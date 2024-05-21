@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: efti-platform-bo
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer_uri: https://keycloak.efti.int.k8s.groupein.local/realms/eFTI_BO
+
+server:
+  port: 8080
+
+gate:
+  minSleep: 1000
+  maxSleep: 2000
+  owner: http://efti.platform.acme.com
+  cda_path: file:/opt/javapp/config/cda
+  gate: https://mock.efti.int.k8s.groupein.local/bo
+  ap:
+    url: http://ileftimicr02in.service.groupein.local:8080/domibus/services/wsplugin
+    username: acme_service_account
+    password: Azerty59*1234567

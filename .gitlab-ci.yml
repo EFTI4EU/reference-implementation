@@ -31,6 +31,7 @@ variables:
       - "NONE"
       - "ttf"
       - "massive"
+      - "acme"
       - "umbrella"      
     description: "The label of component. Set to 'NONE' by default."
 
