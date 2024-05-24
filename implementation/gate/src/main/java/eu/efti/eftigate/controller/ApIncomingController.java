@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ws")
 @RequiredArgsConstructor
 @Slf4j
-public class ApIncomingController {
+public class ApIncomingController 
 
     private static final String SOAP_RESULT = """
             <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
