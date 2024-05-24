@@ -57,7 +57,7 @@ class RequestSendingServiceTest {
                     .build()).build();
 
         final String result = service.sendRequest(requestDto, eDeliveryAction);
-        assertEquals("", result);
+        assertEquals("fc0e70cf-8d57-11ee-a62e-0242ac13000d@domibus.eu", result);
     }
 
     @Test
