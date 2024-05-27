@@ -26,7 +26,7 @@ import static eu.efti.commons.enums.StatusEnum.PENDING;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ControlDto {
+public class ControlDto 
     public static final String SUBSET_EU_REQUESTED = "SubsetEuRequested";
     public static final String SUBSET_MS_REQUESTED = "SubsetMsRequested";
     private int id;
