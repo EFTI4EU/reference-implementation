@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: efti-platform
+  main:
+    banner-mode: off
+  output:
+    ansi:
+      enabled: always
+
+management:
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: info,health,metrics

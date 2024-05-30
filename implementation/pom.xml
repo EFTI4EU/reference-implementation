@@ -194,5 +194,6 @@
         <module>commons</module>
         <module>gate</module>
         <module>edelivery-ap-connector</module>
+        <module>platform-simulator</module>
     </modules>
 </project>

@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: efti-platform-bo
