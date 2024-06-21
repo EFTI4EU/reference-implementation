@@ -1,0 +1,264 @@
+{
+  "eCMR": {
+    "ExchangedDocument": {
+      "ID": "XX1234/15FEB220",
+      "IssueDateTime": {
+        "DateTime": "2022-02-15T12:00:00+02:00"
+      }
+    },
+    "SpecifiedSupplyChainConsignment": {
+      "GrossWeightMeasure": 6055,
+      "GrossVolumeMeasure": 31.0887,
+      "ConsignmentItemQuantity": 8,
+      "ConsignorTradeParty": {
+        "Name": "Some Sender Name just for example",
+        "DefinedTradeContact": {
+          "TelephoneUniversalCommunication": {
+            "CompleteNumber": "123 5 789012345"
+          }
+        },
+        "PostalTradeAddress": {
+          "PostcodeCode": "UA-02138",
+          "StreetName": "Name of the street",
+          "CityName": "City",
+          "CountryID": "UA"
+        }
+      },
+      "ConsigneeTradeParty": {
+        "Name": "Some Consignee name",
+        "PostalTradeAddress": {
+          "PostcodeCode": "DE 00001",
+          "StreetName": "Name of the street",
+          "CityName": "City",
+          "CountryID": "DE"
+        }
+      },
+      "CarrierTradeParty": {
+        "Name": "Some Carrier name",
+        "PostalTradeAddress": {
+          "PostcodeCode": "PL 00000",
+          "StreetName": "Name of the street",
+          "CityName": "City",
+          "CountryID": "PL"
+        }
+      },
+      "CarrierAcceptanceLogisticsLocation": {
+        "Name": "City",
+        "CountryID": "UA"
+      },
+      "ConsigneeReceiptLogisticsLocation": {
+        "Name": "City",
+        "CountryID": "DE"
+      },
+      "AssociatedReferencedDocument": {
+        "ID": "XX1234/15FEB22"
+      },
+      "DeliveryTransportEvent": {
+        "ScheduledOccurrenceDateTime": {
+          "DateTime": "2022-02-16T22:00:00+02:00"
+        }
+      },
+      "PickUpTransportEvent": {
+        "ScheduledOccurrenceDateTime": {
+          "DateTime": "2022-02-15T12:00:00+02:00"
+        },
+        "RelatedSpecifiedObservation": {
+          "Description": "Driver was not present during loading/unloading"
+        }
+      },
+      "IncludedSupplyChainConsignmentItem": [
+        {
+          "SequenceNumeric": 1,
+          "GrossWeightMeasure": 607,
+          "GrossVolumeMeasure": 2.412,
+          "NatureIdentificationTransportCargo": {
+            "Identification": "LINEN PRODUCTS"
+          },
+          "OriginTradeCountry": {
+            "ID": "LT"
+          },
+          "DestinationTradeCountry": {
+            "ID": "JP"
+          },
+          "TransportLogisticsPackage": {
+            "ItemQuantity": 62,
+            "PhysicalLogisticsShippingMarks": {
+              "Marking": "105-11256851"
+            }
+          }
+        },
+        {
+          "SequenceNumeric": 2,
+          "GrossWeightMeasure": 1953,
+          "GrossVolumeMeasure": 11.7164,
+          "NatureIdentificationTransportCargo": {
+            "Identification": "LINEN FABRICHO"
+          },
+          "OriginTradeCountry": {
+            "ID": "LT"
+          },
+          "DestinationTradeCountry": {
+            "ID": "JP"
+          },
+          "TransportLogisticsPackage": {
+            "ItemQuantity": 398,
+            "PhysicalLogisticsShippingMarks": {
+              "Marking": "105-11243142"
+            }
+          }
+        },
+        {
+          "SequenceNumeric": 3,
+          "GrossWeightMeasure": 466,
+          "GrossVolumeMeasure": 2.8759,
+          "NatureIdentificationTransportCargo": {
+            "Identification": "PROPS AND TOOLS"
+          },
+          "HandlingInstructions": {
+            "Description": "HEA",
+            "DescriptionCode": "Heavy item ( 1 pcs 150kg or more )"
+          },
+          "OriginTradeCountry": {
+            "ID": "LT"
+          },
+          "DestinationTradeCountry": {
+            "ID": "US"
+          },
+          "TransportLogisticsPackage": {
+            "ItemQuantity": 2,
+            "PhysicalLogisticsShippingMarks": {
+              "Marking": "105-11231931"
+            }
+          }
+        },
+        {
+          "SequenceNumeric": 4,
+          "GrossWeightMeasure": 240,
+          "GrossVolumeMeasure": 1.176,
+          "NatureIdentificationTransportCargo": {
+            "Identification": "FURNITURE"
+          },
+          "HandlingInstructions": {
+            "Description": "HEA",
+            "DescriptionCode": "Heavy item ( 1 pcs 150kg or more )"
+          },
+          "OriginTradeCountry": {
+            "ID": "LT"
+          },
+          "DestinationTradeCountry": {
+            "ID": "US"
+          },
+          "TransportLogisticsPackage": {
+            "ItemQuantity": 1,
+            "PhysicalLogisticsShippingMarks": {
+              "Marking": "105-11249976"
+            }
+          }
+        },
+        {
+          "SequenceNumeric": 5,
+          "GrossWeightMeasure": 106,
+          "GrossVolumeMeasure": 0.576,
+          "NatureIdentificationTransportCargo": {
+            "Identification": "COSMETIC GOODS"
+          },
+          "OriginTradeCountry": {
+            "ID": "LT"
+          },
+          "DestinationTradeCountry": {
+            "ID": "HK"
+          },
+          "TransportLogisticsPackage": {
+            "ItemQuantity": 1,
+            "PhysicalLogisticsShippingMarks": {
+              "Marking": "105-11244951"
+            }
+          }
+        },
+        {
+          "SequenceNumeric": 6,
+          "GrossWeightMeasure": 1970,
+          "GrossVolumeMeasure": 7.7068,
+          "NatureIdentificationTransportCargo": {
+            "Identification": "HOME TEXTILE LI"
+          },
+          "OriginTradeCountry": {
+            "ID": "LT"
+          },
+          "DestinationTradeCountry": {
+            "ID": "JP"
+          },
+          "TransportLogisticsPackage": {
+            "ItemQuantity": 155,
+            "PhysicalLogisticsShippingMarks": {
+              "Marking": "105-11243131"
+            }
+          }
+        },
+        {
+          "SequenceNumeric": 7,
+          "GrossWeightMeasure": 136,
+          "GrossVolumeMeasure": 0.632,
+          "NatureIdentificationTransportCargo": {
+            "Identification": "FEMTOSECOND LAS"
+          },
+          "HandlingInstructions": {
+            "Description": "HER",
+            "DescriptionCode": "SK, OV, BT heavy (1 pcs 80 to 149.5 kg)"
+          },
+          "OriginTradeCountry": {
+            "ID": "LT"
+          },
+          "DestinationTradeCountry": {
+            "ID": "CH"
+          },
+          "TransportLogisticsPackage": {
+            "ItemQuantity": 2,
+            "PhysicalLogisticsShippingMarks": {
+              "Marking": "105-11247670"
+            }
+          }
+        },
+        {
+          "SequenceNumeric": 8,
+          "GrossWeightMeasure": 577,
+          "GrossVolumeMeasure": 3.9936,
+          "NatureIdentificationTransportCargo": {
+            "Identification": "SENSORS"
+          },
+          "OriginTradeCountry": {
+            "ID": "LT"
+          },
+          "DestinationTradeCountry": {
+            "ID": "SG"
+          },
+          "TransportLogisticsPackage": {
+            "ItemQuantity": 3,
+            "PhysicalLogisticsShippingMarks": {
+              "Marking": "105-11260023"
+            }
+          }
+        }
+      ],
+      "UtilizedLogisticsTransportEquipment": [
+        {
+          "ID": "592MSP",
+          "SealedIndicator": {
+            "Indicator": false
+          }
+        },
+        {
+          "ID": "",
+          "SealedIndicator": {
+            "Indicator": false
+          }
+        }
+      ],
+      "MainCarriageLogisticsTransportMovement": {
+        "UsedLogisticsTransportMeans": {
+          "ID": ""
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth.gate.syldavia.eu:8080/realms/eFTI_SY
+          
+server:
+  port: 8071
+
+gate:
+  minSleep: 1000
+  maxSleep: 2000
+  owner: http://efti.platform.massivedynamic.com
+  cda_path: file:cda/
+  gate: http://efti.gate.syldavia.eu
+  ap:
+    url: http://efti.platform.massivedynamic.com:81/domibus/services/wsplugin
+    username: massivedynamic_service_account
+    password: Azerty59*1234567
+

@@ -10,17 +10,19 @@
               value="%d{HH:mm:ss.SSS} [%5.-5X{thread}] %highlight([%5.5X{d_user}] [%8.-8X{d_messageId}] [%8.-8X{d_messageEntityId}] %5p) %50.-50(.\(%c{1}:%domibusLine\\)) - %m%n"
               scope="global"/>
 
-    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
-        <Target>System.out</Target>
-        <encoder>
-            <pattern>${encoderPatternColor}</pattern>
-        </encoder>
+
+    <appender name="Console-Appender"
+              class="ch.qos.logback.core.ConsoleAppender">
+
+        <layout>
+            <pattern>%d %-5level %logger : %msg%n</pattern>
+        </layout>
     </appender>
 
     <logger name="eu.domibus.plugin.ws" level="INFO"/>
 
-    <root level="INFO">
-        <appender-ref ref="stdout"/>
+    <root level="INFO" additivity="false">
+        <appender-ref ref="Console-Appender" />
     </root>
 
 </configuration>
