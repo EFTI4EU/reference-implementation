@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: efti-platform
+  main:
+    banner-mode: off
+  output:
+    ansi:
+      enabled: always

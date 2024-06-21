@@ -1,0 +1,63 @@
+spring:
+  rabbitmq:
+    host: host.docker.internal
+    listener:
+      default-requeue-rejected: false
+      simple:
+        default-requeue-rejected: false
+        retry:
+          enabled: true
+          initial-interval: 2s
+          max-attempts: 6
+          max-interval: 10s
+          multiplier: 2
+        concurrency: 10
+    port: 5672
+    queues:
+      eftiKeySendMessage: EFTI
+      eftiSendMessageExchange: efti.send-message.exchange
+      eftiReceiveMessageExchange: efti.receive-message.exchange
+      eftiSendMessageQueue: efti.send-messages.q
+      eftiReceiveMessageQueue: efti.receive-messages.q
+      messageSendDeadLetterQueue: message-send-dead-letter-queue
+      messageReceiveDeadLetterQueue: message-receive-dead-letter-queue
+  application:
+    name: efti-gate
+  datasource:
+    control:
+      jdbc-url: jdbc:postgresql://host.docker.internal:9000/efti
+      url: jdbc:postgresql://host.docker.internal:9000/efti
+      username: ingroup
+      password: root
+      driverClassName: org.postgresql.Driver
+      liquibase:
+        change-log: classpath:db.changelog/db.gate.changelog-master.xml
+    metadata:
+      jdbc-url: jdbc:postgresql://host.docker.internal:2345/efti
+      url: jdbc:postgresql://host.docker.internal:2345/efti
+      username: root
+      password: root
+      driverClassName: org.postgresql.Driver
+      liquibase:
+        change-log: classpath:db.changelog/db.metadata.changelog-master.xml
+  jackson:
+    default-property-inclusion: NON_NULL
+
+server:
+  port: 8880
+
+batch:
+  update:
+    cron: "0 */1 * ? * *"
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+
+efti:
+  control:
+    pending:
+      timeout: 60
+

@@ -1,0 +1,186 @@
+version: "3.2"
+services:
+  mariadb-sybo:
+    image: mariadb:10.11.6
+    restart: always
+    environment:
+      MARIADB_DATABASE: 'db'
+      MARIADB_USER: 'user'
+      MARIADB_PASSWORD: 'password'
+      MARIADB_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./mariadb/sybo:/docker-entrypoint-initdb.d/
+    networks:
+      efti:
+
+  mariadb-li:
+    image: mariadb:10.11.6
+    restart: always
+    environment:
+      MARIADB_DATABASE: 'db'
+      MARIADB_USER: 'user'
+      MARIADB_PASSWORD: 'password'
+      MARIADB_ROOT_PASSWORD: 'password'
+    ports:
+      - '3307:3306'
+    volumes:
+      - ./mariadb/li:/docker-entrypoint-initdb.d/
+    networks:
+      efti:
+
+  mariadb-platform:
+    image: mariadb:10.11.6
+    restart: always
+    environment:
+      MARIADB_DATABASE: 'db'
+      MARIADB_USER: 'user'
+      MARIADB_PASSWORD: 'password'
+      MARIADB_ROOT_PASSWORD: 'password'
+    ports:
+      - '3308:3306'
+    volumes:
+      - ./mariadb/platform:/docker-entrypoint-initdb.d/
+    networks:
+      efti:
+
+  domibus-sybo-1:
+    image: efti4eu/domibus
+    tty: true
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./domibus/sybo/domains/syldavia:/opt/domibus/conf/domibus/domains/syldavia/
+      - ./domibus/sybo/domains/borduria:/opt/domibus/conf/domibus/domains/borduria/
+      - ./domibus/sybo/domibus-sybo.properties:/opt/domibus/conf/domibus/domibus.properties
+      - ./domibus/sh/setenv-node-1.sh:/opt/domibus/bin/setenv.sh
+      - ./domibus/sybo/plugins-conf:/opt/domibus/conf/domibus/plugins/config/domains/
+    depends_on:
+      - mariadb-sybo
+      - activemq-sybo
+    command: tail -f /opt/domibus/logs/domibus.log
+    networks:
+      efti:
+
+  domibus-sybo-2:
+    image: efti4eu/domibus
+    tty: true
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./domibus/sybo/domains/syldavia:/opt/domibus/conf/domibus/domains/syldavia/
+      - ./domibus/sybo/domains/borduria:/opt/domibus/conf/domibus/domains/borduria/
+      - ./domibus/sybo/domibus-sybo.properties:/opt/domibus/conf/domibus/domibus.properties
+      - ./domibus/sh/setenv-node-2.sh:/opt/domibus/bin/setenv.sh
+      - ./domibus/sybo/plugins-conf:/opt/domibus/conf/domibus/plugins/config/domains/
+    depends_on:
+      - mariadb-sybo
+      - activemq-sybo
+    command: tail -f /opt/domibus/logs/domibus.log
+    networks:
+      efti:
+
+  domibus-li-1:
+    image: efti4eu/domibus
+    tty: true
+    ports:
+      - "8090:8080"
+    volumes:
+      - ./domibus/li/domains/listenbourg:/opt/domibus/conf/domibus/domains/listenbourg/
+      - ./domibus/li/domibus-li.properties:/opt/domibus/conf/domibus/domibus.properties
+      - ./domibus/sh/setenv-node-1.sh:/opt/domibus/bin/setenv.sh
+      - ./domibus/li/plugins-conf:/opt/domibus/conf/domibus/plugins/config/domains/
+    depends_on:
+      - mariadb-li
+      - activemq-li
+    command: tail -f /opt/domibus/logs/domibus.log
+    networks:
+      efti:
+
+  domibus-li-2:
+    image: efti4eu/domibus
+    tty: true
+    ports:
+      - "8091:8080"
+    volumes:
+      - ./domibus/li/domains/listenbourg:/opt/domibus/conf/domibus/domains/listenbourg/
+      - ./domibus/li/domibus-li.properties:/opt/domibus/conf/domibus/domibus.properties
+      - ./domibus/sh/setenv-node-2.sh:/opt/domibus/bin/setenv.sh
+      - ./domibus/li/plugins-conf:/opt/domibus/conf/domibus/plugins/config/domains/
+    depends_on:
+      - mariadb-li
+      - activemq-li
+    command: tail -f /opt/domibus/logs/domibus.log
+    networks:
+      efti:
+
+  domibus-platform:
+    image: efti4eu/domibus
+    tty: true
+    ports:
+      - "8100:8080"
+    volumes:
+      - ./domibus/platform/domains/acme:/opt/domibus/conf/domibus/domains/acme/
+      - ./domibus/platform/domains/massivedynamic:/opt/domibus/conf/domibus/domains/massivedynamic/
+      - ./domibus/platform/domains/umbrellacorporation:/opt/domibus/conf/domibus/domains/umbrellacorporation/
+      - ./domibus/platform/domibus-platform.properties:/opt/domibus/conf/domibus/domibus.properties
+      - ./domibus/sh/setenv-node-1.sh:/opt/domibus/bin/setenv.sh
+      - ./domibus/platform/plugins-conf:/opt/domibus/conf/domibus/plugins/config/domains/
+    depends_on:
+      - mariadb-platform
+      - activemq-platform
+    command: tail -f /opt/domibus/logs/domibus.log
+    networks:
+      efti:
+
+  activemq-sybo:
+    image: webcenter/activemq:latest
+    ports:
+      - "8161:8161"
+    environment:
+      - ACTIVEMQ_NAME=activemq
+      - ACTIVEMQ_ADMIN_LOGIN=admin
+      - ACTIVEMQ_ADMIN_PASSWORD=password
+    networks:
+      efti:
+  activemq-li:
+    image: webcenter/activemq:latest
+    ports:
+      - "8162:8161"
+    environment:
+      - ACTIVEMQ_NAME=activemq
+      - ACTIVEMQ_ADMIN_LOGIN=admin
+      - ACTIVEMQ_ADMIN_PASSWORD=password
+    networks:
+      efti:
+  activemq-platform:
+    image: webcenter/activemq:latest
+    ports:
+      - "8163:8161"
+    environment:
+      - ACTIVEMQ_NAME=activemq
+      - ACTIVEMQ_ADMIN_LOGIN=admin
+      - ACTIVEMQ_ADMIN_PASSWORD=password
+    networks:
+      efti:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "81:81"
+      - "82:82"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      efti:
+        aliases:
+          - efti.gate.syldavia.eu
+          - efti.gate.borduria.eu
+          - efti.gate.listenbourg.eu
+          - efti.platform.massivedynamic.com
+          - efti.platform.acme.com
+          - efti.platform.umbrellainc.com
+networks:
+  efti:
+    name: efti-network
+    external: true

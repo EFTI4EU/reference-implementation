@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<db:configuration xmlns:db="http://domibus.eu/configuration" party="syldavia">
+
+	<mpcs>
+		<mpc name="defaultMpc"
+			 qualifiedName="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC"
+			 enabled="true"
+			 default="true"
+			 retention_downloaded="0"
+			 retention_undownloaded="14400"
+			 retention_sent="14400"
+			 retention_metadata_offset="0"
+		     delete_message_metadata="false"
+		     max_batch_delete="1000"/>
+	</mpcs>
+	<businessProcesses>
+		<roles>
+			<role name="defaultInitiatorRole" 
+					value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator"/>
+			<role name="defaultResponderRole" 
+					value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder"/>
+		</roles>
+		<parties>
+			<partyIdTypes>
+				<partyIdType name="partyTypeUrn" value="urn:oasis:names:tc:ebcore:partyid-type:unregistered"/>
+			</partyIdTypes>
+			<party name="syldavia"
+				   endpoint="http://efti.gate.syldavia.eu:81/domibus/services/msh?domain=syldavia">
+				<identifier partyId="http://efti.gate.syldavia.eu" partyIdType="partyTypeUrn"/>
+			</party>
+			<party name="borduria"
+				   endpoint="http://efti.gate.borduria.eu:81/domibus/services/msh?domain=borduria">
+				<identifier partyId="http://efti.gate.borduria.eu" partyIdType="partyTypeUrn"/>
+			</party>
+			<party name="listenbourg"
+				   endpoint="http://efti.gate.listenbourg.eu:81/domibus/services/msh?domain=listenbourg">
+				<identifier partyId="http://efti.gate.listenbourg.eu" partyIdType="partyTypeUrn"/>
+			</party>
+			<party name="massivedynamic"
+				   endpoint="http://efti.platform.massivedynamic.com:81/domibus/services/msh?domain=massivedynamic">
+				<identifier partyId="http://efti.platform.massivedynamic.com" partyIdType="partyTypeUrn"/>
+			</party>
+		</parties>
+		<meps>
+			<mep name="twoWay" value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/twoWay"/>
+			<binding name="pushAndPull" value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pushAndPush"/>
+		</meps>
+		<properties>
+			<property name="originalSenderProperty" 
+					key="originalSender" 
+					datatype="string" 
+					required="true"/>
+			<property name="finalRecipientProperty" 
+					key="finalRecipient" 
+					datatype="string" 
+					required="true"/>
+			<propertySet name="eDeliveryPropertySet">
+				<propertyRef property="finalRecipientProperty"/>
+				<propertyRef property="originalSenderProperty"/>
+			</propertySet>
+		</properties>
+		<payloadProfiles>
+			<payload name="businessPayload"
+					 cid="cid:message"
+					 required="false"
+					 mimeType="text/xml"/>
+			<payload name="businessContentAttachment"
+					 cid="cid:attachment"
+					 required="false"
+					 mimeType="application/octet-stream"/>
+			<payloadProfile name="MessageProfile" maxSize="2147483647">
+				<attachment name="businessPayload"/>
+				<attachment name="businessContentAttachment"/>
+			</payloadProfile>
+		</payloadProfiles>
+		<securities>
+			<security name="eDeliveryAS4Policy"
+					policy="eDeliveryAS4Policy.xml"
+					signatureMethod="RSA_SHA256" />
+		</securities>
+		<errorHandlings>
+			<errorHandling name="eftiErrorHandling"
+					errorAsResponse="true" 
+					businessErrorNotifyProducer="true"
+					businessErrorNotifyConsumer="true"
+					deliveryFailureNotifyProducer="true"/>
+		</errorHandlings>
+		<agreements>
+			<agreement name="agreement1" value="A1" type="T1"/>
+		</agreements>
+		<services>
+			<service name="eftiService" value="bdx:noprocess" type="tc1"/>
+		</services>
+		<actions>
+			<action name="getUIL" value="getUIL"/>
+			<action name="uploadMetadata" value="uploadMetadata"/>
+			<action name="forwardUil" value="forwardUil"/>
+			<action name="getIdentifiers" value="getIdentifiers"/>
+		</actions>
+		<as4>
+			<receptionAwareness name="receptionAwareness" retry="1;4;CONSTANT" duplicateDetection="true"/>
+			<reliability name="AS4Reliability" nonRepudiation="true" replyPattern="response"/>
+		</as4>
+		<splittingConfigurations>
+			<splitting name="default"
+					   fragmentSize="500"
+					   compression="true"
+					   joinInterval="1440"/>
+		</splittingConfigurations>
+
+		<legConfigurations>
+			<!--
+			Please add the attribute "splitting"(pointing to a splitting configuration)
+			to a specific leg in case you want to activate splitAndJoin feature
+			-->
+			<legConfiguration name="eftiServiceGetUIL"
+							  service="eftiService"
+							  action="getUIL"
+							  defaultMpc="defaultMpc"
+							  reliability="AS4Reliability"
+							  security="eDeliveryAS4Policy"
+							  receptionAwareness="receptionAwareness"
+							  propertySet="eDeliveryPropertySet"
+							  payloadProfile="MessageProfile"
+							  errorHandling="eftiErrorHandling"
+							  compressPayloads="true"/>
+			<legConfiguration name="eftiServiceUploadMetadata"
+							  service="eftiService"
+							  action="uploadMetadata"
+							  defaultMpc="defaultMpc"
+							  reliability="AS4Reliability"
+							  security="eDeliveryAS4Policy"
+							  receptionAwareness="receptionAwareness"
+							  propertySet="eDeliveryPropertySet"
+							  payloadProfile="MessageProfile"
+							  errorHandling="eftiErrorHandling"
+							  compressPayloads="true"/>
+			<legConfiguration name="eftiServiceGetIdentifiers"
+							  service="eftiService"
+							  action="getIdentifiers"
+							  defaultMpc="defaultMpc"
+							  reliability="AS4Reliability"
+							  security="eDeliveryAS4Policy"
+							  receptionAwareness="receptionAwareness"
+							  propertySet="eDeliveryPropertySet"
+							  payloadProfile="MessageProfile"
+							  errorHandling="eftiErrorHandling"
+							  compressPayloads="true"/>
+		<legConfiguration name="eftiServiceForwardUil"
+							  service="eftiService"
+							  action="forwardUil"
+							  defaultMpc="defaultMpc"
+							  reliability="AS4Reliability"
+							  security="eDeliveryAS4Policy"
+							  receptionAwareness="receptionAwareness"
+							  propertySet="eDeliveryPropertySet"
+							  payloadProfile="MessageProfile"
+							  errorHandling="eftiErrorHandling"
+							  compressPayloads="true"/>
+		</legConfigurations>
+
+		<process name="eftiProcess"
+				 mep="twoWay"
+				 binding="pushAndPull"
+				 initiatorRole="defaultInitiatorRole"
+				 responderRole="defaultResponderRole">
+			<initiatorParties>
+				<initiatorParty name="borduria"/>
+				<initiatorParty name="syldavia"/>
+				<initiatorParty name="listenbourg"/>
+				<initiatorParty name="massivedynamic"/>
+			</initiatorParties>
+			<responderParties>
+				<responderParty name="borduria"/>
+				<responderParty name="syldavia"/>
+				<responderParty name="listenbourg"/>
+				<responderParty name="massivedynamic"/>
+			</responderParties>
+			<legs>
+				<leg name="eftiServiceGetUIL"/>
+				<leg name="eftiServiceUploadMetadata"/>
+				<leg name="eftiServiceGetIdentifiers"/>
+				<leg name="eftiServiceForwardUil"/>
+			</legs>
+		</process>
+	</businessProcesses>
+</db:configuration>

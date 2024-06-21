@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="C:/Users/cdanna/Documents/eFTI/eCMR/CMR_xml_2_html.v-1.1.xsl"?>
+<eCMR xmlns="urn:un:unece:uncefact:data:standard:eCMR:1">
+  <ExchangedDocument>
+    <ID xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">XX1234/15FEB220</ID>
+    <IssueDateTime xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <DateTime xmlns="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:25">2022-02-15T12:00:00+02:00</DateTime>
+    </IssueDateTime>
+  </ExchangedDocument>
+  <SpecifiedSupplyChainConsignment>
+    <GrossWeightMeasure xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101" unitCode="KGM">6055</GrossWeightMeasure>
+    <GrossVolumeMeasure xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101" unitCode="MTQ">31.0887</GrossVolumeMeasure>
+    <ConsignmentItemQuantity xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">8</ConsignmentItemQuantity>
+    <ConsignorTradeParty xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <Name>Some Sender Name just for example</Name>
+      <DefinedTradeContact>
+        <TelephoneUniversalCommunication>
+          <CompleteNumber>123 5 789012345</CompleteNumber>
+        </TelephoneUniversalCommunication>
+      </DefinedTradeContact>
+      <PostalTradeAddress>
+        <PostcodeCode>UA-02138</PostcodeCode>
+        <StreetName>Name of the street</StreetName>
+        <CityName>City</CityName>
+        <CountryID>UA</CountryID>
+      </PostalTradeAddress>
+    </ConsignorTradeParty>
+    <ConsigneeTradeParty xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <Name>Some Consignee name</Name>
+      <PostalTradeAddress>
+        <PostcodeCode>DE 00001</PostcodeCode>
+        <StreetName>Name of the street</StreetName>
+        <CityName>City</CityName>
+        <CountryID>DE</CountryID>
+      </PostalTradeAddress>
+    </ConsigneeTradeParty>
+    <CarrierTradeParty xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <Name>Some Carrier name</Name>
+      <PostalTradeAddress>
+        <PostcodeCode>PL 00000</PostcodeCode>
+        <StreetName>Name of the street</StreetName>
+        <CityName>City</CityName>
+        <CountryID>PL</CountryID>
+      </PostalTradeAddress>
+    </CarrierTradeParty>
+    <CarrierAcceptanceLogisticsLocation xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <Name>City</Name>
+      <CountryID>UA</CountryID>
+    </CarrierAcceptanceLogisticsLocation>
+    <ConsigneeReceiptLogisticsLocation xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <Name>City</Name>
+      <CountryID>DE</CountryID>
+    </ConsigneeReceiptLogisticsLocation>
+    <AssociatedReferencedDocument xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <ID>XX1234/15FEB22</ID>
+    </AssociatedReferencedDocument>
+    <DeliveryTransportEvent xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <ScheduledOccurrenceDateTime>
+        <DateTime xmlns="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:25">2022-02-16T22:00:00+02:00</DateTime>
+      </ScheduledOccurrenceDateTime>
+    </DeliveryTransportEvent>
+    <PickUpTransportEvent xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <ScheduledOccurrenceDateTime>
+        <DateTime xmlns="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:25">2022-02-15T12:00:00+02:00</DateTime>
+      </ScheduledOccurrenceDateTime>
+      <RelatedSpecifiedObservation>
+        <Description>Driver was not present during loading/unloading</Description>
+      </RelatedSpecifiedObservation>
+    </PickUpTransportEvent>
+    <IncludedSupplyChainConsignmentItem xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <SequenceNumeric>1</SequenceNumeric>
+      <GrossWeightMeasure unitCode="KGM">607</GrossWeightMeasure>
+      <GrossVolumeMeasure unitCode="MTQ">2.412</GrossVolumeMeasure>
+      <NatureIdentificationTransportCargo>
+        <Identification>LINEN PRODUCTS</Identification>
+      </NatureIdentificationTransportCargo>
+      <OriginTradeCountry>
+        <ID>LT</ID>
+      </OriginTradeCountry>
+      <DestinationTradeCountry>
+        <ID>JP</ID>
+      </DestinationTradeCountry>
+      <TransportLogisticsPackage>
+        <ItemQuantity>62</ItemQuantity>
+        <PhysicalLogisticsShippingMarks>
+          <Marking>105-11256851</Marking>
+        </PhysicalLogisticsShippingMarks>
+      </TransportLogisticsPackage>
+    </IncludedSupplyChainConsignmentItem>
+    <IncludedSupplyChainConsignmentItem xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <SequenceNumeric>2</SequenceNumeric>
+      <GrossWeightMeasure unitCode="KGM">1953</GrossWeightMeasure>
+      <GrossVolumeMeasure unitCode="MTQ">11.7164</GrossVolumeMeasure>
+      <NatureIdentificationTransportCargo>
+        <Identification>LINEN FABRICHO</Identification>
+      </NatureIdentificationTransportCargo>
+      <OriginTradeCountry>
+        <ID>LT</ID>
+      </OriginTradeCountry>
+      <DestinationTradeCountry>
+        <ID>JP</ID>
+      </DestinationTradeCountry>
+      <TransportLogisticsPackage>
+        <ItemQuantity>398</ItemQuantity>
+        <PhysicalLogisticsShippingMarks>
+          <Marking>105-11243142</Marking>
+        </PhysicalLogisticsShippingMarks>
+      </TransportLogisticsPackage>
+    </IncludedSupplyChainConsignmentItem>
+    <IncludedSupplyChainConsignmentItem xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <SequenceNumeric>3</SequenceNumeric>
+      <GrossWeightMeasure unitCode="KGM">466</GrossWeightMeasure>
+      <GrossVolumeMeasure unitCode="MTQ">2.8759</GrossVolumeMeasure>
+      <NatureIdentificationTransportCargo>
+        <Identification>PROPS AND TOOLS</Identification>
+      </NatureIdentificationTransportCargo>
+      <HandlingInstructions>
+        <Description>HEA</Description>
+        <DescriptionCode>Heavy item ( 1 pcs 150kg or more )</DescriptionCode>
+      </HandlingInstructions>
+      <OriginTradeCountry>
+        <ID>LT</ID>
+      </OriginTradeCountry>
+      <DestinationTradeCountry>
+        <ID>US</ID>
+      </DestinationTradeCountry>
+      <TransportLogisticsPackage>
+        <ItemQuantity>2</ItemQuantity>
+        <PhysicalLogisticsShippingMarks>
+          <Marking>105-11231931</Marking>
+        </PhysicalLogisticsShippingMarks>
+      </TransportLogisticsPackage>
+    </IncludedSupplyChainConsignmentItem>
+    <IncludedSupplyChainConsignmentItem xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <SequenceNumeric>4</SequenceNumeric>
+      <GrossWeightMeasure unitCode="KGM">240</GrossWeightMeasure>
+      <GrossVolumeMeasure unitCode="MTQ">1.176</GrossVolumeMeasure>
+      <NatureIdentificationTransportCargo>
+        <Identification>FURNITURE</Identification>
+      </NatureIdentificationTransportCargo>
+      <HandlingInstructions>
+        <Description>HEA</Description>
+        <DescriptionCode>Heavy item ( 1 pcs 150kg or more )</DescriptionCode>
+      </HandlingInstructions>
+      <OriginTradeCountry>
+        <ID>LT</ID>
+      </OriginTradeCountry>
+      <DestinationTradeCountry>
+        <ID>US</ID>
+      </DestinationTradeCountry>
+      <TransportLogisticsPackage>
+        <ItemQuantity>1</ItemQuantity>
+        <PhysicalLogisticsShippingMarks>
+          <Marking>105-11249976</Marking>
+        </PhysicalLogisticsShippingMarks>
+      </TransportLogisticsPackage>
+    </IncludedSupplyChainConsignmentItem>
+    <IncludedSupplyChainConsignmentItem xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <SequenceNumeric>5</SequenceNumeric>
+      <GrossWeightMeasure unitCode="KGM">106</GrossWeightMeasure>
+      <GrossVolumeMeasure unitCode="MTQ">0.576</GrossVolumeMeasure>
+      <NatureIdentificationTransportCargo>
+        <Identification>COSMETIC GOODS</Identification>
+      </NatureIdentificationTransportCargo>
+      <OriginTradeCountry>
+        <ID>LT</ID>
+      </OriginTradeCountry>
+      <DestinationTradeCountry>
+        <ID>HK</ID>
+      </DestinationTradeCountry>
+      <TransportLogisticsPackage>
+        <ItemQuantity>1</ItemQuantity>
+        <PhysicalLogisticsShippingMarks>
+          <Marking>105-11244951</Marking>
+        </PhysicalLogisticsShippingMarks>
+      </TransportLogisticsPackage>
+    </IncludedSupplyChainConsignmentItem>
+    <IncludedSupplyChainConsignmentItem xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <SequenceNumeric>6</SequenceNumeric>
+      <GrossWeightMeasure unitCode="KGM">1970</GrossWeightMeasure>
+      <GrossVolumeMeasure unitCode="MTQ">7.7068</GrossVolumeMeasure>
+      <NatureIdentificationTransportCargo>
+        <Identification>HOME TEXTILE LI</Identification>
+      </NatureIdentificationTransportCargo>
+      <OriginTradeCountry>
+        <ID>LT</ID>
+      </OriginTradeCountry>
+      <DestinationTradeCountry>
+        <ID>JP</ID>
+      </DestinationTradeCountry>
+      <TransportLogisticsPackage>
+        <ItemQuantity>155</ItemQuantity>
+        <PhysicalLogisticsShippingMarks>
+          <Marking>105-11243131</Marking>
+        </PhysicalLogisticsShippingMarks>
+      </TransportLogisticsPackage>
+    </IncludedSupplyChainConsignmentItem>
+    <IncludedSupplyChainConsignmentItem xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <SequenceNumeric>7</SequenceNumeric>
+      <GrossWeightMeasure unitCode="KGM">136</GrossWeightMeasure>
+      <GrossVolumeMeasure unitCode="MTQ">0.632</GrossVolumeMeasure>
+      <NatureIdentificationTransportCargo>
+        <Identification>FEMTOSECOND LAS</Identification>
+      </NatureIdentificationTransportCargo>
+      <HandlingInstructions>
+        <Description>HER</Description>
+        <DescriptionCode>SK, OV, BT heavy (1 pcs 80 to 149.5 kg)</DescriptionCode>
+      </HandlingInstructions>
+      <OriginTradeCountry>
+        <ID>LT</ID>
+      </OriginTradeCountry>
+      <DestinationTradeCountry>
+        <ID>CH</ID>
+      </DestinationTradeCountry>
+      <TransportLogisticsPackage>
+        <ItemQuantity>2</ItemQuantity>
+        <PhysicalLogisticsShippingMarks>
+          <Marking>105-11247670</Marking>
+        </PhysicalLogisticsShippingMarks>
+      </TransportLogisticsPackage>
+    </IncludedSupplyChainConsignmentItem>
+    <IncludedSupplyChainConsignmentItem xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <SequenceNumeric>8</SequenceNumeric>
+      <GrossWeightMeasure unitCode="KGM">577</GrossWeightMeasure>
+      <GrossVolumeMeasure unitCode="MTQ">3.9936</GrossVolumeMeasure>
+      <NatureIdentificationTransportCargo>
+        <Identification>SENSORS</Identification>
+      </NatureIdentificationTransportCargo>
+      <OriginTradeCountry>
+        <ID>LT</ID>
+      </OriginTradeCountry>
+      <DestinationTradeCountry>
+        <ID>SG</ID>
+      </DestinationTradeCountry>
+      <TransportLogisticsPackage>
+        <ItemQuantity>3</ItemQuantity>
+        <PhysicalLogisticsShippingMarks>
+          <Marking>105-11260023</Marking>
+        </PhysicalLogisticsShippingMarks>
+      </TransportLogisticsPackage>
+    </IncludedSupplyChainConsignmentItem>
+    <UtilizedLogisticsTransportEquipment xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <ID>592MSP</ID>
+      <SealedIndicator>
+        <Indicator xmlns="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:25">false</Indicator>
+      </SealedIndicator>
+    </UtilizedLogisticsTransportEquipment>
+    <UtilizedLogisticsTransportEquipment xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <ID></ID>
+      <SealedIndicator>
+        <Indicator xmlns="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:25">false</Indicator>
+      </SealedIndicator>
+    </UtilizedLogisticsTransportEquipment>
+    <MainCarriageLogisticsTransportMovement xmlns="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101">
+      <UsedLogisticsTransportMeans>
+        <ID></ID>
+      </UsedLogisticsTransportMeans>
+    </MainCarriageLogisticsTransportMovement>
+  </SpecifiedSupplyChainConsignment>
+</eCMR>

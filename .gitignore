@@ -4,3 +4,7 @@
 
 #Build
 target/
+
+#Deploy
+/**/*.log
+/deploy/local/efti-gate/**/*.jar
