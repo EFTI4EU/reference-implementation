@@ -13,8 +13,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EntityScan("com.ingroupe.platform")
-@ComponentScan(basePackages = {"com.ingroupe.platform", "eu.efti"})
+@EntityScan("eu.efti.platformsimulator")
+@ComponentScan(basePackages = {"eu.efti.platformsimulator", "eu.efti"})
 public class PlatformConfig {
 
     @Bean

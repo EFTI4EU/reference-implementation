@@ -27,7 +27,7 @@ spring:
     control:
       jdbc-url: jdbc:postgresql://host.docker.internal:9000/efti
       url: jdbc:postgresql://host.docker.internal:9000/efti
-      username: ingroup
+      username: efti
       password: root
       driverClassName: org.postgresql.Driver
       liquibase:

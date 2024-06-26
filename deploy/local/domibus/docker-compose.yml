@@ -69,7 +69,7 @@ services:
       efti:
 
   domibus-sybo-1:
-    image: domibus-unix
+    image: efti4eu/domibus
     tty: true
     ports:
       - "8081:8080"
@@ -90,7 +90,7 @@ services:
       efti:
 
   domibus-sybo-2:
-    image: domibus-unix
+    image: efti4eu/domibus
     tty: true
     ports:
       - "8082:8080"
@@ -111,7 +111,7 @@ services:
       efti:
 
   domibus-li-1:
-    image: domibus-unix
+    image: efti4eu/domibus
     tty: true
     ports:
       - "8090:8080"
@@ -131,7 +131,7 @@ services:
       efti:
 
   domibus-li-2:
-    image: domibus-unix
+    image: efti4eu/domibus
     tty: true
     ports:
       - "8091:8080"
@@ -151,7 +151,7 @@ services:
       efti:
 
   domibus-platform:
-    image: domibus-unix
+    image: efti4eu/domibus
     tty: true
     ports:
       - "8100:8080"
