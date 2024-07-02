@@ -73,6 +73,8 @@ services:
     ports:
       - 8880:8880
       - 8890:5005
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       efti:
 
@@ -90,6 +92,8 @@ services:
     ports:
       - 8881:8881
       - 8891:5005
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       efti:
 
@@ -107,6 +111,8 @@ services:
     ports:
       - 8882:8882
       - 8892:5005
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       efti:
 
