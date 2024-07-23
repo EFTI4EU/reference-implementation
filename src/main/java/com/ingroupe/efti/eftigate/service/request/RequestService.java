@@ -8,8 +8,8 @@ import com.ingroupe.efti.commons.enums.EDeliveryAction;
 import com.ingroupe.efti.commons.enums.ErrorCodesEnum;
 import com.ingroupe.efti.commons.enums.RequestStatusEnum;
 import com.ingroupe.efti.commons.enums.RequestTypeEnum;
-import com.ingroupe.efti.edeliveryapconnector.dto.ApConfigDto;
 import com.ingroupe.efti.commons.utils.SerializeUtils;
+import com.ingroupe.efti.edeliveryapconnector.dto.ApConfigDto;
 import com.ingroupe.efti.edeliveryapconnector.dto.NotificationDto;
 import com.ingroupe.efti.edeliveryapconnector.dto.NotificationType;
 import com.ingroupe.efti.edeliveryapconnector.service.RequestUpdaterService;
@@ -172,7 +172,7 @@ public abstract class RequestService<T extends RequestEntity> {
         this.save(requestDto);
     }
 
-    protected void markMessageAsDownloaded(String eDeliveryMessageId){
+    protected void markMessageAsDownloaded(final String eDeliveryMessageId){
         try {
             getRequestUpdaterService().setMarkedAsDownload(createApConfig(), eDeliveryMessageId);
         } catch (final MalformedURLException e) {
@@ -199,5 +199,9 @@ public abstract class RequestService<T extends RequestEntity> {
                 .status(status)
                 .gateUrlDest(controlDto.getFromGateUrl())
                 .build();
+    }
+
+    public void notifyTimeOut(final ControlEntity controlEntity) {
+
     }
 }

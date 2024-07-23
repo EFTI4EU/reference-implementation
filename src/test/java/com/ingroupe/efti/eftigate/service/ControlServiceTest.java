@@ -196,6 +196,9 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlEntity.setTransportMetadata(controlDto.getTransportMetaData());
         this.controlEntity.setFromGateUrl(controlDto.getFromGateUrl());
 
+        identifiersRequestEntity.setRequestType("IDENTIFIER");
+        uilRequestEntity.setRequestType("UIL");
+
 
         metadataResult.setCountryStart("FR");
         metadataResult.setCountryEnd("FR");
@@ -773,6 +776,7 @@ class ControlServiceTest extends AbstractServiceTest {
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
         controlEntity.setStatus(StatusEnum.PENDING);
+        controlEntity.setCreatedDate(LocalDateTime.now());
 
         //Act
         controlService.updatePendingControl(controlEntity);
@@ -819,8 +823,12 @@ class ControlServiceTest extends AbstractServiceTest {
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
         controlEntity.setStatus(StatusEnum.PENDING);
-        when(controlRepository.findByCriteria(anyString(), anyInt())).thenReturn(List.of(controlEntity));
+        controlEntity.setCreatedDate(LocalDateTime.now().minusSeconds(100));
 
+        when(controlRepository.findByCriteria(any(), anyInt())).thenReturn(List.of(controlEntity));
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(metadataRequestService);
+        when(requestServiceFactory.getRequestServiceByRequestType(anyString())).thenReturn(metadataRequestService);
+        when(controlRepository.save(any(ControlEntity.class))).thenReturn(controlEntity);
 
         //Act
         final int updatedControls = controlService.updatePendingControls();
