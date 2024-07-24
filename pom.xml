@@ -89,22 +89,22 @@
         <dependency>
             <groupId>com.ingroupe.efti</groupId>
             <artifactId>edelivery-ap-connector</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.ingroupe.efti</groupId>
             <artifactId>commons</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.ingroupe.efti</groupId>
             <artifactId>metadata-registry</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.ingroupe.efti</groupId>
             <artifactId>efti-logger</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.1-SNAPSHOT</version>
         </dependency>
 
         <!-- security -->
