@@ -37,7 +37,7 @@
     </parent>
 
     <properties>
-        <revision>0.4.0-SNAPSHOT</revision>
+        <revision>0.4.1-SNAPSHOT</revision>
         <!--NEXUS-->
         <nexus.home>http://nexus.imprimerienationale.fr</nexus.home>
 
