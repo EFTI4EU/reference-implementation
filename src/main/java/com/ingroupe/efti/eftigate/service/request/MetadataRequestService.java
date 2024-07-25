@@ -251,6 +251,8 @@ public class MetadataRequestService extends RequestService<IdentifiersRequestEnt
 
     private void updateControlMetadata(final ControlEntity existingControl, final MetadataResults metadataResults, final List<MetadataResultDto> metadataResultDtos) {
         final MetadataResults controlMetadataResults = existingControl.getMetadataResults();
+        final int currentResultSize = controlMetadataResults == null ? 0 : controlMetadataResults.getMetadataResult().size();
+        log.info("updating metadata result for control {}, currently {} results", existingControl.getId(), currentResultSize);
         if (controlMetadataResults == null || controlMetadataResults.getMetadataResult().isEmpty()) {
             existingControl.setMetadataResults(metadataResults);
         } else {
@@ -258,6 +260,7 @@ public class MetadataRequestService extends RequestService<IdentifiersRequestEnt
             final List<MetadataResult> responseMetadata = getMapperUtils().metadataResultDtosToMetadataEntities(metadataResultDtos);
             existingControl.setMetadataResults(MetadataResults.builder().metadataResult(ListUtils.union(currentMetadata, responseMetadata)).build());
         }
+        log.info("after updating metadata result for control {}, there is {} result", existingControl.getId(), existingControl.getMetadataResults().getMetadataResult().size());
     }
 
     private void updateControlRequests(final List<RequestEntity> pendingRequests, final MetadataResults metadataResults, final NotificationDto notificationDto) {
