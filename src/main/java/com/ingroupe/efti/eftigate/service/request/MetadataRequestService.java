@@ -121,142 +121,6 @@ public class MetadataRequestService extends RequestService<IdentifiersRequestEnt
     }
 
     @Override
-    protected void sendRequest(final RequestDto requestDto) {
-        final RequestDto updatedRequest = this.updateStatus(requestDto, RequestStatusEnum.RESPONSE_IN_PROGRESS);
-        super.sendRequest(updatedRequest);
-    }
-
-    @Override
-    public void updateSentRequestStatus(final RequestDto requestDto, final String edeliveryMessageId) {
-        requestDto.setEdeliveryMessageId(edeliveryMessageId);
-        this.updateStatus(requestDto, isExternalRequest(requestDto) ? RequestStatusEnum.RESPONSE_IN_PROGRESS : RequestStatusEnum.IN_PROGRESS);
-
-    }
-
-    private void handleNewControlRequest(final NotificationDto notificationDto, final String bodyFromNotification) {
-        final IdentifiersMessageBodyDto requestMessage = getSerializeUtils().mapXmlStringToClass(bodyFromNotification, IdentifiersMessageBodyDto.class);
-        final List<MetadataDto> metadataDtoList = metadataService.search(buildMetadataRequestDtoFrom(requestMessage));
-        final MetadataResultsDto metadataResults = buildMetadataResultDto(metadataDtoList);
-        final ControlDto controlDto = getControlService().createControlFrom(requestMessage, notificationDto.getContent().getFromPartyId(), metadataResults);
-        final RequestDto request = createReceivedRequest(controlDto, metadataDtoList);
-        sendRequest(request);
-    }
-
-    private void updateExistingControl(final String bodyFromNotification, final ControlEntity existingControl, final NotificationDto notificationDto) {
-        final MetadataResponseDto response = getSerializeUtils().mapXmlStringToClass(bodyFromNotification, MetadataResponseDto.class);
-        final List<MetadataResultDto> metadataResultDtos = response.getMetadata();
-        final MetadataResults metadataResults = buildMetadataResultFrom(metadataResultDtos);
-        updateControlMetadata(existingControl, metadataResults, metadataResultDtos);
-        updateControlRequests(existingControl.getRequests(), metadataResults, notificationDto);
-        if (!StatusEnum.ERROR.equals(existingControl.getStatus())) {
-            existingControl.setStatus(getControlStatus(existingControl));
-        }
-        getControlService().save(existingControl);
-    }
-
-    private StatusEnum getControlStatus(final ControlEntity existingControl) {
-        final StatusEnum currentControlStatus = existingControl.getStatus();
-        final List<RequestEntity> requests = existingControl.getRequests();
-        if (requests.stream().allMatch(requestEntity -> RequestStatusEnum.SUCCESS == requestEntity.getStatus())) {
-            return StatusEnum.COMPLETE;
-        } else if (shouldSetTimeout(requests)) {
-            return StatusEnum.TIMEOUT;
-        } else if (requests.stream().anyMatch(requestEntity -> RequestStatusEnum.ERROR == requestEntity.getStatus())) {
-            return StatusEnum.ERROR;
-        }
-        return currentControlStatus;
-    }
-
-    private static boolean shouldSetTimeout(final List<RequestEntity> requests) {
-        return requests.stream().anyMatch(requestEntity -> RequestStatusEnum.TIMEOUT == requestEntity.getStatus())
-                && requests.stream().noneMatch(requestEntity -> RequestStatusEnum.ERROR == requestEntity.getStatus());
-    }
-
-    private void updateControlMetadata(final ControlEntity existingControl, final MetadataResults metadataResults, final List<MetadataResultDto> metadataResultDtos) {
-        final MetadataResults controlMetadataResults = existingControl.getMetadataResults();
-        if (controlMetadataResults == null || controlMetadataResults.getMetadataResult().isEmpty()) {
-            existingControl.setMetadataResults(metadataResults);
-        } else {
-            final ArrayList<MetadataResult> currentMetadata = new ArrayList<>(controlMetadataResults.getMetadataResult());
-            final List<MetadataResult> responseMetadata = getMapperUtils().metadataResultDtosToMetadataEntities(metadataResultDtos);
-            existingControl.setMetadataResults(MetadataResults.builder().metadataResult(ListUtils.union(currentMetadata, responseMetadata)).build());
-        }
-    }
-
-    private void updateControlRequests(final List<RequestEntity> pendingRequests, final MetadataResults metadataResults, final NotificationDto notificationDto) {
-        CollectionUtils.emptyIfNull(pendingRequests).stream()
-                .filter(requestEntity -> isRequestWaitingSentNotification(notificationDto, requestEntity))
-                .map(IdentifiersRequestEntity.class::cast)
-                .forEach(requestEntity -> {
-                    requestEntity.setMetadataResults(metadataResults);
-                    requestEntity.setStatus(RequestStatusEnum.SUCCESS);
-                });
-    }
-
-    private static boolean isRequestWaitingSentNotification(final NotificationDto notificationDto, final RequestEntity requestEntity) {
-        return RequestStatusEnum.IN_PROGRESS == requestEntity.getStatus()
-                && requestEntity.getGateUrlDest() != null
-                && requestEntity.getGateUrlDest().equalsIgnoreCase(notificationDto.getContent().getFromPartyId());
-    }
-
-    public IdentifiersRequestDto createRequest(final ControlDto controlDto, final RequestStatusEnum status, final List<MetadataDto> metadataDtoList) {
-        final IdentifiersRequestDto requestDto = save(buildRequestDto(controlDto, status, metadataDtoList));
-        log.info("Request has been register with controlId : {}", requestDto.getControl().getId());
-        return requestDto;
-    }
-
-    private RequestDto buildRequestDto(final ControlDto controlDto, final RequestStatusEnum status, final List<MetadataDto> metadataDtoList) {
-        return IdentifiersRequestDto.builder()
-                .retry(0)
-                .control(controlDto)
-                .status(status)
-                .metadataResults(buildMetadataResultDto(metadataDtoList))
-                .gateUrlDest(controlDto.getFromGateUrl())
-                .requestType(RequestType.IDENTIFIER)
-                .build();
-    }
-
-    private RequestDto createReceivedRequest(final ControlDto controlDto, final List<MetadataDto> metadataDtoList) {
-        final RequestDto request = createRequest(controlDto, RECEIVED, metadataDtoList);
-        final ControlDto updatedControl = getControlService().getControlByRequestUuid(controlDto.getRequestUuid());
-        if (StatusEnum.COMPLETE == updatedControl.getStatus()) {
-            request.setStatus(RequestStatusEnum.RESPONSE_IN_PROGRESS);
-        }
-        request.setControl(updatedControl);
-        return request;
-    }
-
-    private MetadataRequestDto buildMetadataRequestDtoFrom(final IdentifiersMessageBodyDto messageBody) {
-        return MetadataRequestDto.builder()
-                .vehicleID(messageBody.getVehicleID())
-                .isDangerousGoods(messageBody.getIsDangerousGoods())
-                .transportMode(messageBody.getTransportMode())
-                .vehicleCountry(messageBody.getVehicleCountry())
-                .build();
-    }
-
-    public MetadataResultsDto buildMetadataResultDto(final List<MetadataDto> metadataDtos) {
-        final List<MetadataResultDto> metadataResultList = getMapperUtils().metadataDtosToMetadataResultDto(metadataDtos);
-        return MetadataResultsDto.builder()
-                .metadataResult(metadataResultList)
-                .build();
-    }
-
-    public MetadataResults buildMetadataResult(final List<MetadataDto> metadataDtos) {
-        final List<MetadataResult> metadataResultList = getMapperUtils().metadataDtosToMetadataEntities(metadataDtos);
-        return MetadataResults.builder()
-                .metadataResult(metadataResultList)
-                .build();
-    }
-    private MetadataResults buildMetadataResultFrom(final List<MetadataResultDto> metadataResultDtos) {
-        final List<MetadataResult> metadataResultList = getMapperUtils().metadataResultDtosToMetadataEntities(metadataResultDtos);
-        return MetadataResults.builder()
-                .metadataResult(metadataResultList)
-                .build();
-    }
-
-
-    @Override
     public boolean supports(final RequestTypeEnum requestTypeEnum) {
         return IDENTIFIERS_TYPES.contains(requestTypeEnum);
     }
@@ -313,6 +177,112 @@ public class MetadataRequestService extends RequestService<IdentifiersRequestEnt
                 .orElseThrow(() -> new RequestNotFoundException("couldn't find Identifiers request for messageId: " + eDeliveryMessageId));
     }
 
+    @Override
+    public void updateSentRequestStatus(final RequestDto requestDto, final String edeliveryMessageId) {
+        requestDto.setEdeliveryMessageId(edeliveryMessageId);
+        this.updateStatus(requestDto, isExternalRequest(requestDto) ? RequestStatusEnum.RESPONSE_IN_PROGRESS : RequestStatusEnum.IN_PROGRESS);
+
+    }
+
+    private void handleNewControlRequest(final NotificationDto notificationDto, final String bodyFromNotification) {
+        final IdentifiersMessageBodyDto requestMessage = getSerializeUtils().mapXmlStringToClass(bodyFromNotification, IdentifiersMessageBodyDto.class);
+        final List<MetadataDto> metadataDtoList = metadataService.search(buildMetadataRequestDtoFrom(requestMessage));
+        final MetadataResultsDto metadataResults = buildMetadataResultDto(metadataDtoList);
+        final ControlDto controlDto = getControlService().createControlFrom(requestMessage, notificationDto.getContent().getFromPartyId(), metadataResults);
+        final RequestDto request = createReceivedRequest(controlDto, metadataDtoList);
+        final RequestDto updatedRequest = this.updateStatus(request, RequestStatusEnum.RESPONSE_IN_PROGRESS);
+        super.sendRequest(updatedRequest);
+    }
+
+    private RequestDto createReceivedRequest(final ControlDto controlDto, final List<MetadataDto> metadataDtoList) {
+        final RequestDto request = createRequest(controlDto, RECEIVED, metadataDtoList);
+        final ControlDto updatedControl = getControlService().getControlByRequestUuid(controlDto.getRequestUuid());
+        if (StatusEnum.COMPLETE == updatedControl.getStatus()) {
+            request.setStatus(RequestStatusEnum.RESPONSE_IN_PROGRESS);
+        }
+        request.setControl(updatedControl);
+        return request;
+    }
+
+    public IdentifiersRequestDto createRequest(final ControlDto controlDto, final RequestStatusEnum status, final List<MetadataDto> metadataDtoList) {
+        final IdentifiersRequestDto requestDto = save(buildRequestDto(controlDto, status, metadataDtoList));
+        log.info("Request has been register with controlId : {}", requestDto.getControl().getId());
+        return requestDto;
+    }
+
+    private RequestDto buildRequestDto(final ControlDto controlDto, final RequestStatusEnum status, final List<MetadataDto> metadataDtoList) {
+        return IdentifiersRequestDto.builder()
+                .retry(0)
+                .control(controlDto)
+                .status(status)
+                .metadataResults(buildMetadataResultDto(metadataDtoList))
+                .gateUrlDest(controlDto.getFromGateUrl())
+                .requestType(RequestType.IDENTIFIER)
+                .build();
+    }
+
+    private MetadataRequestDto buildMetadataRequestDtoFrom(final IdentifiersMessageBodyDto messageBody) {
+        return MetadataRequestDto.builder()
+                .vehicleID(messageBody.getVehicleID())
+                .isDangerousGoods(messageBody.getIsDangerousGoods())
+                .transportMode(messageBody.getTransportMode())
+                .vehicleCountry(messageBody.getVehicleCountry())
+                .build();
+    }
+
+    public MetadataResultsDto buildMetadataResultDto(final List<MetadataDto> metadataDtos) {
+        final List<MetadataResultDto> metadataResultList = getMapperUtils().metadataDtosToMetadataResultDto(metadataDtos);
+        return MetadataResultsDto.builder()
+                .metadataResult(metadataResultList)
+                .build();
+    }
+
+    private void updateExistingControl(final String bodyFromNotification, final ControlEntity existingControl, final NotificationDto notificationDto) {
+        final MetadataResponseDto response = getSerializeUtils().mapXmlStringToClass(bodyFromNotification, MetadataResponseDto.class);
+        final List<MetadataResultDto> metadataResultDtos = response.getMetadata();
+        final MetadataResults metadataResults = buildMetadataResultFrom(metadataResultDtos);
+        updateControlMetadata(existingControl, metadataResults, metadataResultDtos);
+        updateControlRequests(existingControl.getRequests(), metadataResults, notificationDto);
+        if (!StatusEnum.ERROR.equals(existingControl.getStatus())) {
+            existingControl.setStatus(getControlService().getControlNextStatus(existingControl));
+        }
+        getControlService().save(existingControl);
+    }
+
+    private void updateControlMetadata(final ControlEntity existingControl, final MetadataResults metadataResults, final List<MetadataResultDto> metadataResultDtos) {
+        final MetadataResults controlMetadataResults = existingControl.getMetadataResults();
+        if (controlMetadataResults == null || controlMetadataResults.getMetadataResult().isEmpty()) {
+            existingControl.setMetadataResults(metadataResults);
+        } else {
+            final ArrayList<MetadataResult> currentMetadata = new ArrayList<>(controlMetadataResults.getMetadataResult());
+            final List<MetadataResult> responseMetadata = getMapperUtils().metadataResultDtosToMetadataEntities(metadataResultDtos);
+            existingControl.setMetadataResults(MetadataResults.builder().metadataResult(ListUtils.union(currentMetadata, responseMetadata)).build());
+        }
+    }
+
+    private void updateControlRequests(final List<RequestEntity> pendingRequests, final MetadataResults metadataResults, final NotificationDto notificationDto) {
+        CollectionUtils.emptyIfNull(pendingRequests).stream()
+                .filter(requestEntity -> isRequestWaitingSentNotification(notificationDto, requestEntity))
+                .map(IdentifiersRequestEntity.class::cast)
+                .forEach(requestEntity -> {
+                    requestEntity.setMetadataResults(metadataResults);
+                    requestEntity.setStatus(RequestStatusEnum.SUCCESS);
+                });
+    }
+
+    private static boolean isRequestWaitingSentNotification(final NotificationDto notificationDto, final RequestEntity requestEntity) {
+        return RequestStatusEnum.IN_PROGRESS == requestEntity.getStatus()
+                && requestEntity.getGateUrlDest() != null
+                && requestEntity.getGateUrlDest().equalsIgnoreCase(notificationDto.getContent().getFromPartyId());
+    }
+
+    private MetadataResults buildMetadataResultFrom(final List<MetadataResultDto> metadataResultDtos) {
+        final List<MetadataResult> metadataResultList = getMapperUtils().metadataResultDtosToMetadataEntities(metadataResultDtos);
+        return MetadataResults.builder()
+                .metadataResult(metadataResultList)
+                .build();
+    }
+
     public void updateControlMetadata(final ControlDto control, final List<MetadataDto> metadataDtoList) {
         getControlService().getByRequestUuid(control.getRequestUuid()).ifPresent(controlEntity -> {
             if (controlEntity.getMetadataResults() == null || controlEntity.getMetadataResults().getMetadataResult().isEmpty())
@@ -325,5 +295,12 @@ public class MetadataRequestService extends RequestService<IdentifiersRequestEnt
             }
             getControlService().save(controlEntity);
         });
+    }
+
+    public MetadataResults buildMetadataResult(final List<MetadataDto> metadataDtos) {
+        final List<MetadataResult> metadataResultList = getMapperUtils().metadataDtosToMetadataEntities(metadataDtos);
+        return MetadataResults.builder()
+                .metadataResult(metadataResultList)
+                .build();
     }
 }

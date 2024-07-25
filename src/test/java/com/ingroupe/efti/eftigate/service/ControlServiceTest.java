@@ -50,6 +50,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static com.ingroupe.efti.commons.enums.StatusEnum.COMPLETE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -105,6 +106,8 @@ class ControlServiceTest extends AbstractServiceTest {
     private final ControlEntity controlEntity = ControlEntity.builder().requestType(RequestTypeEnum.LOCAL_UIL_SEARCH).build();
     private final UilRequestEntity uilRequestEntity = new UilRequestEntity();
     private final IdentifiersRequestEntity identifiersRequestEntity = new IdentifiersRequestEntity();
+    private final IdentifiersRequestEntity secondIdentifiersRequestEntity = new IdentifiersRequestEntity();
+
 
     MetadataResult metadataResult = new MetadataResult();
     MetadataResults metadataResults = new MetadataResults();
@@ -197,6 +200,7 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlEntity.setFromGateUrl(controlDto.getFromGateUrl());
 
         identifiersRequestEntity.setRequestType("IDENTIFIER");
+        secondIdentifiersRequestEntity.setRequestType("IDENTIFIER");
         uilRequestEntity.setRequestType("UIL");
 
 
@@ -403,7 +407,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void getControlEntitySuccessTestWhenStatusComplete() {
-        controlEntity.setStatus(StatusEnum.COMPLETE);
+        controlEntity.setStatus(COMPLETE);
         when(controlRepository.findByRequestUuid(any())).thenReturn(Optional.of(controlEntity));
 
         final RequestUuidDto requestUuidDtoResult = controlService.getControlEntity(requestUuid);
@@ -433,7 +437,7 @@ class ControlServiceTest extends AbstractServiceTest {
         //Act
         controlService.getControlEntity(requestUuid);
 
-        assertEquals(StatusEnum.COMPLETE, controlEntity.getStatus());
+        assertEquals(COMPLETE, controlEntity.getStatus());
 
         verify(controlRepository, times(1)).save(controlEntity);
         verify(controlRepository, times(1)).findByRequestUuid(any());
@@ -460,7 +464,7 @@ class ControlServiceTest extends AbstractServiceTest {
         controlService.getControlEntity(requestUuid);
 
         //Assert
-        assertEquals(StatusEnum.COMPLETE, controlEntity.getStatus());
+        assertEquals(COMPLETE, controlEntity.getStatus());
 
         verify(controlRepository, times(1)).save(controlEntity);
         verify(controlRepository, times(1)).findByRequestUuid(any());
@@ -687,13 +691,13 @@ class ControlServiceTest extends AbstractServiceTest {
     void shouldGetMetadataResponse_whenControlExistsWithData() {
         //Arrange
         final ControlDto expectedControl = ControlDto.builder()
-                .status(StatusEnum.COMPLETE)
+                .status(COMPLETE)
                 .metadataResults(metadataResultsDto)
                 .build();
         when(controlService.getControlByRequestUuid(requestUuid)).thenReturn(expectedControl);
 
         final MetadataResponseDto expectedMetadataResponse = MetadataResponseDto.builder()
-                .status(StatusEnum.COMPLETE)
+                .status(COMPLETE)
                 .metadata(List.of(metadataResultDto))
                 .build();
         //Act
@@ -797,7 +801,7 @@ class ControlServiceTest extends AbstractServiceTest {
         controlService.updatePendingControl(controlEntity);
 
         //Assert
-        assertThat(controlEntity.getStatus()).isEqualTo(StatusEnum.COMPLETE);
+        assertThat(controlEntity.getStatus()).isEqualTo(COMPLETE);
         assertNull(controlEntity.getEftiData());
     }
 
@@ -913,5 +917,60 @@ class ControlServiceTest extends AbstractServiceTest {
         assertEquals("note was not sent", noteResponseDto.getMessage());
         assertNotNull(noteResponseDto.getErrorCode());
         assertNotNull(noteResponseDto.getErrorDescription());
+    }
+
+    @Test
+    void shouldGetCompleteAsControlNextStatus_whenAllRequestsAreInSuccessStatus() {
+        identifiersRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
+        identifiersRequestEntity.setGateUrlDest("gate");
+
+        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH);
+        controlEntity.setRequests(List.of(identifiersRequestEntity));
+
+        //Act
+        final StatusEnum expectedControlStatus = controlService.getControlNextStatus(controlEntity);
+
+        //assert
+
+        assertEquals(COMPLETE, expectedControlStatus);
+    }
+
+    @Test
+    void shouldGetErrorAsControlNextStatus_whenSomeRequestsAreInErrorStatus() {
+        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
+        identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
+        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
+
+        //Act
+        final StatusEnum expectedStatus = controlService.getControlNextStatus(controlEntity);
+
+        //assert
+        assertEquals(StatusEnum.ERROR, expectedStatus);
+    }
+
+    @Test
+    void shouldGetTimeoutAsControlNextStatus_whenSomeRequestsAreInTimeoutStatus() {
+        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.TIMEOUT);
+        identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
+        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
+
+        //Act
+        final StatusEnum expectedStatus = controlService.getControlNextStatus(controlEntity);
+
+        //assert
+        assertEquals(StatusEnum.TIMEOUT, expectedStatus);
+    }
+
+    @Test
+    void  shouldGetErrorAsControlNextStatusOverTimeout_whenAtLeastOneRequestIsInErrorStatus() {
+        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.TIMEOUT);
+        identifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
+        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
+
+        //Act
+        final StatusEnum expectedStatus = controlService.getControlNextStatus(controlEntity);
+
+        //assert
+        assertEquals(StatusEnum.ERROR, expectedStatus);
     }
 }

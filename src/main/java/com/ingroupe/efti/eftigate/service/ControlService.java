@@ -22,6 +22,7 @@ import com.ingroupe.efti.eftigate.dto.NoteResponseDto;
 import com.ingroupe.efti.eftigate.dto.RequestUuidDto;
 import com.ingroupe.efti.eftigate.entity.ControlEntity;
 import com.ingroupe.efti.eftigate.entity.ErrorEntity;
+import com.ingroupe.efti.eftigate.entity.RequestEntity;
 import com.ingroupe.efti.eftigate.exception.AmbiguousIdentifierException;
 import com.ingroupe.efti.eftigate.mapper.MapperUtils;
 import com.ingroupe.efti.eftigate.repository.ControlRepository;
@@ -46,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -199,7 +201,6 @@ public class ControlService {
                         .anyMatch(request -> EftiGateConstants.IN_PROGRESS_STATUS.contains(request.getStatus()))) {
             controlEntity.setStatus(StatusEnum.TIMEOUT);
             updateControlRequests(controlEntity);
-            getRequestService(controlEntity.getRequestType()).notifyTimeOut(controlEntity);
         } else if (PENDING.equals(controlEntity.getStatus())) {
             controlEntity.setStatus(StatusEnum.COMPLETE);
         }
@@ -214,7 +215,11 @@ public class ControlService {
                     request.setStatus(RequestStatusEnum.TIMEOUT);
                     final String requestType = request.getRequestType();
                     final RequestDto requestDto = mapperUtils.requestToRequestDto(request, EftiGateConstants.REQUEST_TYPE_CLASS_MAP.get(RequestType.valueOf(requestType)));
-                    requestServiceFactory.getRequestServiceByRequestType(requestType).save(requestDto);
+                    final RequestService<?> requestService = requestServiceFactory.getRequestServiceByRequestType(requestType);
+                    requestService.save(requestDto);
+                    if (controlEntity.isExternalAsk()){
+                        requestService.notifyTimeout(requestDto);
+                    }
                 });
     }
 
@@ -378,5 +383,23 @@ public class ControlService {
             }
         }
         return null;
+    }
+
+    public StatusEnum getControlNextStatus(final ControlEntity existingControl) {
+        final List<RequestEntity> requests = existingControl.getRequests();
+        if (requests.stream().allMatch(requestEntity -> RequestStatusEnum.SUCCESS == requestEntity.getStatus())) {
+            return StatusEnum.COMPLETE;
+        } else if (shouldBeTimeout(existingControl)) {
+            return StatusEnum.TIMEOUT;
+        } else if (requests.stream().anyMatch(requestEntity -> RequestStatusEnum.ERROR == requestEntity.getStatus())) {
+            return StatusEnum.ERROR;
+        }
+        return existingControl.getStatus();
+    }
+
+    private boolean shouldBeTimeout(final ControlEntity controlEntity) {
+        final Collection<RequestEntity> requests = CollectionUtils.emptyIfNull(controlEntity.getRequests());
+        return requests.stream().anyMatch(requestEntity -> RequestStatusEnum.TIMEOUT == requestEntity.getStatus())
+                && requests.stream().noneMatch(requestEntity -> RequestStatusEnum.ERROR == requestEntity.getStatus());
     }
 }

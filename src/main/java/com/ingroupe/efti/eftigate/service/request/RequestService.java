@@ -43,6 +43,7 @@ import static com.ingroupe.efti.commons.enums.RequestStatusEnum.ERROR;
 import static com.ingroupe.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
 import static com.ingroupe.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
 import static com.ingroupe.efti.commons.enums.RequestStatusEnum.SEND_ERROR;
+import static com.ingroupe.efti.commons.enums.RequestStatusEnum.TIMEOUT;
 
 @Slf4j
 @Component
@@ -112,7 +113,7 @@ public abstract class RequestService<T extends RequestEntity> {
         return requestDto;
     }
 
-    protected void sendRequest(final RequestDto requestDto) {
+    public void sendRequest(final RequestDto requestDto) {
         try {
             rabbitSenderService.sendMessageToRabbit(eftiSendMessageExchange, eftiKeySendMessage, requestDto);
         } catch (final JsonProcessingException e) {
@@ -166,7 +167,7 @@ public abstract class RequestService<T extends RequestEntity> {
     public void updateSentRequestStatus(final RequestDto requestDto, final String edeliveryMessageId) {
         requestDto.setEdeliveryMessageId(edeliveryMessageId);
         final RequestStatusEnum requestStatus = requestDto.getStatus();
-        if (!(RESPONSE_IN_PROGRESS.equals(requestStatus) || ERROR.equals(requestStatus))){
+        if (!(RESPONSE_IN_PROGRESS.equals(requestStatus) || ERROR.equals(requestStatus) || TIMEOUT.equals(requestStatus))){
             requestDto.setStatus(IN_PROGRESS);
         }
         this.save(requestDto);
@@ -201,7 +202,8 @@ public abstract class RequestService<T extends RequestEntity> {
                 .build();
     }
 
-    public void notifyTimeOut(final ControlEntity controlEntity) {
-
+    public void notifyTimeout(final RequestDto requestDto) {
+        requestDto.setGateUrlDest(requestDto.getControl().getFromGateUrl());
+        sendRequest(requestDto);
     }
 }

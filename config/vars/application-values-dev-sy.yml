@@ -40,3 +40,7 @@ springdoc:
     enabled: true
   api_docs:
     enabled: true
+efti:
+  control:
+    pending:
+      timeout: 300
