@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.InputSource;
 
 import javax.xml.xpath.XPath;
@@ -48,7 +49,7 @@ import static com.ingroupe.efti.commons.enums.RequestStatusEnum.SEND_ERROR;
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
 @Getter
-
+@Transactional("controlTransactionManager")
 public abstract class RequestService<T extends RequestEntity> {
     private final MapperUtils mapperUtils;
     private final RabbitSenderService rabbitSenderService;
