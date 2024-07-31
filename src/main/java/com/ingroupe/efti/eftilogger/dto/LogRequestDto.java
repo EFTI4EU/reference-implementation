@@ -1,5 +1,6 @@
 package com.ingroupe.efti.eftilogger.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
@@ -8,7 +9,8 @@ import lombok.experimental.SuperBuilder;
 public class LogRequestDto extends LogCommonDto {
 
     public final String requestId;
-    public final String eFTIDataId;
+    @JsonProperty("eFTIDataId")
+    public final String eftidataId;
     public final String responseId;
     public final String authorityNationalUniqueIdentifier;
     public final String authorityName;
