@@ -52,7 +52,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                 .responseId(RESPONSE_ID)
                 .subsetEURequested(control.getSubsetEuRequested())
                 .subsetMSRequested(control.getSubsetMsRequested())
-                .eFTIDataId(control.getEftiDataUuid())
+                .eftidataId(control.getEftiDataUuid())
                 .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
                 .messageContent(body)
                 .statusMessage(status.name())
