@@ -8,8 +8,8 @@ import com.ingroupe.efti.commons.enums.EDeliveryAction;
 import com.ingroupe.efti.commons.enums.ErrorCodesEnum;
 import com.ingroupe.efti.commons.enums.RequestStatusEnum;
 import com.ingroupe.efti.commons.enums.RequestTypeEnum;
-import com.ingroupe.efti.edeliveryapconnector.dto.ApConfigDto;
 import com.ingroupe.efti.commons.utils.SerializeUtils;
+import com.ingroupe.efti.edeliveryapconnector.dto.ApConfigDto;
 import com.ingroupe.efti.edeliveryapconnector.dto.NotificationDto;
 import com.ingroupe.efti.edeliveryapconnector.dto.NotificationType;
 import com.ingroupe.efti.edeliveryapconnector.service.RequestUpdaterService;
@@ -44,6 +44,7 @@ import static com.ingroupe.efti.commons.enums.RequestStatusEnum.ERROR;
 import static com.ingroupe.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
 import static com.ingroupe.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
 import static com.ingroupe.efti.commons.enums.RequestStatusEnum.SEND_ERROR;
+import static com.ingroupe.efti.commons.enums.RequestStatusEnum.TIMEOUT;
 
 @Slf4j
 @Component
@@ -113,7 +114,7 @@ public abstract class RequestService<T extends RequestEntity> {
         return requestDto;
     }
 
-    protected void sendRequest(final RequestDto requestDto) {
+    public void sendRequest(final RequestDto requestDto) {
         try {
             rabbitSenderService.sendMessageToRabbit(eftiSendMessageExchange, eftiKeySendMessage, requestDto);
         } catch (final JsonProcessingException e) {
@@ -167,13 +168,13 @@ public abstract class RequestService<T extends RequestEntity> {
     public void updateSentRequestStatus(final RequestDto requestDto, final String edeliveryMessageId) {
         requestDto.setEdeliveryMessageId(edeliveryMessageId);
         final RequestStatusEnum requestStatus = requestDto.getStatus();
-        if (!(RESPONSE_IN_PROGRESS.equals(requestStatus) || ERROR.equals(requestStatus))){
+        if (!(RESPONSE_IN_PROGRESS.equals(requestStatus) || ERROR.equals(requestStatus) || TIMEOUT.equals(requestStatus))){
             requestDto.setStatus(IN_PROGRESS);
         }
         this.save(requestDto);
     }
 
-    protected void markMessageAsDownloaded(String eDeliveryMessageId){
+    protected void markMessageAsDownloaded(final String eDeliveryMessageId){
         try {
             getRequestUpdaterService().setMarkedAsDownload(createApConfig(), eDeliveryMessageId);
         } catch (final MalformedURLException e) {
@@ -200,5 +201,10 @@ public abstract class RequestService<T extends RequestEntity> {
                 .status(status)
                 .gateUrlDest(controlDto.getFromGateUrl())
                 .build();
+    }
+
+    public void notifyTimeout(final RequestDto requestDto) {
+        requestDto.setGateUrlDest(requestDto.getControl().getFromGateUrl());
+        sendRequest(requestDto);
     }
 }

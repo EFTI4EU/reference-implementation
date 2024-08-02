@@ -38,8 +38,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RabbitListenerServiceTest extends BaseServiceTest {
     @Mock
-    private ControlService controlService;
-    @Mock
     private RequestSendingService requestSendingService;
     @Mock
     private RequestServiceFactory requestServiceFactory;
@@ -66,6 +64,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
     private static final String LOGGER_NAME = RabbitListenerService.class.getName();
 
 
+    @Override
     @BeforeEach
     public void before() {
 
@@ -76,8 +75,8 @@ class RabbitListenerServiceTest extends BaseServiceTest {
                         .password(password)
                         .username(username).build()).build();
 
-        rabbitListenerService = new RabbitListenerService(controlService, gateProperties, serializeUtils, requestSendingService,
-                requestServiceFactory, apIncomingService, requestToEDeliveryActionFunction, mapperUtils, logManager, eftiGateUrlResolver);
+        rabbitListenerService = new RabbitListenerService(gateProperties, serializeUtils, requestSendingService,
+                requestServiceFactory, apIncomingService, requestToEDeliveryActionFunction, mapperUtils, logManager);
         memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
         memoryAppender =
                 MemoryAppender.createInitializedMemoryAppender(

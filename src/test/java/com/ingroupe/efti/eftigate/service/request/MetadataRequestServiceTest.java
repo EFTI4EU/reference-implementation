@@ -12,7 +12,6 @@ import com.ingroupe.efti.commons.enums.CountryIndicator;
 import com.ingroupe.efti.commons.enums.EDeliveryAction;
 import com.ingroupe.efti.commons.enums.RequestStatusEnum;
 import com.ingroupe.efti.commons.enums.RequestTypeEnum;
-import com.ingroupe.efti.commons.enums.StatusEnum;
 import com.ingroupe.efti.edeliveryapconnector.dto.NotificationContentDto;
 import com.ingroupe.efti.edeliveryapconnector.dto.NotificationDto;
 import com.ingroupe.efti.edeliveryapconnector.dto.NotificationType;
@@ -63,7 +62,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -129,7 +127,7 @@ class MetadataRequestServiceTest extends BaseServiceTest {
         metadataRequestService.createAndSendRequest(controlDto, "https://efti.platform.borduria.eu");
 
         //Assert
-        verify(mapperUtils, times(2)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
+        verify(mapperUtils, times(1)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
         assertEquals("https://efti.platform.borduria.eu", requestDtoArgumentCaptor.getValue().getGateUrlDest());
     }
 
@@ -152,8 +150,6 @@ class MetadataRequestServiceTest extends BaseServiceTest {
     
     @Test
     void trySendDomibusSuccessTest() throws SendRequestException, JsonProcessingException {
-        when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
-
         metadataRequestService.sendRequest(requestDto);
         verify(rabbitSenderService).sendMessageToRabbit(any(), any(), any());
     }
@@ -179,136 +175,6 @@ class MetadataRequestServiceTest extends BaseServiceTest {
         verify(identifiersRequestRepository, times(2)).save(any());
         verify(metadataService).search(any());
         verify(rabbitSenderService).sendMessageToRabbit(any(), any(), any());
-    }
-
-    @Test
-    void shouldManageMessageReceiveAndUpdateExistingControlStatusAsComplete() throws IOException {
-        final NotificationDto notificationDto = NotificationDto.builder()
-                .notificationType(NotificationType.RECEIVED)
-                .content(NotificationContentDto.builder()
-                        .messageId(MESSAGE_ID)
-                        .body(testFile("/xml/FTI021-full.xml"))
-                        .fromPartyId("gate")
-                        .build())
-                .build();
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH);
-        identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
-        identifiersRequestEntity.setGateUrlDest("gate");
-
-        controlEntity.setRequests(List.of(identifiersRequestEntity));
-        when(controlService.getControlForCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS)).thenReturn(controlEntity);
-        when(mapperUtils.metadataResultDtosToMetadataEntities(anyList())).thenReturn(List.of(metadataResult));
-
-        //Act
-        metadataRequestService.manageMessageReceive(notificationDto);
-
-        //assert
-        verify(controlService, never()).createControlFrom(any(), any(), any());
-        verify(metadataService, never()).search(any());
-        verify(rabbitSenderService, never()).sendMessageToRabbit(any(), any(), any());
-
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertEquals(COMPLETE, controlEntityArgumentCaptor.getValue().getStatus());
-        assertEquals(SUCCESS, controlEntityArgumentCaptor.getValue().getRequests().iterator().next().getStatus());
-        assertFalse(controlEntityArgumentCaptor.getValue().getMetadataResults().getMetadataResult().isEmpty());
-        final IdentifiersRequestEntity identifiersRequest = (IdentifiersRequestEntity) controlEntityArgumentCaptor.getValue().getRequests().iterator().next();
-        assertFalse(identifiersRequest.getMetadataResults().getMetadataResult().isEmpty());
-    }
-
-    @Test
-    void shouldManageMessageReceiveAndUpdateExistingControlStatusAsError_whenSomeRequestsAreInErrorStatus() throws IOException {
-        final NotificationDto notificationDto = NotificationDto.builder()
-                .notificationType(NotificationType.RECEIVED)
-                .content(NotificationContentDto.builder()
-                        .messageId(MESSAGE_ID)
-                        .body(testFile("/xml/FTI021-full.xml"))
-                        .fromPartyId("gate")
-                        .build())
-                .build();
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH);
-        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
-        identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
-        identifiersRequestEntity.setGateUrlDest("gate");
-        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-        when(controlService.getControlForCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS)).thenReturn(controlEntity);
-        when(mapperUtils.metadataResultDtosToMetadataEntities(anyList())).thenReturn(List.of(metadataResult));
-
-        //Act
-        metadataRequestService.manageMessageReceive(notificationDto);
-
-        //assert
-        verify(controlService, never()).createControlFrom(any(), any(), any());
-        verify(metadataService, never()).search(any());
-        verify(rabbitSenderService, never()).sendMessageToRabbit(any(), any(), any());
-
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertEquals(StatusEnum.ERROR, controlEntityArgumentCaptor.getValue().getStatus());
-        assertFalse(controlEntityArgumentCaptor.getValue().getMetadataResults().getMetadataResult().isEmpty());
-        final IdentifiersRequestEntity identifiersRequest = (IdentifiersRequestEntity) controlEntityArgumentCaptor.getValue().getRequests().iterator().next();
-        assertFalse(identifiersRequest.getMetadataResults().getMetadataResult().isEmpty());
-    }
-
-    @Test
-    void shouldManageMessageReceiveAndUpdateExistingControlStatusAsTimeout_whenSomeRequestsAreInTimeoutStatus() throws IOException {
-        final NotificationDto notificationDto = NotificationDto.builder()
-                .notificationType(NotificationType.RECEIVED)
-                .content(NotificationContentDto.builder()
-                        .messageId(MESSAGE_ID)
-                        .body(testFile("/xml/FTI021-full.xml"))
-                        .fromPartyId("gate")
-                        .build())
-                .build();
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH);
-        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.TIMEOUT);
-        identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
-        identifiersRequestEntity.setGateUrlDest("gate");
-        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-        when(controlService.getControlForCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS)).thenReturn(controlEntity);
-        when(mapperUtils.metadataResultDtosToMetadataEntities(anyList())).thenReturn(List.of(metadataResult));
-
-        //Act
-        metadataRequestService.manageMessageReceive(notificationDto);
-
-        //assert
-        verify(controlService, never()).createControlFrom(any(), any(), any());
-        verify(metadataService, never()).search(any());
-        verify(rabbitSenderService, never()).sendMessageToRabbit(any(), any(), any());
-
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertEquals(StatusEnum.TIMEOUT, controlEntityArgumentCaptor.getValue().getStatus());
-        assertFalse(controlEntityArgumentCaptor.getValue().getMetadataResults().getMetadataResult().isEmpty());
-        final IdentifiersRequestEntity identifiersRequest = (IdentifiersRequestEntity) controlEntityArgumentCaptor.getValue().getRequests().iterator().next();
-        assertFalse(identifiersRequest.getMetadataResults().getMetadataResult().isEmpty());
-    }
-
-    @Test
-    void shouldManageMessageReceiveAndUpdateExistingControlStatusAseRROR_whenOneRequestsIsInErrorStatus() throws IOException {
-        final NotificationDto notificationDto = NotificationDto.builder()
-                .notificationType(NotificationType.RECEIVED)
-                .content(NotificationContentDto.builder()
-                        .messageId(MESSAGE_ID)
-                        .body(testFile("/xml/FTI021-full.xml"))
-                        .fromPartyId("gate")
-                        .build())
-                .build();
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH);
-        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.TIMEOUT);
-        identifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
-        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-        when(controlService.getControlForCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS)).thenReturn(controlEntity);
-        when(mapperUtils.metadataResultDtosToMetadataEntities(anyList())).thenReturn(List.of(metadataResult));
-
-        //Act
-        metadataRequestService.manageMessageReceive(notificationDto);
-
-        //assert
-        verify(controlService, never()).createControlFrom(any(), any(), any());
-        verify(metadataService, never()).search(any());
-        verify(rabbitSenderService, never()).sendMessageToRabbit(any(), any(), any());
-
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertEquals(StatusEnum.ERROR, controlEntityArgumentCaptor.getValue().getStatus());
-        assertFalse(controlEntityArgumentCaptor.getValue().getMetadataResults().getMetadataResult().isEmpty());
     }
 
     @Test
