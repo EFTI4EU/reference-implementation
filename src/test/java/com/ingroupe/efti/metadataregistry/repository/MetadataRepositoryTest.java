@@ -1,11 +1,10 @@
-package com.ingroupe.efti.metadataregistry.service;
+package com.ingroupe.efti.metadataregistry.repository;
 
 import com.ingroupe.efti.commons.dto.MetadataRequestDto;
 import com.ingroupe.efti.commons.enums.CountryIndicator;
 import com.ingroupe.efti.commons.enums.TransportMode;
 import com.ingroupe.efti.metadataregistry.entity.MetadataEntity;
 import com.ingroupe.efti.metadataregistry.entity.TransportVehicle;
-import com.ingroupe.efti.metadataregistry.repository.MetadataRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

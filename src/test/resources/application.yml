@@ -1,7 +1,5 @@
-spring.liquibase.change-log: db/changelog/db.changelog-master.xml
 spring:
   jpa:
-    database: h2
     show-sql: true
     hibernate:
       ddl-auto: create-drop
@@ -22,4 +20,5 @@ spring:
   h2:
     console:
       enabled: true
-
+  datasource:
+    driver-class-name: org.h2.Driver
