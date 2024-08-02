@@ -94,6 +94,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
     </metadata>
     """;
 
+    @Override
     @BeforeEach
     public void before() {
         service = new ApIncomingService(notificationService, requestServiceFactory, metadataService, serializeUtils, eftiRequestUpdater);

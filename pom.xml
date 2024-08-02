@@ -23,6 +23,7 @@
         <sonar.projectName>EFTI : efti-gate</sonar.projectName>
         <keycloak.version>22.0.5</keycloak.version>
         <java-jwt.version>4.4.0</java-jwt.version>
+        <hibernate.version>6.4.8.Final</hibernate.version>
     </properties>
 
     <distributionManagement>
@@ -50,20 +51,20 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.5</version>
+        <version>3.2.8</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
+            <version>1.18.34</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>2.7.1</version>
+            <version>3.2.8</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -146,7 +147,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.6.0</version>
+            <version>42.7.3</version>
         </dependency>
 
         <dependency>
@@ -176,7 +177,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.13.0</version>
+            <version>3.15.0</version>
         </dependency>
 
         <dependency>
@@ -204,12 +205,12 @@
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>2.3.4</version>
+            <version>2.3.8</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
-            <version>2.3.5</version>
+            <version>2.3.7</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -238,13 +239,12 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.25.1</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.13.4</version>
+            <version>2.17.2</version>
         </dependency>
 
         <dependency>
@@ -261,6 +261,7 @@
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-matchers</artifactId>
             <version>2.9.1</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Test Logs -->
@@ -268,12 +269,11 @@
             <groupId>com.ingroupe.common</groupId>
             <artifactId>common-test</artifactId>
             <version>2.0.0</version>
+            <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.2.224</version>
             <scope>test</scope>
         </dependency>
 
@@ -294,7 +294,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>8.2.1</version>
+                <version>10.0.3</version>
                 <configuration>
                     <formats>
                         <format>HTML</format>
@@ -366,12 +366,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.3.1</version>
             </plugin>
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>4.25.1</version>
+                <version>4.29.0</version>
                 <configuration>
                     <propertyFile>target/classes/liquibase.properties</propertyFile>
                 </configuration>
@@ -383,7 +383,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>8.2.1</version>
+                <version>10.0.3</version>
                 <configuration>
                     <name>Dependency Check</name>
                 </configuration>
