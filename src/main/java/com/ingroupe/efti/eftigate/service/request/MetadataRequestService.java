@@ -38,7 +38,6 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -97,7 +96,7 @@ public class MetadataRequestService extends RequestService<IdentifiersRequestEnt
     }
 
     @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional
     public void manageMessageReceive(final NotificationDto notificationDto) {
         final String bodyFromNotification = notificationDto.getContent().getBody();
         if (StringUtils.isNotBlank(bodyFromNotification)){
