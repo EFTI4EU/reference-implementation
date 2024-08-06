@@ -159,7 +159,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
             return getSerializeUtils().mapObjectToXmlString(MessageBodyDto.builder()
                     .requestUuid(controlDto.getRequestUuid())
-                    .eFTIData(hasData ? new String(requestDto.getReponseData()) : null)
+                    .eFTIData(hasData ? new String(requestDto.getReponseData(), StandardCharsets.UTF_8) : null)
                     .status(getStatus(requestDto, hasError))
                     .errorDescription(hasError ? controlDto.getError().getErrorDescription() : null)
                     .eFTIDataUuid(controlDto.getEftiDataUuid())

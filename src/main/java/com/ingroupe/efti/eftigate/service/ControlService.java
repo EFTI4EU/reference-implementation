@@ -63,7 +63,6 @@ import static java.util.Collections.emptyList;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
 @Slf4j
-@Transactional("controlTransactionManager")
 public class ControlService {
 
     public static final String ERROR_REQUEST_UUID_NOT_FOUND = "Error requestUuid not found.";
