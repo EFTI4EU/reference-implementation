@@ -175,7 +175,6 @@ public class ControlService {
         final RequestService<?> requestService = this.getRequestService(controlEntity.getRequestType());
         final boolean allRequestsContainsData =  requestService.allRequestsContainsData(controlEntity.getRequests());
         if (allRequestsContainsData) {
-            requestService.setDataFromRequests(controlEntity);
             controlEntity.setStatus(StatusEnum.COMPLETE);
             return mapperUtils.controlEntityToControlDto(controlRepository.save(controlEntity));
         } else {
@@ -251,7 +250,7 @@ public class ControlService {
     }
 
     public ControlDto save(final ControlDto controlDto) {
-        return this.save(mapperUtils.controlDtoToControEntity(controlDto));
+        return this.save(mapperUtils.controlDtoToControlEntity(controlDto));
     }
 
     public ControlDto save(final ControlEntity controlEntity) {
@@ -359,6 +358,14 @@ public class ControlService {
         return result;
     }
 
+    public MetadataResponseDto buildMetadataResponse(final ControlDto controlDto, final List<MetadataResultDto> metadata) {
+        final MetadataResponseDto metadataResponseDto = this.buildMetadataResponse(controlDto);
+        if (metadata != null && metadataResponseDto.getMetadata().isEmpty()) {
+            metadataResponseDto.setMetadata(metadata);
+        }
+        return metadataResponseDto;
+    }
+
     private List<MetadataResultDto> getMetadataResultDtos(final ControlDto controlDto) {
         if(controlDto.getMetadataResults() != null) {
             return controlDto.getMetadataResults().getMetadataResult();
@@ -397,9 +404,18 @@ public class ControlService {
         return existingControl.getStatus();
     }
 
+
     private boolean shouldBeTimeout(final ControlEntity controlEntity) {
         final Collection<RequestEntity> requests = CollectionUtils.emptyIfNull(controlEntity.getRequests());
         return requests.stream().anyMatch(requestEntity -> RequestStatusEnum.TIMEOUT == requestEntity.getStatus())
                 && requests.stream().noneMatch(requestEntity -> RequestStatusEnum.ERROR == requestEntity.getStatus());
+    }
+
+    public boolean existsByCriteria(final String requestUuid) {
+        return controlRepository.existsByRequestUuid(requestUuid);
+    }
+
+    public Optional<ControlEntity> findByRequestUuid(final String controlRequestUuid) {
+        return controlRepository.findByRequestUuid(controlRequestUuid);
     }
 }

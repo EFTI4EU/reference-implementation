@@ -4,17 +4,22 @@ import com.ingroupe.efti.commons.dto.ControlDto;
 import com.ingroupe.efti.commons.dto.ErrorDto;
 import com.ingroupe.efti.commons.dto.MetadataDto;
 import com.ingroupe.efti.commons.dto.MetadataResultDto;
+import com.ingroupe.efti.commons.dto.MetadataResultsDto;
 import com.ingroupe.efti.commons.dto.RequestDto;
 import com.ingroupe.efti.eftigate.dto.RabbitRequestDto;
 import com.ingroupe.efti.eftigate.entity.ControlEntity;
 import com.ingroupe.efti.eftigate.entity.ErrorEntity;
+import com.ingroupe.efti.eftigate.entity.IdentifiersRequestEntity;
 import com.ingroupe.efti.eftigate.entity.MetadataResult;
 import com.ingroupe.efti.eftigate.entity.RequestEntity;
+import com.ingroupe.efti.eftigate.entity.UilRequestEntity;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 @Component
@@ -23,7 +28,7 @@ public class MapperUtils {
 
     private final ModelMapper modelMapper;
 
-    public ControlEntity controlDtoToControEntity(final ControlDto controlDto) {
+    public ControlEntity controlDtoToControlEntity(final ControlDto controlDto) {
         final ControlEntity controlEntity = modelMapper.map(controlDto, ControlEntity.class);
 
         //ça marche pas sinon
@@ -42,7 +47,25 @@ public class MapperUtils {
     }
 
     public ControlDto controlEntityToControlDto(final ControlEntity controlEntity) {
-        return modelMapper.map(controlEntity, ControlDto.class);
+        final ControlDto controlDto = modelMapper.map(controlEntity, ControlDto.class);
+        final List<MetadataResult> metadataResultList = CollectionUtils.emptyIfNull(controlEntity.getRequests()).stream()
+                .filter(IdentifiersRequestEntity.class::isInstance)
+                .map(IdentifiersRequestEntity.class::cast)
+                .filter(identifiersRequestEntity -> identifiersRequestEntity.getMetadataResults() != null
+                        && CollectionUtils.isNotEmpty(identifiersRequestEntity.getMetadataResults().getMetadataResult()))
+                .flatMap(request -> request.getMetadataResults().getMetadataResult().stream())
+                .toList();
+        controlDto.setMetadataResults(new MetadataResultsDto(metadataResultEntitiesToMetadataResultDtos(metadataResultList)));
+        final byte[] byteArray = CollectionUtils.emptyIfNull(controlEntity.getRequests()).stream()
+                .filter(UilRequestEntity.class::isInstance)
+                .map(UilRequestEntity.class::cast)
+                .map(UilRequestEntity::getReponseData)
+                .filter(ArrayUtils::isNotEmpty)
+                .collect(ByteArrayOutputStream::new, (byteArrayOutputStream, bytes) -> byteArrayOutputStream.write(bytes, 0, bytes.length), (arrayOutputStream, byteArrayOutputStream) -> {
+                })
+                .toByteArray();
+        controlDto.setEftiData(byteArray);
+        return controlDto;
     }
 
     public <T extends RequestEntity> T requestDtoToRequestEntity(final RequestDto requestDto, final Class<T> destinationClass) {

@@ -44,7 +44,6 @@ import org.xmlunit.matchers.CompareMatcher;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.ingroupe.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
@@ -75,6 +74,8 @@ class MetadataRequestServiceTest extends BaseServiceTest {
     private MetadataService metadataService;
     @Mock
     private IdentifiersRequestRepository identifiersRequestRepository;
+    @Mock
+    private IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService;
     private MetadataRequestService metadataRequestService;
     @Captor
     private ArgumentCaptor<IdentifiersRequestDto> requestDtoArgumentCaptor;
@@ -112,7 +113,8 @@ class MetadataRequestServiceTest extends BaseServiceTest {
                 .transportVehicles(List.of(TransportVehicle.builder()
                         .vehicleId("abc123").vehicleCountry(CountryIndicator.FR).build(), TransportVehicle.builder()
                         .vehicleId("abc124").vehicleCountry(CountryIndicator.BE).build())).build();
-        metadataRequestService = new MetadataRequestService(identifiersRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties, metadataService, requestUpdaterService, serializeUtils, logManager);
+        metadataRequestService = new MetadataRequestService(identifiersRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties,
+                metadataService, requestUpdaterService, serializeUtils, logManager, identifiersControlUpdateDelegateService);
 
         final Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(MetadataRequestService.class);
         memoryAppender = MemoryAppender.createInitializedMemoryAppender(Level.INFO, memoryAppenderTestLogger);
@@ -170,7 +172,6 @@ class MetadataRequestServiceTest extends BaseServiceTest {
         metadataRequestService.manageMessageReceive(notificationDto);
 
         //assert
-        verify(controlService).getControlForCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS);
         verify(controlService).createControlFrom(any(), any(), any());
         verify(identifiersRequestRepository, times(2)).save(any());
         verify(metadataService).search(any());
@@ -178,31 +179,26 @@ class MetadataRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldManageMessageReceiveAndUpdateExistingControlMetadatas() {
+    void shouldManageMessageReceiveAndUpdateExistingControlRequests() {
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
                         .messageId(MESSAGE_ID)
                         .body(testFile("/xml/FTI021-full.xml"))
+                        .fromPartyId("borduria.eu")
                         .build())
                 .build();
         controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH);
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
-        identifiersRequestEntity.setMetadataResults(metadataResults);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
-        controlEntity.setMetadataResults(metadataResults);
-
-        when(controlService.getControlForCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS)).thenReturn(controlEntity);
-        when(mapperUtils.metadataResultDtosToMetadataEntities(anyList())).thenReturn(List.of(metadataResult));
+        when(controlService.existsByCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(true);
 
         //Act
         metadataRequestService.manageMessageReceive(notificationDto);
 
         //assert
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertEquals(2, controlEntityArgumentCaptor.getValue().getMetadataResults().getMetadataResult().size());
-        final IdentifiersRequestEntity identifiersRequest = (IdentifiersRequestEntity) controlEntityArgumentCaptor.getValue().getRequests().iterator().next();
-        assertEquals(1, identifiersRequest.getMetadataResults().getMetadataResult().size());
+        verify(identifiersControlUpdateDelegateService).updateExistingControl(anyString(), anyString(), anyString());
+        verify(identifiersControlUpdateDelegateService).setControlNextStatus("67fe38bd-6bf7-4b06-b20e-206264bd639c");
     }
 
     @Test
@@ -216,39 +212,6 @@ class MetadataRequestServiceTest extends BaseServiceTest {
         identifiersRequestEntity.setMetadataResults(new MetadataResults(List.of(metadataResult)));
         //Act and Assert
         assertTrue(metadataRequestService.allRequestsContainsData(List.of(identifiersRequestEntity)));
-    }
-
-    @Test
-    void getDataFromRequestsTest() {
-        //Arrange
-        final MetadataResult metadataResult1 = new MetadataResult();
-        metadataResult1.setCountryStart("FR");
-        metadataResult1.setCountryEnd("FR");
-        metadataResult1.setDisabled(false);
-        metadataResult1.setDangerousGoods(true);
-
-        final MetadataResults metadataResults1 = new MetadataResults();
-        metadataResults1.setMetadataResult(List.of(metadataResult1));
-
-        final MetadataResult metadataResult2 = new MetadataResult();
-        metadataResult2.setCountryStart("FR");
-        metadataResult2.setCountryEnd("FR");
-        metadataResult2.setDisabled(false);
-        metadataResult2.setDangerousGoods(true);
-
-        final MetadataResults metadataResults2 = new MetadataResults();
-        metadataResults2.setMetadataResult(List.of(metadataResult2));
-
-        identifiersRequestEntity.setMetadataResults(metadataResults1);
-        secondIdentifiersRequestEntity.setMetadataResults(metadataResults2);
-
-        final ControlEntity controlEntity = ControlEntity.builder().requests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity)).build();
-        //Act
-        metadataRequestService.setDataFromRequests(controlEntity);
-
-        //Assert
-        assertNotNull(controlEntity.getMetadataResults());
-        assertEquals(2, controlEntity.getMetadataResults().getMetadataResult().size());
     }
 
     @Test
@@ -304,14 +267,14 @@ class MetadataRequestServiceTest extends BaseServiceTest {
         controlDto.setMetadataResults(metadataResultsDto);
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
         rabbitRequestDto.setControl(controlDto);
-        final MetadataResponseDto metadataResponseDto = com.ingroupe.efti.commons.dto.MetadataResponseDto.builder()
+        final MetadataResponseDto metadataResponseDto = MetadataResponseDto.builder()
                 .requestUuid(controlDto.getRequestUuid())
                 .status(controlDto.getStatus())
                 .metadata(List.of(metadataResultDto)).build();
 
         final String expectedRequestBody = testFile("/xml/FTI021.xml");
 
-        when(controlService.buildMetadataResponse(any())).thenReturn(metadataResponseDto);
+        when(controlService.buildMetadataResponse(any(), anyList())).thenReturn(metadataResponseDto);
 
         final String requestBody = metadataRequestService.buildRequestBody(rabbitRequestDto);
 
@@ -345,35 +308,6 @@ class MetadataRequestServiceTest extends BaseServiceTest {
             metadataRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         });
         assertEquals("couldn't find Identifiers request for messageId: messageId", exception.getMessage());
-    }
-
-    @Test
-    void shouldUpdateControlWithMetadatas_whenControlHasNotMetadatas() {
-        controlEntity.setMetadataResults(null);
-        when(controlService.getByRequestUuid(anyString())).thenReturn(Optional.of(controlEntity));
-        when(mapperUtils.metadataDtosToMetadataEntities(anyList())).thenReturn(List.of(metadataResult));
-
-        metadataRequestService.updateControlMetadata(controlDto, List.of(metadataDto));
-
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertNotNull(controlEntityArgumentCaptor.getValue().getMetadataResults());
-        assertFalse(controlEntityArgumentCaptor.getValue().getMetadataResults().getMetadataResult().isEmpty());
-        assertEquals(1, controlEntityArgumentCaptor.getValue().getMetadataResults().getMetadataResult().size());
-        assertEquals(List.of(metadataResult), controlEntityArgumentCaptor.getValue().getMetadataResults().getMetadataResult());
-    }
-
-    @Test
-    void shouldUpdateControlWithMetadatas_whenControlHasMetadatas() {
-        controlEntity.setMetadataResults(metadataResults);
-        when(controlService.getByRequestUuid(anyString())).thenReturn(Optional.of(controlEntity));
-        when(mapperUtils.metadataDtosToMetadataEntities(anyList())).thenReturn(List.of(metadataResult));
-
-        metadataRequestService.updateControlMetadata(controlDto, List.of(metadataDto));
-
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertNotNull(controlEntityArgumentCaptor.getValue().getMetadataResults());
-        assertFalse(controlEntityArgumentCaptor.getValue().getMetadataResults().getMetadataResult().isEmpty());
-        assertEquals(2, controlEntityArgumentCaptor.getValue().getMetadataResults().getMetadataResult().size());
     }
 
     @ParameterizedTest

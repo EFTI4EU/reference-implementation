@@ -58,7 +58,7 @@ class MetadataControllerTest {
                 .requestUuid(REQUEST_UUID)
                 .build());
 
-        String result = mockMvc.perform(post("/v1/getMetadata")
+        final String result = mockMvc.perform(post("/v1/getMetadata")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsBytes(metadataRequestDto)))
@@ -104,6 +104,4 @@ class MetadataControllerTest {
                 .assertThat("$.status", is("COMPLETE"));
         ;
     }
-
-
 }

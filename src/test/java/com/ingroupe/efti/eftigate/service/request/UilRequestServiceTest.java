@@ -291,7 +291,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         uilRequestService.updateWithResponse(notificationDto);
 
-        verify(controlService, times(3)).save(controlEntityArgumentCaptor.capture());
+        verify(controlService, times(2)).save(controlEntityArgumentCaptor.capture());
         assertEquals(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, controlEntityArgumentCaptor.getValue().getRequestType());
     }
 
@@ -393,23 +393,6 @@ class UilRequestServiceTest extends BaseServiceTest {
         uilRequestEntity.setReponseData(data);
         //Act and Assert
         assertTrue(uilRequestService.allRequestsContainsData(List.of(uilRequestEntity)));
-    }
-
-    @Test
-    void getDataFromRequestsTest() {
-        //Arrange
-        final byte[] data1 = {10, 20, 30, 40};
-        final byte[] data2 = {60, 80, 70, 10};
-
-        uilRequestEntity.setReponseData(data1);
-        secondUilRequestEntity.setReponseData(data2);
-        final ControlEntity controlEntity = ControlEntity.builder().requests(List.of(uilRequestEntity, secondUilRequestEntity)).build();
-        //Act
-        uilRequestService.setDataFromRequests(controlEntity);
-
-        //Assert
-        assertNotNull(controlEntity.getEftiData());
-        assertEquals(8, controlEntity.getEftiData().length);
     }
 
     @Test
