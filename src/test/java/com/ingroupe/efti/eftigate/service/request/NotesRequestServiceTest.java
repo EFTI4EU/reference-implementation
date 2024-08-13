@@ -17,6 +17,7 @@ import com.ingroupe.efti.edeliveryapconnector.dto.NotificationType;
 import com.ingroupe.efti.eftigate.EftiTestUtils;
 import com.ingroupe.efti.eftigate.dto.RabbitRequestDto;
 import com.ingroupe.efti.eftigate.entity.NoteRequestEntity;
+import com.ingroupe.efti.eftigate.entity.RequestEntity;
 import com.ingroupe.efti.eftigate.entity.UilRequestEntity;
 import com.ingroupe.efti.eftigate.exception.RequestNotFoundException;
 import com.ingroupe.efti.eftigate.repository.NotesRequestRepository;
@@ -123,12 +124,8 @@ class NotesRequestServiceTest extends BaseServiceTest {
     @Test
     void allRequestsContainsDataTest() {
         //Act and Assert
-        assertThrows(UnsupportedOperationException.class, () -> notesRequestService.allRequestsContainsData(List.of(noteRequestEntity)));
-    }
-
-    @Test
-    void setDataFromRequestsTest() {
-        assertThrows(UnsupportedOperationException.class, () -> notesRequestService.setDataFromRequests(controlEntity));
+        final List<RequestEntity> noteRequestEntityList = List.of(noteRequestEntity);
+        assertThrows(UnsupportedOperationException.class, () -> notesRequestService.allRequestsContainsData(noteRequestEntityList));
     }
 
     @Test

@@ -20,7 +20,6 @@ import com.ingroupe.efti.edeliveryapconnector.service.RequestUpdaterService;
 import com.ingroupe.efti.eftigate.config.GateProperties;
 import com.ingroupe.efti.eftigate.dto.RabbitRequestDto;
 import com.ingroupe.efti.eftigate.dto.requestbody.MetadataRequestBodyDto;
-import com.ingroupe.efti.eftigate.entity.ControlEntity;
 import com.ingroupe.efti.eftigate.entity.IdentifiersRequestEntity;
 import com.ingroupe.efti.eftigate.entity.MetadataResult;
 import com.ingroupe.efti.eftigate.entity.MetadataResults;
@@ -34,7 +33,6 @@ import com.ingroupe.efti.eftigate.service.RabbitSenderService;
 import com.ingroupe.efti.metadataregistry.service.MetadataService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -61,6 +59,8 @@ public class MetadataRequestService extends RequestService<IdentifiersRequestEnt
     @Lazy
     private final MetadataService metadataService;
     private final IdentifiersRequestRepository identifiersRequestRepository;
+    private final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService;
+
 
     public MetadataRequestService(final IdentifiersRequestRepository identifiersRequestRepository,
                                   final MapperUtils mapperUtils,
@@ -70,10 +70,11 @@ public class MetadataRequestService extends RequestService<IdentifiersRequestEnt
                                   final MetadataService metadataService,
                                   final RequestUpdaterService requestUpdaterService,
                                   final SerializeUtils serializeUtils,
-                                  final LogManager logManager) {
+                                  final LogManager logManager, final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService) {
         super(mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
         this.metadataService = metadataService;
         this.identifiersRequestRepository = identifiersRequestRepository;
+        this.identifiersControlUpdateDelegateService = identifiersControlUpdateDelegateService;
     }
 
 
@@ -86,24 +87,13 @@ public class MetadataRequestService extends RequestService<IdentifiersRequestEnt
     }
 
     @Override
-    public void setDataFromRequests(final ControlEntity controlEntity) {
-        final List<MetadataResult> metadataResultList = controlEntity.getRequests().stream()
-                .filter(IdentifiersRequestEntity.class::isInstance)
-                .map(IdentifiersRequestEntity.class::cast)
-                .flatMap(request -> request.getMetadataResults().getMetadataResult().stream())
-                .toList();
-        controlEntity.setMetadataResults(new MetadataResults(metadataResultList));
-    }
-
-    @Override
-    @Transactional
     public void manageMessageReceive(final NotificationDto notificationDto) {
         final String bodyFromNotification = notificationDto.getContent().getBody();
         if (StringUtils.isNotBlank(bodyFromNotification)){
             final String requestUuid = getRequestUuid(bodyFromNotification);
-            final ControlEntity existingControl = getControlService().getControlForCriteria(requestUuid, RequestStatusEnum.IN_PROGRESS);
-            if (existingControl != null) {
-                updateExistingControl(bodyFromNotification, existingControl, notificationDto);
+            if (getControlService().existsByCriteria(requestUuid)) {
+                identifiersControlUpdateDelegateService.updateExistingControl(bodyFromNotification, requestUuid, notificationDto.getContent().getFromPartyId());
+                identifiersControlUpdateDelegateService.setControlNextStatus(requestUuid);
             } else {
                 handleNewControlRequest(notificationDto, bodyFromNotification);
             }
@@ -151,7 +141,11 @@ public class MetadataRequestService extends RequestService<IdentifiersRequestEnt
     public String buildRequestBody(final RabbitRequestDto requestDto) {
         final ControlDto controlDto = requestDto.getControl();
         if (EXTERNAL_ASK_METADATA_SEARCH == controlDto.getRequestType()) { //remote sending response
-            final MetadataResponseDto metadataResponseDto = getControlService().buildMetadataResponse(controlDto);
+            List<MetadataResultDto> metadataResultDtos = new ArrayList<>();
+            if (requestDto.getMetadataResults() != null){
+                metadataResultDtos = getMapperUtils().metadataResultEntitiesToMetadataResultDtos(requestDto.getMetadataResults().getMetadataResult());
+            }
+            final MetadataResponseDto metadataResponseDto = getControlService().buildMetadataResponse(controlDto, metadataResultDtos);
             return getSerializeUtils().mapObjectToXmlString(metadataResponseDto);
         } else { //local sending request
             final MetadataRequestBodyDto metadataRequestBodyDto = MetadataRequestBodyDto.fromControl(controlDto);
@@ -237,69 +231,6 @@ public class MetadataRequestService extends RequestService<IdentifiersRequestEnt
         return MetadataResultsDto.builder()
                 .metadataResult(metadataResultList)
                 .build();
-    }
-
-    private void updateExistingControl(final String bodyFromNotification, final ControlEntity existingControl, final NotificationDto notificationDto) {
-        final MetadataResponseDto response = getSerializeUtils().mapXmlStringToClass(bodyFromNotification, MetadataResponseDto.class);
-        final List<MetadataResultDto> metadataResultDtos = response.getMetadata();
-        final MetadataResults metadataResults = buildMetadataResultFrom(metadataResultDtos);
-        updateControlMetadata(existingControl, metadataResults, metadataResultDtos);
-        updateControlRequests(existingControl.getRequests(), metadataResults, notificationDto);
-        if (!StatusEnum.ERROR.equals(existingControl.getStatus())) {
-            existingControl.setStatus(getControlService().getControlNextStatus(existingControl));
-        }
-        getControlService().save(existingControl);
-    }
-
-    private void updateControlMetadata(final ControlEntity existingControl, final MetadataResults metadataResults, final List<MetadataResultDto> metadataResultDtos) {
-        final MetadataResults controlMetadataResults = existingControl.getMetadataResults();
-        final int currentResultSize = controlMetadataResults == null ? 0 : controlMetadataResults.getMetadataResult().size();
-        log.info("updating metadata result for control {}, currently {} results", existingControl.getId(), currentResultSize);
-        if (controlMetadataResults == null || controlMetadataResults.getMetadataResult().isEmpty()) {
-            existingControl.setMetadataResults(metadataResults);
-        } else {
-            final ArrayList<MetadataResult> currentMetadata = new ArrayList<>(controlMetadataResults.getMetadataResult());
-            final List<MetadataResult> responseMetadata = getMapperUtils().metadataResultDtosToMetadataEntities(metadataResultDtos);
-            existingControl.setMetadataResults(MetadataResults.builder().metadataResult(ListUtils.union(currentMetadata, responseMetadata)).build());
-        }
-        log.info("after updating metadata result for control {}, there is {} result", existingControl.getId(), existingControl.getMetadataResults().getMetadataResult().size());
-    }
-
-    private void updateControlRequests(final List<RequestEntity> pendingRequests, final MetadataResults metadataResults, final NotificationDto notificationDto) {
-        CollectionUtils.emptyIfNull(pendingRequests).stream()
-                .filter(requestEntity -> isRequestWaitingSentNotification(notificationDto, requestEntity))
-                .map(IdentifiersRequestEntity.class::cast)
-                .forEach(requestEntity -> {
-                    requestEntity.setMetadataResults(metadataResults);
-                    requestEntity.setStatus(RequestStatusEnum.SUCCESS);
-                });
-    }
-
-    private static boolean isRequestWaitingSentNotification(final NotificationDto notificationDto, final RequestEntity requestEntity) {
-        return RequestStatusEnum.IN_PROGRESS == requestEntity.getStatus()
-                && requestEntity.getGateUrlDest() != null
-                && requestEntity.getGateUrlDest().equalsIgnoreCase(notificationDto.getContent().getFromPartyId());
-    }
-
-    private MetadataResults buildMetadataResultFrom(final List<MetadataResultDto> metadataResultDtos) {
-        final List<MetadataResult> metadataResultList = getMapperUtils().metadataResultDtosToMetadataEntities(metadataResultDtos);
-        return MetadataResults.builder()
-                .metadataResult(metadataResultList)
-                .build();
-    }
-
-    public void updateControlMetadata(final ControlDto control, final List<MetadataDto> metadataDtoList) {
-        getControlService().getByRequestUuid(control.getRequestUuid()).ifPresent(controlEntity -> {
-            if (controlEntity.getMetadataResults() == null || controlEntity.getMetadataResults().getMetadataResult().isEmpty())
-            {
-                controlEntity.setMetadataResults(buildMetadataResult(metadataDtoList));
-            } else {
-                final ArrayList<MetadataResult> existingMetadata = new ArrayList<>(controlEntity.getMetadataResults().getMetadataResult());
-                final List<MetadataResult> responseMetadata = getMapperUtils().metadataDtosToMetadataEntities(metadataDtoList);
-                controlEntity.setMetadataResults(MetadataResults.builder().metadataResult(ListUtils.union(existingMetadata, responseMetadata)).build());
-            }
-            getControlService().save(controlEntity);
-        });
     }
 
     public MetadataResults buildMetadataResult(final List<MetadataDto> metadataDtos) {

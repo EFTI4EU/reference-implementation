@@ -15,7 +15,6 @@ import com.ingroupe.efti.edeliveryapconnector.dto.NotificationType;
 import com.ingroupe.efti.edeliveryapconnector.service.RequestUpdaterService;
 import com.ingroupe.efti.eftigate.config.GateProperties;
 import com.ingroupe.efti.eftigate.dto.RabbitRequestDto;
-import com.ingroupe.efti.eftigate.entity.ControlEntity;
 import com.ingroupe.efti.eftigate.entity.RequestEntity;
 import com.ingroupe.efti.eftigate.mapper.MapperUtils;
 import com.ingroupe.efti.eftigate.service.ControlService;
@@ -42,7 +41,6 @@ import static com.ingroupe.efti.commons.constant.EftiGateConstants.EXTERNAL_REQU
 import static com.ingroupe.efti.commons.enums.RequestStatusEnum.ERROR;
 import static com.ingroupe.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
 import static com.ingroupe.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
-import static com.ingroupe.efti.commons.enums.RequestStatusEnum.SEND_ERROR;
 import static com.ingroupe.efti.commons.enums.RequestStatusEnum.TIMEOUT;
 
 @Slf4j
@@ -66,8 +64,6 @@ public abstract class RequestService<T extends RequestEntity> {
 
     public abstract boolean allRequestsContainsData(List<RequestEntity> controlEntityRequests);
 
-    public abstract void setDataFromRequests(ControlEntity controlEntity);
-
     public abstract void manageMessageReceive(final NotificationDto notificationDto);
 
     public abstract void manageSendSuccess(final String eDeliveryMessageId);
@@ -89,10 +85,6 @@ public abstract class RequestService<T extends RequestEntity> {
     protected abstract void updateStatus(final T requestEntity, final RequestStatusEnum status);
 
     protected abstract T findRequestByMessageIdOrThrow(final String eDeliveryMessageId);
-
-    public void manageSendFailure(final NotificationDto notificationDto) {
-        this.updateStatus(findRequestByMessageIdOrThrow(notificationDto.getMessageId()), SEND_ERROR);
-    }
 
     public void createAndSendRequest(final ControlDto controlDto, final String destinationUrl){
         this.createAndSendRequest(controlDto, destinationUrl, RequestStatusEnum.RECEIVED);

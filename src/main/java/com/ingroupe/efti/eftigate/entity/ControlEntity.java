@@ -75,9 +75,6 @@ public class ControlEntity extends AbstractModel implements Serializable {
     @Column(name = "subsetmsrequested")
     private String subsetMsRequested;
 
-    @Column(name = "eftidata")
-    private byte[] eftiData;
-
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "transportmetadata")
     private SearchParameter transportMetadata;
@@ -98,10 +95,6 @@ public class ControlEntity extends AbstractModel implements Serializable {
     @JoinColumn(name = "error", referencedColumnName = "id")
     @ToString.Exclude @EqualsAndHashCode.Exclude
     private ErrorEntity error;
-
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "metadatas")
-    private MetadataResults metadataResults;
 
     public boolean isExternalAsk() {
         return this.getRequestType() != null && this.getRequestType().isExternalAsk();

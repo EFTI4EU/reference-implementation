@@ -34,7 +34,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,15 +73,6 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 .filter(UilRequestEntity.class::isInstance)
                 .map(UilRequestEntity.class::cast)
                 .allMatch(requestEntity -> Objects.nonNull(requestEntity.getReponseData()));
-    }
-
-    @Override
-    public void setDataFromRequests(final ControlEntity controlEntity) {
-        controlEntity.setEftiData(controlEntity.getRequests().stream()
-                .map(UilRequestEntity.class::cast)
-                .map(UilRequestEntity::getReponseData).toList().stream()
-                .collect(ByteArrayOutputStream::new, (byteArrayOutputStream, bytes) -> byteArrayOutputStream.write(bytes, 0, bytes.length), (arrayOutputStream, byteArrayOutputStream) -> {})
-                .toByteArray());
     }
 
     @Override
@@ -254,13 +244,12 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         getControlService().save(controlEntity);
     }
 
-    private void responseToOtherGateIfNecessary(final UilRequestEntity requestEntity) {
-        if (!requestEntity.getControl().isExternalAsk()) return;
-        this.updateStatus(requestEntity, RESPONSE_IN_PROGRESS);
-        requestEntity.setGateUrlDest(requestEntity.getControl().getFromGateUrl());
-        requestEntity.getControl().setEftiData(requestEntity.getReponseData());
-        getControlService().save(requestEntity.getControl());
-        final UilRequestDto requestDto = getMapperUtils().requestToRequestDto(requestEntity, UilRequestDto.class);
+    private void responseToOtherGateIfNecessary(final UilRequestEntity uilRequestEntity) {
+        if (!uilRequestEntity.getControl().isExternalAsk()) return;
+        this.updateStatus(uilRequestEntity, RESPONSE_IN_PROGRESS);
+        uilRequestEntity.setGateUrlDest(uilRequestEntity.getControl().getFromGateUrl());
+        final UilRequestEntity savedUilRequestEntity = uilRequestRepository.save(uilRequestEntity);
+        final UilRequestDto requestDto = getMapperUtils().requestToRequestDto(savedUilRequestEntity, UilRequestDto.class);
         requestDto.setRequestType(RequestType.UIL);
         this.sendRequest(requestDto);
     }

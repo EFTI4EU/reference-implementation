@@ -35,6 +35,7 @@ import com.ingroupe.efti.eftigate.service.request.NotesRequestService;
 import com.ingroupe.efti.eftigate.service.request.RequestServiceFactory;
 import com.ingroupe.efti.eftigate.service.request.UilRequestService;
 import com.ingroupe.efti.metadataregistry.service.MetadataService;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +45,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -195,7 +197,6 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlEntity.setSubsetMsRequested(controlDto.getSubsetMsRequested());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
-        this.controlEntity.setEftiData(controlDto.getEftiData());
         this.controlEntity.setTransportMetadata(controlDto.getTransportMetaData());
         this.controlEntity.setFromGateUrl(controlDto.getFromGateUrl());
 
@@ -413,8 +414,6 @@ class ControlServiceTest extends AbstractServiceTest {
         final RequestUuidDto requestUuidDtoResult = controlService.getControlEntity(requestUuid);
 
         verify(controlRepository, times(1)).findByRequestUuid(any());
-        verify(metadataRequestService, never()).setDataFromRequests(any());
-        verify(uilRequestService, never()).setDataFromRequests(any());
 
         verify(logManager).logAppResponse(any(), any());
         assertNotNull(requestUuidDtoResult);
@@ -481,7 +480,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(controlRepository, times(1)).findByRequestUuid(any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(StatusEnum.ERROR, requestUuidDtoResult.getStatus());
-        assertNull(requestUuidDtoResult.getEFTIData());
+        assertEquals(0, requestUuidDtoResult.getEFTIData().length);
     }
 
     @Test
@@ -673,17 +672,19 @@ class ControlServiceTest extends AbstractServiceTest {
                         .vehicleCountry("FR")
                         .isDangerousGoods(true)
                         .build())
+                .eftiData(ArrayUtils.EMPTY_BYTE_ARRAY)
+                .metadataResults(new MetadataResultsDto(new ArrayList<>()))
                 .build();
         when(controlRepository.save(any())).thenReturn(metadataControl);
         //Act
-        final ControlDto cretaedControlDto = controlService.createControlFrom(messageBodyDto, "https://efti.gate.france.eu", metadataResultsDto);
+        final ControlDto createdControlDto = controlService.createControlFrom(messageBodyDto, "https://efti.gate.france.eu", metadataResultsDto);
         //Assert
-        assertThat(cretaedControlDto)
+        assertThat(createdControlDto)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(expectedControl);
         verify(controlRepository, times(1)).save(any());
-        verify(mapperUtils, times(1)).controlDtoToControEntity(any());
+        verify(mapperUtils, times(1)).controlDtoToControlEntity(any());
         verify(mapperUtils, times(1)).controlEntityToControlDto(any());
     }
 
@@ -802,7 +803,6 @@ class ControlServiceTest extends AbstractServiceTest {
 
         //Assert
         assertThat(controlEntity.getStatus()).isEqualTo(COMPLETE);
-        assertNull(controlEntity.getEftiData());
     }
 
     @Test
