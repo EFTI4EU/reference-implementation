@@ -1,24 +1,29 @@
 package com.ingroupe.efti.commons.dto;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.ingroupe.efti.commons.enums.RequestTypeEnum;
 import com.ingroupe.efti.commons.enums.StatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static com.ingroupe.efti.commons.enums.ErrorCodesEnum.UUID_NOT_FOUND;
 
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class ControlDto {
     private int id;
     private String eftiDataUuid;
@@ -34,9 +39,6 @@ public class ControlDto {
     private byte[] eftiData;
     private SearchParameter transportMetaData;
     private String fromGateUrl;
-    @ToString.Exclude
-    @JsonIgnore
-    private List<RequestDto> requests;
     private AuthorityDto authority;
     private ErrorDto error;
     private MetadataResultsDto metadataResults;
