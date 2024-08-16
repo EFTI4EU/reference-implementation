@@ -24,7 +24,7 @@ spring:
   #----- Liquibase -----#
   liquibase:
     enabled: true
-    defaultSchema: eftili
+    defaultSchema: eftibo
     parameters:
       defaultSchema: ${spring.liquibase.defaultSchema}
     change-log: classpath:db/changelog/db.changelog-master.xml
