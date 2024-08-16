@@ -20,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -54,6 +55,7 @@ public class MapperUtils {
                 .filter(identifiersRequestEntity -> identifiersRequestEntity.getMetadataResults() != null
                         && CollectionUtils.isNotEmpty(identifiersRequestEntity.getMetadataResults().getMetadataResult()))
                 .flatMap(request -> request.getMetadataResults().getMetadataResult().stream())
+                .sorted(Comparator.comparing(MetadataResult::getEFTIGateUrl))
                 .toList();
         controlDto.setMetadataResults(new MetadataResultsDto(metadataResultEntitiesToMetadataResultDtos(metadataResultList)));
         final byte[] byteArray = CollectionUtils.emptyIfNull(controlEntity.getRequests()).stream()
