@@ -73,7 +73,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
             <transportVehicle>
                 <transportMode>tututu</transportMode>
                 <sequence>1</sequence>
-                <vehicleId>abc123</vehicleId>
+                <vehicleID>abc123</vehicleID>
                 <vehicleCountry>IT</vehicleCountry>
                 <journeyStart>2023-06-11T12:23:00+0000</journeyStart>
                 <countryStart>IT</countryStart>
@@ -83,7 +83,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
             <transportVehicle>
                 <transportMode>ROAD</transportMode>
                 <sequence>221</sequence>
-                <vehicleId>abc124</vehicleId>
+                <vehicleID>abc124</vehicleID>
                 <vehicleCountry></vehicleCountry>
                 <journeyStart>2023-06-12T12:03:00+0000</journeyStart>
                 <countryStart>gITggggg</countryStart>

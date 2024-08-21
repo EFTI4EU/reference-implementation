@@ -101,7 +101,7 @@ public class ControlService {
     }
 
     public RequestUuidDto createMetadataControl(final MetadataRequestDto metadataRequestDto) {
-        log.info("create metadata control for vehicleId : {}", metadataRequestDto.getVehicleID());
+        log.info("create metadata control for vehicleID : {}", metadataRequestDto.getVehicleID());
         return createControl(metadataRequestDto, ControlUtils.fromLocalMetadataControl(metadataRequestDto, RequestTypeEnum.LOCAL_METADATA_SEARCH));
     }
 

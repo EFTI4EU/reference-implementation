@@ -104,15 +104,15 @@ class MetadataRequestServiceTest extends BaseServiceTest {
                 .eFTIDataUuid(DATA_UUID)
                 .eFTIPlatformUrl(PLATFORM_URL)
                 .transportVehicles(List.of(TransportVehicleDto.builder()
-                        .vehicleId("abc123").countryStart("FR").vehicleCountry("FR").countryEnd("toto").build(), TransportVehicleDto.builder()
-                        .vehicleId("abc124").countryStart("BE").vehicleCountry("BE").countryEnd("IT").build())).build();
+                        .vehicleID("abc123").countryStart("FR").vehicleCountry("FR").countryEnd("toto").build(), TransportVehicleDto.builder()
+                        .vehicleID("abc124").countryStart("BE").vehicleCountry("BE").countryEnd("IT").build())).build();
 
         metadataResult = MetadataResult.builder()
                 .eFTIDataUuid(DATA_UUID)
                 .eFTIPlatformUrl(PLATFORM_URL)
                 .transportVehicles(List.of(TransportVehicle.builder()
-                        .vehicleId("abc123").vehicleCountry(CountryIndicator.FR).build(), TransportVehicle.builder()
-                        .vehicleId("abc124").vehicleCountry(CountryIndicator.BE).build())).build();
+                        .vehicleID("abc123").vehicleCountry(CountryIndicator.FR).build(), TransportVehicle.builder()
+                        .vehicleID("abc124").vehicleCountry(CountryIndicator.BE).build())).build();
         metadataRequestService = new MetadataRequestService(identifiersRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties,
                 metadataService, requestUpdaterService, serializeUtils, logManager, identifiersControlUpdateDelegateService);
 

@@ -24,7 +24,7 @@ public class MetadataController implements MetadataControllerApi {
 
     @Override
     public ResponseEntity<RequestUuidDto> getMetadata(final @RequestBody MetadataRequestDto metadataRequestDto) {
-        log.info("POST on /getMetadata with param vehicleId {}", metadataRequestDto.getVehicleID());
+        log.info("POST on /getMetadata with param vehicleID {}", metadataRequestDto.getVehicleID());
         return new ResponseEntity<>(controlService.createMetadataControl(metadataRequestDto), HttpStatus.ACCEPTED);
     }
 
