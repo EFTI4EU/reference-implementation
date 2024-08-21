@@ -24,7 +24,7 @@ public class MetadataDto extends AbstractUilDto {
     private long id;
     @JsonProperty("isDangerousGoods")
     @XmlElement(name = "isDangerousGoods")
-    private boolean isDangerousGoods;
+    private Boolean isDangerousGoods;
     private String journeyStart;
     private String countryStart;
     private String journeyEnd;
