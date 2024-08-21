@@ -17,9 +17,10 @@ import java.util.List;
 public class IdentifiersMessageBodyDto {
     private String requestUuid;
     private String transportMode;
-    @XmlElement(name = "vehicleId")
+    @XmlElement(name = "vehicleID")
     private String vehicleID;
     private String vehicleCountry;
+    @XmlElement(name = "isDangerousGoods")
     private Boolean isDangerousGoods;
     @XmlElement(name = "eFTIGateIndicator")
     private List<String> eFTIGateIndicator;
