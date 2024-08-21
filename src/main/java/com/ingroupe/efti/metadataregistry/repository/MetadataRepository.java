@@ -24,7 +24,7 @@ public interface MetadataRepository extends JpaRepository<MetadataEntity, Long>,
     String TRANSPORT_MODE = "transportMode";
     String IS_DANGEROUS_GOODS = "isDangerousGoods";
     String TRANSPORT_VEHICLES = "transportVehicles";
-    String VEHICLE_ID = "vehicleId";
+    String VEHICLE_ID = "vehicleID";
 
     @Query(value = "SELECT m FROM MetadataEntity m where m.eFTIGateUrl = :gate and m.eFTIDataUuid = :uuid and m.eFTIPlatformUrl = :platform")
     Optional<MetadataEntity> findByUil(final String gate, final String uuid, final String platform);
@@ -32,7 +32,6 @@ public interface MetadataRepository extends JpaRepository<MetadataEntity, Long>,
     default List<MetadataEntity> searchByCriteria(final MetadataRequestDto request) {
         return this.findAll((root, query, cb) -> {
             final List<Predicate> predicates = new ArrayList<>();
-
             if(request.getIsDangerousGoods() != null) {
                 predicates.add(cb.equal(root.get(IS_DANGEROUS_GOODS), request.getIsDangerousGoods()));
             }
