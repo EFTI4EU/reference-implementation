@@ -54,9 +54,9 @@ class MetadataServiceTest extends AbstractServiceTest {
                 .eFTIDataUuid(DATA_UUID)
                 .eFTIPlatformUrl(PLATFORM_URL)
                 .transportVehicles(List.of(TransportVehicleDto.builder()
-                                .vehicleId("abc123").countryStart("FR").countryEnd("toto").build(),
+                                .vehicleID("abc123").countryStart("FR").countryEnd("toto").build(),
                         TransportVehicleDto.builder()
-                                .vehicleId("abc124").countryStart("osef").countryEnd("IT").build())).build();
+                                .vehicleID("abc124").countryStart("osef").countryEnd("IT").build())).build();
 
         metadata = MetadataEntity.builder()
                 .eFTIGateUrl(GATE_URL)

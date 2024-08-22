@@ -48,12 +48,12 @@ class MetadataRepositoryTest {
                 .metadataUUID(UUID.randomUUID().toString())
                 .isDangerousGoods(true)
                 .transportVehicles(List.of(TransportVehicle.builder()
-                                .vehicleId("vehicleId1")
+                                .vehicleID("vehicleID1")
                                 .transportMode(TransportMode.ROAD)
                                 .vehicleCountry(CountryIndicator.FR)
                                 .build(),
                         TransportVehicle.builder()
-                                .vehicleId("vehicleId2")
+                                .vehicleID("vehicleID2")
                                 .transportMode(TransportMode.ROAD)
                                 .vehicleCountry(CountryIndicator.CY)
                                 .build()))
@@ -66,12 +66,12 @@ class MetadataRepositoryTest {
                 .metadataUUID(UUID.randomUUID().toString())
                 .isDangerousGoods(false)
                 .transportVehicles(List.of(TransportVehicle.builder()
-                                .vehicleId("vehicleId1")
+                                .vehicleID("vehicleID1")
                                 .transportMode(TransportMode.ROAD)
                                 .vehicleCountry(CountryIndicator.FR)
                                 .build(),
                         TransportVehicle.builder()
-                                .vehicleId("vehicleId2")
+                                .vehicleID("vehicleID2")
                                 .transportMode(TransportMode.ROAD)
                                 .vehicleCountry(CountryIndicator.FR)
                                 .build()))
@@ -97,11 +97,11 @@ class MetadataRepositoryTest {
 
     @Test
     void shouldGetDataByCriteria() {
-        final MetadataRequestDto metadataRequestDto = MetadataRequestDto.builder().vehicleID("vehicleId1").vehicleCountry(CountryIndicator.FR.name()).build();
+        final MetadataRequestDto metadataRequestDto = MetadataRequestDto.builder().vehicleID("vehicleID1").vehicleCountry(CountryIndicator.FR.name()).build();
         final List<MetadataEntity> result = metadataRepository.searchByCriteria(metadataRequestDto);
         assertEquals(2, result.size());
 
-        final MetadataRequestDto metadataRequestDto2 = MetadataRequestDto.builder().vehicleID("vehicleId1")
+        final MetadataRequestDto metadataRequestDto2 = MetadataRequestDto.builder().vehicleID("vehicleID1")
                 .vehicleCountry(CountryIndicator.FR.name()).isDangerousGoods(false).build();
         final List<MetadataEntity> result2 = metadataRepository.searchByCriteria(metadataRequestDto2);
         assertEquals(1, result2.size());

@@ -39,7 +39,7 @@ public class MetadataEntity extends JourneyEntity implements Serializable {
     private String eFTIPlatformUrl;
     private String eFTIDataUuid;
     private String eFTIGateUrl;
-    private boolean isDangerousGoods;
+    private Boolean isDangerousGoods;
     private String metadataUUID;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true )
     @JoinColumn(name = "metadata")
