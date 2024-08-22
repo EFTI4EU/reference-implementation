@@ -70,7 +70,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.uilDto.setEFTIDataUuid("uuid");
         this.uilDto.setEFTIPlatformUrl("plateform");
 
-        searchParameter.setVehicleId("AA123VV");
+        searchParameter.setVehicleID("AA123VV");
         searchParameter.setVehicleCountry(CountryIndicator.BE.toString());
         searchParameter.setTransportMode(TransportMode.ROAD.toString());
 
@@ -101,14 +101,14 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         metadataResult.setCountryStart("FR");
         metadataResult.setCountryEnd("FR");
         metadataResult.setDisabled(false);
-        metadataResult.setDangerousGoods(true);
+        metadataResult.setIsDangerousGoods(true);
         metadataResult.setTransportVehicles(List.of(transportVehicle));
         metadataResults.setMetadataResult(Collections.singletonList(metadataResult));
 
         metadataResultDto.setCountryStart("FR");
         metadataResultDto.setCountryEnd("FR");
         metadataResultDto.setDisabled(false);
-        metadataResultDto.setDangerousGoods(true);
+        metadataResultDto.setIsDangerousGoods(true);
         metadataResultsDto.setMetadataResult(Collections.singletonList(metadataResultDto));
     }
 

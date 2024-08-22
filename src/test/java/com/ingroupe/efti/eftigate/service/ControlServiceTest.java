@@ -208,7 +208,7 @@ class ControlServiceTest extends AbstractServiceTest {
         metadataResult.setCountryStart("FR");
         metadataResult.setCountryEnd("FR");
         metadataResult.setDisabled(false);
-        metadataResult.setDangerousGoods(true);
+        metadataResult.setIsDangerousGoods(true);
 
         metadataResults.setMetadataResult(Collections.singletonList(metadataResult));
 
@@ -221,7 +221,7 @@ class ControlServiceTest extends AbstractServiceTest {
         transportVehicleDto.setJourneyStart(LocalDateTime.now().toString());
         transportVehicleDto.setJourneyStart(LocalDateTime.now().plusHours(5L).toString());
 
-        metadataDto.setDangerousGoods(true);
+        metadataDto.setIsDangerousGoods(true);
         metadataDto.setMetadataUUID(metadataUuid);
         metadataDto.setDisabled(false);
         metadataDto.setCountryStart("FR");
@@ -231,14 +231,14 @@ class ControlServiceTest extends AbstractServiceTest {
         metadataResult.setCountryStart("FR");
         metadataResult.setCountryEnd("FR");
         metadataResult.setDisabled(false);
-        metadataResult.setDangerousGoods(true);
+        metadataResult.setIsDangerousGoods(true);
 
         metadataResults.setMetadataResult(Collections.singletonList(metadataResult));
 
         metadataResultDto.setCountryStart("FR");
         metadataResultDto.setCountryEnd("FR");
         metadataResultDto.setDisabled(false);
-        metadataResultDto.setDangerousGoods(true);
+        metadataResultDto.setIsDangerousGoods(true);
 
         metadataResultsDto.setMetadataResult(Collections.singletonList(metadataResultDto));
 
@@ -645,7 +645,7 @@ class ControlServiceTest extends AbstractServiceTest {
                 .eftiGateUrl("france")
                 .fromGateUrl("https://efti.gate.france.eu")
                 .transportMetadata(SearchParameter.builder()
-                        .vehicleId("AA123VV")
+                        .vehicleID("AA123VV")
                         .transportMode("ROAD")
                         .vehicleCountry("FR")
                         .isDangerousGoods(true)
@@ -667,7 +667,7 @@ class ControlServiceTest extends AbstractServiceTest {
                 .eftiGateUrl("france")
                 .fromGateUrl("https://efti.gate.france.eu")
                 .transportMetaData(SearchParameter.builder()
-                        .vehicleId("AA123VV")
+                        .vehicleID("AA123VV")
                         .transportMode("ROAD")
                         .vehicleCountry("FR")
                         .isDangerousGoods(true)

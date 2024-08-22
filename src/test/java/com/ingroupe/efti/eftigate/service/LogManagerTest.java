@@ -31,9 +31,8 @@ class LogManagerTest extends BaseServiceTest {
 
     private ControlDto controlDto;
     private UilDto uilDto;
-    private final String body = "body";
-    private final String receiver = "receiver";
-    private final String sender = "sender";
+    private final static String BODY = "body";
+    private final static String RECEIVER = "receiver";
 
     @BeforeEach
     public void setUp() {
@@ -58,9 +57,9 @@ class LogManagerTest extends BaseServiceTest {
                 .respondingComponentType(PLATFORM)
                 .respondingComponentCountry("receiverCountry").build();
 
-        logManager.logSentMessage(controlDto, body, receiver, true, false);
+        logManager.logSentMessage(controlDto, BODY, RECEIVER, true, false);
 
-        final String bodyBase64 = serializeUtils.mapObjectToBase64String(body);
+        final String bodyBase64 = serializeUtils.mapObjectToBase64String(BODY);
         verify(auditRequestLogService).log(controlDto, ExpectedMessageParties, "ownerId", "ownerCountry", bodyBase64, StatusEnum.ERROR, false);
     }
 
@@ -75,8 +74,8 @@ class LogManagerTest extends BaseServiceTest {
                 .respondingComponentType(GATE)
                 .respondingComponentCountry("receiverCountry").build();
 
-        logManager.logSentMessage(controlDto, body, receiver, false, true);
-        final String bodyBase64 = serializeUtils.mapObjectToBase64String(body);
+        logManager.logSentMessage(controlDto, BODY, RECEIVER, false, true);
+        final String bodyBase64 = serializeUtils.mapObjectToBase64String(BODY);
 
         verify(auditRequestLogService).log(controlDto, ExpectedMessageParties, "ownerId", "ownerCountry", bodyBase64, StatusEnum.COMPLETE, false);
     }
@@ -122,9 +121,9 @@ class LogManagerTest extends BaseServiceTest {
                 .respondingComponentType(GATE)
                 .respondingComponentCountry("ownerCountry").build();
 
-        logManager.logReceivedMessage(controlDto, body, sender);
+        logManager.logReceivedMessage(controlDto, BODY, "sender");
 
-        final String bodyBase64 = serializeUtils.mapObjectToBase64String(body);
+        final String bodyBase64 = serializeUtils.mapObjectToBase64String(BODY);
         verify(auditRequestLogService).log(controlDto, ExpectedMessageParties, "ownerId", "ownerCountry", bodyBase64, StatusEnum.COMPLETE, false);
     }
 
