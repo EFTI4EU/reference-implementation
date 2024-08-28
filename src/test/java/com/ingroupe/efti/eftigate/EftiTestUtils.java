@@ -1,6 +1,5 @@
 package com.ingroupe.efti.eftigate;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -18,11 +17,7 @@ public class EftiTestUtils {
 
     public static List<String> testFileLines(final String fileName) {
         final InputStream resource = testFileResource(fileName);
-        try {
-            return readLines(resource, "UTF-8");
-        } catch (final IOException e) {
-            throw new RuntimeException("failed to load test file " + fileName, e);
-        }
+        return readLines(resource, "UTF-8");
     }
 
     private static InputStream testFileResource(final String filePath) {
