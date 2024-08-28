@@ -126,17 +126,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-admin-client</artifactId>
-            <version>${keycloak.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun.istack</groupId>
-                    <artifactId>istack-commons-runtime</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -217,7 +206,11 @@
             <artifactId>jackson-dataformat-xml</artifactId>
             <version>2.14.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
+            <version>2.17.2</version>
+        </dependency>
         <dependency>
             <groupId>net.javacrumbs.shedlock</groupId>
             <artifactId>shedlock-spring</artifactId>
