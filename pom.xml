@@ -17,7 +17,7 @@
         <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
         <nexus.home>https://nexus.imprimerienationale.fr</nexus.home>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <revision>0.4.1-SNAPSHOT</revision>
+        <revision>0.4.2-SNAPSHOT</revision>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/../coverage-aggregate/target/site/jacoco-aggregate/jacoco.xml
@@ -78,7 +78,7 @@
         <dependency>
             <groupId>com.ingroupe.efti</groupId>
             <artifactId>commons</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
