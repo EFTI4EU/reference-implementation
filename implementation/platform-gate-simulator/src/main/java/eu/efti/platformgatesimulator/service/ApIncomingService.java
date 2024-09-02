@@ -2,7 +2,7 @@ package eu.efti.platformgatesimulator.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import eu.efti.commons.dto.MetadataDto;
+import eu.efti.commons.dto.ConsignmentIdentifiersDTO;
 import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
 import eu.efti.edeliveryapconnector.dto.ApRequestDto;
@@ -41,16 +41,16 @@ public class ApIncomingService {
     private final ReaderService readerService;
     private final XmlMapper xmlMapper;
 
-    public void uploadMetadata(final MetadataDto metadataDto) throws JsonProcessingException {
+    public void uploadIdentifiers(final ConsignmentIdentifiersDTO consignmentIdentifiersDTO) throws JsonProcessingException {
         final ApRequestDto apRequestDto = ApRequestDto.builder()
-                .requestId(1L).body(xmlMapper.writeValueAsString(metadataDto))
+                .requestId(1L).body(xmlMapper.writeValueAsString(consignmentIdentifiersDTO))
                 .apConfig(buildApConf())
                 .receiver(gateProperties.getGate())
                 .sender(gateProperties.getOwner())
                 .build();
 
         try {
-            requestSendingService.sendRequest(apRequestDto, EDeliveryAction.UPLOAD_METADATA);
+            requestSendingService.sendRequest(apRequestDto, EDeliveryAction.UPLOAD_IDENTIFIERS);
         } catch (final SendRequestException e) {
             log.error("SendRequestException received : ", e);
         }

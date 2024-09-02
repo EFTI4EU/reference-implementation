@@ -7,9 +7,11 @@ spring:
     control:
       liquibase:
         default-schema: eftisy
-    metadata:
+        change-log: classpath:db.changelog/db.gate.changelog-master.xml
+    identifiers:
       liquibase:
         default-schema: eftisy
+        change-log: classpath:db.changelog/db.identifiers.changelog-master.xml
   security:
     oauth2:
       resourceserver:
@@ -19,7 +21,7 @@ spring:
     properties:
       hibernate:
         control_schema: "eftisy"
-        metadata_schema: "eftisy"
+        identifiers_schema: "eftisy"
 
 gate:
   owner: http://efti.gate.syldavia.eu

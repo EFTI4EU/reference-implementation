@@ -7,9 +7,11 @@ spring:
     control:
       liquibase:
         default-schema: eftili
-    metadata:
+        change-log: classpath:db.changelog/db.gate.changelog-master.xml
+    identifiers:
       liquibase:
         default-schema: eftili
+        change-log: classpath:db.changelog/db.identifiers.changelog-master.xml
   security:
     oauth2:
       resourceserver:
@@ -19,7 +21,7 @@ spring:
     properties:
       hibernate:
         control_schema: "eftili"
-        metadata_schema: "eftili"
+        identifiers_schema: "eftili"
 
 gate:
   owner: http://efti.gate.listenbourg.eu

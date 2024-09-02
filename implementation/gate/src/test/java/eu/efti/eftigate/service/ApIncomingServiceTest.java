@@ -11,10 +11,10 @@ import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.RequestRepository;
 import eu.efti.eftigate.service.request.EftiRequestUpdater;
-import eu.efti.eftigate.service.request.MetadataRequestService;
+import eu.efti.eftigate.service.request.IdentifiersRequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
-import eu.efti.metadataregistry.service.MetadataService;
+import eu.efti.identifierregistry.service.IdentifiersService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,9 +44,9 @@ class ApIncomingServiceTest extends BaseServiceTest {
     @Mock
     private UilRequestService uilRequestService;
     @Mock
-    private MetadataRequestService metadataRequestService;
+    private IdentifiersRequestService identifiersRequestService;
     @Mock
-    private MetadataService metadataService;
+    private IdentifiersService identifiersService;
     @Mock
     private EftiRequestUpdater eftiRequestUpdater;
     @Mock
@@ -60,7 +60,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
     private final static String password = "password";
     private final static String username = "username";
     private final static String xml_body = """
-    <metadata>
+    <identifiers>
         <eFTIPlatformUrl>https://efti.platform.001.eu</eFTIPlatformUrl>
         <eFTIDataUuid>ac0bbbc9-f46e-4093-b523-830431fb1001</eFTIDataUuid>
         <eFTIGateUrl>https://efti.gate.001.eu"</eFTIGateUrl>
@@ -91,12 +91,12 @@ class ApIncomingServiceTest extends BaseServiceTest {
                 <countryEnd>DE</countryEnd>
             </transportVehicle>
         </transportVehicles>
-    </metadata>
+    </identifiers>
     """;
 
     @BeforeEach
     public void before() {
-        service = new ApIncomingService(notificationService, requestServiceFactory, metadataService, serializeUtils, eftiRequestUpdater);
+        service = new ApIncomingService(notificationService, requestServiceFactory, identifiersService, serializeUtils, eftiRequestUpdater);
     }
 
     @Test
@@ -145,7 +145,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldManageIncomingNotificationCreateMetadataXml() {
+    void shouldManageIncomingNotificationCreateIdentifiersXml() {
         final String messageId = "messageId";
         final ReceivedNotificationDto receivedNotificationDto = ReceivedNotificationDto.builder()
                 .body(Map.of(SUBMIT_MESSAGE, Map.of(MESSAGE_ID, messageId))).build();
@@ -153,7 +153,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
                 .content(NotificationContentDto.builder()
                         .messageId(messageId)
                         .body(xml_body)
-                        .action(EDeliveryAction.UPLOAD_METADATA.getValue())
+                        .action(EDeliveryAction.UPLOAD_IDENTIFIERS.getValue())
                         .contentType(MediaType.TEXT_XML_VALUE)
                         .build())
                 .notificationType(NotificationType.RECEIVED)
@@ -163,7 +163,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
         service.manageIncomingNotification(receivedNotificationDto);
 
         verify(notificationService).consume(receivedNotificationDto);
-        verify(metadataService).createOrUpdate(any());
+        verify(identifiersService).createOrUpdate(any());
     }
 
     @Test

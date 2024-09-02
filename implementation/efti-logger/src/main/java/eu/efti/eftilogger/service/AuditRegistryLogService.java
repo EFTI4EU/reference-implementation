@@ -1,6 +1,6 @@
 package eu.efti.eftilogger.service;
 
-import eu.efti.commons.dto.MetadataDto;
+import eu.efti.commons.dto.ConsignmentIdentifiersDTO;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -21,7 +21,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
     private static final LogMarkerEnum MARKER = LogMarkerEnum.REGISTRY;
     private final SerializeUtils serializeUtils;
 
-    public void log(final MetadataDto metadataDto,
+    public void log(final ConsignmentIdentifiersDTO consignmentIdentifiersDTO,
                     final String currentGateId,
                     final String currentGateCountry,
                     final String body,
@@ -34,7 +34,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .componentId(currentGateId)
                 .componentCountry(currentGateCountry)
                 .requestingComponentType(ComponentType.PLATFORM)
-                .requestingComponentId(metadataDto.getEFTIPlatformUrl())
+                .requestingComponentId(consignmentIdentifiersDTO.getEFTIPlatformUrl())
                 .requestingComponentCountry(currentGateCountry)
                 .respondingComponentType(ComponentType.GATE)
                 .respondingComponentId(currentGateId)
@@ -44,16 +44,16 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .errorCodeMessage(isError ? errorCode : "")
                 .errorDescriptionMessage(isError ? ErrorCodesEnum.valueOf(errorCode).getMessage() : "")
                 .timeoutComponentType(TIMEOUT_COMPONENT_TYPE)
-                .metadataId(metadataDto.getMetadataUUID())
-                .eFTIDataId(metadataDto.getEFTIDataUuid())
+                .consignmentId(consignmentIdentifiersDTO.getConsignmentUUID())
+                .eFTIDataId(consignmentIdentifiersDTO.getEFTIDataUuid())
                 .interfaceType(edelivery)
                 .build());
     }
-        public void log(final MetadataDto metadataDto,
+        public void log(final ConsignmentIdentifiersDTO consignmentIdentifiersDto,
                     final String currentGateId,
                     final String currentGateCountry,
                     final String body) {
-        this.log(metadataDto, currentGateId, currentGateCountry, body, null);
+        this.log(consignmentIdentifiersDto, currentGateId, currentGateCountry, body, null);
 
     }
 

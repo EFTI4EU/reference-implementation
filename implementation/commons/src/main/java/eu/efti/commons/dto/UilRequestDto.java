@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UilRequestDto extends RequestDto {
-    private byte[] reponseData;
+    private byte[] responseData;
 
     public UilRequestDto(final ControlDto controlDto) {
         super(controlDto);

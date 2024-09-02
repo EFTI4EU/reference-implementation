@@ -3,8 +3,8 @@
   <requestUuid>67fe38bd-6bf7-4b06-b20e-206264bd639c</requestUuid>
   <status>COMPLETE</status>
   <errorDescription>null</errorDescription>
-  <metadata>
-     <metadata>
+  <identifiers>
+     <identifiers>
         <journeyStart>null</journeyStart>
         <countryStart>FR</countryStart>
         <journeyEnd>null</journeyEnd>
@@ -27,6 +27,6 @@
         <eFTIDataUuid>032ad16a-ce1b-4ed2-a943-3b3975be9657</eFTIDataUuid>
         <eFTIPlatformUrl>http://efti.platform.acme.com</eFTIPlatformUrl>
         <isDangerousGoods>true</isDangerousGoods>
-     </metadata>
-  </metadata>
+     </identifiers>
+  </identifiers>
 </body>

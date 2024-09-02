@@ -2,12 +2,12 @@ package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.AuthorityDto;
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.MetadataDto;
-import eu.efti.commons.dto.MetadataRequestDto;
+import eu.efti.commons.dto.ConsignmentIdentifiersDTO;
+import eu.efti.commons.dto.ConsignmentIdentifiersRequestDto;
 import eu.efti.commons.dto.TransportVehicleDto;
 import eu.efti.eftigate.config.GateProperties;
-import eu.efti.eftigate.service.request.MetadataRequestService;
-import eu.efti.metadataregistry.service.MetadataService;
+import eu.efti.eftigate.service.request.IdentifiersRequestService;
+import eu.efti.identifierregistry.service.IdentifiersService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,9 +26,9 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class EftiAsyncCallsProcessorTest {
     @Mock
-    private MetadataRequestService metadataRequestService;
+    private IdentifiersRequestService identifiersRequestService;
     @Mock
-    private MetadataService metadataService;
+    private IdentifiersService identifiersService;
     @Mock
     private LogManager logManager;
     @Mock
@@ -37,11 +37,11 @@ class EftiAsyncCallsProcessorTest {
     @InjectMocks
     private EftiAsyncCallsProcessor eftiAsyncCallsProcessor;
 
-    private final MetadataRequestDto metadataRequestDto = new MetadataRequestDto();
+    private final ConsignmentIdentifiersRequestDto consignmentIdentifiersRequestDto = new ConsignmentIdentifiersRequestDto();
 
-    MetadataDto metadataDto= new MetadataDto();
+    ConsignmentIdentifiersDTO consignmentIdentifiersDTO = new ConsignmentIdentifiersDTO();
 
-    private final String metadataUuid = UUID.randomUUID().toString();
+    private final String consignmentUUID = UUID.randomUUID().toString();
     TransportVehicleDto transportVehicleDto = new TransportVehicleDto();
     private final ControlDto controlDto = new ControlDto();
 
@@ -51,30 +51,30 @@ class EftiAsyncCallsProcessorTest {
         final AuthorityDto authorityDto = new AuthorityDto();
 
 
-        metadataDto.setDangerousGoods(true);
-        metadataDto.setMetadataUUID(metadataUuid);
-        metadataDto.setDisabled(false);
-        metadataDto.setCountryStart("FR");
-        metadataDto.setCountryEnd("FR");
-        metadataDto.setTransportVehicles(Collections.singletonList(transportVehicleDto));
+        consignmentIdentifiersDTO.setDangerousGoods(true);
+        consignmentIdentifiersDTO.setConsignmentUUID(consignmentUUID);
+        consignmentIdentifiersDTO.setDisabled(false);
+        consignmentIdentifiersDTO.setCountryStart("FR");
+        consignmentIdentifiersDTO.setCountryEnd("FR");
+        consignmentIdentifiersDTO.setTransportVehicles(Collections.singletonList(transportVehicleDto));
 
 
-        this.metadataRequestDto.setVehicleID("abc123");
-        this.metadataRequestDto.setVehicleCountry("FR");
-        this.metadataRequestDto.setAuthority(authorityDto);
-        this.metadataRequestDto.setTransportMode("ROAD");
+        this.consignmentIdentifiersRequestDto.setVehicleID("abc123");
+        this.consignmentIdentifiersRequestDto.setVehicleCountry("FR");
+        this.consignmentIdentifiersRequestDto.setAuthority(authorityDto);
+        this.consignmentIdentifiersRequestDto.setTransportMode("ROAD");
     }
 
     @Test
-    void checkLocalRepoTest_whenMetadataIsNotPresentInRegistry() {
+    void checkLocalRepoTest_whenIdentifiersAreNotPresentInRegistry() {
         //Arrange
 
         //Act
-        eftiAsyncCallsProcessor.checkLocalRepoAsync(metadataRequestDto, controlDto);
+        eftiAsyncCallsProcessor.checkLocalRepoAsync(consignmentIdentifiersRequestDto, controlDto);
 
         //Assert
-        verify(metadataService, times(1)).search(metadataRequestDto);
-        verify(metadataRequestService, times(1)).createRequest(any(ControlDto.class), any(), anyList());
+        verify(identifiersService, times(1)).search(consignmentIdentifiersRequestDto);
+        verify(identifiersRequestService, times(1)).createRequest(any(ControlDto.class), any(), anyList());
         verify(logManager).logLocalRegistryMessage(any(), any());
     }
 }

@@ -2,12 +2,12 @@ package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.IdentifiersRequestDto;
-import eu.efti.commons.dto.MetadataDto;
-import eu.efti.commons.dto.MetadataRequestDto;
+import eu.efti.commons.dto.ConsignmentIdentifiersDTO;
+import eu.efti.commons.dto.ConsignmentIdentifiersRequestDto;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
-import eu.efti.eftigate.service.request.MetadataRequestService;
-import eu.efti.metadataregistry.service.MetadataService;
+import eu.efti.eftigate.service.request.IdentifiersRequestService;
+import eu.efti.identifierregistry.service.IdentifiersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,23 +20,23 @@ import java.util.List;
 @RequiredArgsConstructor()
 @Slf4j
 public class EftiAsyncCallsProcessor {
-    private final MetadataRequestService metadataRequestService;
-    private final MetadataService metadataService;
+    private final IdentifiersRequestService identifiersRequestService;
+    private final IdentifiersService identifiersService;
     private final LogManager logManager;
 
     @Async
-    public void checkLocalRepoAsync(final MetadataRequestDto metadataRequestDto, final ControlDto savedControl) {
-        final List<MetadataDto> metadataDtoList = metadataService.search(metadataRequestDto);
-        logManager.logLocalRegistryMessage(savedControl, metadataDtoList);
-        final IdentifiersRequestDto request = metadataRequestService.createRequest(savedControl, RequestStatusEnum.SUCCESS, metadataDtoList);
-        if (shouldUpdateControl(savedControl, request, metadataDtoList)) {
-            metadataRequestService.updateControlMetadata(request.getControl(), metadataDtoList);
+    public void checkLocalRepoAsync(final ConsignmentIdentifiersRequestDto consignmentIdentifiersRequestDto, final ControlDto savedControl) {
+        final List<ConsignmentIdentifiersDTO> consignmentIdentifiersDTOList = identifiersService.search(consignmentIdentifiersRequestDto);
+        logManager.logLocalRegistryMessage(savedControl, consignmentIdentifiersDTOList);
+        final IdentifiersRequestDto request = identifiersRequestService.createRequest(savedControl, RequestStatusEnum.SUCCESS, consignmentIdentifiersDTOList);
+        if (shouldUpdateControl(savedControl, request, consignmentIdentifiersDTOList)) {
+            identifiersRequestService.updateControlIdentifiers(request.getControl(), consignmentIdentifiersDTOList);
         }
     }
 
-    private static boolean shouldUpdateControl(final ControlDto savedControl, final IdentifiersRequestDto request, final List<MetadataDto> metadataDtoList) {
+    private static boolean shouldUpdateControl(final ControlDto savedControl, final IdentifiersRequestDto request, final List<ConsignmentIdentifiersDTO> consignmentIdentifiersDTOList) {
         return request != null && RequestStatusEnum.SUCCESS.equals(request.getStatus())
-                && CollectionUtils.isNotEmpty(metadataDtoList)
-                && RequestTypeEnum.EXTERNAL_METADATA_SEARCH.equals(savedControl.getRequestType());
+                && CollectionUtils.isNotEmpty(consignmentIdentifiersDTOList)
+                && RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH.equals(savedControl.getRequestType());
     }
 }

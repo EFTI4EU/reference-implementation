@@ -13,6 +13,6 @@ cp -rf ../../../implementation/gate/target/efti-gate-*.jar ./gate/efti-gate.jar
 cp -rf ../../../implementation/platform-gate-simulator/target/platform-gate-simulator-*.jar ./platform/platform-simulator.jar
 
 echo "Starting up docker compose"
-#docker-compose up -d
+docker compose up
 
 $SHELL

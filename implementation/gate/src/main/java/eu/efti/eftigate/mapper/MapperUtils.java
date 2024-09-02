@@ -2,13 +2,13 @@ package eu.efti.eftigate.mapper;
 
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
-import eu.efti.commons.dto.MetadataDto;
-import eu.efti.commons.dto.MetadataResultDto;
+import eu.efti.commons.dto.ConsignmentIdentifiersDTO;
+import eu.efti.commons.dto.IdentifiersResultDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.ErrorEntity;
-import eu.efti.eftigate.entity.MetadataResult;
+import eu.efti.eftigate.entity.IdentifiersResult;
 import eu.efti.eftigate.entity.RequestEntity;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -57,27 +57,21 @@ public class MapperUtils {
         return modelMapper.map(requestEntity, destinationClass);
     }
 
-    public List<MetadataResult> metadataDtosToMetadataEntities(final List<MetadataDto> metadataDtoList) {
-        return CollectionUtils.emptyIfNull(metadataDtoList).stream()
-                .map(metadataDto -> modelMapper.map(metadataDto, MetadataResult.class))
+    public List<IdentifiersResult> identifierDTOsToIdentifierEntities(final List<ConsignmentIdentifiersDTO> consignmentIdentifiersDTOList) {
+        return CollectionUtils.emptyIfNull(consignmentIdentifiersDTOList).stream()
+                .map(identifiersDTO -> modelMapper.map(identifiersDTO, IdentifiersResult.class))
                 .toList();
     }
 
-    public List<MetadataResultDto> metadataDtosToMetadataResultDto(final List<MetadataDto> metadataDtoList) {
-        return CollectionUtils.emptyIfNull(metadataDtoList).stream()
-                .map(metadataDto -> modelMapper.map(metadataDto, MetadataResultDto.class))
+    public List<IdentifiersResultDto> identifiersDtosToIdentifiersResultDto(final List<ConsignmentIdentifiersDTO> consignmentIdentifiersDTOList) {
+        return CollectionUtils.emptyIfNull(consignmentIdentifiersDTOList).stream()
+                .map(identifiersDTO -> modelMapper.map(identifiersDTO, IdentifiersResultDto.class))
                 .toList();
     }
 
-    public List<MetadataResultDto> metadataResultEntitiesToMetadataResultDtos(final List<MetadataResult> metadataResultList) {
-        return CollectionUtils.emptyIfNull(metadataResultList).stream()
-                .map(metadataResult -> modelMapper.map(metadataResult, MetadataResultDto.class))
-                .toList();
-    }
-
-    public List<MetadataResult> metadataResultDtosToMetadataEntities(final List<MetadataResultDto> metadataResultDtos) {
-        return CollectionUtils.emptyIfNull(metadataResultDtos).stream()
-                .map(metadataResultDto -> modelMapper.map(metadataResultDto, MetadataResult.class))
+    public List<IdentifiersResult> identifierResultDtosToIdentifierEntities(final List<IdentifiersResultDto> identifiersResultDtos) {
+        return CollectionUtils.emptyIfNull(identifiersResultDtos).stream()
+                .map(identifiersResultDto -> modelMapper.map(identifiersResultDto, IdentifiersResult.class))
                 .toList();
     }
 }

@@ -31,14 +31,14 @@ public class ControlDto {
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private byte[] eftiData;
-    private SearchParameter transportMetaData;
+    private SearchParameter transportIdentifiers;
     private String fromGateUrl;
     @ToString.Exclude
     @JsonIgnore
     private List<RequestDto> requests;
     private AuthorityDto authority;
     private ErrorDto error;
-    private MetadataResultsDto metadataResults;
+    private IdentifiersResultsDto identifierResults;
     private String notes;
 
     public boolean isError() {

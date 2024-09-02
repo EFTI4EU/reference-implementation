@@ -67,7 +67,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="eftidata" type="BYTEA"/>
-            <column name="transportmetadata" type="JSONB"/>
+            <column name="transportidentifiers" type="JSONB"/>
             <column name="fromgateurl" type="VARCHAR(255)"/>
             <column name="authority" type="INTEGER"/>
             <column name="error" type="INTEGER"/>
@@ -132,12 +132,12 @@
     </changeSet>
     <changeSet author="osouley" id="1707315732219-13">
         <addColumn catalogName="efti" tableName="control">
-            <column name="metadatas" type="JSONB"/>
+            <column name="consignments" type="JSONB"/>
         </addColumn>
     </changeSet>
     <changeSet author="osouley" id="1707315732219-14">
         <addColumn catalogName="efti" tableName="request">
-            <column name="metadatas" type="JSONB"/>
+            <column name="consignments" type="JSONB"/>
         </addColumn>
     </changeSet>
     <changeSet author="osouley" id="1707315732219-15">

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+    <changeSet author="jthueux (generated)" id="1707989626822-1">
+        <createTable tableName="consignment">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="consignment_pkey"/>
+            </column>
+            <column name="eftidatauuid" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eftigateurl" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eftiplatformurl" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="isdangerousgoods" type="BOOLEAN"/>
+            <column name="journeystart" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="countrystart" type="VARCHAR(10)"/>
+            <column name="journeyend" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="countryend" type="VARCHAR(10)"/>
+            <column name="consignmentuuid" type="VARCHAR(36)"/>
+            <column name="createddate" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastmodifieddate" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="isdisabled" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="jthueux (generated)" id="1707989626822-2">
+        <createTable tableName="transportvehicle">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="transportvehicle_pkey"/>
+            </column>
+            <column name="transportmode" type="VARCHAR(36)"/>
+            <column name="sequence" type="INTEGER"/>
+            <column name="vehicleid" type="VARCHAR(36)"/>
+            <column name="vehiclecountry" type="VARCHAR(10)"/>
+            <column name="journeystart" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="countrystart" type="VARCHAR(10)"/>
+            <column name="journeyend" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="countryend" type="VARCHAR(10)"/>
+            <column name="consignment" type="INTEGER"/>
+            <column name="createddate" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastmodifieddate" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="jthueux (generated)" id="1707989626822-3">
+        <addForeignKeyConstraint baseColumnNames="consignment" baseTableName="transportvehicle" constraintName="transportvehicle_consignment_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="consignment" validate="true"/>
+    </changeSet>
+
+    <include file="/db.changelog/db.identifiers.changelog-2024-05-16-add-index.xml"/>
+</databaseChangeLog>

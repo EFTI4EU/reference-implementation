@@ -3,6 +3,7 @@
 The aim of this project is to provide a simple environment to make multiple domibus access points communicate together. Each domibus is multi tenant and/or multi instance
 
 In order to demonstrate this, we create a fictional ecosystem of 3 gates and 3 platforms.
+<ul>
 <li>Syldavia (platform: massivedynamic)</li>
 <li>Borduria (platform: acme)</li>
 <li>Listenbourg (platform: umbrellacorporation)</li>

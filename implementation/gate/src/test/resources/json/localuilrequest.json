@@ -3,7 +3,7 @@
   "status": "RECEIVED",
   "edeliveryMessageId": null,
   "retry": 0,
-  "reponseData": null,
+  "responseData": null,
   "nextRetryDate": null,
   "createdDate": [2024, 3, 5, 15, 6, 52, 135892300],
   "lastModifiedDate": null,
@@ -21,7 +21,7 @@
     "createdDate": [2024, 3, 5, 15, 6, 51, 987861600],
     "lastModifiedDate": [2024, 3, 5, 15, 6, 51, 987861600],
     "eftiData": null,
-    "transportMetaData": null,
+    "transportIdentifiers": null,
     "fromGateUrl": null,
     "requests": null,
     "authority": {
@@ -50,7 +50,7 @@
       "nationalUniqueIdentifier": "aaa"
     },
     "error": null,
-    "metadataResults": null
+    "identifiersResults": null
   },
   "error": null,
   "requestType": "UIL"

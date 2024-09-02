@@ -16,7 +16,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -57,7 +56,7 @@
         </dependency>
         <dependency>
             <groupId>eu.efti</groupId>
-            <artifactId>metadata-registry</artifactId>
+            <artifactId>registry-of-identifiers</artifactId>
             <version>0.4.1-SNAPSHOT</version>
         </dependency>
         <dependency>

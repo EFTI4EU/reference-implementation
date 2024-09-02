@@ -219,13 +219,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{gate_bo_url}}/v1/getMetadata",
+									"raw": "{{gate_bo_url}}/v1/getIdentifiers",
 									"host": [
 										"{{gate_bo_url}}"
 									],
 									"path": [
 										"v1",
-										"getMetadata"
+										"getIdentifiers"
 									]
 								}
 							},
@@ -247,13 +247,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{gate_bo_url}}/v1/getMetadata?requestUuid=98188661-b803-4d0c-b21f-d368c7417b8b",
+									"raw": "{{gate_bo_url}}/v1/getIdentifiers?requestUuid=98188661-b803-4d0c-b21f-d368c7417b8b",
 									"host": [
 										"{{gate_bo_url}}"
 									],
 									"path": [
 										"v1",
-										"getMetadata"
+										"getIdentifiers"
 									],
 									"query": [
 										{
@@ -686,13 +686,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{gate_li_url}}/v1/getMetadata",
+									"raw": "{{gate_li_url}}/v1/getIdentifiers",
 									"host": [
 										"{{gate_li_url}}"
 									],
 									"path": [
 										"v1",
-										"getMetadata"
+										"getIdentifiers"
 									]
 								}
 							},
@@ -714,13 +714,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{gate_li_url}}/v1/getMetadata?requestUuid=98188661-b803-4d0c-b21f-d368c7417b8b",
+									"raw": "{{gate_li_url}}/v1/getIdentifiers?requestUuid=98188661-b803-4d0c-b21f-d368c7417b8b",
 									"host": [
 										"{{gate_li_url}}"
 									],
 									"path": [
 										"v1",
-										"getMetadata"
+										"getIdentifiers"
 									],
 									"query": [
 										{
@@ -1118,13 +1118,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{gate_sy_url}}/v1/getMetadata",
+									"raw": "{{gate_sy_url}}/v1/getIdentifiers",
 									"host": [
 										"{{gate_sy_url}}"
 									],
 									"path": [
 										"v1",
-										"getMetadata"
+										"getIdentifiers"
 									]
 								}
 							},
@@ -1146,13 +1146,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{gate_sy_url}}/v1/getMetadata?requestUuid=98188661-b803-4d0c-b21f-d368c7417b8b",
+									"raw": "{{gate_sy_url}}/v1/getIdentifiers?requestUuid=98188661-b803-4d0c-b21f-d368c7417b8b",
 									"host": [
 										"{{gate_sy_url}}"
 									],
 									"path": [
 										"v1",
-										"getMetadata"
+										"getIdentifiers"
 									],
 									"query": [
 										{
@@ -1589,13 +1589,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{gate_fr_url}}/v1/getMetadata",
+									"raw": "{{gate_fr_url}}/v1/getIdentifiers",
 									"host": [
 										"{{gate_fr_url}}"
 									],
 									"path": [
 										"v1",
-										"getMetadata"
+										"getIdentifiers"
 									]
 								}
 							},
@@ -1617,13 +1617,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{gate_fr_url}}/v1/getMetadata?requestUuid=c8d7c664-c44f-4050-8baa-6eabf7f74b1a",
+									"raw": "{{gate_fr_url}}/v1/getIdentifiers?requestUuid=c8d7c664-c44f-4050-8baa-6eabf7f74b1a",
 									"host": [
 										"{{gate_fr_url}}"
 									],
 									"path": [
 										"v1",
-										"getMetadata"
+										"getIdentifiers"
 									],
 									"query": [
 										{

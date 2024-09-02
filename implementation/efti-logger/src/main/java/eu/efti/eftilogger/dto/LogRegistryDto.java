@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class LogRegistryDto extends LogCommonDto {
 
-    public final String metadataId;
+    public final String consignmentId;
     public final String eFTIDataId;
     public final String interfaceType;
 }

@@ -2,8 +2,8 @@ package eu.efti.eftigate.utils;
 
 import eu.efti.commons.dto.AuthorityDto;
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.MetadataRequestDto;
-import eu.efti.commons.dto.MetadataResultsDto;
+import eu.efti.commons.dto.ConsignmentIdentifiersRequestDto;
+import eu.efti.commons.dto.IdentifiersResultsDto;
 import eu.efti.commons.dto.NotesDto;
 import eu.efti.commons.dto.SearchParameter;
 import eu.efti.commons.dto.UilDto;
@@ -77,31 +77,31 @@ public class ControlUtils {
         return controlDto;
     }
 
-    public static ControlDto fromLocalMetadataControl(final MetadataRequestDto metadataRequestDto, final RequestTypeEnum requestTypeEnum) {
-        final AuthorityDto authorityDto = metadataRequestDto.getAuthority();
+    public static ControlDto fromLocalIdentifiersControl(final ConsignmentIdentifiersRequestDto consignmentIdentifiersRequestDto, final RequestTypeEnum requestTypeEnum) {
+        final AuthorityDto authorityDto = consignmentIdentifiersRequestDto.getAuthority();
 
         final ControlDto controlDto = getControlFrom(requestTypeEnum, authorityDto, UUID.randomUUID().toString());
-        controlDto.setTransportMetaData(SearchParameter.builder()
-                .vehicleId(metadataRequestDto.getVehicleID())
-                .transportMode(metadataRequestDto.getTransportMode())
-                .vehicleCountry(metadataRequestDto.getVehicleCountry())
-                .isDangerousGoods(metadataRequestDto.getIsDangerousGoods())
+        controlDto.setTransportIdentifiers(SearchParameter.builder()
+                .vehicleId(consignmentIdentifiersRequestDto.getVehicleID())
+                .transportMode(consignmentIdentifiersRequestDto.getTransportMode())
+                .vehicleCountry(consignmentIdentifiersRequestDto.getVehicleCountry())
+                .isDangerousGoods(consignmentIdentifiersRequestDto.getIsDangerousGoods())
                 .build());
         return controlDto;
     }
 
-    public static ControlDto fromExternalMetadataControl(final IdentifiersMessageBodyDto messageBodyDto, final RequestTypeEnum requestTypeEnum, final String fromGateUrl, final String eftiGateUrl, final MetadataResultsDto metadataResults) {
+    public static ControlDto fromExternalIdentifiersControl(final IdentifiersMessageBodyDto messageBodyDto, final RequestTypeEnum requestTypeEnum, final String fromGateUrl, final String eftiGateUrl, final IdentifiersResultsDto identifiersResultsDto) {
         final ControlDto controlDto = getControlFrom(requestTypeEnum, null, messageBodyDto.getRequestUuid());
         //to check
         controlDto.setEftiGateUrl(eftiGateUrl);
         controlDto.setFromGateUrl(fromGateUrl);
-        controlDto.setTransportMetaData(SearchParameter.builder()
+        controlDto.setTransportIdentifiers(SearchParameter.builder()
                 .vehicleId(messageBodyDto.getVehicleID())
                 .transportMode(messageBodyDto.getTransportMode())
                 .vehicleCountry(messageBodyDto.getVehicleCountry())
                 .isDangerousGoods(messageBodyDto.getIsDangerousGoods())
                 .build());
-        controlDto.setMetadataResults(metadataResults);
+        controlDto.setIdentifierResults(identifiersResultsDto);
         return controlDto;
     }
 

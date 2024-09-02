@@ -7,9 +7,11 @@ spring:
     control:
       liquibase:
         default-schema: eftibo
-    metadata:
+        change-log: classpath:db.changelog/db.gate.changelog-master.xml
+    identifiers:
       liquibase:
         default-schema: eftibo
+        change-log: classpath:db.changelog/db.identifiers.changelog-master.xml
   security:
     oauth2:
       resourceserver:
@@ -19,7 +21,7 @@ spring:
     properties:
       hibernate:
         control_schema: "eftibo"
-        metadata_schema: "eftibo"
+        identifiers_schema: "eftibo"
 
 gate:
   owner: http://efti.gate.borduria.eu

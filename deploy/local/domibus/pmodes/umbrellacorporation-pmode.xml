@@ -85,7 +85,7 @@
 		</services>
 		<actions>
 			<action name="getUIL" value="getUIL"/>
-			<action name="uploadMetadata" value="uploadMetadata"/>
+			<action name="uploadIdentifiers" value="uploadIdentifiers"/>
 			<action name="sendNotes" value="sendNotes"/>
 		</actions>
 		<as4>
@@ -115,9 +115,9 @@
 							  payloadProfile="MessageProfile"
 							  errorHandling="eftiErrorHandling"
 							  compressPayloads="true"/>
-			<legConfiguration name="eftiServiceUploadMetadata"
+			<legConfiguration name="eftiServiceUploadIdentifiers"
 							  service="eftiService"
-							  action="uploadMetadata"
+							  action="uploadIdentifiers"
 							  defaultMpc="defaultMpc"
 							  reliability="AS4Reliability"
 							  security="eDeliveryAS4Policy"
@@ -154,7 +154,7 @@
 			</responderParties>
 			<legs>
 				<leg name="eftiServiceGetUIL"/>
-				<leg name="eftiServiceUploadMetadata"/>
+				<leg name="eftiServiceUploadIdentifiers"/>
 				<leg name="eftiServiceSendNotes"/>
 			</legs>
 		</process>
