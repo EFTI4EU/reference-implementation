@@ -158,8 +158,8 @@
     <changeSet  author="osouley" id="1707315732219-16">
         <insert tableName="gate">
             <column name="id" value="1" />
-            <column name="country" value="FR"/>
-            <column name="url" value="http://efti.gate.france.eu" />
+            <column name="country" value="LI"/>
+            <column name="url" value="http://efti.gate.listenbourg.eu" />
             <column name="createddate" valueDate="CURRENT_TIMESTAMP" />
             <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP" />
         </insert>
@@ -167,7 +167,7 @@
     <changeSet  author="osouley" id="1707315732219-17">
         <insert tableName="gate">
             <column name="id" value="2" />
-            <column name="country" value="BE"/>
+            <column name="country" value="BO"/>
             <column name="url" value="http://efti.gate.borduria.eu" />
             <column name="createddate" valueDate="CURRENT_TIMESTAMP" />
             <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP" />
@@ -176,7 +176,7 @@
     <changeSet  author="osouley" id="1707315732219-18">
         <insert tableName="gate">
             <column name="id" value="3" />
-            <column name="country" value="DE"/>
+            <column name="country" value="SY"/>
             <column name="url" value="http://efti.gate.syldavia.eu" />
             <column name="createddate" valueDate="CURRENT_TIMESTAMP" />
             <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP" />
