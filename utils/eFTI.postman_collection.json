@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "da047921-597c-42db-90fb-dd4cbb88ef51",
+		"_postman_id": "cb58c001-574a-4a78-9a58-b51aae7c8b8b",
 		"name": "eFTI",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "30836777"
+		"_exporter_id": "36219283"
 	},
 	"item": [
 		{
@@ -151,13 +151,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"type": "text",
 										"value": "",
+										"type": "text",
 										"disabled": true
 									}
 								],
 								"url": {
-									"raw": "{{gate_bo_url}}/v1/requestUil?requestUuid=6d8bc4bf-db77-49ba-84a6-77b9b1bfe748",
+									"raw": "{{gate_bo_url}}/v1/requestUil?requestUuid=82533c4a-2afa-4480-9489-62409d401099",
 									"host": [
 										"{{gate_bo_url}}"
 									],
@@ -168,7 +168,7 @@
 									"query": [
 										{
 											"key": "requestUuid",
-											"value": "6d8bc4bf-db77-49ba-84a6-77b9b1bfe748"
+											"value": "82533c4a-2afa-4480-9489-62409d401099"
 										}
 									]
 								}
@@ -176,7 +176,7 @@
 							"response": []
 						},
 						{
-							"name": "post Metadata Control",
+							"name": "post Identifiers Control",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -211,7 +211,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"isDangerousGoods\": false,\r\n    \"vehicleID\": \"abc123\",\r\n    \"eFTIGateIndicator\": [\"BE\",\"FR\"],\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"additionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"vehicleID\": \"AA123BB\",\r\n    \"eFTIGateIndicator\": [\"BO\", \"LI\"],\r\n    \"authority\" : {\r\n        \"country\": \"BO\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"additionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -232,7 +232,7 @@
 							"response": []
 						},
 						{
-							"name": "GET Metadata Control",
+							"name": "GET Identifiers Control",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -247,13 +247,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{gate_bo_url}}/v1/getIdentifiers?requestUuid=98188661-b803-4d0c-b21f-d368c7417b8b",
+									"raw": "{{gate_bo_url}}/v1/getMetadata?requestUuid=98188661-b803-4d0c-b21f-d368c7417b8b",
 									"host": [
 										"{{gate_bo_url}}"
 									],
 									"path": [
 										"v1",
-										"getIdentifiers"
+										"getMetadata"
 									],
 									"query": [
 										{
@@ -433,7 +433,7 @@
 							"response": []
 						},
 						{
-							"name": "upload Metadata",
+							"name": "upload Identifiers",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -619,8 +619,8 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"type": "text",
 										"value": "",
+										"type": "text",
 										"disabled": true
 									}
 								],
@@ -644,7 +644,7 @@
 							"response": []
 						},
 						{
-							"name": "post Metadata Control",
+							"name": "post Identifiers Control",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -686,20 +686,76 @@
 									}
 								},
 								"url": {
-									"raw": "{{gate_li_url}}/v1/getIdentifiers",
+									"raw": "{{gate_li_url}}/v1/getMetadata",
 									"host": [
 										"{{gate_li_url}}"
 									],
 									"path": [
 										"v1",
-										"getIdentifiers"
+										"getMetadata"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "GET Metadata Control",
+							"name": "post Identifiers Control Copy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isDangerousGoods\": false,\r\n    \"vehicleID\": \"abc123\",\r\n    \"eFTIGateIndicator\": [\"BE\",\"FR\"],\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"additionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gate_bo_url}}/v1/getMetadata",
+									"host": [
+										"{{gate_bo_url}}"
+									],
+									"path": [
+										"v1",
+										"getMetadata"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET Identifiers Control",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -863,7 +919,7 @@
 							"response": []
 						},
 						{
-							"name": "upload Metadata",
+							"name": "upload Identifiers",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -1050,8 +1106,8 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"type": "text",
 										"value": "",
+										"type": "text",
 										"disabled": true
 									}
 								],
@@ -1075,7 +1131,7 @@
 							"response": []
 						},
 						{
-							"name": "post Metadata Control",
+							"name": "post Identifiers Control",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -1118,20 +1174,20 @@
 									}
 								},
 								"url": {
-									"raw": "{{gate_sy_url}}/v1/getIdentifiers",
+									"raw": "{{gate_sy_url}}/v1/getMetadata",
 									"host": [
 										"{{gate_sy_url}}"
 									],
 									"path": [
 										"v1",
-										"getIdentifiers"
+										"getMetadata"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "GET Metadata Control",
+							"name": "GET Identifiers Control",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1335,7 +1391,7 @@
 							"response": []
 						},
 						{
-							"name": "upload Metadata",
+							"name": "upload Identifiers",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -1375,477 +1431,6 @@
 										"{{simulator_sy_url}}"
 									],
 									"path": [
-										"metadata",
-										"upload"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "FR",
-			"item": [
-				{
-					"name": "Gate",
-					"item": [
-						{
-							"name": "Authentication FR",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											" // Set access_token global variable\r",
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"access_token\", responseData.access_token);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "username",
-											"value": "user_fr",
-											"type": "text"
-										},
-										{
-											"key": "password",
-											"value": "Azerty59*123",
-											"type": "text"
-										},
-										{
-											"key": "grant_type",
-											"value": "password",
-											"type": "text"
-										},
-										{
-											"key": "client_id",
-											"value": "gate",
-											"type": "text"
-										},
-										{
-											"key": "client_secret",
-											"value": "{{kc_gate_fr_secret}}",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{kc_fr_url}}/realms/eFTI_FR/protocol/openid-connect/token",
-									"host": [
-										"{{kc_fr_url}}"
-									],
-									"path": [
-										"realms",
-										"eFTI_FR",
-										"protocol",
-										"openid-connect",
-										"token"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Post UIL Control",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_fr_url}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.ttf.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_fr_url}}/v1/requestUil",
-									"host": [
-										"{{gate_fr_url}}"
-									],
-									"path": [
-										"v1",
-										"requestUil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "get Request Uuid",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"type": "text",
-										"value": "",
-										"disabled": true
-									}
-								],
-								"url": {
-									"raw": "{{gate_fr_url}}/v1/requestUil?requestUuid=7cad0cab-f038-4c63-a740-cc74418e55d9",
-									"host": [
-										"{{gate_fr_url}}"
-									],
-									"path": [
-										"v1",
-										"requestUil"
-									],
-									"query": [
-										{
-											"key": "requestUuid",
-											"value": "7cad0cab-f038-4c63-a740-cc74418e55d9"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "post Metadata Control",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"isDangerousGoods\": false,\r\n    \"vehicleID\": \"AA123DE\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"additionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_fr_url}}/v1/getIdentifiers",
-									"host": [
-										"{{gate_fr_url}}"
-									],
-									"path": [
-										"v1",
-										"getIdentifiers"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET Metadata Control",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{gate_fr_url}}/v1/getIdentifiers?requestUuid=c8d7c664-c44f-4050-8baa-6eabf7f74b1a",
-									"host": [
-										"{{gate_fr_url}}"
-									],
-									"path": [
-										"v1",
-										"getIdentifiers"
-									],
-									"query": [
-										{
-											"key": "requestUuid",
-											"value": "c8d7c664-c44f-4050-8baa-6eabf7f74b1a"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Gate to Gate UIL",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"https://mock.efti.dev.k8s.groupein.local/bo\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_fr_url}}/v1/requestUil",
-									"host": [
-										"{{gate_fr_url}}"
-									],
-									"path": [
-										"v1",
-										"requestUil"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Simulator",
-					"item": [
-						{
-							"name": "Authentification",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											" // Set access_token global variable\r",
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"access_token\", responseData.access_token);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "username",
-											"value": "user_bo",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "password",
-											"value": "Azerty59*123",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "grant_type",
-											"value": "client_credentials",
-											"type": "text"
-										},
-										{
-											"key": "client_id",
-											"value": "simulator",
-											"type": "text"
-										},
-										{
-											"key": "client_secret",
-											"value": "{{kc_simulator_fr_secret}}",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{kc_fr_url}}/realms/eFTI_FR/protocol/openid-connect/token",
-									"host": [
-										"{{kc_fr_url}}"
-									],
-									"path": [
-										"realms",
-										"eFTI_FR",
-										"protocol",
-										"openid-connect",
-										"token"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "upload File",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"type": "file",
-											"src": "/C:/Users/dfourmaux/Desktop/jdd_efti/12345678-ab12-4ab6-8999-123456789abc.xml"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{simulator_fr_url}}/ttf/metadata/upload/file",
-									"host": [
-										"{{simulator_fr_url}}"
-									],
-									"path": [
-										"ttf",
-										"metadata",
-										"upload",
-										"file"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "upload Metadata",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"eFTIDataUuid\": \"032ad16a-ce1b-4ed2-a943-3b3975be9170\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"isDangerousGoods\": false,\r\n    \"journeyStart\": \"2024-01-26T10:54:51+00:00\",\r\n    \"countryStart\": \"FR\",\r\n    \"journeyEnd\": \"2024-01-27T10:54:51+00:00\",\r\n    \"countryEnd\": \"FR\",\r\n    \"transportVehicles\": [\r\n        {\r\n            \"transportMode\": \"ROAD\",\r\n            \"sequence\": 1,\r\n            \"vehicleID\": \"AA123DE\",\r\n            \"vehicleCountry\": \"FR\",\r\n            \"journeyStart\": \"2024-01-26T10:54:51+00:00\",\r\n            \"countryStart\": \"FR\",\r\n            \"journeyEnd\": \"2024-01-27T10:54:51+00:00\",\r\n            \"countryEnd\": \"FRANCE\"\r\n        }\r\n    ]\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{simulator_fr_url}}/ttf/metadata/upload",
-									"host": [
-										"{{simulator_fr_url}}"
-									],
-									"path": [
-										"ttf",
 										"metadata",
 										"upload"
 									]
