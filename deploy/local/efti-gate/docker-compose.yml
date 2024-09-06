@@ -69,7 +69,7 @@ services:
     volumes:
       - ./gate:/usr/src/myapp
     working_dir: /usr/src/myapp
-    command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar -Dspring.config.location=/usr/src/myapp/ -Dspring.profiles.active=$${PROFILE} efti-gate.jar --port=$${PORT}
+    command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar -Dspring.config.location=/usr/src/myapp/ -Dspring.profiles.active=$${PROFILE} efti-gate.jar
     ports:
       - 8880:8880
       - 8890:5005
@@ -88,7 +88,7 @@ services:
     volumes:
       - ./gate:/usr/src/myapp
     working_dir: /usr/src/myapp
-    command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar -Dspring.config.location=/usr/src/myapp/ -Dspring.profiles.active=$${PROFILE} efti-gate.jar --port=$${PORT}
+    command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar -Dspring.config.location=/usr/src/myapp/ -Dspring.profiles.active=$${PROFILE} efti-gate.jar
     ports:
       - 8881:8881
       - 8891:5005
@@ -107,7 +107,7 @@ services:
     volumes:
       - ./gate:/usr/src/myapp
     working_dir: /usr/src/myapp
-    command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar -Dspring.config.location=/usr/src/myapp/ -Dspring.profiles.active=$${PROFILE} efti-gate.jar --port=$${PORT}
+    command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar -Dspring.config.location=/usr/src/myapp/ -Dspring.profiles.active=$${PROFILE} efti-gate.jar
     ports:
       - 8882:8882
       - 8892:5005
