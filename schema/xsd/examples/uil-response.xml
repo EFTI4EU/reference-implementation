@@ -2,16 +2,16 @@
     xmlns="http://efti.eu/v1/consignment/common"
     xmlns:ed="http://efti.eu/v1/edelivery"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery.xsd http://efti.eu/v1/consignment/common ../consignment-dummy.xsd ">
+    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery.xsd">
 
   <consignment>
     <!-- eFTI39 -->
-    <carrierAcceptanceDateTime>2024-01-01T00:00:00Z</carrierAcceptanceDateTime>
+    <carrierAcceptanceDateTime>202401010000</carrierAcceptanceDateTime>
 
 
     <deliveryEvent>
       <!-- eFTI188 -->
-      <actualOccurrenceDateTime>2024-01-02T00:00:00Z</actualOccurrenceDateTime>
+      <actualOccurrenceDateTime>202401020000</actualOccurrenceDateTime>
     </deliveryEvent>
 
     <mainCarriageTransportMovement>

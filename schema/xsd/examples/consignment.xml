@@ -5,11 +5,11 @@
     xsi:schemaLocation="http://efti.eu/v1/consignment/identifier ../consignment-identifier.xsd">
 
   <!-- eFTI39 -->
-  <carrierAcceptanceDateTime>2024-01-01T00:00:00Z</carrierAcceptanceDateTime>
+  <carrierAcceptanceDateTime formatId="203">202401010000</carrierAcceptanceDateTime>
 
   <deliveryEvent>
     <!-- eFTI188 -->
-    <actualOccurrenceDateTime>2024-01-02T00:00:00Z</actualOccurrenceDateTime>
+    <actualOccurrenceDateTime formatId="203">202401020000</actualOccurrenceDateTime>
   </deliveryEvent>
 
   <mainCarriageTransportMovement>
@@ -40,7 +40,7 @@
     <!-- eFTI378 -->
     <categoryCode>AE</categoryCode>
     <!-- eFTI374 -->
-    <id>313</id>
+    <id schemeAgencyId="20">313</id>
 
     <!-- eFTI578 -->
     <registrationCountry>

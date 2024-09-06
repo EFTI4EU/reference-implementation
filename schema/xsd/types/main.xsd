@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://efti.eu/v1/types"
+            elementFormDefault="qualified">
+  <xsd:include schemaLocation="common.xsd"/>
+  <xsd:include schemaLocation="currency.xsd"/>
+  <xsd:include schemaLocation="measurement.xsd"/>
+  <xsd:include schemaLocation="time.xsd"/>
+</xsd:schema>

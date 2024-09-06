@@ -1,49 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:efti="http://efti.eu/v1/consignment/common" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:format="http://efti.eu/v1/consignment/format" targetNamespace="http://efti.eu/v1/consignment/common"
+            xmlns:types="http://efti.eu/v1/types" targetNamespace="http://efti.eu/v1/consignment/common"
             elementFormDefault="qualified">
-  <xsd:import namespace="http://efti.eu/v1/consignment/format" schemaLocation="formats.xsd"/>
+  <xsd:import namespace="http://efti.eu/v1/types" schemaLocation="types/main.xsd"/>
   <xsd:element name="consignment" type="efti:SupplyChainConsignment"/>
-  <xsd:complexType name="AirFlowUnitMeasure">
-    <xsd:sequence>
-      <xsd:element name="unit" type="xsd:string" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure Unit. Code"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="value" type="xsd:decimal" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure. Content"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
-  <xsd:complexType name="Amount">
-    <xsd:sequence>
-      <xsd:element name="currency" type="xsd:string" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Amount. Currency. Identifier"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="value" type="xsd:decimal" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Amount. Content"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
   <xsd:complexType name="AssociatedTransportEquipment">
     <xsd:sequence>
       <xsd:element name="affixedSeal" type="efti:LogisticsSeal" minOccurs="0" maxOccurs="unbounded">
@@ -71,7 +31,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="goodsItemUnitQuantity" type="format:Integer8" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="goodsItemUnitQuantity" type="types:Integer8" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015612" id="Associated_ Transport Equipment. Goods Item_ Unit. Quantity"/>
@@ -82,7 +42,7 @@
           <xsd:documentation>A quantity of goods items in this associated transport equipment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="grossGoodsVolumeMeasure" type="efti:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="grossGoodsVolumeMeasure" type="types:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015610" id="Associated_ Transport Equipment. Gross_ Goods Volume. Measure"/>
@@ -94,7 +54,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="grossGoodsWeightMeasure" type="efti:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="grossGoodsWeightMeasure" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015608" id="Associated_ Transport Equipment. Gross_ Goods Weight. Measure"/>
@@ -106,7 +66,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="grossWeight" type="efti:Measure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="grossWeight" type="types:Measure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01013655" id="Associated_ Transport Equipment. Gross Weight. Measure"/>
@@ -119,7 +79,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004884" id="Associated_ Transport Equipment. Identification. Identifier"/>
@@ -145,7 +105,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="netGoodsVolumeMeasure" type="efti:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="netGoodsVolumeMeasure" type="types:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015611" id="Associated_ Transport Equipment. Net_ Goods Volume. Measure"/>
@@ -157,7 +117,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="netGoodsWeightMeasure" type="efti:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="netGoodsWeightMeasure" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015609" id="Associated_ Transport Equipment. Net_ Goods Weight. Measure"/>
@@ -169,7 +129,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="reportableQuantity" type="format:Integer8" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="reportableQuantity" type="types:Integer8" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015613" id="Associated_ Transport Equipment. Reportable. Quantity"/>
@@ -180,7 +140,7 @@
           <xsd:documentation>A reportable quantity for this associated transport equipment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="sequenceNumber" type="format:Integer16" minOccurs="0" maxOccurs="1">
+      <xsd:element name="sequenceNumber" type="types:Integer16" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015562" id="Associated_ Transport Equipment. Sequence. Numeric"/>
@@ -193,7 +153,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="stowagePositionID" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="stowagePositionID" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015615" id="Associated_ Transport Equipment. Stowage Position. Identifier"/>
@@ -220,7 +180,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="verifiedGrossWeight" type="efti:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="verifiedGrossWeight" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015563" id="Associated_ Transport Equipment. Verified_ Gross Weight. Measure"/>
@@ -249,7 +209,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003417" id="Attached_ Transport Equipment. Identification. Identifier"/>
@@ -260,7 +220,7 @@
           <xsd:documentation>A unique identifier of this piece of attached transport equipment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="unitQuantity" type="format:Integer8" minOccurs="0" maxOccurs="1">
+      <xsd:element name="unitQuantity" type="types:Integer8" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01008955" id="Attached_ Transport Equipment. Unit. Quantity"/>
@@ -275,7 +235,7 @@
   </xsd:complexType>
   <xsd:complexType name="AuthoritativeSignatoryPerson">
     <xsd:sequence>
-      <xsd:element name="name" type="format:LimitedString35" minOccurs="0" maxOccurs="1">
+      <xsd:element name="name" type="types:LimitedString35" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01002514" id="Authoritative Signatory_ Person. Name. Text"/>
@@ -290,7 +250,7 @@
   </xsd:complexType>
   <xsd:complexType name="CalibratedMeasurement">
     <xsd:sequence>
-      <xsd:element name="valueMeasure" type="efti:Measure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="valueMeasure" type="types:Measure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01013536" id="Calibrated_ Measurement. Value. Measure"/>
@@ -310,7 +270,7 @@
   </xsd:complexType>
   <xsd:complexType name="ContactPerson">
     <xsd:sequence>
-      <xsd:element name="familyName" type="format:LimitedString35" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="familyName" type="types:LimitedString35" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01005150" id="Contact_ Person. Family Name. Text"/>
@@ -326,7 +286,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="givenName" type="format:LimitedString35" minOccurs="0" maxOccurs="1">
+      <xsd:element name="givenName" type="types:LimitedString35" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01005147" id="Contact_ Person. Given Name. Text"/>
@@ -345,7 +305,7 @@
   </xsd:complexType>
   <xsd:complexType name="CreditorFinancialAccount">
     <xsd:sequence>
-      <xsd:element name="proprietaryID" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="proprietaryID" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004850" id="Creditor_ Financial Account. Proprietary_ Identification. Identifier"/>
@@ -388,7 +348,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="quotaID" type="format:LimitedString17" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="quotaID" type="types:Identifier17" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006166" id="Cross-Border_ Regulatory Procedure. Quota. Identifier"/>
@@ -428,7 +388,7 @@
   </xsd:complexType>
   <xsd:complexType name="DocumentAuthentication">
     <xsd:sequence>
-      <xsd:element name="actualDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="actualDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01002641" id="Document_ Authentication. Actual. Date Time"/>
@@ -472,7 +432,7 @@
   </xsd:complexType>
   <xsd:complexType name="DocumentClause">
     <xsd:sequence>
-      <xsd:element name="contentText" type="format:LimitedString256" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="contentText" type="types:LimitedString256" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01002648" id="Document_ Clause. Content. Text"/>
@@ -485,49 +445,9 @@
       </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
-  <xsd:complexType name="DurationUnitMeasure">
-    <xsd:sequence>
-      <xsd:element name="unit" type="xsd:string" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure Unit. Code"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="value" type="xsd:decimal" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure. Content"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
-  <xsd:complexType name="FileSizeUnitMeasure">
-    <xsd:sequence>
-      <xsd:element name="unit" type="xsd:string" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure Unit. Code"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="value" type="xsd:decimal" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure. Content"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
   <xsd:complexType name="GeographicalCoordinate">
     <xsd:sequence>
-      <xsd:element name="latitude" type="efti:Measure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="latitude" type="types:Measure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003618" id="Geographical Coordinate. Latitude. Measure"/>
@@ -543,7 +463,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="longitude" type="efti:Measure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="longitude" type="types:Measure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003619" id="Geographical Coordinate. Longitude. Measure"/>
@@ -557,26 +477,6 @@
           <xsd:documentation>The measure of the longitude as an angular distance east or west from the Greenwich
             meridian to the meridian of a specific place (Reference ISO 6709).
           </xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
-  <xsd:complexType name="LinearUnitMeasure">
-    <xsd:sequence>
-      <xsd:element name="unit" type="xsd:string" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure Unit. Code"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="value" type="xsd:decimal" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure. Content"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
         </xsd:annotation>
       </xsd:element>
     </xsd:sequence>
@@ -598,7 +498,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003680" id="Logistics_ Location. Identification. Identifier"/>
@@ -647,7 +547,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="name" type="format:LimitedString256" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="name" type="types:LimitedString256" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003681" id="Logistics_ Location. Name. Text"/>
@@ -707,7 +607,7 @@
   </xsd:complexType>
   <xsd:complexType name="LogisticsPackage">
     <xsd:sequence>
-      <xsd:element name="information" type="format:LimitedString35" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="information" type="types:LimitedString35" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003704" id="Logistics_ Package. Information. Text"/>
@@ -717,7 +617,7 @@
           <xsd:documentation>Information, expressed as text, for this logistics package.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="itemQuantity" type="format:Integer8" minOccurs="0" maxOccurs="1">
+      <xsd:element name="itemQuantity" type="types:Integer8" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003690" id="Logistics_ Package. Item. Quantity"/>
@@ -794,7 +694,7 @@
           <xsd:documentation>A code specifying the type of logistics package.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="typeText" type="format:LimitedString35" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="typeText" type="types:LimitedString35" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003698" id="Logistics_ Package. Type. Text"/>
@@ -825,7 +725,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="description" type="format:LimitedString128" minOccurs="0" maxOccurs="1">
+      <xsd:element name="description" type="types:LimitedString128" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01013049" id="Logistics_ Risk Analysis Result. Description. Text"/>
@@ -835,7 +735,7 @@
           <xsd:documentation>The textual description of this logistics risk analysis result.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="informationText" type="format:LimitedString128" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="informationText" type="types:LimitedString128" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015623" id="Logistics_ Risk Analysis Result. Information. Text"/>
@@ -900,7 +800,7 @@
           <xsd:documentation>A code specifying a condition of this logistics seal.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="id" type="format:LimitedString70" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier70" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003714" id="Logistics_ Seal. Identification. Identifier"/>
@@ -945,7 +845,7 @@
   </xsd:complexType>
   <xsd:complexType name="LogisticsServiceCharge">
     <xsd:sequence>
-      <xsd:element name="appliedAmount" type="efti:Amount" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="appliedAmount" type="types:Amount" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003730" id="Logistics_ Service Charge. Applied. Amount"/>
@@ -1022,7 +922,7 @@
   </xsd:complexType>
   <xsd:complexType name="LogisticsShippingMarks">
     <xsd:sequence>
-      <xsd:element name="markingText" type="format:LimitedString70" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="markingText" type="types:LimitedString70" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003742" id="Logistics_ Shipping Marks. Marking. Text"/>
@@ -1095,7 +995,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="grossGoodsVolumeMeasure" type="efti:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="grossGoodsVolumeMeasure" type="types:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015626" id="Logistics_ Transport Equipment. Gross_ Goods Volume. Measure"/>
@@ -1107,7 +1007,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="grossGoodsWeightMeasure" type="efti:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="grossGoodsWeightMeasure" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015624" id="Logistics_ Transport Equipment. Gross_ Goods Weight. Measure"/>
@@ -1119,7 +1019,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="grossVolume" type="efti:VolumeUnitMeasure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="grossVolume" type="types:VolumeUnitMeasure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003764" id="Logistics_ Transport Equipment. Gross Volume. Measure"/>
@@ -1131,7 +1031,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003758" id="Logistics_ Transport Equipment. Identification. Identifier"/>
@@ -1155,7 +1055,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="netGoodsVolumeMeasure" type="efti:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="netGoodsVolumeMeasure" type="types:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015627" id="Logistics_ Transport Equipment. Net_ Goods Volume. Measure"/>
@@ -1167,7 +1067,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="netGoodsWeightMeasure" type="efti:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="netGoodsWeightMeasure" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015625" id="Logistics_ Transport Equipment. Net_ Goods Weight. Measure"/>
@@ -1210,7 +1110,7 @@
           <xsd:documentation>The registration country for this logistics transport equipment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="reportableQuantity" type="format:Integer8" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="reportableQuantity" type="types:Integer8" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015629" id="Logistics_ Transport Equipment. Reportable. Quantity"/>
@@ -1222,7 +1122,7 @@
           <xsd:documentation>A reportable quantity for this logistics transport equipment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="sealQuantity" type="format:Integer8" minOccurs="0" maxOccurs="1">
+      <xsd:element name="sealQuantity" type="types:Integer8" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006135" id="Logistics_ Transport Equipment. Seal. Quantity"/>
@@ -1232,7 +1132,7 @@
           <xsd:documentation>The quantity of seals for this piece of logistics transport equipment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="sequenceNumber" type="format:Integer16" minOccurs="0" maxOccurs="1">
+      <xsd:element name="sequenceNumber" type="types:Integer16" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003779" id="Logistics_ Transport Equipment. Sequence. Numeric"/>
@@ -1260,7 +1160,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="stowagePosition" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="stowagePosition" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01013168" id="Logistics_ Transport Equipment. Stowage Position. Identifier"/>
@@ -1277,7 +1177,7 @@
   </xsd:complexType>
   <xsd:complexType name="LogisticsTransportMeans">
     <xsd:sequence>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003822" id="Logistics_ Transport Means. Identification. Identifier"/>
@@ -1291,7 +1191,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="name" type="format:LimitedString70" minOccurs="0" maxOccurs="1">
+      <xsd:element name="name" type="types:LimitedString70" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003823" id="Logistics_ Transport Means. Name. Text"/>
@@ -1418,7 +1318,7 @@
           <xsd:documentation>A transport event specified for this logistics transport movement.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003841" id="Logistics_ Transport Movement. Identification. Identifier"/>
@@ -1489,7 +1389,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="sequenceNumber" type="format:Integer16" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="sequenceNumber" type="types:Integer16" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015631" id="Logistics_ Transport Movement. Sequence. Numeric"/>
@@ -1534,29 +1434,9 @@
       </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
-  <xsd:complexType name="Measure">
-    <xsd:sequence>
-      <xsd:element name="unit" type="xsd:string" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure Unit. Code"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="value" type="xsd:decimal" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure. Content"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
   <xsd:complexType name="Measurement">
     <xsd:sequence>
-      <xsd:element name="conditionMeasure" type="efti:Measure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="conditionMeasure" type="types:Measure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003894" id="Measurement. Condition. Measure"/>
@@ -1589,7 +1469,7 @@
   </xsd:complexType>
   <xsd:complexType name="Note">
     <xsd:sequence>
-      <xsd:element name="contentText" type="format:LimitedString256" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="contentText" type="types:LimitedString256" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01002522" id="Note. Content. Text"/>
@@ -1641,7 +1521,7 @@
           <xsd:documentation>An isotope applicable to this radioactive material.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="fissileCriticalitySafetyIndexNumber" type="format:Decimal16d6" minOccurs="0" maxOccurs="1">
+      <xsd:element name="fissileCriticalitySafetyIndexNumber" type="types:Decimal16d6" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014889" id="Radioactive_ Material. Fissile Criticality Safety_ Index. Numeric"/>
@@ -1669,7 +1549,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="specialFormInformation" type="format:LimitedString70" minOccurs="0" maxOccurs="1">
+      <xsd:element name="specialFormInformation" type="types:LimitedString70" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006198" id="Radioactive_ Material. Special Form_ Information. Text"/>
@@ -1731,7 +1611,7 @@
           <xsd:documentation>A contractual clause of this referenced document.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="formattedIssueDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="formattedIssueDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01011525" id="Referenced_ Document. Formatted_ Issue. Date Time"/>
@@ -1742,7 +1622,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="id" type="format:LimitedString35" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier35" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003991" id="Referenced_ Document. Identification. Identifier"/>
@@ -1833,7 +1713,7 @@
           <xsd:documentation>The code specifying the type of referenced document.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="uRI" type="format:LimitedString512" minOccurs="0" maxOccurs="1">
+      <xsd:element name="uRI" type="types:Identifier512" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01001571" id="Referenced_ Document. URI_ Identification. Identifier"/>
@@ -1854,7 +1734,7 @@
   </xsd:complexType>
   <xsd:complexType name="ReferencedLogisticsTransportEquipment">
     <xsd:sequence>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004023" id="Referenced_ Logistics_ Transport Equipment. Identification. Identifier"/>
@@ -1872,7 +1752,7 @@
   </xsd:complexType>
   <xsd:complexType name="RepresentativePerson">
     <xsd:sequence>
-      <xsd:element name="name" type="format:LimitedString35" minOccurs="0" maxOccurs="1">
+      <xsd:element name="name" type="types:LimitedString35" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004068" id="Representative_ Person. Name. Text"/>
@@ -1888,7 +1768,7 @@
   </xsd:complexType>
   <xsd:complexType name="SpatialDimension">
     <xsd:sequence>
-      <xsd:element name="description" type="format:LimitedString35" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="description" type="types:LimitedString35" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004078" id="Spatial_ Dimension. Description. Text"/>
@@ -1899,7 +1779,7 @@
           <xsd:documentation>A textual description of this spatial dimension.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="height" type="efti:LinearUnitMeasure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="height" type="types:LinearUnitMeasure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004081" id="Spatial_ Dimension. Height. Measure"/>
@@ -1912,7 +1792,7 @@
           <xsd:documentation>The measure of the height component of this spatial dimension.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="length" type="efti:LinearUnitMeasure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="length" type="types:LinearUnitMeasure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004080" id="Spatial_ Dimension. Length. Measure"/>
@@ -1925,7 +1805,7 @@
           <xsd:documentation>The measure of the length component of this spatial dimension.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="width" type="efti:LinearUnitMeasure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="width" type="types:LinearUnitMeasure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004079" id="Spatial_ Dimension. Width. Measure"/>
@@ -1942,7 +1822,7 @@
   </xsd:complexType>
   <xsd:complexType name="SpecifiedBinaryFile">
     <xsd:sequence>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006015" id="Specified_ Binary File. Identification. Identifier"/>
@@ -1982,7 +1862,7 @@
           <xsd:documentation>A code specifying an action for this specified condition.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="actionDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="actionDateTime" type="types:DateTime" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015638" id="Specified_ Condition. Action. Date Time"/>
@@ -2044,7 +1924,7 @@ The code of the stated condition."
           <xsd:documentation>A code specifying a statement for this specified condition.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="statementText" type="format:LimitedString70" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="statementText" type="types:LimitedString70" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015640" id="Specified_ Condition. Statement. Text"/>
@@ -2096,7 +1976,7 @@ The text of the stated condition."
           <xsd:documentation>A code specifying a subject type for this specified condition.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="valueMeasure" type="efti:Measure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="valueMeasure" type="types:Measure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014754" id="Specified_ Condition. Value. Measure"/>
@@ -2130,7 +2010,7 @@ The text of the stated condition."
           <xsd:documentation>The code specifying the type of specified fuel.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="volumeMeasure" type="efti:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="volumeMeasure" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015620" id="Specified_ Fuel. Volume. Measure"/>
@@ -2141,7 +2021,7 @@ The text of the stated condition."
           <xsd:documentation>A measure of a weight (mass) for this specified fuel.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="weightMeasure" type="efti:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="weightMeasure" type="types:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015621" id="Specified_ Fuel. Weight. Measure"/>
@@ -2153,7 +2033,7 @@ The text of the stated condition."
           <xsd:documentation>A measure of a volume for this specified fuel.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="workingPressureMeasure" type="efti:UnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="workingPressureMeasure" type="types:UnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015622" id="Specified_ Fuel. Working_ Pressure. Measure"/>
@@ -2169,7 +2049,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="SpecifiedLicence">
     <xsd:sequence>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015043" id="Specified_ Licence. Identification. Identifier"/>
@@ -2197,7 +2077,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="SpecifiedLocation">
     <xsd:sequence>
-      <xsd:element name="name" type="format:LimitedString35" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="name" type="types:LimitedString35" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015358" id="Specified_ Location. Name. Text"/>
@@ -2226,7 +2106,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="SpecifiedPeriod">
     <xsd:sequence>
-      <xsd:element name="durationMeasure" type="efti:Measure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="durationMeasure" type="types:Measure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01001271" id="Specified_ Period. Duration. Measure"/>
@@ -2238,7 +2118,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="endDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="endDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01001275" id="Specified_ Period. End. Date Time"/>
@@ -2252,7 +2132,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="maximumDurationMeasure" type="efti:DurationUnitMeasure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="maximumDurationMeasure" type="types:DurationUnitMeasure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015383" id="Specified_ Period. Maximum_ Duration. Measure"/>
@@ -2264,7 +2144,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="startDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="startDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01001274" id="Specified_ Period. Start. Date Time"/>
@@ -2280,7 +2160,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="SpecifiedRadioactiveIsotope">
     <xsd:sequence>
-      <xsd:element name="activityLevelMeasure" type="efti:UnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="activityLevelMeasure" type="types:UnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014764" id="Specified_ Radioactive Isotope. Activity Level. Measure"/>
@@ -2296,7 +2176,7 @@ The text of the stated condition."
           <xsd:documentation>A measure of the activity level of this specified radioactive isotope.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="name" type="format:LimitedString35" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="name" type="types:LimitedString35" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014763" id="Specified_ Radioactive Isotope. Name. Text"/>
@@ -2350,7 +2230,7 @@ The text of the stated condition."
           <xsd:documentation>A trade party associated with this supply chain consignment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="cODAmount" type="efti:Amount" minOccurs="0" maxOccurs="1">
+      <xsd:element name="cODAmount" type="types:Amount" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004189" id="Supply Chain_ Consignment. COD. Amount"/>
@@ -2363,7 +2243,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="cargoInsuranceInstructions" type="format:LimitedString256" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="cargoInsuranceInstructions" type="types:LimitedString256" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01012578"
@@ -2388,7 +2268,7 @@ The text of the stated condition."
           <xsd:documentation>The carrier party for this supply chain consignment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="carrierAcceptanceDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="carrierAcceptanceDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004170" id="Supply Chain_ Consignment. Carrier Acceptance. Date Time"/>
@@ -2479,7 +2359,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="consignorProvidedInformationText" type="format:LimitedString256" minOccurs="0"
+      <xsd:element name="consignorProvidedInformationText" type="types:LimitedString256" minOccurs="0"
                    maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
@@ -2493,7 +2373,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="contractTermsText" type="format:LimitedString256" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="contractTermsText" type="types:LimitedString256" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015090" id="Supply Chain_ Consignment. Contract Terms_ Information. Text"/>
@@ -2519,7 +2399,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="declaredValueForCarriageAmount" type="efti:Amount" minOccurs="0" maxOccurs="1">
+      <xsd:element name="declaredValueForCarriageAmount" type="types:Amount" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006138" id="Supply Chain_ Consignment. Declared Value For Carriage. Amount"/>
@@ -2544,7 +2424,7 @@ The text of the stated condition."
           <xsd:documentation>The delivery event for this supply chain consignment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="deliveryInformation" type="format:LimitedString256" minOccurs="0" maxOccurs="1">
+      <xsd:element name="deliveryInformation" type="types:LimitedString256" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01009001" id="Supply Chain_ Consignment. Delivery_ Information. Text"/>
@@ -2565,7 +2445,7 @@ The text of the stated condition."
           <xsd:documentation>The freight forwarder party for this supply chain consignment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="grossVolume" type="efti:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="grossVolume" type="types:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004175" id="Supply Chain_ Consignment. Gross Volume. Measure"/>
@@ -2579,7 +2459,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="grossWeight" type="efti:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="grossWeight" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004173" id="Supply Chain_ Consignment. Gross Weight. Measure"/>
@@ -2605,7 +2485,7 @@ The text of the stated condition."
           <xsd:documentation>A consignment item included in this supply chain consignment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="information" type="format:LimitedString256" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="information" type="types:LimitedString256" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004203" id="Supply Chain_ Consignment. Information. Text"/>
@@ -2657,7 +2537,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="netWeight" type="efti:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="netWeight" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004174" id="Supply Chain_ Consignment. Net Weight. Measure"/>
@@ -2670,7 +2550,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="numberOfPackages" type="format:Integer8" minOccurs="0" maxOccurs="1">
+      <xsd:element name="numberOfPackages" type="types:Integer8" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004197" id="Supply Chain_ Consignment. Package. Quantity"/>
@@ -2757,7 +2637,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="transportEquipmentQuantity" type="format:Integer8" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="transportEquipmentQuantity" type="types:Integer8" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004198" id="Supply Chain_ Consignment. Transport Equipment. Quantity"/>
@@ -2886,7 +2766,7 @@ The text of the stated condition."
           <xsd:documentation>The linear spatial dimensions of this supply chain consignment item.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="goodsUnitQuantity" type="format:Integer8" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="goodsUnitQuantity" type="types:Integer8" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015641" id="Supply Chain_ Consignment Item. Goods_ Unit. Quantity"/>
@@ -2899,7 +2779,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="grossVolume" type="efti:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="grossVolume" type="types:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004124" id="Supply Chain_ Consignment Item. Gross Volume. Measure"/>
@@ -2930,7 +2810,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="TaxRegistration">
     <xsd:sequence>
-      <xsd:element name="id" type="format:LimitedString35" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier35" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004487" id="Tax_ Registration. Identification. Identifier"/>
@@ -2946,29 +2826,9 @@ The text of the stated condition."
       </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
-  <xsd:complexType name="TemperatureUnitMeasure">
-    <xsd:sequence>
-      <xsd:element name="unit" type="xsd:string" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure Unit. Code"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="value" type="xsd:decimal" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure. Content"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
   <xsd:complexType name="TradeAddress">
     <xsd:sequence>
-      <xsd:element name="additionalStreetName" type="format:LimitedString35" minOccurs="0" maxOccurs="1">
+      <xsd:element name="additionalStreetName" type="types:LimitedString35" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01008282" id="Trade_ Address. Additional_ Street Name. Text"/>
@@ -3015,7 +2875,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="buildingNumber" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="buildingNumber" type="types:LimitedString17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006053" id="Trade_ Address. Building Number. Text"/>
@@ -3054,7 +2914,7 @@ The text of the stated condition."
           <xsd:documentation>The building number, expressed as text, in this trade address.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="cityName" type="format:LimitedString35" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="cityName" type="types:LimitedString35" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004544" id="Trade_ Address. City Name. Text"/>
@@ -3140,7 +3000,7 @@ The text of the stated condition."
           <xsd:documentation>The unique identifier of a country for this trade address.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="countrySubDivisionName" type="format:LimitedString35" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="countrySubDivisionName" type="types:LimitedString35" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004549" id="Trade_ Address. Country Sub-Division Name. Text"/>
@@ -3183,7 +3043,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="departmentName" type="format:LimitedString35" minOccurs="0" maxOccurs="1">
+      <xsd:element name="departmentName" type="types:LimitedString35" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006206" id="Trade_ Address. Department Name. Text"/>
@@ -3207,7 +3067,7 @@ The text of the stated condition."
           <xsd:documentation>The name, expressed as text, of a department for this trade address.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="postOfficeBox" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="postOfficeBox" type="types:LimitedString17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004536" id="Trade_ Address. Post Office Box. Text"/>
@@ -3288,7 +3148,7 @@ The text of the stated condition."
           <xsd:documentation>A code specifying the postcode of this trade address.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="streetName" type="format:LimitedString35" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="streetName" type="types:LimitedString35" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004543" id="Trade_ Address. Street Name. Text"/>
@@ -3359,7 +3219,7 @@ The text of the stated condition."
           <xsd:documentation>Fax communication information for this trade contact.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="personName" type="format:LimitedString35" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="personName" type="types:LimitedString35" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01001642" id="Trade_ Contact. Person Name. Text"/>
@@ -3395,7 +3255,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="TradeContract">
     <xsd:sequence>
-      <xsd:element name="issueDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="issueDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01001653" id="Trade_ Contract. Issue. Date Time"/>
@@ -3526,7 +3386,7 @@ The text of the stated condition."
           <xsd:documentation>A trade contact defined for this trade party.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004595" id="Trade_ Party. Identification. Identifier"/>
@@ -3564,7 +3424,7 @@ The text of the stated condition."
           <xsd:documentation>A unique identifier of this trade party.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="name" type="format:LimitedString70" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="name" type="types:LimitedString70" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004598" id="Trade_ Party. Name. Text"/>
@@ -3709,7 +3569,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="TradePrice">
     <xsd:sequence>
-      <xsd:element name="basisQuantity" type="format:Integer8" minOccurs="0" maxOccurs="1">
+      <xsd:element name="basisQuantity" type="types:Integer8" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01001680" id="Trade_ Price. Basis. Quantity"/>
@@ -3732,7 +3592,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="unitAmount" type="efti:Amount" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="unitAmount" type="types:Amount" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004645" id="Trade_ Price. Unit. Amount"/>
@@ -3747,7 +3607,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="TransportCargo">
     <xsd:sequence>
-      <xsd:element name="identificationText" type="format:LimitedString512" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="identificationText" type="types:LimitedString512" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004759" id="Transport_ Cargo. Identification. Text"/>
@@ -3838,7 +3698,7 @@ The text of the stated condition."
           <xsd:documentation>A logistics package specified for these transported dangerous goods.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="densityMeasure" type="efti:UnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="densityMeasure" type="types:UnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015097" id="Transport_ Dangerous Goods. Density. Measure"/>
@@ -3862,7 +3722,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="explosiveCargoNetWeight" type="efti:WeightUnitMeasure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="explosiveCargoNetWeight" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004787" id="Transport_ Dangerous Goods. Explosive Cargo_ Net Weight. Measure"/>
@@ -3880,7 +3740,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="grossVolume" type="efti:VolumeUnitMeasure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="grossVolume" type="types:VolumeUnitMeasure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004783" id="Transport_ Dangerous Goods. Gross Volume. Measure"/>
@@ -3894,7 +3754,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="grossWeight" type="efti:WeightUnitMeasure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="grossWeight" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004778" id="Transport_ Dangerous Goods. Gross Weight. Measure"/>
@@ -3921,7 +3781,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="hazardClassificationID" type="format:LimitedString7" minOccurs="0" maxOccurs="1">
+      <xsd:element name="hazardClassificationID" type="types:Identifier7" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004780" id="Transport_ Dangerous Goods. Hazard Classification. Identifier"/>
@@ -3967,7 +3827,7 @@ The text of the stated condition."
           <xsd:documentation>Gaseous fuels included in the transport of these dangerous goods.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="information" type="format:LimitedString256" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="information" type="types:LimitedString256" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004768" id="Transport_ Dangerous Goods. Information. Text"/>
@@ -4000,7 +3860,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="meltingPointTemperatureMeasure" type="efti:TemperatureUnitMeasure" minOccurs="0"
+      <xsd:element name="meltingPointTemperatureMeasure" type="types:TemperatureUnitMeasure" minOccurs="0"
                    maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
@@ -4013,7 +3873,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="netWeight" type="efti:WeightUnitMeasure" minOccurs="0" maxOccurs="1">
+      <xsd:element name="netWeight" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004786" id="Transport_ Dangerous Goods. Net Weight. Measure"/>
@@ -4040,7 +3900,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="previousCargoInformation" type="format:LimitedString256" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="previousCargoInformation" type="types:LimitedString256" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015649" id="Transport_ Dangerous Goods. Previous Cargo_ Information. Text"/>
@@ -4056,7 +3916,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="properShippingName" type="format:LimitedString128" minOccurs="0" maxOccurs="1">
+      <xsd:element name="properShippingName" type="types:LimitedString128" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006207" id="Transport_ Dangerous Goods. Proper Shipping Name. Text"/>
@@ -4085,7 +3945,7 @@ The text of the stated condition."
           <xsd:documentation>The radioactive material (Class 7) transported as dangerous goods.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="regulatoryAuthorityName" type="format:LimitedString35" minOccurs="0" maxOccurs="1">
+      <xsd:element name="regulatoryAuthorityName" type="types:LimitedString35" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004764" id="Transport_ Dangerous Goods. Regulatory Authority Name. Text"/>
@@ -4127,7 +3987,7 @@ The text of the stated condition."
           <xsd:documentation>A document related to these transported dangerous goods.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="reportableQuantity" type="format:Integer8" minOccurs="0" maxOccurs="1">
+      <xsd:element name="reportableQuantity" type="types:Integer8" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006210" id="Transport_ Dangerous Goods. Reportable. Quantity"/>
@@ -4141,7 +4001,7 @@ The text of the stated condition."
           <xsd:documentation>The reportable quantity for these transported dangerous goods.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="specialProvisionID" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="specialProvisionID" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006212" id="Transport_ Dangerous Goods. Special Provision. Identifier"/>
@@ -4178,7 +4038,7 @@ The text of the stated condition."
           <xsd:documentation>A stated condition of these transported dangerous goods.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="supplementaryInformation" type="format:LimitedString128" minOccurs="0" maxOccurs="1">
+      <xsd:element name="supplementaryInformation" type="types:LimitedString128" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006208" id="Transport_ Dangerous Goods. Supplementary_ Information. Text"/>
@@ -4195,7 +4055,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="technicalName" type="format:LimitedString128" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="technicalName" type="types:LimitedString128" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004767" id="Transport_ Dangerous Goods. Technical Name. Text"/>
@@ -4246,7 +4106,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="TransportEvent">
     <xsd:sequence>
-      <xsd:element name="actualOccurrenceDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="actualOccurrenceDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004796" id="Transport_ Event. Actual_ Occurrence. Date Time"/>
@@ -4297,7 +4157,7 @@ The text of the stated condition."
           <xsd:documentation>A certifying party for this transport event.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="estimatedOccurrenceDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="estimatedOccurrenceDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004795" id="Transport_ Event. Estimated_ Occurrence. Date Time"/>
@@ -4350,7 +4210,7 @@ The text of the stated condition."
           <xsd:documentation>An observation related to this transport event.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="requestedOccurrenceDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="requestedOccurrenceDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004798" id="Transport_ Event. Requested_ Occurrence. Date Time"/>
@@ -4365,7 +4225,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="scheduledOccurrenceDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="scheduledOccurrenceDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004797" id="Transport_ Event. Scheduled_ Occurrence. Date Time"/>
@@ -4419,7 +4279,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="TransportInstructions">
     <xsd:sequence>
-      <xsd:element name="description" type="format:LimitedString256" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="description" type="types:LimitedString256" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004813" id="Transport_ Instructions. Description. Text"/>
@@ -4434,7 +4294,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="TransportPerson">
     <xsd:sequence>
-      <xsd:element name="birthDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="birthDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004818" id="Transport_ Person. Birth. Date Time"/>
@@ -4445,7 +4305,7 @@ The text of the stated condition."
           <xsd:documentation>The birth date of this transport person.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="familyName" type="format:LimitedString35" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="familyName" type="types:LimitedString35" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01013138" id="Transport_ Person. Family Name. Text"/>
@@ -4456,7 +4316,7 @@ The text of the stated condition."
           <xsd:documentation>A family name, expressed as text, for this transport person.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="givenName" type="format:LimitedString35" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="givenName" type="types:LimitedString35" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01013137" id="Transport_ Person. Given Name. Text"/>
@@ -4467,7 +4327,7 @@ The text of the stated condition."
           <xsd:documentation>A given name, expressed as text, for this transport person.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004816" id="Transport_ Person. Identification. Identifier"/>
@@ -4482,7 +4342,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="TransportRoute">
     <xsd:sequence>
-      <xsd:element name="description" type="format:LimitedString256" minOccurs="0" maxOccurs="1">
+      <xsd:element name="description" type="types:LimitedString256" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004824" id="Transport_ Route. Description. Text"/>
@@ -4510,7 +4370,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="description" type="format:LimitedString256" minOccurs="0" maxOccurs="1">
+      <xsd:element name="description" type="types:LimitedString256" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004839" id="Transport_ Service. Description. Text"/>
@@ -4525,7 +4385,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="TransportationWasteMaterial">
     <xsd:sequence>
-      <xsd:element name="weight" type="efti:Measure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="weight" type="types:Measure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014623" id="Transportation Waste_ Material. Weight. Measure"/>
@@ -4538,29 +4398,9 @@ The text of the stated condition."
       </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
-  <xsd:complexType name="UnitMeasure">
-    <xsd:sequence>
-      <xsd:element name="unit" type="xsd:string" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure Unit. Code"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="value" type="xsd:decimal" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure. Content"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
   <xsd:complexType name="UniversalCommunication">
     <xsd:sequence>
-      <xsd:element name="completeNumber" type="format:LimitedString35" minOccurs="0" maxOccurs="1">
+      <xsd:element name="completeNumber" type="types:LimitedString35" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01001256" id="Universal_ Communication. Complete Number. Text"/>
@@ -4583,7 +4423,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="uRI" type="format:LimitedString35" minOccurs="0" maxOccurs="1">
+      <xsd:element name="uRI" type="types:Identifier35" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01001253" id="Universal_ Communication. URI. Identifier"/>
@@ -4598,46 +4438,6 @@ The text of the stated condition."
           <xsd:documentation>The Uniform Resource Identifier (URI), such as a web or an email address, for this
             universal communication.
           </xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
-  <xsd:complexType name="VolumeUnitMeasure">
-    <xsd:sequence>
-      <xsd:element name="unit" type="xsd:string" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure Unit. Code"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="value" type="xsd:decimal" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure. Content"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
-  <xsd:complexType name="WeightUnitMeasure">
-    <xsd:sequence>
-      <xsd:element name="unit" type="xsd:string" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure Unit. Code"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="value" type="xsd:decimal" minOccurs="0" maxOccurs="1">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <unCefact id="Measure. Content"/>
-          </xsd:appinfo>
-          <xsd:documentation/>
         </xsd:annotation>
       </xsd:element>
     </xsd:sequence>

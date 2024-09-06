@@ -6,11 +6,11 @@
 
   <ed:consignment>
     <!-- eFTI39 -->
-    <carrierAcceptanceDateTime>2024-01-01T00:00:00Z</carrierAcceptanceDateTime>
+    <carrierAcceptanceDateTime>202401010000</carrierAcceptanceDateTime>
 
     <deliveryEvent>
       <!-- eFTI188 -->
-      <actualOccurrenceDateTime>2024-01-02T00:00:00Z</actualOccurrenceDateTime>
+      <actualOccurrenceDateTime>202401020000</actualOccurrenceDateTime>
     </deliveryEvent>
 
 
@@ -62,12 +62,12 @@
 
   <ed:consignment>
     <!-- eFTI39 -->
-    <carrierAcceptanceDateTime>2024-02-01T00:00:00Z</carrierAcceptanceDateTime>
+    <carrierAcceptanceDateTime>202402010000</carrierAcceptanceDateTime>
 
 
     <deliveryEvent>
       <!-- eFTI188 -->
-      <actualOccurrenceDateTime>2024-02-02T00:00:00Z</actualOccurrenceDateTime>
+      <actualOccurrenceDateTime>202402020000+0000</actualOccurrenceDateTime>
     </deliveryEvent>
 
     <mainCarriageTransportMovement>

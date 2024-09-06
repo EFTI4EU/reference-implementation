@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:efti="http://efti.eu/v1/consignment/identifier" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:format="http://efti.eu/v1/consignment/format"
-            targetNamespace="http://efti.eu/v1/consignment/identifier" elementFormDefault="qualified">
-  <xsd:import namespace="http://efti.eu/v1/consignment/format" schemaLocation="formats.xsd"/>
+            xmlns:types="http://efti.eu/v1/types" targetNamespace="http://efti.eu/v1/consignment/identifier"
+            elementFormDefault="qualified">
+  <xsd:import namespace="http://efti.eu/v1/types" schemaLocation="types/main.xsd"/>
   <xsd:element name="consignment" type="efti:SupplyChainConsignment"/>
   <xsd:complexType name="AssociatedTransportEquipment">
     <xsd:sequence>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004884" id="Associated_ Transport Equipment. Identification. Identifier"/>
@@ -19,7 +19,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="sequenceNumber" type="format:Integer16" minOccurs="0" maxOccurs="1">
+      <xsd:element name="sequenceNumber" type="types:Integer16" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015562" id="Associated_ Transport Equipment. Sequence. Numeric"/>
@@ -65,7 +65,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003758" id="Logistics_ Transport Equipment. Identification. Identifier"/>
@@ -88,7 +88,7 @@
           <xsd:documentation>The registration country for this logistics transport equipment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="sequenceNumber" type="format:Integer16" minOccurs="0" maxOccurs="1">
+      <xsd:element name="sequenceNumber" type="types:Integer16" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003779" id="Logistics_ Transport Equipment. Sequence. Numeric"/>
@@ -106,7 +106,7 @@
   </xsd:complexType>
   <xsd:complexType name="LogisticsTransportMeans">
     <xsd:sequence>
-      <xsd:element name="id" type="format:LimitedString17" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003822" id="Logistics_ Transport Means. Identification. Identifier"/>
@@ -183,7 +183,7 @@
   </xsd:complexType>
   <xsd:complexType name="SupplyChainConsignment">
     <xsd:sequence>
-      <xsd:element name="carrierAcceptanceDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="carrierAcceptanceDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004170" id="Supply Chain_ Consignment. Carrier Acceptance. Date Time"/>
@@ -258,7 +258,7 @@
   </xsd:complexType>
   <xsd:complexType name="TransportEvent">
     <xsd:sequence>
-      <xsd:element name="actualOccurrenceDateTime" type="xsd:dateTime" minOccurs="0" maxOccurs="1">
+      <xsd:element name="actualOccurrenceDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004796" id="Transport_ Event. Actual_ Occurrence. Date Time"/>
