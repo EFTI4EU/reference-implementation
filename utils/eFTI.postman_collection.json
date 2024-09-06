@@ -266,7 +266,44 @@
 							"response": []
 						},
 						{
-							"name": "Gate to Gate UIL",
+							"name": "Gate to SY Gate UIL",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_sy_domain}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.massivedynamic.com\",\r\n    \"authority\" : {\r\n        \"country\": \"BO\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gate_bo_url}}/v1/requestUil",
+									"host": [
+										"{{gate_bo_url}}"
+									],
+									"path": [
+										"v1",
+										"requestUil"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Gate to LI Gate UIL",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -731,6 +768,43 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Gate to Gate UIL",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_fr_url}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.ttf.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gate_bo_url}}/v1/requestUil",
+									"host": [
+										"{{gate_bo_url}}"
+									],
+									"path": [
+										"v1",
+										"requestUil"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -746,7 +820,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
@@ -757,7 +832,8 @@
 											"let responseData = pm.response.json();\r",
 											"pm.globals.set(\"access_token\", responseData.access_token);"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -797,13 +873,13 @@
 									]
 								},
 								"url": {
-									"raw": "{{kc_li_url}}/realms/eFTI_SY/protocol/openid-connect/token",
+									"raw": "{{kc_li_url}}/realms/eFTI_LI/protocol/openid-connect/token",
 									"host": [
 										"{{kc_li_url}}"
 									],
 									"path": [
 										"realms",
-										"eFTI_SY",
+										"eFTI_LI",
 										"protocol",
 										"openid-connect",
 										"token"
@@ -1182,6 +1258,43 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n    \"eFTIGateUrl\": \"https://gate.efti.dev.k8s.groupein.local\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.ttf.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gate_sy_url}}/v1/requestUil",
+									"host": [
+										"{{gate_sy_url}}"
+									],
+									"path": [
+										"v1",
+										"requestUil"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Post UIL Control Copy",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_sy_url}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.massivedynamic.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
