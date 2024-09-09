@@ -1,11 +1,11 @@
 <body>
     <requestUuid>67fe38bd-6bf7-4b06-b20e-206264bd639c</requestUuid>
     <status>PENDING</status>
-    <metadata>
-        <metadata>
+    <identifiers>
+        <identifiers>
             <countryStart>FR</countryStart>
             <countryEnd>FR</countryEnd>
             <isDangerousGoods>true</isDangerousGoods>
-        </metadata>
-    </metadata>
+        </identifiers>
+    </identifiers>
 </body>

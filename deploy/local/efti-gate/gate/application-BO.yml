@@ -7,7 +7,7 @@ spring:
     control:
       liquibase:
         default-schema: eftibo
-    metadata:
+    identifiers:
       liquibase:
         default-schema: eftibo
   security:
@@ -19,7 +19,7 @@ spring:
     properties:
       hibernate:
         control_schema: "eftibo"
-        metadata_schema: "eftibo"
+        identifiers_schema: "eftibo"
 
 gate:
   owner: http://efti.gate.borduria.eu

@@ -32,14 +32,14 @@ spring:
       driverClassName: org.postgresql.Driver
       liquibase:
         change-log: classpath:db.changelog/db.gate.changelog-master.xml
-    metadata:
+    identifiers:
       jdbc-url: jdbc:postgresql://host.docker.internal:2345/efti
       url: jdbc:postgresql://host.docker.internal:2345/efti
       username: root
       password: root
       driverClassName: org.postgresql.Driver
       liquibase:
-        change-log: classpath:db.changelog/db.metadata.changelog-master.xml
+        change-log: classpath:db.changelog/db.identifiers.changelog-master.xml
   jackson:
     default-property-inclusion: NON_NULL
 

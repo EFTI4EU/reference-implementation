@@ -7,7 +7,7 @@ spring:
     control:
       liquibase:
         default-schema: eftili
-    metadata:
+    identifiers:
       liquibase:
         default-schema: eftili
   security:
@@ -19,7 +19,7 @@ spring:
     properties:
       hibernate:
         control_schema: "eftili"
-        metadata_schema: "eftili"
+        identifiers_schema: "eftili"
 
 gate:
   owner: http://efti.gate.listenbourg.eu

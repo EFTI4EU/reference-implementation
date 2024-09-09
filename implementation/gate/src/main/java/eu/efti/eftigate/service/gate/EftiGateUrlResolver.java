@@ -1,6 +1,6 @@
 package eu.efti.eftigate.service.gate;
 
-import eu.efti.commons.dto.MetadataRequestDto;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.eftigate.entity.GateEntity;
 import eu.efti.eftigate.repository.GateRepository;
@@ -24,11 +24,11 @@ public class EftiGateUrlResolver {
 
     private final GateRepository gateRepository;
 
-    public List<String> resolve(final MetadataRequestDto metadataRequestDto) {
+    public List<String> resolve(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
         final Map<CountryIndicator, GateEntity> destinationGatesIndicatorMap;
 
-        if (CollectionUtils.isNotEmpty(metadataRequestDto.getEFTIGateIndicator())){
-            final List<CountryIndicator> requestedCountryIndicators = metadataRequestDto.getEFTIGateIndicator().stream().map(CountryIndicator::valueOf).toList();
+        if (CollectionUtils.isNotEmpty(identifiersRequestDto.getEFTIGateIndicator())){
+            final List<CountryIndicator> requestedCountryIndicators = identifiersRequestDto.getEFTIGateIndicator().stream().map(CountryIndicator::valueOf).toList();
             final List<GateEntity> registeredDestinationGates = gateRepository.findByCountryIn(requestedCountryIndicators);
             destinationGatesIndicatorMap =  mapRequestedCountriesToRegisteredGates(requestedCountryIndicators, registeredDestinationGates);
 

@@ -127,7 +127,7 @@
         <module>commons</module>
         <module>efti-logger</module>
         <module>edelivery-ap-connector</module>
-        <module>metadata-registry</module>
+        <module>registry-of-identifiers</module>
         <module>gate</module>
         <module>platform-gate-simulator</module>
     </modules>

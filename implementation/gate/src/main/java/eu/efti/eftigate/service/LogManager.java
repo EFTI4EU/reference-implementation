@@ -1,7 +1,7 @@
 package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.MetadataDto;
+import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.dto.ValidableDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
@@ -80,7 +80,7 @@ public class LogManager {
     }
 
     public void logLocalRegistryMessage(final ControlDto control,
-                                        final List<MetadataDto> metadataDtoList) {
+                                        final List<IdentifiersDto> identifiersDtoList) {
         final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
                 .requestingComponentType(GATE)
                 .requestingComponentId(gateProperties.getOwner())
@@ -88,7 +88,7 @@ public class LogManager {
                 .respondingComponentType(GATE)
                 .respondingComponentId(gateProperties.getOwner())
                 .respondingComponentCountry(gateProperties.getCountry()).build();
-        final String body = serializeUtils.mapObjectToBase64String(metadataDtoList);
+        final String body = serializeUtils.mapObjectToBase64String(identifiersDtoList);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, StatusEnum.COMPLETE, false);
     }
 

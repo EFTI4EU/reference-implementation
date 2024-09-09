@@ -48,7 +48,7 @@ class EftiRequestUpdaterTest extends BaseServiceTest {
         requestEntity.setEdeliveryMessageId("messageId");
         requestEntity.setRequestType("UIL");
         final ControlEntity controlEntity = new ControlEntity();
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH);
+        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         requestEntity.setControl(controlEntity);
         controlEntity.setRequests(List.of(requestEntity));
     }

@@ -7,7 +7,7 @@ import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
-import eu.efti.eftigate.entity.MetadataResults;
+import eu.efti.eftigate.entity.IdentifiersResults;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +34,7 @@ public class RabbitRequestDto {
     private String gateUrlDest;
     private ControlDto control;
     private ErrorDto error;
-    private MetadataResults metadataResults;
+    private IdentifiersResults identifiersResults;
     private RequestType requestType;
     private String note;
     @JsonProperty("eFTIPlatformUrl")

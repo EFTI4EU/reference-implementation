@@ -220,7 +220,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
                 Arguments.of(EDeliveryAction.GET_IDENTIFIERS, false),
                 Arguments.of(EDeliveryAction.SEND_NOTES, true),
                 Arguments.of(EDeliveryAction.GET_UIL, false),
-                Arguments.of(EDeliveryAction.UPLOAD_METADATA, false),
+                Arguments.of(EDeliveryAction.UPLOAD_IDENTIFIERS, false),
                 Arguments.of(EDeliveryAction.FORWARD_UIL, false)
         );
     }
@@ -233,12 +233,12 @@ class NotesRequestServiceTest extends BaseServiceTest {
 
     private static Stream<Arguments> getArgumentsForRequestTypeEnumSupport() {
         return Stream.of(
-                Arguments.of(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH, false),
-                Arguments.of(RequestTypeEnum.EXTERNAL_METADATA_SEARCH, false),
+                Arguments.of(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH, false),
+                Arguments.of(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH, false),
                 Arguments.of(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, false),
                 Arguments.of(RequestTypeEnum.EXTERNAL_UIL_SEARCH, false),
                 Arguments.of(RequestTypeEnum.EXTERNAL_NOTE_SEND, true),
-                Arguments.of(RequestTypeEnum.LOCAL_METADATA_SEARCH, false),
+                Arguments.of(RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH, false),
                 Arguments.of(RequestTypeEnum.LOCAL_UIL_SEARCH, false)
         );
     }

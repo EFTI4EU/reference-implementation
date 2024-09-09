@@ -31,7 +31,7 @@ class GateToRequestTypeFunctionTest {
         final RequestTypeEnum requestType = gateToRequestTypeFunction.apply(List.of("https://efti.gate.fr.eu", "https://efti.gate.be.eu"));
 
         //Assert
-        assertEquals(RequestTypeEnum.EXTERNAL_METADATA_SEARCH, requestType);
+        assertEquals(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH, requestType);
     }
 
     @Test
@@ -40,7 +40,7 @@ class GateToRequestTypeFunctionTest {
         final RequestTypeEnum requestType = gateToRequestTypeFunction.apply(List.of("https://efti.gate.fr.eu"));
 
         //Assert
-        assertEquals(RequestTypeEnum.LOCAL_METADATA_SEARCH, requestType);
+        assertEquals(RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH, requestType);
     }
 
     @Test
@@ -49,7 +49,7 @@ class GateToRequestTypeFunctionTest {
         final RequestTypeEnum requestType = gateToRequestTypeFunction.apply(List.of("https://efti.gate.be.eu"));
 
         //Assert
-        assertEquals(RequestTypeEnum.EXTERNAL_METADATA_SEARCH, requestType);
+        assertEquals(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH, requestType);
     }
 
 

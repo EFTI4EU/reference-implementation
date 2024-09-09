@@ -57,7 +57,7 @@
         </dependency>
         <dependency>
             <groupId>eu.efti</groupId>
-            <artifactId>metadata-registry</artifactId>
+            <artifactId>registry-of-identifiers</artifactId>
             <version>0.4.1-SNAPSHOT</version>
         </dependency>
         <dependency>

@@ -1,6 +1,6 @@
 package eu.efti.eftigate.service;
 
-import eu.efti.commons.dto.MetadataDto;
+import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.exception.TechnicalException;
 import eu.efti.commons.utils.SerializeUtils;
@@ -12,7 +12,7 @@ import eu.efti.edeliveryapconnector.service.NotificationService;
 import eu.efti.eftigate.service.request.EftiRequestUpdater;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
-import eu.efti.metadataregistry.service.MetadataService;
+import eu.efti.identifiersregistry.service.IdentifiersService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class ApIncomingService {
 
     private final NotificationService notificationService;
     private final RequestServiceFactory requestServiceFactory;
-    private final MetadataService metadataService;
+    private final IdentifiersService identifiersService;
     private final SerializeUtils serializeUtils;
     private final EftiRequestUpdater eftiRequestUpdater;
 
@@ -48,7 +48,7 @@ public class ApIncomingService {
             case GET_UIL, GET_IDENTIFIERS -> requestService.updateWithResponse(notificationDto);
             case FORWARD_UIL -> requestService.receiveGateRequest(notificationDto);
             case SEND_NOTES -> requestService.manageMessageReceive(notificationDto);
-            case UPLOAD_METADATA -> metadataService.createOrUpdate(parseBodyToMetadata(notificationDto.getContent()));
+            case UPLOAD_IDENTIFIERS -> identifiersService.createOrUpdate(parseBodyToIdentifiers(notificationDto.getContent()));
             default -> log.warn("unmanaged notification type {}", notificationDto.getContent().getAction());
         }
     }
@@ -62,8 +62,8 @@ public class ApIncomingService {
         return action;
     }
 
-    private MetadataDto parseBodyToMetadata(final NotificationContentDto notificationContent) {
-        return serializeUtils.mapXmlStringToClass(notificationContent.getBody(), MetadataDto.class);
+    private IdentifiersDto parseBodyToIdentifiers(final NotificationContentDto notificationContent) {
+        return serializeUtils.mapXmlStringToClass(notificationContent.getBody(), IdentifiersDto.class);
     }
 
     private RequestService<?> getRequestService(final EDeliveryAction eDeliveryAction) {
