@@ -267,8 +267,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, times(1)).createAndSendRequest(any(), any());
         verify(controlRepository, times(1)).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager, never()).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager, never()).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertNull(requestUuidDtoResult.getErrorCode());
         assertNull(requestUuidDtoResult.getErrorDescription());
@@ -283,8 +283,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, times(1)).createAndSendRequest(any(), any());
         verify(controlRepository, times(1)).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager, never()).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager, never()).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertNull(requestUuidDtoResult.getErrorCode());
         assertNull(requestUuidDtoResult.getErrorDescription());
@@ -300,8 +300,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(controlRepository, never()).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.UIL_GATE_MISSING.name(), requestUuidDtoResult.getErrorCode());
         assertEquals("Missing parameter eFTIGateUrl", requestUuidDtoResult.getErrorDescription());
@@ -316,8 +316,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(controlRepository, times(0)).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.UIL_GATE_INCORRECT_FORMAT.name(), requestUuidDtoResult.getErrorCode());
         assertEquals("Gate format incorrect.", requestUuidDtoResult.getErrorDescription());
@@ -333,8 +333,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(controlRepository, never()).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.UIL_PLATFORM_MISSING.name(), requestUuidDtoResult.getErrorCode());
         assertEquals("Missing parameter eFTIPlatformUrl", requestUuidDtoResult.getErrorDescription());
@@ -349,8 +349,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(controlRepository, times(0)).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.UIL_PLATFORM_INCORRECT_FORMAT.name(), requestUuidDtoResult.getErrorCode());
         assertEquals("Platform format incorrect.", requestUuidDtoResult.getErrorDescription());
@@ -366,8 +366,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(controlRepository, never()).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.UIL_UUID_MISSING.name(), requestUuidDtoResult.getErrorCode());
         assertEquals("Missing parameter eFTIDataUuid", requestUuidDtoResult.getErrorDescription());
@@ -382,8 +382,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(controlRepository, times(0)).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.UIL_UUID_INCORRECT_FORMAT.name(), requestUuidDtoResult.getErrorCode());
         assertEquals("Uuid format incorrect.", requestUuidDtoResult.getErrorDescription());
@@ -401,7 +401,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(controlRepository, times(1)).findByRequestUuid(any());
 
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(requestUuidDtoResult.getRequestUuid(), controlEntity.getRequestUuid());
     }
@@ -415,7 +415,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(controlRepository, times(1)).findByRequestUuid(any());
 
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(requestUuidDtoResult.getRequestUuid(), controlEntity.getRequestUuid());
     }

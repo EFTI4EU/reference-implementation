@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ApIncomingService {
 
+
     private final NotificationService notificationService;
     private final RequestServiceFactory requestServiceFactory;
     private final MetadataService metadataService;
@@ -35,10 +36,10 @@ public class ApIncomingService {
     private void rootResponse(final NotificationDto notificationDto) {
 
         if (NotificationType.SEND_SUCCESS.equals(notificationDto.getNotificationType())) {
-            eftiRequestUpdater.manageSendSuccess(notificationDto);
+            eftiRequestUpdater.manageSendSuccess(notificationDto, LogManager.FTI_ROOT_RESPONSE_SUCESS);
             return;
         } else if (NotificationType.SEND_FAILURE.equals(notificationDto.getNotificationType())) {
-            eftiRequestUpdater.manageSendFailure(notificationDto);
+            eftiRequestUpdater.manageSendFailure(notificationDto, LogManager.FTI_SEND_FAIL);
             return;
         }
 

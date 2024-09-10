@@ -142,7 +142,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         uilRequestService.receiveGateRequest(notificationDto);
 
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
-        verify(logManager).logReceivedMessage(any(), any(), any());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any());
         assertEquals(RequestStatusEnum.SUCCESS, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
 
@@ -176,7 +176,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         uilRequestService.receiveGateRequest(notificationDto);
 
-        verify(logManager).logReceivedMessage(any(), any(), any());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any());
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
         assertEquals(RequestStatusEnum.ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
@@ -212,7 +212,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         uilRequestService.receiveGateRequest(notificationDto);
 
-        verify(logManager).logReceivedMessage(any(), any(), any());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any());
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
         assertEquals(RequestStatusEnum.ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
@@ -244,7 +244,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         uilRequestService.receiveGateRequest(notificationDto);
 
-        verify(logManager).logReceivedMessage(any(), anyString(), anyString());
+        verify(logManager).logReceivedMessage(any(), anyString(), anyString(), anyString());
         verify(controlService).createUilControl(argumentCaptorControlDto.capture());
         assertEquals(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, argumentCaptorControlDto.getValue().getRequestType());
     }

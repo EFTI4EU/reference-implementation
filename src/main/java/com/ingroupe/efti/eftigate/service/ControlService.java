@@ -262,7 +262,7 @@ public class ControlService {
                 error -> createErrorControl(controlDto, error, true),
                 () -> createControlFromType(searchDto, controlDto));
 
-        logManager.logAppRequest(controlDto, searchDto);
+        logManager.logAppRequest(controlDto, searchDto, LogManager.FTI_008_FTI_014);
         return buildResponse(controlDto);
     }
 
@@ -285,7 +285,12 @@ public class ControlService {
 
     private boolean checkOnLocalRegistry(final ControlDto controlDto) {
         log.info("checking local registry for dataUuid {}", controlDto.getEftiDataUuid());
-        return this.metadataService.existByUIL(controlDto.getEftiDataUuid(), controlDto.getEftiGateUrl(), controlDto.getEftiPlatformUrl());
+        //log fti015
+        logManager.logRequestRegistry(controlDto, null, LogManager.FTI_015);
+        final boolean result = this.metadataService.existByUIL(controlDto.getEftiDataUuid(), controlDto.getEftiGateUrl(), controlDto.getEftiPlatformUrl());
+        //log fti016
+        logManager.logRequestRegistry(controlDto, String.valueOf(result), LogManager.FTI_016);
+        return result;
     }
 
     private void createMetadataControl(final ControlDto controlDto, final MetadataRequestDto metadataRequestDto) {
@@ -300,6 +305,8 @@ public class ControlService {
                 eftiAsyncCallsProcessor.checkLocalRepoAsync(metadataRequestDto, saveControl);
             } else {
                 getRequestService(saveControl.getRequestType()).createAndSendRequest(saveControl, destinationUrl);
+                final boolean isCurrentGate = gateProperties.isCurrentGate(destinationUrl);
+                logManager.logFromMetadataRequestDto(controlDto, metadataRequestDto, isCurrentGate, isCurrentGate ? controlDto.getEftiPlatformUrl() : destinationUrl, true, false, LogManager.LOG_FROM_METADATA_REQUEST_DTO);
             }
         });
         log.info("Metadata control with request uuid '{}' has been register", saveControl.getRequestUuid());
@@ -328,7 +335,7 @@ public class ControlService {
             result.setErrorCode(controlDto.getError().getErrorCode());
         }
         if(controlDto.getStatus() != PENDING) { // pending request are not logged
-            logManager.logAppResponse(controlDto, result);
+            logManager.logAppResponse(controlDto, result, LogManager.FTI_017);
         }
         return result;
     }
@@ -355,6 +362,8 @@ public class ControlService {
             result.setErrorDescription(controlDto.getError().getErrorDescription());
             result.setErrorCode(controlDto.getError().getErrorCode());
         }
+        //log fti017
+        logManager.logFromMetadata(result, controlDto, LogManager.FTI_017);
         return result;
     }
 

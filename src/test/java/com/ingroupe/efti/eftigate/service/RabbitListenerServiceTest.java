@@ -129,7 +129,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
         rabbitListenerService.listenSendMessage(StringUtils.deleteWhitespace(requestJson));
 
-        verify(logManager).logSentMessage(any(), any(), anyString(), anyBoolean(), anyBoolean());
+        verify(logManager).logSentMessage(any(), any(), anyString(), anyBoolean(), anyBoolean(), any());
         assertTrue(memoryAppender.containedInFormattedLogMessage("receive message from rabbimq queue"));
         assertEquals(1,memoryAppender.countEventsForLogger(LOGGER_NAME, Level.INFO));
     }
@@ -152,7 +152,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
         final Exception exception = assertThrows(TechnicalException.class, () -> {
             rabbitListenerService.listenSendMessage(message);
         });
-        verify(logManager).logSentMessage(any(), any(), anyString(), anyBoolean(), anyBoolean());
+        verify(logManager).logSentMessage(any(), any(), anyString(), anyBoolean(), anyBoolean(), any());
         assertEquals("Error when try to send message to domibus", exception.getMessage());
     }
 

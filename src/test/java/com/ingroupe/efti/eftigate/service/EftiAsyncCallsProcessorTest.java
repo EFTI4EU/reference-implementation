@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Collections;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.times;
@@ -75,6 +76,5 @@ class EftiAsyncCallsProcessorTest {
         //Assert
         verify(metadataService, times(1)).search(metadataRequestDto);
         verify(metadataRequestService, times(1)).createRequest(any(ControlDto.class), any(), anyList());
-        verify(logManager).logLocalRegistryMessage(any(), any());
     }
 }

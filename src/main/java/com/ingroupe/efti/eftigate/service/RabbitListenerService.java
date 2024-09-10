@@ -3,6 +3,7 @@ package com.ingroupe.efti.eftigate.service;
 import com.ingroupe.efti.commons.constant.EftiGateConstants;
 import com.ingroupe.efti.commons.dto.RequestDto;
 import com.ingroupe.efti.commons.enums.EDeliveryAction;
+import com.ingroupe.efti.commons.enums.RequestType;
 import com.ingroupe.efti.commons.enums.RequestTypeEnum;
 import com.ingroupe.efti.commons.exception.TechnicalException;
 import com.ingroupe.efti.commons.utils.SerializeUtils;
@@ -16,6 +17,7 @@ import com.ingroupe.efti.eftigate.dto.RabbitRequestDto;
 import com.ingroupe.efti.eftigate.mapper.MapperUtils;
 import com.ingroupe.efti.eftigate.service.request.RequestService;
 import com.ingroupe.efti.eftigate.service.request.RequestServiceFactory;
+import com.ingroupe.efti.eftilogger.dto.LogRegistryDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -75,7 +77,13 @@ public class RabbitListenerService {
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
             final String body = getRequestService(eDeliveryAction).buildRequestBody(rabbitRequestDto);
-            logManager.logSentMessage(requestDto.getControl(), body, receiver, isCurrentGate, hasBeenSent);
+            if (RequestType.UIL.equals(requestDto.getRequestType())) {
+                //log fti020 and fti009
+                logManager.logSentMessage(requestDto.getControl(), body, receiver, isCurrentGate, hasBeenSent, LogManager.UIL_FTI_020_FTI_009);
+            } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
+                //log fti019
+                logManager.logRequestForMetadata(requestDto.getControl(), body, gateProperties.getOwner(), gateProperties.getCountry(), requestDto.getError() != null  ? requestDto.getError().getErrorCode() : null, LogManager.METADATA);
+            }
         }
     }
 

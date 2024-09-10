@@ -89,7 +89,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             errorReceived(uilRequestEntity, messageBody.getErrorDescription());
         }
         final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(uilRequestEntity.getControl());
-        getLogManager().logReceivedMessage(controlDto, notificationDto.getContent().getBody(), notificationDto.getContent().getFromPartyId());
+        getLogManager().logReceivedMessage(controlDto, notificationDto.getContent().getBody(), notificationDto.getContent().getFromPartyId(), LogManager.FTI_010_FTI_022_ET_AUTRES);
         responseToOtherGateIfNecessary(uilRequestEntity);
     }
 
@@ -129,10 +129,10 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
         final ControlDto controlDto = requestEntity != null ? manageResponseFromOtherGate(requestEntity, messageBody) :
                 this.getControlService().createUilControl(ControlUtils
-                    .fromGateToGateMessageBodyDto(messageBody, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH,
-                            notificationDto, getGateProperties().getOwner()));
-
-        getLogManager().logReceivedMessage(controlDto, notificationDto.getContent().getBody(), notificationDto.getContent().getFromPartyId());
+                        .fromGateToGateMessageBodyDto(messageBody, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH,
+                                notificationDto, getGateProperties().getOwner()));
+        //log efti022
+        getLogManager().logReceivedMessage(controlDto, notificationDto.getContent().getBody(), notificationDto.getContent().getFromPartyId(), LogManager.FTI_022_FTI_010);
     }
 
     @Override
@@ -168,7 +168,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     private String getStatus(final RabbitRequestDto requestDto, final boolean hasError) {
-        if (hasError){
+        if (hasError) {
             return StatusEnum.ERROR.name();
         } else if (TIMEOUT.equals(requestDto.getStatus())) {
             return StatusEnum.TIMEOUT.name();
