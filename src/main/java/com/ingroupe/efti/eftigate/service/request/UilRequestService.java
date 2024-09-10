@@ -53,8 +53,6 @@ import static com.ingroupe.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_UIL_S
 public class UilRequestService extends RequestService<UilRequestEntity> {
 
     private static final String UIL = "UIL";
-    public static final String FTI_010_FTI_022_ET_AUTRES = "fti010, fti 022 et autres";
-    public static final String FTI_022_FTI_010 = "fti022|fti010";
     private final UilRequestRepository uilRequestRepository;
 
     public UilRequestService(final UilRequestRepository uilRequestRepository, final MapperUtils mapperUtils,
@@ -91,7 +89,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             errorReceived(uilRequestEntity, messageBody.getErrorDescription());
         }
         final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(uilRequestEntity.getControl());
-        getLogManager().logReceivedMessage(controlDto, notificationDto.getContent().getBody(), notificationDto.getContent().getFromPartyId(), FTI_010_FTI_022_ET_AUTRES);
+        getLogManager().logReceivedMessage(controlDto, notificationDto.getContent().getBody(), notificationDto.getContent().getFromPartyId(), LogManager.FTI_010_FTI_022_ET_AUTRES);
         responseToOtherGateIfNecessary(uilRequestEntity);
     }
 
@@ -133,8 +131,8 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 this.getControlService().createUilControl(ControlUtils
                         .fromGateToGateMessageBodyDto(messageBody, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH,
                                 notificationDto, getGateProperties().getOwner()));
-        //juju commentaire voir si c'est efti022
-        getLogManager().logReceivedMessage(controlDto, notificationDto.getContent().getBody(), notificationDto.getContent().getFromPartyId(), FTI_022_FTI_010);
+        //log efti022
+        getLogManager().logReceivedMessage(controlDto, notificationDto.getContent().getBody(), notificationDto.getContent().getFromPartyId(), LogManager.FTI_022_FTI_010);
     }
 
     @Override

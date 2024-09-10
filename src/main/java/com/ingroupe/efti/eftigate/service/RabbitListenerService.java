@@ -80,7 +80,7 @@ public class RabbitListenerService {
             if (RequestType.UIL.equals(requestDto.getRequestType())) {
                 logManager.logSentMessage(requestDto.getControl(), body, receiver, isCurrentGate, hasBeenSent, "uil|FTI020|fti009");
             } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
-                //juju commentaire fti019
+                //log fti019
                 logManager.logRequestForMetadata(requestDto.getControl(), body, gateProperties.getOwner(), gateProperties.getCountry(), requestDto.getError() != null  ? requestDto.getError().getErrorCode() : null, "metadata");
             }
         }

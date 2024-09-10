@@ -35,6 +35,16 @@ public class LogManager {
     private final AuditRegistryLogService auditRegistryLogService;
     private final SerializeUtils serializeUtils;
 
+    public static final String FTI_ROOT_RESPONSE_SUCESS = "fti root response sucess";
+    public static final String FTI_SEND_FAIL = "fti send fail";
+    public static final String FTI_008_FTI_014 = "fti008|fti014";
+    public static final String FTI_015 = "fti015";
+    public static final String FTI_016 = "fti016";
+    public static final String LOG_FROM_METADATA_REQUEST_DTO = "logFromMetadataRequestDto";
+    public static final String FTI_017 = "fti017";
+    public static final String FTI_010_FTI_022_ET_AUTRES = "fti010, fti 022 et autres";
+    public static final String FTI_022_FTI_010 = "fti022|fti010";
+
     public void logRequestForMetadata(ControlDto controlDto, String body, String currentGateId, String currentGateCountry, String errorCode, String name) {
         auditRegistryLogService.logByControlDto(controlDto, currentGateId, currentGateCountry, body, errorCode, name);
     }
