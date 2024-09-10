@@ -44,6 +44,8 @@ public class LogManager {
     public static final String FTI_017 = "fti017";
     public static final String FTI_010_FTI_022_ET_AUTRES = "fti010, fti 022 et autres";
     public static final String FTI_022_FTI_010 = "fti022|fti010";
+    public static final String UIL_FTI_020_FTI_009 = "uil|FTI020|fti009";
+    public static final String METADATA = "metadata";
 
     public void logRequestForMetadata(ControlDto controlDto, String body, String currentGateId, String currentGateCountry, String errorCode, String name) {
         auditRegistryLogService.logByControlDto(controlDto, currentGateId, currentGateCountry, body, errorCode, name);

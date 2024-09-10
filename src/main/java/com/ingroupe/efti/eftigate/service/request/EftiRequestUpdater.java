@@ -36,7 +36,7 @@ public class EftiRequestUpdater {
     public void manageSendFailure(final NotificationDto notificationDto, final String name) {
         final RequestDto requestDto = getRequestDtoFromMessageId(notificationDto.getMessageId());
         this.updateStatus(requestDto, SEND_ERROR);
-        //logManager.logAckMessage(requestDto.getControl(), false, name);
+        logManager.logAckMessage(requestDto.getControl(), false, name);
     }
 
     public void manageSendSuccess(final NotificationDto notificationDto, final String name) {
@@ -46,7 +46,7 @@ public class EftiRequestUpdater {
         } else {
             log.info(" sent message {} successfully", notificationDto.getMessageId());
         }
-        //logManager.logAckMessage(requestDto.getControl(), true, name);
+        logManager.logAckMessage(requestDto.getControl(), true, name);
     }
 
     private RequestService<?> getRequestService(final String requestType) {

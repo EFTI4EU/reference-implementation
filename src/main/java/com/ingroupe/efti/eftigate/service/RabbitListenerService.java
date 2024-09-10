@@ -78,10 +78,11 @@ public class RabbitListenerService {
         } finally {
             final String body = getRequestService(eDeliveryAction).buildRequestBody(rabbitRequestDto);
             if (RequestType.UIL.equals(requestDto.getRequestType())) {
-                logManager.logSentMessage(requestDto.getControl(), body, receiver, isCurrentGate, hasBeenSent, "uil|FTI020|fti009");
+                //log fti020 and fti009
+                logManager.logSentMessage(requestDto.getControl(), body, receiver, isCurrentGate, hasBeenSent, LogManager.UIL_FTI_020_FTI_009);
             } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
                 //log fti019
-                logManager.logRequestForMetadata(requestDto.getControl(), body, gateProperties.getOwner(), gateProperties.getCountry(), requestDto.getError() != null  ? requestDto.getError().getErrorCode() : null, "metadata");
+                logManager.logRequestForMetadata(requestDto.getControl(), body, gateProperties.getOwner(), gateProperties.getCountry(), requestDto.getError() != null  ? requestDto.getError().getErrorCode() : null, LogManager.METADATA);
             }
         }
     }
