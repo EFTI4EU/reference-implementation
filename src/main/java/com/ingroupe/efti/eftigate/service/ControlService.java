@@ -67,6 +67,11 @@ public class ControlService {
 
     public static final String ERROR_REQUEST_UUID_NOT_FOUND = "Error requestUuid not found.";
     public static final String NOTE_WAS_NOT_SENT = "note was not sent";
+    public static final String FTI_008_FTI_014 = "fti008|fti014";
+    public static final String FTI_015 = "fti015";
+    public static final String FTI_016 = "fti016";
+    public static final String LOG_FROM_METADATA_REQUEST_DTO = "logFromMetadataRequestDto";
+    public static final String FTI_017 = "fti017";
     private final ControlRepository controlRepository;
     private final EftiGateUrlResolver eftiGateUrlResolver;
     private final MetadataService metadataService;
@@ -262,7 +267,7 @@ public class ControlService {
                 error -> createErrorControl(controlDto, error, true),
                 () -> createControlFromType(searchDto, controlDto));
 
-        logManager.logAppRequest(controlDto, searchDto);
+        logManager.logAppRequest(controlDto, searchDto, FTI_008_FTI_014);
         return buildResponse(controlDto);
     }
 
@@ -285,7 +290,12 @@ public class ControlService {
 
     private boolean checkOnLocalRegistry(final ControlDto controlDto) {
         log.info("checking local registry for dataUuid {}", controlDto.getEftiDataUuid());
-        return this.metadataService.existByUIL(controlDto.getEftiDataUuid(), controlDto.getEftiGateUrl(), controlDto.getEftiPlatformUrl());
+        //juju commentaire fti015
+        logManager.logRequestRegistry(controlDto, null, FTI_015);
+        final boolean result = this.metadataService.existByUIL(controlDto.getEftiDataUuid(), controlDto.getEftiGateUrl(), controlDto.getEftiPlatformUrl());
+        //juju commentaire fti016
+        logManager.logRequestRegistry(controlDto, String.valueOf(result), FTI_016);
+        return result;
     }
 
     private void createMetadataControl(final ControlDto controlDto, final MetadataRequestDto metadataRequestDto) {
@@ -300,6 +310,8 @@ public class ControlService {
                 eftiAsyncCallsProcessor.checkLocalRepoAsync(metadataRequestDto, saveControl);
             } else {
                 getRequestService(saveControl.getRequestType()).createAndSendRequest(saveControl, destinationUrl);
+                final boolean isCurrentGate = gateProperties.isCurrentGate(destinationUrl);
+                logManager.logFromMetadataRequestDto(controlDto, metadataRequestDto, isCurrentGate, isCurrentGate ? controlDto.getEftiPlatformUrl() : destinationUrl, true, false, LOG_FROM_METADATA_REQUEST_DTO);
             }
         });
         log.info("Metadata control with request uuid '{}' has been register", saveControl.getRequestUuid());
@@ -328,7 +340,7 @@ public class ControlService {
             result.setErrorCode(controlDto.getError().getErrorCode());
         }
         if(controlDto.getStatus() != PENDING) { // pending request are not logged
-            logManager.logAppResponse(controlDto, result);
+            logManager.logAppResponse(controlDto, result, FTI_017);
         }
         return result;
     }
@@ -355,6 +367,8 @@ public class ControlService {
             result.setErrorDescription(controlDto.getError().getErrorDescription());
             result.setErrorCode(controlDto.getError().getErrorCode());
         }
+        //juju commentaire pour fti017
+        logManager.logFromMetadata(result, controlDto, FTI_017);
         return result;
     }
 
