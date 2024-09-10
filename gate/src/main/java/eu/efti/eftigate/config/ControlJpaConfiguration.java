@@ -30,7 +30,7 @@ import java.util.Objects;
         entityManagerFactoryRef = "controlEntityManagerFactory",
         transactionManagerRef = "controlTransactionManager"
 )
-@ComponentScan("eu.efti.metadataregistry")
+@ComponentScan("eu.efti.identifiersregistry")
 public class ControlJpaConfiguration {
 
     @Value("${spring.jpa.properties.hibernate.control_schema}")

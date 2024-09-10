@@ -1,13 +1,13 @@
 package eu.efti.eftigate.service.request;
 
-import eu.efti.commons.dto.MetadataResponseDto;
-import eu.efti.commons.dto.MetadataResultDto;
+import eu.efti.commons.dto.IdentifiersResponseDto;
+import eu.efti.commons.dto.IdentifiersResultDto;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
-import eu.efti.eftigate.entity.MetadataResult;
-import eu.efti.eftigate.entity.MetadataResults;
+import eu.efti.eftigate.entity.IdentifiersResult;
+import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * This service is created to serve as proxy , so that @transactional annotation for metadata works correctly
+ * This service is created to serve as proxy , so that @transactional annotation for identifiers works correctly
  */
 @Service
 public class IdentifiersControlUpdateDelegateService {
@@ -36,12 +36,12 @@ public class IdentifiersControlUpdateDelegateService {
 
     @Transactional("controlTransactionManager")
     public void updateExistingControl(final String bodyFromNotification, final String requestUuid, final String gateUrlDest) {
-        final MetadataResponseDto response = serializeUtils.mapXmlStringToClass(bodyFromNotification, MetadataResponseDto.class);
-        final List<MetadataResultDto> metadataResultDtos = response.getMetadata();
-        final MetadataResults metadataResults = buildMetadataResultFrom(metadataResultDtos);
+        final IdentifiersResponseDto response = serializeUtils.mapXmlStringToClass(bodyFromNotification, IdentifiersResponseDto.class);
+        final List<IdentifiersResultDto> identifiersResultDtoList = response.getIdentifiers();
+        final IdentifiersResults identifiersResults = buildIdentifiersResultFrom(identifiersResultDtoList);
         final IdentifiersRequestEntity waitingRequest = identifiersRequestRepository.findByControlRequestUuidAndStatusAndGateUrlDest(requestUuid, RequestStatusEnum.IN_PROGRESS, gateUrlDest);
         if (waitingRequest != null){
-            updateControlRequests(waitingRequest, metadataResults);
+            updateControlRequests(waitingRequest, identifiersResults);
         }
     }
 
@@ -71,16 +71,16 @@ public class IdentifiersControlUpdateDelegateService {
         return currentStatus;
     }
 
-    private void updateControlRequests(final IdentifiersRequestEntity waitingRequest, final MetadataResults metadataResults) {
-        waitingRequest.setMetadataResults(metadataResults);
+    private void updateControlRequests(final IdentifiersRequestEntity waitingRequest, final IdentifiersResults identifiersResults) {
+        waitingRequest.setIdentifiersResults(identifiersResults);
         waitingRequest.setStatus(RequestStatusEnum.SUCCESS);
         identifiersRequestRepository.save(waitingRequest);
     }
 
-    private MetadataResults buildMetadataResultFrom(final List<MetadataResultDto> metadataResultDtos) {
-        final List<MetadataResult> metadataResultList = mapperUtils.metadataResultDtosToMetadataEntities(metadataResultDtos);
-        return MetadataResults.builder()
-                .metadataResult(metadataResultList)
+    private IdentifiersResults buildIdentifiersResultFrom(final List<IdentifiersResultDto> identifiersResultDtoList) {
+        final List<IdentifiersResult> IdentifiersResultList = mapperUtils.identifierResultDtosToIdentifierEntities(identifiersResultDtoList);
+        return IdentifiersResults.builder()
+                .identifiersResult(IdentifiersResultList)
                 .build();
     }
 }

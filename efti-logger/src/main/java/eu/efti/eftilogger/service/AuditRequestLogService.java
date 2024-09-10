@@ -37,7 +37,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                      final String body,
                      final StatusEnum status,
                      final boolean isAck,
-                    final String name) {
+                     final String name) {
 
         final LogRequestDto logRequestDto = LogRequestDto.builder()
                 .authorityName(control.getAuthority() != null ? control.getAuthority().getName() : null)

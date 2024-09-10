@@ -2,15 +2,14 @@ package eu.efti.eftigate.mapper;
 
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
-import eu.efti.commons.dto.MetadataDto;
-import eu.efti.commons.dto.MetadataResultDto;
-import eu.efti.commons.dto.MetadataResultsDto;
 import eu.efti.commons.dto.RequestDto;
+import eu.efti.commons.dto.*;
+import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.ErrorEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
-import eu.efti.eftigate.entity.MetadataResult;
+import eu.efti.eftigate.entity.IdentifiersResult;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import lombok.RequiredArgsConstructor;
@@ -49,15 +48,15 @@ public class MapperUtils {
 
     public ControlDto controlEntityToControlDto(final ControlEntity controlEntity) {
         final ControlDto controlDto = modelMapper.map(controlEntity, ControlDto.class);
-        final List<MetadataResult> metadataResultList = CollectionUtils.emptyIfNull(controlEntity.getRequests()).stream()
+        final List<IdentifiersResult> metadataResultList = CollectionUtils.emptyIfNull(controlEntity.getRequests()).stream()
                 .filter(IdentifiersRequestEntity.class::isInstance)
                 .map(IdentifiersRequestEntity.class::cast)
-                .filter(identifiersRequestEntity -> identifiersRequestEntity.getMetadataResults() != null
-                        && CollectionUtils.isNotEmpty(identifiersRequestEntity.getMetadataResults().getMetadataResult()))
-                .flatMap(request -> request.getMetadataResults().getMetadataResult().stream())
-                .sorted(Comparator.comparing(MetadataResult::getEFTIGateUrl))
+                .filter(identifiersRequestEntity -> identifiersRequestEntity.getIdentifiersResults() != null
+                        && CollectionUtils.isNotEmpty(identifiersRequestEntity.getIdentifiersResults().getIdentifiersResult()))
+                .flatMap(request -> request.getIdentifiersResults().getIdentifiersResult().stream())
+                .sorted(Comparator.comparing(IdentifiersResult::getEFTIGateUrl))
                 .toList();
-        controlDto.setMetadataResults(new MetadataResultsDto(metadataResultEntitiesToMetadataResultDtos(metadataResultList)));
+        controlDto.setIdentifiersResults(new IdentifiersResultsDto(identifierResultEntitiesToIdentifiersResultDtos(metadataResultList)));
         final byte[] byteArray = CollectionUtils.emptyIfNull(controlEntity.getRequests()).stream()
                 .filter(UilRequestEntity.class::isInstance)
                 .map(UilRequestEntity.class::cast)
@@ -82,31 +81,31 @@ public class MapperUtils {
         return modelMapper.map(requestEntity, destinationClass);
     }
 
-    public List<MetadataResult> metadataDtosToMetadataEntities(final List<MetadataDto> metadataDtoList) {
-        return CollectionUtils.emptyIfNull(metadataDtoList).stream()
-                .map(metadataDto -> modelMapper.map(metadataDto, MetadataResult.class))
+    public List<IdentifiersResult> identifierDtosToIdentifierEntities(final List<IdentifiersDto> identifiersDtoList) {
+        return CollectionUtils.emptyIfNull(identifiersDtoList).stream()
+                .map(identifiersDto -> modelMapper.map(identifiersDto, IdentifiersResult.class))
                 .toList();
     }
 
-    public MetadataDto metadataResultDtoToMetadataDto(final MetadataResultDto metadataResultDto) {
-        return modelMapper.map(metadataResultDto, MetadataDto.class);
+    public IdentifiersDto identifiersResultDtoToIdentifiersDto(final IdentifiersResultDto identifiersResultDto) {
+        return modelMapper.map(identifiersResultDto, IdentifiersDto.class);
     }
 
-    public List<MetadataResultDto> metadataDtosToMetadataResultDto(final List<MetadataDto> metadataDtoList) {
-        return CollectionUtils.emptyIfNull(metadataDtoList).stream()
-                .map(metadataDto -> modelMapper.map(metadataDto, MetadataResultDto.class))
+    public List<IdentifiersResultDto> identifierDtosToIdentifiersResultDto(final List<IdentifiersDto> identifiersDtoList) {
+        return CollectionUtils.emptyIfNull(identifiersDtoList).stream()
+                .map(identifiersDto -> modelMapper.map(identifiersDto, IdentifiersResultDto.class))
                 .toList();
     }
 
-    public List<MetadataResultDto> metadataResultEntitiesToMetadataResultDtos(final List<MetadataResult> metadataResultList) {
-        return CollectionUtils.emptyIfNull(metadataResultList).stream()
-                .map(metadataResult -> modelMapper.map(metadataResult, MetadataResultDto.class))
+    public List<IdentifiersResultDto> identifierResultEntitiesToIdentifiersResultDtos(final List<IdentifiersResult> identifiersResultList) {
+        return CollectionUtils.emptyIfNull(identifiersResultList).stream()
+                .map(identifiersResult -> modelMapper.map(identifiersResult, IdentifiersResultDto.class))
                 .toList();
     }
 
-    public List<MetadataResult> metadataResultDtosToMetadataEntities(final List<MetadataResultDto> metadataResultDtos) {
-        return CollectionUtils.emptyIfNull(metadataResultDtos).stream()
-                .map(metadataResultDto -> modelMapper.map(metadataResultDto, MetadataResult.class))
+    public List<IdentifiersResult> identifierResultDtosToIdentifierEntities(final List<IdentifiersResultDto> identifiersResultDtos) {
+        return CollectionUtils.emptyIfNull(identifiersResultDtos).stream()
+                .map(identifiersResultDto -> modelMapper.map(identifiersResultDto, IdentifiersResult.class))
                 .toList();
     }
 }

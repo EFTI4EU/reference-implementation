@@ -20,11 +20,11 @@
     "createdDate": null,
     "lastModifiedDate": null,
     "eftiData": null,
-    "transportMetaData": null,
+    "transportIdentifiers": null,
     "fromGateUrl": null,
     "authority": null,
     "error": null,
-    "metadataResults": null,
+    "identifiersResults": null,
     "notes": null
   },
   "error": null,

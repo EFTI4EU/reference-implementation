@@ -20,11 +20,11 @@ public class GateToRequestTypeFunction implements Function<List<String>, Request
     public RequestTypeEnum apply(final List<String> gatesUrls) {
         if (CollectionUtils.isNotEmpty(gatesUrls)) {
             if (gatesUrls.size() == 1 && gateProperties.isCurrentGate(gatesUrls.get(0))) {
-                return RequestTypeEnum.LOCAL_METADATA_SEARCH;
+                return RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH;
             } else {
-                return RequestTypeEnum.EXTERNAL_METADATA_SEARCH;
+                return RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH;
             }
         }
-        return RequestTypeEnum.LOCAL_METADATA_SEARCH;
+        return RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH;
     }
 }

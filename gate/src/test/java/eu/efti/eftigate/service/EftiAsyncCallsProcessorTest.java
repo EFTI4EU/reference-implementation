@@ -2,12 +2,13 @@ package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.AuthorityDto;
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.MetadataDto;
-import eu.efti.commons.dto.MetadataRequestDto;
+import eu.efti.commons.dto.IdentifiersDto;
+import eu.efti.commons.dto.IdentifiersRequestDto;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.TransportVehicleDto;
 import eu.efti.eftigate.config.GateProperties;
-import eu.efti.eftigate.service.request.MetadataRequestService;
-import eu.efti.metadataregistry.service.MetadataService;
+import eu.efti.eftigate.service.request.IdentifiersRequestService;
+import eu.efti.identifiersregistry.service.IdentifiersService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,9 +27,9 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class EftiAsyncCallsProcessorTest {
     @Mock
-    private MetadataRequestService metadataRequestService;
+    private IdentifiersRequestService metadataRequestService;
     @Mock
-    private MetadataService metadataService;
+    private IdentifiersService metadataService;
     @Mock
     private LogManager logManager;
     @Mock
@@ -37,9 +38,9 @@ class EftiAsyncCallsProcessorTest {
     @InjectMocks
     private EftiAsyncCallsProcessor eftiAsyncCallsProcessor;
 
-    private final MetadataRequestDto metadataRequestDto = new MetadataRequestDto();
+    private final SearchWithIdentifiersRequestDto SearchWithIdentifiersRequestDto = new SearchWithIdentifiersRequestDto();
 
-    MetadataDto metadataDto= new MetadataDto();
+    IdentifiersDto identifiersDto = new IdentifiersDto();
 
     private final String metadataUuid = UUID.randomUUID().toString();
     TransportVehicleDto transportVehicleDto = new TransportVehicleDto();
@@ -50,19 +51,17 @@ class EftiAsyncCallsProcessorTest {
     public void before() {
         final AuthorityDto authorityDto = new AuthorityDto();
 
+        identifiersDto.setIsDangerousGoods(true);
+        identifiersDto.setIdentifiersUUID(metadataUuid);
+        identifiersDto.setDisabled(false);
+        identifiersDto.setCountryStart("FR");
+        identifiersDto.setCountryEnd("FR");
+        identifiersDto.setTransportVehicles(Collections.singletonList(transportVehicleDto));
 
-        metadataDto.setIsDangerousGoods(true);
-        metadataDto.setMetadataUUID(metadataUuid);
-        metadataDto.setDisabled(false);
-        metadataDto.setCountryStart("FR");
-        metadataDto.setCountryEnd("FR");
-        metadataDto.setTransportVehicles(Collections.singletonList(transportVehicleDto));
-
-
-        this.metadataRequestDto.setVehicleID("abc123");
-        this.metadataRequestDto.setVehicleCountry("FR");
-        this.metadataRequestDto.setAuthority(authorityDto);
-        this.metadataRequestDto.setTransportMode("ROAD");
+        this.SearchWithIdentifiersRequestDto.setVehicleID("abc123");
+        this.SearchWithIdentifiersRequestDto.setVehicleCountry("FR");
+        this.SearchWithIdentifiersRequestDto.setAuthority(authorityDto);
+        this.SearchWithIdentifiersRequestDto.setTransportMode("ROAD");
     }
 
     @Test
@@ -70,10 +69,10 @@ class EftiAsyncCallsProcessorTest {
         //Arrange
 
         //Act
-        eftiAsyncCallsProcessor.checkLocalRepoAsync(metadataRequestDto, controlDto);
+        eftiAsyncCallsProcessor.checkLocalRepoAsync(SearchWithIdentifiersRequestDto, controlDto);
 
         //Assert
-        verify(metadataService, times(1)).search(metadataRequestDto);
+        verify(metadataService, times(1)).search(SearchWithIdentifiersRequestDto);
         verify(metadataRequestService, times(1)).createRequest(any(ControlDto.class), any(), anyList());
     }
 }

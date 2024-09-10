@@ -4,13 +4,13 @@ import eu.efti.commons.dto.AuthorityDto;
 import eu.efti.commons.dto.ContactInformationDto;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
-import eu.efti.commons.dto.MetadataDto;
-import eu.efti.commons.dto.MetadataRequestDto;
-import eu.efti.commons.dto.MetadataResponseDto;
-import eu.efti.commons.dto.MetadataResultDto;
-import eu.efti.commons.dto.MetadataResultsDto;
+import eu.efti.commons.dto.IdentifiersDto;
+import eu.efti.commons.dto.IdentifiersResponseDto;
+import eu.efti.commons.dto.IdentifiersResultDto;
+import eu.efti.commons.dto.IdentifiersResultsDto;
 import eu.efti.commons.dto.NotesDto;
 import eu.efti.commons.dto.SearchParameter;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.TransportVehicleDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
@@ -23,18 +23,18 @@ import eu.efti.eftigate.dto.NoteResponseDto;
 import eu.efti.eftigate.dto.RequestUuidDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
-import eu.efti.eftigate.entity.MetadataResult;
-import eu.efti.eftigate.entity.MetadataResults;
+import eu.efti.eftigate.entity.IdentifiersResult;
+import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.AmbiguousIdentifierException;
 import eu.efti.eftigate.repository.ControlRepository;
 import eu.efti.eftigate.service.gate.EftiGateUrlResolver;
-import eu.efti.eftigate.service.request.MetadataRequestService;
+import eu.efti.eftigate.service.request.IdentifiersRequestService;
 import eu.efti.eftigate.service.request.NotesRequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
-import eu.efti.metadataregistry.service.MetadataService;
+import eu.efti.identifiersregistry.service.IdentifiersService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,9 +78,9 @@ class ControlServiceTest extends AbstractServiceTest {
     @Mock
     private NotesRequestService notesRequestService;
     @Mock
-    private MetadataRequestService metadataRequestService;
+    private IdentifiersRequestService identifiersRequestService;
     @Mock
-    private MetadataService metadataService;
+    private IdentifiersService identifiersService;
 
     private ControlService controlService;
     @Mock
@@ -101,9 +101,9 @@ class ControlServiceTest extends AbstractServiceTest {
 
     private final UilDto uilDto = new UilDto();
     private final NotesDto notesDto = new NotesDto();
-    private final MetadataRequestDto metadataRequestDto = new MetadataRequestDto();
+    private final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto = new SearchWithIdentifiersRequestDto();
     private final ControlDto controlDto = new ControlDto();
-    MetadataDto metadataDto= new MetadataDto();
+    final IdentifiersDto metadataDto = new IdentifiersDto();
     TransportVehicleDto transportVehicleDto = new TransportVehicleDto();
     private final ControlEntity controlEntity = ControlEntity.builder().requestType(RequestTypeEnum.LOCAL_UIL_SEARCH).build();
     private final UilRequestEntity uilRequestEntity = new UilRequestEntity();
@@ -111,11 +111,11 @@ class ControlServiceTest extends AbstractServiceTest {
     private final IdentifiersRequestEntity secondIdentifiersRequestEntity = new IdentifiersRequestEntity();
 
 
-    MetadataResult metadataResult = new MetadataResult();
-    MetadataResults metadataResults = new MetadataResults();
+    IdentifiersResult identifiersResult = new IdentifiersResult();
+    IdentifiersResults identifiersResults = new IdentifiersResults();
 
-    private final MetadataResultDto metadataResultDto = new MetadataResultDto();
-    private final MetadataResultsDto metadataResultsDto = new MetadataResultsDto();
+    private final IdentifiersResultDto identifiersResultDto = new IdentifiersResultDto();
+    private final IdentifiersResultsDto identifiersResultsDto = new IdentifiersResultsDto();
 
     private final RequestUuidDto requestUuidDto = new RequestUuidDto();
     private final String requestUuid = UUID.randomUUID().toString();
@@ -134,7 +134,7 @@ class ControlServiceTest extends AbstractServiceTest {
                         .url(url)
                         .password(password)
                         .username(username).build()).build();
-        controlService = new ControlService(controlRepository, eftiGateUrlResolver, metadataService, mapperUtils,
+        controlService = new ControlService(controlRepository, eftiGateUrlResolver, identifiersService, mapperUtils,
                 requestServiceFactory, logManager, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
                 gateProperties );
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
@@ -165,10 +165,10 @@ class ControlServiceTest extends AbstractServiceTest {
         this.uilDto.setEFTIPlatformUrl("http://www.platform.com");
         this.uilDto.setAuthority(authorityDto);
 
-        this.metadataRequestDto.setVehicleID("abc123");
-        this.metadataRequestDto.setVehicleCountry("FR");
-        this.metadataRequestDto.setAuthority(authorityDto);
-        this.metadataRequestDto.setTransportMode("ROAD");
+        this.searchWithIdentifiersRequestDto.setVehicleID("abc123");
+        this.searchWithIdentifiersRequestDto.setVehicleCountry("FR");
+        this.searchWithIdentifiersRequestDto.setAuthority(authorityDto);
+        this.searchWithIdentifiersRequestDto.setTransportMode("ROAD");
 
         this.controlDto.setEftiDataUuid(uilDto.getEFTIDataUuid());
         this.controlDto.setEftiGateUrl(uilDto.getEFTIGateUrl());
@@ -197,7 +197,7 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlEntity.setSubsetMsRequested(controlDto.getSubsetMsRequested());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
-        this.controlEntity.setTransportMetadata(controlDto.getTransportMetaData());
+        this.controlEntity.setTransportIdentifiers(controlDto.getTransportIdentifiers());
         this.controlEntity.setFromGateUrl(controlDto.getFromGateUrl());
 
         identifiersRequestEntity.setRequestType("IDENTIFIER");
@@ -205,12 +205,12 @@ class ControlServiceTest extends AbstractServiceTest {
         uilRequestEntity.setRequestType("UIL");
 
 
-        metadataResult.setCountryStart("FR");
-        metadataResult.setCountryEnd("FR");
-        metadataResult.setDisabled(false);
-        metadataResult.setIsDangerousGoods(true);
+        identifiersResult.setCountryStart("FR");
+        identifiersResult.setCountryEnd("FR");
+        identifiersResult.setDisabled(false);
+        identifiersResult.setIsDangerousGoods(true);
 
-        metadataResults.setMetadataResult(Collections.singletonList(metadataResult));
+        identifiersResults.setIdentifiersResult(Collections.singletonList(identifiersResult));
 
         uilRequestEntity.setControl(controlEntity);
 
@@ -222,25 +222,25 @@ class ControlServiceTest extends AbstractServiceTest {
         transportVehicleDto.setJourneyStart(LocalDateTime.now().plusHours(5L).toString());
 
         metadataDto.setIsDangerousGoods(true);
-        metadataDto.setMetadataUUID(metadataUuid);
+        metadataDto.setIdentifiersUUID(metadataUuid);
         metadataDto.setDisabled(false);
         metadataDto.setCountryStart("FR");
         metadataDto.setCountryEnd("FR");
         metadataDto.setTransportVehicles(Collections.singletonList(transportVehicleDto));
 
-        metadataResult.setCountryStart("FR");
-        metadataResult.setCountryEnd("FR");
-        metadataResult.setDisabled(false);
-        metadataResult.setIsDangerousGoods(true);
+        identifiersResult.setCountryStart("FR");
+        identifiersResult.setCountryEnd("FR");
+        identifiersResult.setDisabled(false);
+        identifiersResult.setIsDangerousGoods(true);
 
-        metadataResults.setMetadataResult(Collections.singletonList(metadataResult));
+        identifiersResults.setIdentifiersResult(Collections.singletonList(identifiersResult));
 
-        metadataResultDto.setCountryStart("FR");
-        metadataResultDto.setCountryEnd("FR");
-        metadataResultDto.setDisabled(false);
-        metadataResultDto.setIsDangerousGoods(true);
+        identifiersResult.setCountryStart("FR");
+        identifiersResult.setCountryEnd("FR");
+        identifiersResult.setDisabled(false);
+        identifiersResult.setIsDangerousGoods(true);
 
-        metadataResultsDto.setMetadataResult(Collections.singletonList(metadataResultDto));
+        identifiersResultsDto.setIdentifiersResult(Collections.singletonList(identifiersResultDto));
 
         setField(controlService,"timeoutValue", 60);
     }
@@ -261,7 +261,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
-        when(metadataService.existByUIL(any(), any(), any())).thenReturn(true);
+        when(identifiersService.existByUIL(any(), any(), any())).thenReturn(true);
 
         final RequestUuidDto requestUuidDtoResult = controlService.createUilControl(uilDto);
 
@@ -423,15 +423,15 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void shouldUpdatePendingControl_whenMetadataSearchAndRequestsContainsData() {
         //Arrange
-        controlEntity.setRequestType(RequestTypeEnum.LOCAL_METADATA_SEARCH);
+        controlEntity.setRequestType(RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH);
         controlEntity.setRequests(Collections.singletonList(identifiersRequestEntity));
-        identifiersRequestEntity.setMetadataResults(metadataResults);
+        identifiersRequestEntity.setIdentifiersResults(identifiersResults);
         identifiersRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
 
         when(controlRepository.findByRequestUuid(any())).thenReturn(Optional.of(controlEntity));
-        when(metadataRequestService.allRequestsContainsData(any())).thenReturn(true);
+        when(identifiersRequestService.allRequestsContainsData(any())).thenReturn(true);
         when(controlRepository.save(controlEntity)).thenReturn(controlEntity);
-        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(metadataRequestService);
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
 
         //Act
         controlService.getControlEntity(requestUuid);
@@ -440,7 +440,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(controlRepository, times(1)).save(controlEntity);
         verify(controlRepository, times(1)).findByRequestUuid(any());
-        verify(metadataRequestService, times(1)).allRequestsContainsData(controlEntity.getRequests());
+        verify(identifiersRequestService, times(1)).allRequestsContainsData(controlEntity.getRequests());
         verify(uilRequestService, never()).allRequestsContainsData(any());
     }
 
@@ -468,7 +468,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(controlRepository, times(1)).save(controlEntity);
         verify(controlRepository, times(1)).findByRequestUuid(any());
         verify(uilRequestService, times(1)).allRequestsContainsData(controlEntity.getRequests());
-        verify(metadataRequestService, never()).allRequestsContainsData(any());
+        verify(identifiersRequestService, never()).allRequestsContainsData(any());
     }
 
     @Test
@@ -502,14 +502,14 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void createMetadataControlTest() {
         when(controlRepository.save(any())).thenReturn(controlEntity);
-        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(metadataRequestService);
-        when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH);
-        when(eftiGateUrlResolver.resolve(any(MetadataRequestDto.class))).thenReturn(List.of("http://efti.gate.borduria.eu"));
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
+        when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
+        when(eftiGateUrlResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("http://efti.gate.borduria.eu"));
 
 
-        final RequestUuidDto requestUuidDtoResult = controlService.createMetadataControl(metadataRequestDto);
+        final RequestUuidDto requestUuidDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
-        verify(metadataRequestService, times(1)).createAndSendRequest(any(), any());
+        verify(identifiersRequestService, times(1)).createAndSendRequest(any(), any());
         verify(eftiAsyncCallsProcessor, never()).checkLocalRepoAsync(any(), any());
         verify(controlRepository, times(1)).save(any());
         assertNotNull(requestUuidDtoResult);
@@ -520,13 +520,13 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void createMetadataControlForLocalRequestTest() {
         when(controlRepository.save(any())).thenReturn(controlEntity);
-        when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.LOCAL_METADATA_SEARCH);
-        when(eftiGateUrlResolver.resolve(any(MetadataRequestDto.class))).thenReturn(List.of("http://france.lol"));
+        when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH);
+        when(eftiGateUrlResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("http://france.lol"));
 
 
-        final RequestUuidDto requestUuidDtoResult = controlService.createMetadataControl(metadataRequestDto);
+        final RequestUuidDto requestUuidDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
-        verify(metadataRequestService, never()).createAndSendRequest(any(), any());
+        verify(identifiersRequestService, never()).createAndSendRequest(any(), any());
         verify(eftiAsyncCallsProcessor, times(1)).checkLocalRepoAsync(any(), any());
         verify(controlRepository, times(1)).save(any());
         assertNotNull(requestUuidDtoResult);
@@ -536,18 +536,18 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void shouldCreateMetadataControlWithPendingStatus_whenSomeOfGivenDestinationGatesDoesNotExist() {
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_METADATA_SEARCH);
-        metadataRequestDto.setEFTIGateIndicator(List.of("IT", "RO"));
-        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(metadataRequestService);
+        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
+        searchWithIdentifiersRequestDto.setEFTIGateIndicator(List.of("IT", "RO"));
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
         when(controlRepository.save(any())).thenReturn(controlEntity);
-        when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_METADATA_SEARCH);
-        when(eftiGateUrlResolver.resolve(any(MetadataRequestDto.class))).thenReturn(List.of("http://italie.it"));
+        when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
+        when(eftiGateUrlResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("http://italie.it"));
 
 
 
-        final RequestUuidDto requestUuidDtoResult = controlService.createMetadataControl(metadataRequestDto);
+        final RequestUuidDto requestUuidDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
-        verify(metadataRequestService, times(1)).createAndSendRequest(any(), any());
+        verify(identifiersRequestService, times(1)).createAndSendRequest(any(), any());
         verify(eftiAsyncCallsProcessor, never()).checkLocalRepoAsync(any(), any());
         verify(controlRepository, times(1)).save(any());
         assertNotNull(requestUuidDtoResult);
@@ -556,14 +556,14 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void  shouldCreateMetadataControlWithPendingStatus_whenAllGivenDestinationGatesDoesNotExist() {
-        metadataRequestDto.setEFTIGateIndicator(List.of("IT", "RO"));
+        searchWithIdentifiersRequestDto.setEFTIGateIndicator(List.of("IT", "RO"));
         when(controlRepository.save(any())).thenReturn(controlEntity);
-        when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_METADATA_SEARCH);
+        when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
 
 
-        final RequestUuidDto requestUuidDtoResult = controlService.createMetadataControl(metadataRequestDto);
+        final RequestUuidDto requestUuidDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
-        verify(metadataRequestService, never()).createAndSendRequest(any(), any());
+        verify(identifiersRequestService, never()).createAndSendRequest(any(), any());
         verify(eftiAsyncCallsProcessor, never()).checkLocalRepoAsync(any(), any());
         verify(controlRepository, times(1)).save(any());
         assertNotNull(requestUuidDtoResult);
@@ -572,20 +572,20 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createMetadataControlWithMinimumRequiredTest() {
-        metadataRequestDto.setTransportMode(null);
-        metadataRequestDto.setVehicleCountry(null);
-        metadataRequestDto.setEFTIGateIndicator(null);
-        metadataRequestDto.setIsDangerousGoods(null);
+        searchWithIdentifiersRequestDto.setTransportMode(null);
+        searchWithIdentifiersRequestDto.setVehicleCountry(null);
+        searchWithIdentifiersRequestDto.setEFTIGateIndicator(null);
+        searchWithIdentifiersRequestDto.setIsDangerousGoods(null);
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
-        when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH);
-        when(eftiGateUrlResolver.resolve(any(MetadataRequestDto.class))).thenReturn(List.of("http://efti.gate.borduria.eu"));
-        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(metadataRequestService);
+        when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
+        when(eftiGateUrlResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("http://efti.gate.borduria.eu"));
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
 
 
-        final RequestUuidDto requestUuidDtoResult = controlService.createMetadataControl(metadataRequestDto);
+        final RequestUuidDto requestUuidDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
 
-        verify(metadataRequestService, times(1)).createAndSendRequest(any(), any());
+        verify(identifiersRequestService, times(1)).createAndSendRequest(any(), any());
         verify(uilRequestService, times(0)).createAndSendRequest(any(), any());
         verify(controlRepository, times(1)).save(any());
         assertNotNull(requestUuidDtoResult);
@@ -595,9 +595,9 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createMetadataControlVehicleIDIncorrect() {
-        metadataRequestDto.setVehicleID("fausse plaque");
+        searchWithIdentifiersRequestDto.setVehicleID("fausse plaque");
 
-        final RequestUuidDto requestUuidDtoResult = controlService.createMetadataControl(metadataRequestDto);
+        final RequestUuidDto requestUuidDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
 
         verify(uilRequestService, times(0)).createAndSendRequest(any(), any());
         verify(controlRepository, times(0)).save(any());
@@ -608,9 +608,9 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createMetadataControlVehicleCountryIncorrect() {
-        metadataRequestDto.setVehicleCountry("toto");
+        searchWithIdentifiersRequestDto.setVehicleCountry("toto");
 
-        final RequestUuidDto requestUuidDtoResult = controlService.createMetadataControl(metadataRequestDto);
+        final RequestUuidDto requestUuidDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
 
         verify(uilRequestService, times(0)).createAndSendRequest(any(), any());
         verify(controlRepository, times(0)).save(any());
@@ -621,9 +621,9 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createMetadataControlTransportModeIncorrect() {
-        metadataRequestDto.setTransportMode("toto");
+        searchWithIdentifiersRequestDto.setTransportMode("toto");
 
-        final RequestUuidDto requestUuidDtoResult = controlService.createMetadataControl(metadataRequestDto);
+        final RequestUuidDto requestUuidDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
 
         verify(uilRequestService, times(0)).createAndSendRequest(any(), any());
         verify(controlRepository, times(0)).save(any());
@@ -639,12 +639,12 @@ class ControlServiceTest extends AbstractServiceTest {
                 .id(1)
                 .requestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")
                 .status(StatusEnum.PENDING)
-                .requestType(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH)
+                .requestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH)
                 .subsetEuRequested("SubsetEuRequested")
                 .subsetMsRequested("SubsetMsRequested")
                 .eftiGateUrl("france")
                 .fromGateUrl("https://efti.gate.france.eu")
-                .transportMetadata(SearchParameter.builder()
+                .transportIdentifiers(SearchParameter.builder()
                         .vehicleID("AA123VV")
                         .transportMode("ROAD")
                         .vehicleCountry("FR")
@@ -661,23 +661,23 @@ class ControlServiceTest extends AbstractServiceTest {
         final ControlDto expectedControl = ControlDto.builder()
                 .requestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")
                 .status(StatusEnum.PENDING)
-                .requestType(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH)
+                .requestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH)
                 .subsetEuRequested("SubsetEuRequested")
                 .subsetMsRequested("SubsetMsRequested")
                 .eftiGateUrl("france")
                 .fromGateUrl("https://efti.gate.france.eu")
-                .transportMetaData(SearchParameter.builder()
+                .transportIdentifiers(SearchParameter.builder()
                         .vehicleID("AA123VV")
                         .transportMode("ROAD")
                         .vehicleCountry("FR")
                         .isDangerousGoods(true)
                         .build())
                 .eftiData(ArrayUtils.EMPTY_BYTE_ARRAY)
-                .metadataResults(new MetadataResultsDto(new ArrayList<>()))
+                .identifiersResults(new IdentifiersResultsDto(new ArrayList<>()))
                 .build();
         when(controlRepository.save(any())).thenReturn(metadataControl);
         //Act
-        final ControlDto createdControlDto = controlService.createControlFrom(messageBodyDto, "https://efti.gate.france.eu", metadataResultsDto);
+        final ControlDto createdControlDto = controlService.createControlFrom(messageBodyDto, "https://efti.gate.france.eu", identifiersResultsDto);
         //Assert
         assertThat(createdControlDto)
                 .usingRecursiveComparison()
@@ -693,19 +693,19 @@ class ControlServiceTest extends AbstractServiceTest {
         //Arrange
         final ControlDto expectedControl = ControlDto.builder()
                 .status(COMPLETE)
-                .metadataResults(metadataResultsDto)
+                .identifiersResults(identifiersResultsDto)
                 .build();
         when(controlService.getControlByRequestUuid(requestUuid)).thenReturn(expectedControl);
 
-        final MetadataResponseDto expectedMetadataResponse = MetadataResponseDto.builder()
+        final IdentifiersResponseDto expectedMetadataResponse = IdentifiersResponseDto.builder()
                 .status(COMPLETE)
-                .metadata(List.of(metadataResultDto))
+                .identifiers(List.of(identifiersResultDto))
                 .build();
         //Act
-        final MetadataResponseDto metadataResponseDto = controlService.getMetadataResponse(requestUuid);
+        final IdentifiersResponseDto identifiersResponseDto = controlService.getIdentifiersResponse(requestUuid);
 
         //Assert
-        assertThat(metadataResponseDto).isEqualTo(expectedMetadataResponse);
+        assertThat(identifiersResponseDto).isEqualTo(expectedMetadataResponse);
     }
 
     @Test
@@ -716,14 +716,14 @@ class ControlServiceTest extends AbstractServiceTest {
                 .error(ErrorDto.builder().errorCode(" Uuid not found.").errorDescription("Error requestUuid not found.").build())
                 .build();
         when(controlService.getControlByRequestUuid(requestUuid)).thenReturn(expectedControl);
-        final MetadataResponseDto expectedMetadataResponse = MetadataResponseDto.builder()
+        final IdentifiersResponseDto expectedMetadataResponse = IdentifiersResponseDto.builder()
                 .status(StatusEnum.ERROR)
                 .errorDescription("Error requestUuid not found.")
                 .errorCode(" Uuid not found.")
-                .metadata(Collections.emptyList())
+                .identifiers(Collections.emptyList())
                 .build();
         //Act
-        final MetadataResponseDto metadataResponseDto = controlService.getMetadataResponse(requestUuid);
+        final IdentifiersResponseDto metadataResponseDto = controlService.getIdentifiersResponse(requestUuid);
 
         //Assert
         assertThat(metadataResponseDto).isEqualTo(expectedMetadataResponse);
@@ -830,8 +830,8 @@ class ControlServiceTest extends AbstractServiceTest {
         controlEntity.setCreatedDate(LocalDateTime.now().minusSeconds(100));
 
         when(controlRepository.findByCriteria(any(), anyInt())).thenReturn(List.of(controlEntity));
-        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(metadataRequestService);
-        when(requestServiceFactory.getRequestServiceByRequestType(anyString())).thenReturn(metadataRequestService);
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
+        when(requestServiceFactory.getRequestServiceByRequestType(anyString())).thenReturn(identifiersRequestService);
         when(controlRepository.save(any(ControlEntity.class))).thenReturn(controlEntity);
 
         //Act
@@ -870,7 +870,7 @@ class ControlServiceTest extends AbstractServiceTest {
         uilDto.setEFTIGateUrl("http://france.lol");
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
-        when(metadataService.existByUIL(any(), any(), any())).thenReturn(false);
+        when(identifiersService.existByUIL(any(), any(), any())).thenReturn(false);
 
         final RequestUuidDto requestUuidDtoResult = controlService.createUilControl(uilDto);
 
@@ -924,7 +924,7 @@ class ControlServiceTest extends AbstractServiceTest {
         identifiersRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
         identifiersRequestEntity.setGateUrlDest("gate");
 
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH);
+        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
 
         //Act

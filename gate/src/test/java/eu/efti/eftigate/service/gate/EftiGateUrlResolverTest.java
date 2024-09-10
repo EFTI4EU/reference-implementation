@@ -1,7 +1,7 @@
 package eu.efti.eftigate.service.gate;
 
 import eu.efti.commons.dto.AuthorityDto;
-import eu.efti.commons.dto.MetadataRequestDto;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.eftigate.entity.GateEntity;
 import eu.efti.eftigate.repository.GateRepository;
@@ -24,7 +24,7 @@ class EftiGateUrlResolverTest {
     @Mock
     private GateRepository gateRepository;
 
-    private final MetadataRequestDto metadataRequestDto = new MetadataRequestDto();
+    private final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto = new SearchWithIdentifiersRequestDto();
 
     GateEntity frGateEntity;
     GateEntity beGateEntity;
@@ -36,10 +36,10 @@ class EftiGateUrlResolverTest {
 
         final AuthorityDto authorityDto = new AuthorityDto();
 
-        this.metadataRequestDto.setVehicleID("abc123");
-        this.metadataRequestDto.setVehicleCountry("FR");
-        this.metadataRequestDto.setAuthority(authorityDto);
-        this.metadataRequestDto.setTransportMode("ROAD");
+        this.searchWithIdentifiersRequestDto.setVehicleID("abc123");
+        this.searchWithIdentifiersRequestDto.setVehicleCountry("FR");
+        this.searchWithIdentifiersRequestDto.setAuthority(authorityDto);
+        this.searchWithIdentifiersRequestDto.setTransportMode("ROAD");
 
         frGateEntity = GateEntity.builder().id(1L).url("https://efti.gate.fr.eu").country(CountryIndicator.FR).build();
         beGateEntity = GateEntity.builder().id(2L).url("https://efti.gate.be.eu").country(CountryIndicator.BE).build();
@@ -49,11 +49,11 @@ class EftiGateUrlResolverTest {
     @Test
     void shouldResolveGates_WhenCountryIndicatorsAreGiven(){
         //Arrange
-        this.metadataRequestDto.setEFTIGateIndicator(List.of("BE", "FR"));
+        this.searchWithIdentifiersRequestDto.setEFTIGateIndicator(List.of("BE", "FR"));
         when(gateRepository.findByCountryIn(anyList())).thenReturn(List.of(frGateEntity, beGateEntity));
 
         //Act
-        final List<String> destinationGates = eftiGateUrlResolver.resolve(metadataRequestDto);
+        final List<String> destinationGates = eftiGateUrlResolver.resolve(searchWithIdentifiersRequestDto);
 
         //Assert
         assertFalse(destinationGates.isEmpty());
@@ -66,7 +66,7 @@ class EftiGateUrlResolverTest {
         when(gateRepository.findAll()).thenReturn(List.of(frGateEntity, beGateEntity, deGateEntity));
 
         //Act
-        final List<String> destinationGates = eftiGateUrlResolver.resolve(metadataRequestDto);
+        final List<String> destinationGates = eftiGateUrlResolver.resolve(searchWithIdentifiersRequestDto);
 
         //Assert
         assertFalse(destinationGates.isEmpty());

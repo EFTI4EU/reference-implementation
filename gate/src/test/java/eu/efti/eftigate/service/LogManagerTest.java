@@ -1,7 +1,7 @@
 package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.MetadataDto;
+import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
@@ -144,7 +144,7 @@ class LogManagerTest extends BaseServiceTest {
                 .respondingComponentId("ownerId")
                 .respondingComponentType(GATE)
                 .respondingComponentCountry("ownerCountry").build();
-        final List<MetadataDto> metadataDtoList = List.of(MetadataDto.builder().build());
+        final List<IdentifiersDto> metadataDtoList = List.of(IdentifiersDto.builder().build());
         final String body = serializeUtils.mapObjectToBase64String(metadataDtoList);
 
         logManager.logLocalRegistryMessage(controlDto, metadataDtoList, "test");

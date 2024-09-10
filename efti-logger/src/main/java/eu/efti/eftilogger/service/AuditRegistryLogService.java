@@ -1,7 +1,7 @@
 package eu.efti.eftilogger.service;
 
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.MetadataDto;
+import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -52,7 +52,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .build());
     }
 
-    public void log(final MetadataDto metadataDto,
+    public void log(final IdentifiersDto identifiersDto,
                     final String currentGateId,
                     final String currentGateCountry,
                     final String body,
@@ -67,7 +67,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .componentId(currentGateId)
                 .componentCountry(currentGateCountry)
                 .requestingComponentType(ComponentType.PLATFORM)
-                .requestingComponentId(metadataDto.getEFTIPlatformUrl())
+                .requestingComponentId(identifiersDto.getEFTIPlatformUrl())
                 .requestingComponentCountry(currentGateCountry)
                 .respondingComponentType(ComponentType.GATE)
                 .respondingComponentId(currentGateId)
@@ -77,18 +77,18 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .errorCodeMessage(isError ? errorCode : "")
                 .errorDescriptionMessage(isError ? ErrorCodesEnum.valueOf(errorCode).getMessage() : "")
                 .timeoutComponentType(TIMEOUT_COMPONENT_TYPE)
-                .metadataId(metadataDto.getMetadataUUID())
-                .eFTIDataId(metadataDto.getEFTIDataUuid())
+                .identifiersId(identifiersDto.getIdentifiersUUID())
+                .eFTIDataId(identifiersDto.getEFTIDataUuid())
                 .interfaceType(edelivery)
                 .build());
     }
 
-    public void log(final MetadataDto metadataDto,
+    public void log(final IdentifiersDto identifiersDto,
                     final String currentGateId,
                     final String currentGateCountry,
                     final String body,
                     final String name) {
-        this.log(metadataDto, currentGateId, currentGateCountry, body, null, name);
+        this.log(identifiersDto, currentGateId, currentGateCountry, body, null, name);
 
     }
 

@@ -16,11 +16,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH;
+import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH;
-import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_METADATA_SEARCH;
+import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_UIL_SEARCH;
-import static eu.efti.commons.enums.RequestTypeEnum.LOCAL_METADATA_SEARCH;
+import static eu.efti.commons.enums.RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH;
 import static eu.efti.commons.enums.RequestTypeEnum.LOCAL_UIL_SEARCH;
 import static eu.efti.commons.enums.RequestTypeEnum.NOTE_SEND;
 import static eu.efti.commons.enums.StatusEnum.COMPLETE;
@@ -55,9 +55,9 @@ class RequestToEDeliveryActionFunctionTest {
 
     static Stream<Arguments> provideRequests() {
         return Stream.of(
-                arguments(buildRequestDto(LOCAL_METADATA_SEARCH, FR_GATE_URL, PENDING), EDeliveryAction.GET_IDENTIFIERS),
-                arguments(buildRequestDto(EXTERNAL_METADATA_SEARCH, FR_GATE_URL, PENDING), EDeliveryAction.GET_IDENTIFIERS),
-                arguments(buildRequestDto(EXTERNAL_ASK_METADATA_SEARCH, FR_GATE_URL, PENDING), EDeliveryAction.GET_IDENTIFIERS),
+                arguments(buildRequestDto(LOCAL_IDENTIFIERS_SEARCH, FR_GATE_URL, PENDING), EDeliveryAction.GET_IDENTIFIERS),
+                arguments(buildRequestDto(EXTERNAL_IDENTIFIERS_SEARCH, FR_GATE_URL, PENDING), EDeliveryAction.GET_IDENTIFIERS),
+                arguments(buildRequestDto(EXTERNAL_ASK_IDENTIFIERS_SEARCH, FR_GATE_URL, PENDING), EDeliveryAction.GET_IDENTIFIERS),
                 arguments(buildRequestDto(LOCAL_UIL_SEARCH, FR_GATE_URL, PENDING), EDeliveryAction.GET_UIL),
                 arguments(buildRequestDto(EXTERNAL_UIL_SEARCH, FR_GATE_URL, PENDING), EDeliveryAction.FORWARD_UIL),
                 arguments(buildRequestDto(EXTERNAL_ASK_UIL_SEARCH, FR_GATE_URL, PENDING), EDeliveryAction.FORWARD_UIL),

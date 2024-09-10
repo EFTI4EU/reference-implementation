@@ -1,9 +1,10 @@
 package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.MetadataDto;
-import eu.efti.commons.dto.MetadataRequestDto;
-import eu.efti.commons.dto.MetadataResponseDto;
+import eu.efti.commons.dto.IdentifiersDto;
+import eu.efti.commons.dto.IdentifiersRequestDto;
+import eu.efti.commons.dto.IdentifiersResponseDto;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.ValidableDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
@@ -42,14 +43,14 @@ public class LogManager {
     public static final String FTI_008_FTI_014 = "fti008|fti014";
     public static final String FTI_015 = "fti015";
     public static final String FTI_016 = "fti016";
-    public static final String LOG_FROM_METADATA_REQUEST_DTO = "logFromMetadataRequestDto";
+    public static final String LOG_FROM_IDENTIFIERS_REQUEST_DTO = "logFromIdentifiersRequestDto";
     public static final String FTI_017 = "fti017";
     public static final String FTI_010_FTI_022_ET_AUTRES = "fti010, fti 022 et autres";
     public static final String FTI_022_FTI_010 = "fti022|fti010";
     public static final String UIL_FTI_020_FTI_009 = "uil|FTI020|fti009";
-    public static final String METADATA = "metadata";
+    public static final String IDENTIFIERS = "identifiers";
 
-    public void logRequestForMetadata(ControlDto controlDto, String body, String currentGateId, String currentGateCountry, String errorCode, String name) {
+    public void logRequestForIdentifiers(ControlDto controlDto, String body, String currentGateId, String currentGateCountry, String errorCode, String name) {
         auditRegistryLogService.logByControlDto(controlDto, currentGateId, currentGateCountry, body, errorCode, name);
     }
 
@@ -71,13 +72,13 @@ public class LogManager {
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, status, false, name);
     }
 
-    public void logFromMetadata(MetadataResponseDto metadataResponseDto, ControlDto controlDto, final String name) {
-        List<MetadataDto> metadataDtoList = new ArrayList<>();
-        metadataResponseDto.getMetadata().forEach(mapperUtils::metadataResultDtoToMetadataDto);
-        this.logLocalRegistryMessage(controlDto, metadataDtoList, name);
+    public void logFromIdentifier(IdentifiersResponseDto identifiersResponseDto, ControlDto controlDto, final String name) {
+        List<IdentifiersDto> identifiersDtoList = new ArrayList<>();
+        identifiersResponseDto.getIdentifiers().forEach(mapperUtils::identifiersResultDtoToIdentifiersDto);
+        this.logLocalRegistryMessage(controlDto, identifiersDtoList, name);
     }
 
-    public void logFromMetadataRequestDto(ControlDto controlDto, MetadataRequestDto metadataRequestDto, final boolean isCurrentGate,final String receiver, final boolean isSucess, final boolean isAck, final String name) {
+    public void logFromIdentifiersRequestDto(ControlDto controlDto, SearchWithIdentifiersRequestDto identifiersRequestDto, final boolean isCurrentGate, final String receiver, final boolean isSucess, final boolean isAck, final String name) {
         final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
                 .requestingComponentType(ComponentType.GATE)
                 .requestingComponentId(gateProperties.getOwner())
@@ -85,7 +86,7 @@ public class LogManager {
                 .respondingComponentType(isCurrentGate? ComponentType.PLATFORM : ComponentType.GATE)
                 .respondingComponentId(receiver)
                 .respondingComponentCountry(eftiGateUrlResolver.resolve(receiver)).build();
-        final String body = serializeUtils.mapObjectToBase64String(metadataRequestDto);
+        final String body = serializeUtils.mapObjectToBase64String(identifiersRequestDto);
         final StatusEnum status = isSucess ? StatusEnum.COMPLETE : StatusEnum.ERROR;
 
         auditRequestLogService.log(controlDto, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, status, isAck, name);
@@ -125,18 +126,18 @@ public class LogManager {
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), bodyBase64, StatusEnum.COMPLETE, false, name);
     }
 
-    public void logRegistryMetadata(final ControlDto control,
-                                        final List<MetadataDto> metadataDtoList,
+    public void logRegistryIdentifiers(final ControlDto control,
+                                        final List<IdentifiersDto> metadataDtoList,
                                         final String name) {
         final String body = metadataDtoList != null ? serializeUtils.mapObjectToBase64String(metadataDtoList) : null;
         this.auditRegistryLogService.logByControlDto(control, gateProperties.getOwner(), gateProperties.getCountry(), body, null, name);
     }
 
     public void logLocalRegistryMessage(final ControlDto control,
-                                        final List<MetadataDto> metadataDtoList,
+                                        final List<IdentifiersDto> identifiersDtoList,
                                         final String name) {
         final MessagePartiesDto messagePartiesDto = getMessagePartiesDto();
-        final String body = serializeUtils.mapObjectToBase64String(metadataDtoList);
+        final String body = serializeUtils.mapObjectToBase64String(identifiersDtoList);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, StatusEnum.COMPLETE, false, name);
     }
 
@@ -155,7 +156,7 @@ public class LogManager {
     }
 
     public <T extends ValidableDto> void logAppRequest(final ControlDto control,
-                                                  final T searchDto,
+                                                       final T searchDto,
                                                        final String name) {
         final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
                 .requestingComponentType(CA_APP)

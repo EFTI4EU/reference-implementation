@@ -40,7 +40,7 @@ public class EftiRequestUpdater {
 
     public void manageSendSuccess(final NotificationDto notificationDto, final String name) {
         final RequestDto requestDto = getRequestDtoFromMessageId(notificationDto.getMessageId());
-        if (List.of(RequestTypeEnum.EXTERNAL_ASK_METADATA_SEARCH, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, RequestTypeEnum.EXTERNAL_UIL_SEARCH, RequestTypeEnum.LOCAL_UIL_SEARCH).contains(requestDto.getControl().getRequestType())) {
+        if (List.of(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, RequestTypeEnum.EXTERNAL_UIL_SEARCH, RequestTypeEnum.LOCAL_UIL_SEARCH).contains(requestDto.getControl().getRequestType())) {
             getRequestService(requestDto.getRequestType().name()).manageSendSuccess(notificationDto.getMessageId());
         } else {
             log.info(" sent message {} successfully", notificationDto.getMessageId());

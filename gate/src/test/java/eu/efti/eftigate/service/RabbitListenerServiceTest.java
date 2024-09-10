@@ -167,3 +167,4 @@ class RabbitListenerServiceTest extends BaseServiceTest {
         assertEquals(1,memoryAppender.countEventsForLogger(LOGGER_NAME, Level.ERROR));
     }
 }
+

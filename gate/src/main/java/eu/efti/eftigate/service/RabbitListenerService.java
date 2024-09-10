@@ -81,7 +81,7 @@ public class RabbitListenerService {
                 logManager.logSentMessage(requestDto.getControl(), body, receiver, isCurrentGate, hasBeenSent, LogManager.UIL_FTI_020_FTI_009);
             } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
                 //log fti019
-                logManager.logRequestForMetadata(requestDto.getControl(), body, gateProperties.getOwner(), gateProperties.getCountry(), requestDto.getError() != null  ? requestDto.getError().getErrorCode() : null, LogManager.METADATA);
+                logManager.logRequestForIdentifiers(requestDto.getControl(), body, gateProperties.getOwner(), gateProperties.getCountry(), requestDto.getError() != null  ? requestDto.getError().getErrorCode() : null, LogManager.IDENTIFIERS);
             }
         }
     }

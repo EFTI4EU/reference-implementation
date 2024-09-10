@@ -1,13 +1,16 @@
 package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.MetadataDto;
-import eu.efti.commons.dto.MetadataRequestDto;
+import eu.efti.commons.dto.IdentifiersRequestDto;
+import eu.efti.commons.dto.IdentifiersDto;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.enums.RequestStatusEnum;
-import eu.efti.eftigate.service.request.MetadataRequestService;
-import eu.efti.metadataregistry.service.MetadataService;
+import eu.efti.commons.enums.RequestTypeEnum;
+import eu.efti.eftigate.service.request.IdentifiersRequestService;
+import eu.efti.identifiersregistry.service.IdentifiersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -17,21 +20,18 @@ import java.util.List;
 @RequiredArgsConstructor()
 @Slf4j
 public class EftiAsyncCallsProcessor {
-
-    private final MetadataRequestService metadataRequestService;
-    private final MetadataService metadataService;
+    private final IdentifiersRequestService identifiersRequestService;
+    private final IdentifiersService identifiersService;
     private final LogManager logManager;
 
     @Async
-    public void checkLocalRepoAsync(final MetadataRequestDto metadataRequestDto, final ControlDto savedControl) {
+    public void checkLocalRepoAsync(final SearchWithIdentifiersRequestDto identifiersRequestDto, final ControlDto savedControl) {
+
         //log fti015
-        logManager.logRegistryMetadata(savedControl, null, LogManager.FTI_015);
-        final List<MetadataDto> metadataDtoList = metadataService.search(metadataRequestDto);
+        logManager.logRegistryIdentifiers(savedControl, null, LogManager.FTI_015);
+        final List<IdentifiersDto> metadataDtoList = identifiersService.search(identifiersRequestDto);
         //logfti016
-        logManager.logRegistryMetadata(savedControl, metadataDtoList, LogManager.FTI_016);
-        metadataRequestService.createRequest(savedControl, RequestStatusEnum.SUCCESS, metadataDtoList);
+        logManager.logRegistryIdentifiers(savedControl, metadataDtoList, LogManager.FTI_016);
+        identifiersRequestService.createRequest(savedControl, RequestStatusEnum.SUCCESS, metadataDtoList);
     }
 }
-
-
-

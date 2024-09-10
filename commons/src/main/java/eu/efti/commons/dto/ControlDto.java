@@ -37,11 +37,11 @@ public class ControlDto {
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private byte[] eftiData;
-    private SearchParameter transportMetaData;
+    private SearchParameter transportIdentifiers;
     private String fromGateUrl;
     private AuthorityDto authority;
     private ErrorDto error;
-    private MetadataResultsDto metadataResults;
+    private IdentifiersResultsDto identifiersResults;
     private String notes;
 
     public boolean isError() {

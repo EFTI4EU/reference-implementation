@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 
-import static eu.efti.eftigate.EftiTestUtils.testFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,7 +53,7 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
         identifiersControlUpdateDelegateService = new IdentifiersControlUpdateDelegateService(identifiersRequestRepository, serializeUtils, controlService, mapperUtils);
 
 
-        final Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(MetadataRequestService.class);
+        final Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(IdentifiersRequestService.class);
         memoryAppender = MemoryAppender.createInitializedMemoryAppender(Level.INFO, memoryAppenderTestLogger);
     }
 
@@ -69,15 +68,15 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
         //Assert
         verify(identifiersRequestRepository).save(requestEntityArgumentCaptor.capture());
         assertEquals(RequestStatusEnum.SUCCESS, requestEntityArgumentCaptor.getValue().getStatus());
-        assertNotNull(requestEntityArgumentCaptor.getValue().getMetadataResults());
-        assertFalse(requestEntityArgumentCaptor.getValue().getMetadataResults().getMetadataResult().isEmpty());
+        assertNotNull(requestEntityArgumentCaptor.getValue().getIdentifiersResults());
+        assertFalse(requestEntityArgumentCaptor.getValue().getIdentifiersResults().getIdentifiersResult().isEmpty());
     }
 
     @Test
     void shouldGetCompleteAsControlNextStatus_whenAllRequestsAreInSuccessStatus() {
         identifiersRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
         controlEntity.setStatus(StatusEnum.PENDING);
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_METADATA_SEARCH);
+        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         when(identifiersRequestRepository.findByControlRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(List.of(identifiersRequestEntity));
         when(controlService.findByRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
         //Act
@@ -92,7 +91,7 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
     void shouldGetErrorAsControlNextStatus_whenSomeRequestsAreInErrorStatus() {
         identifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
         controlEntity.setStatus(StatusEnum.PENDING);
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_METADATA_SEARCH);
+        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         when(identifiersRequestRepository.findByControlRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
         when(controlService.findByRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
         //Act
@@ -109,7 +108,7 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
         controlEntity.setStatus(StatusEnum.PENDING);
         controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_METADATA_SEARCH);
+        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         when(identifiersRequestRepository.findByControlRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
         when(controlService.findByRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
         //Act
@@ -126,7 +125,7 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
         identifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
         controlEntity.setStatus(StatusEnum.PENDING);
         controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_METADATA_SEARCH);
+        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         when(identifiersRequestRepository.findByControlRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
         when(controlService.findByRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
         //Act

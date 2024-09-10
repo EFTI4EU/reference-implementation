@@ -7,7 +7,7 @@ spring:
     control:
       liquibase:
         default-schema: eftisy
-    metadata:
+    identifiers:
       liquibase:
         default-schema: eftisy
   security:
@@ -19,7 +19,7 @@ spring:
     properties:
       hibernate:
         control_schema: "eftisy"
-        metadata_schema: "eftisy"
+        identifiers_schema: "eftisy"
 
 gate:
   country: SY
