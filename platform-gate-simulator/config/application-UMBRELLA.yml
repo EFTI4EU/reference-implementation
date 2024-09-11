@@ -1,0 +1,21 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth.gate.listenbourg.eu:8080/realms/eFTI_LI
+
+server:
+  port: 8072
+
+gate:
+  minSleep: 1000
+  maxSleep: 2000
+  owner: http://efti.platform.umbrellainc.com
+  cda_path: classpath:cda/
+  gate: http://efti.gate.listenbourg.eu
+  ap:
+    url: http://efti.platform.umbrellainc.com:81/domibus/services/wsplugin
+    username: umbrellacorporation_service_account
+    password: Azerty59*1234567
+
