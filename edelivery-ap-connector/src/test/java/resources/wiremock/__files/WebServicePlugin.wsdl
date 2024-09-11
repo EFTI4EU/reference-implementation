@@ -1,0 +1,358 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+        xmlns:tns="http://eu.domibus.wsplugin/"
+        xmlns:ns1="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" name="WebServicePlugin"
+        targetNamespace="http://eu.domibus.wsplugin/">
+
+    <wsdl:types>
+
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+        </schema>
+
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.w3.org/2005/05/xmlmime" schemaLocation="xmlmime.xsd"/>
+        </schema>
+
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.w3.org/2003/05/soap-envelope" schemaLocation="envelope.xsd"/>
+        </schema>
+
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://eu.domibus.wsplugin/" schemaLocation="webservicePlugin-body.xsd"/>
+        </schema>
+
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+                    schemaLocation="webservicePlugin-header.xsd"/>
+        </schema>
+
+    </wsdl:types>
+
+    <wsdl:message name="getMessageErrors">
+        <wsdl:part element="tns:getErrorsRequest" name="getErrorsRequest">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getMessageErrorsWithAccessPointRole">
+        <wsdl:part element="tns:getErrorsRequestWithAccessPointRole" name="getErrorsRequestWithAccessPointRole">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="retrieveMessage">
+        <wsdl:part element="tns:retrieveMessageRequest" name="retrieveMessageRequest">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="RetrieveMessageFault">
+        <wsdl:part element="tns:FaultDetail" name="RetrieveMessageFault">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="markMessageAsDownloaded">
+        <wsdl:part element="tns:markMessageAsDownloadedRequest" name="markMessageAsDownloadedRequest">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="MarkMessageAsDownloadedFault">
+        <wsdl:part element="tns:FaultDetail" name="MarkMessageAsDownloadedFault">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="markMessageAsDownloadedResponse">
+        <wsdl:part element="tns:markMessageAsDownloadedResponse" name="markMessageAsDownloadedResponse">
+        </wsdl:part>
+        <wsdl:part element="ns1:Messaging" name="ebMSHeaderInfo">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="listPendingMessagesFault">
+        <wsdl:part element="tns:FaultDetail" name="listPendingMessagesFault">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="listPushFailedMessagesFault">
+        <wsdl:part element="tns:FaultDetail" name="listPushFailedMessagesFault">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="rePushFailedMessagesFault">
+        <wsdl:part element="tns:FaultDetail" name="rePushFailedMessagesFault">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getMessageErrorsFault">
+        <wsdl:part element="tns:FaultDetail" name="getMessageErrorsFault">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="retrieveMessageResponse">
+        <wsdl:part element="tns:retrieveMessageResponse" name="retrieveMessageResponse">
+        </wsdl:part>
+        <wsdl:part element="ns1:Messaging" name="ebMSHeaderInfo">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="listPendingMessagesResponse">
+        <wsdl:part element="tns:listPendingMessagesResponse" name="listPendingMessagesResponse">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="listPushFailedMessagesResponse">
+        <wsdl:part element="tns:listPushFailedMessagesResponse" name="listPushFailedMessagesResponse">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="rePushFailedMessagesResponse">
+    </wsdl:message>
+    <wsdl:message name="getStatusResponse">
+        <wsdl:part element="tns:getStatusResponse" name="getStatusResponse">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="listPendingMessages">
+        <wsdl:part element="tns:listPendingMessagesRequest" name="listPendingMessagesRequest">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="listPushFailedMessages">
+        <wsdl:part element="tns:listPushFailedMessagesRequest" name="listPushFailedMessagesRequest">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="rePushFailedMessages">
+        <wsdl:part element="tns:rePushFailedMessagesRequest" name="rePushFailedMessagesRequest">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getStatus">
+        <wsdl:part element="tns:statusRequest" name="statusRequest">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getStatusWithAccessPointRole">
+        <wsdl:part element="tns:statusRequestWithAccessPointRole" name="statusRequestWithAccessPointRole">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="StatusFault">
+        <wsdl:part element="tns:FaultDetail" name="StatusFault">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="submitMessage">
+        <wsdl:part element="tns:submitRequest" name="submitRequest">
+        </wsdl:part>
+        <wsdl:part element="ns1:Messaging" name="ebMSHeaderInfo">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="submitMessageResponse">
+        <wsdl:part element="tns:submitResponse" name="submitResponse">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="SubmitMessageFault">
+        <wsdl:part element="tns:FaultDetail" name="SubmitMessageFault">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getMessageErrorsResponse">
+        <wsdl:part element="tns:getMessageErrorsResponse" name="getMessageErrorsResponse">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="WebServicePluginInterface">
+        <wsdl:operation name="submitMessage">
+            <wsdl:input message="tns:submitMessage" name="submitMessage">
+            </wsdl:input>
+            <wsdl:output message="tns:submitMessageResponse" name="submitMessageResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:SubmitMessageFault" name="SubmitMessageFault">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getStatus">
+            <wsdl:input message="tns:getStatus" name="getStatus">
+            </wsdl:input>
+            <wsdl:output message="tns:getStatusResponse" name="getStatusResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:StatusFault" name="StatusFault">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getStatusWithAccessPointRole">
+            <wsdl:input message="tns:getStatusWithAccessPointRole" name="getStatusWithAccessPointRole">
+            </wsdl:input>
+            <wsdl:output message="tns:getStatusResponse" name="getStatusResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:StatusFault" name="StatusFault">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="listPendingMessages">
+            <wsdl:input message="tns:listPendingMessages" name="listPendingMessages">
+            </wsdl:input>
+            <wsdl:output message="tns:listPendingMessagesResponse" name="listPendingMessagesResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:listPendingMessagesFault" name="listPendingMessagesFault">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="listPushFailedMessages">
+            <wsdl:input message="tns:listPushFailedMessages" name="listPushFailedMessages">
+            </wsdl:input>
+            <wsdl:output message="tns:listPushFailedMessagesResponse" name="listPushFailedMessagesResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:listPushFailedMessagesFault" name="listPushFailedMessagesFault">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="rePushFailedMessages">
+            <wsdl:input message="tns:rePushFailedMessages" name="rePushFailedMessages">
+            </wsdl:input>
+            <wsdl:output message="tns:rePushFailedMessagesResponse" name="rePushFailedMessagesResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:rePushFailedMessagesFault" name="rePushFailedMessagesFault">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageErrors">
+            <wsdl:input message="tns:getMessageErrors" name="getMessageErrors">
+            </wsdl:input>
+            <wsdl:output message="tns:getMessageErrorsResponse" name="getMessageErrorsResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:getMessageErrorsFault" name="getMessageErrorsFault">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageErrorsWithAccessPointRole">
+            <wsdl:input message="tns:getMessageErrorsWithAccessPointRole" name="getMessageErrorsWithAccessPointRole">
+            </wsdl:input>
+            <wsdl:output message="tns:getMessageErrorsResponse" name="getMessageErrorsResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:getMessageErrorsFault" name="getMessageErrorsFault">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="retrieveMessage">
+            <wsdl:input message="tns:retrieveMessage" name="retrieveMessage">
+            </wsdl:input>
+            <wsdl:output message="tns:retrieveMessageResponse" name="retrieveMessageResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:RetrieveMessageFault" name="RetrieveMessageFault">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="markMessageAsDownloaded">
+            <wsdl:input message="tns:markMessageAsDownloaded" name="markMessageAsDownloaded">
+            </wsdl:input>
+            <wsdl:output message="tns:markMessageAsDownloadedResponse" name="markMessageAsDownloadedResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:MarkMessageAsDownloadedFault" name="MarkMessageAsDownloadedFault">
+            </wsdl:fault>
+        </wsdl:operation>
+
+    </wsdl:portType>
+
+    <wsdl:binding name="WebServicePlugin_SoapBinding" type="tns:WebServicePluginInterface">
+        <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="submitMessage">
+            <soap12:operation soapAction="" style="document"/>
+            <wsdl:input name="submitMessage">
+                <soap12:header message="tns:submitMessage" part="ebMSHeaderInfo" use="literal"/>
+                <soap12:body parts="submitRequest" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="submitMessageResponse">
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SubmitMessageFault">
+                <soap12:fault name="SubmitMessageFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getStatus">
+            <soap12:operation soapAction="" style="document"/>
+            <wsdl:input name="getStatus">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="getStatusResponse">
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="StatusFault">
+                <soap12:fault name="StatusFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="getStatusWithAccessPointRole">
+            <soap12:operation soapAction="" style="document"/>
+            <wsdl:input name="getStatusWithAccessPointRole">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="getStatusResponse">
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="StatusFault">
+                <soap12:fault name="StatusFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageErrors">
+            <soap12:operation soapAction="" style="document"/>
+            <wsdl:input name="getMessageErrors">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="getMessageErrorsResponse">
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="getMessageErrorsFault">
+                <soap12:fault name="getMessageErrorsFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageErrorsWithAccessPointRole">
+            <soap12:operation soapAction="" style="document"/>
+            <wsdl:input name="getMessageErrorsWithAccessPointRole">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="getMessageErrorsResponse">
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="getMessageErrorsFault">
+                <soap12:fault name="getMessageErrorsFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="listPendingMessages">
+            <soap12:operation soapAction="" style="document"/>
+            <wsdl:input name="listPendingMessages">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="listPendingMessagesResponse">
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="listPendingMessagesFault">
+                <soap12:fault name="listPendingMessagesFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="listPushFailedMessages">
+            <soap12:operation soapAction="" style="document"/>
+            <wsdl:input name="listPushFailedMessages">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="listPushFailedMessagesResponse">
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="listPushFailedMessagesFault">
+                <soap12:fault name="listPushFailedMessagesFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="rePushFailedMessages">
+            <soap12:operation soapAction="" style="document"/>
+            <wsdl:input name="rePushFailedMessages">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="rePushFailedMessagesResponse">
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="rePushFailedMessagesFault">
+                <soap12:fault name="rePushFailedMessagesFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="retrieveMessage">
+            <soap12:operation soapAction="" style="document"/>
+            <wsdl:input name="retrieveMessage">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="retrieveMessageResponse">
+                <soap12:header message="tns:retrieveMessageResponse" part="ebMSHeaderInfo" use="literal"/>
+                <soap12:body parts="retrieveMessageResponse" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="RetrieveMessageFault">
+                <soap12:fault name="RetrieveMessageFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="markMessageAsDownloaded">
+            <soap12:operation soapAction="" style="document"/>
+            <wsdl:input name="markMessageAsDownloaded">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="markMessageAsDownloadedResponse">
+                <soap12:header message="tns:markMessageAsDownloadedResponse" part="ebMSHeaderInfo" use="literal"/>
+                <soap12:body parts="markMessageAsDownloadedResponse" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="MarkMessageAsDownloadedFault">
+                <soap12:fault name="MarkMessageAsDownloadedFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="WebServicePlugin">
+        <wsdl:port binding="tns:WebServicePlugin_SoapBinding" name="WEBSERVICEPLUGIN_PORT">
+            <soap12:address location="http://localhost:8080/domibus/services/wsplugin"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
