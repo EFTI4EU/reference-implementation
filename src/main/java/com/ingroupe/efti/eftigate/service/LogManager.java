@@ -10,6 +10,7 @@ import com.ingroupe.efti.commons.enums.StatusEnum;
 import com.ingroupe.efti.commons.utils.SerializeUtils;
 import com.ingroupe.efti.eftigate.config.GateProperties;
 import com.ingroupe.efti.eftigate.dto.RequestUuidDto;
+import com.ingroupe.efti.eftigate.mapper.MapperUtils;
 import com.ingroupe.efti.eftigate.service.gate.EftiGateUrlResolver;
 import com.ingroupe.efti.eftilogger.dto.MessagePartiesDto;
 import com.ingroupe.efti.eftilogger.model.ComponentType;
@@ -34,6 +35,7 @@ public class LogManager {
     private final AuditRequestLogService auditRequestLogService;
     private final AuditRegistryLogService auditRegistryLogService;
     private final SerializeUtils serializeUtils;
+    private final MapperUtils mapperUtils;
 
     public static final String FTI_ROOT_RESPONSE_SUCESS = "fti root response sucess";
     public static final String FTI_SEND_FAIL = "fti send fail";
@@ -71,7 +73,7 @@ public class LogManager {
 
     public void logFromMetadata(MetadataResponseDto metadataResponseDto, ControlDto controlDto, final String name) {
         List<MetadataDto> metadataDtoList = new ArrayList<>();
-        metadataResponseDto.getMetadata().forEach(MetadataDto::new);
+        metadataResponseDto.getMetadata().forEach(mapperUtils::metadataResultDtoToMetadataDto);
         this.logLocalRegistryMessage(controlDto, metadataDtoList, name);
     }
 

@@ -88,6 +88,10 @@ public class MapperUtils {
                 .toList();
     }
 
+    public MetadataDto metadataResultDtoToMetadataDto(final MetadataResultDto metadataResultDto) {
+        return modelMapper.map(metadataResultDto, MetadataDto.class);
+    }
+
     public List<MetadataResultDto> metadataDtosToMetadataResultDto(final List<MetadataDto> metadataDtoList) {
         return CollectionUtils.emptyIfNull(metadataDtoList).stream()
                 .map(metadataDto -> modelMapper.map(metadataDto, MetadataResultDto.class))

@@ -6,6 +6,7 @@ import com.ingroupe.efti.commons.dto.UilDto;
 import com.ingroupe.efti.commons.enums.RequestTypeEnum;
 import com.ingroupe.efti.commons.enums.StatusEnum;
 import com.ingroupe.efti.eftigate.config.GateProperties;
+import com.ingroupe.efti.eftigate.mapper.MapperUtils;
 import com.ingroupe.efti.eftilogger.dto.MessagePartiesDto;
 import com.ingroupe.efti.eftilogger.service.AuditRegistryLogService;
 import com.ingroupe.efti.eftilogger.service.AuditRequestLogService;
@@ -33,6 +34,9 @@ class LogManagerTest extends BaseServiceTest {
     @Mock
     private AuditRegistryLogService auditRegistryLogService;
 
+    @Mock
+    private MapperUtils mapperUtils;
+
     private ControlDto controlDto;
     private UilDto uilDto;
     private final static String BODY = "body";
@@ -41,7 +45,7 @@ class LogManagerTest extends BaseServiceTest {
     @BeforeEach
     public void setUp() {
         gateProperties = GateProperties.builder().owner("ownerId").country("ownerCountry").build();
-        logManager = new LogManager(gateProperties, eftiGateUrlResolver, auditRequestLogService, auditRegistryLogService,serializeUtils);
+        logManager = new LogManager(gateProperties, eftiGateUrlResolver, auditRequestLogService, auditRegistryLogService,serializeUtils, mapperUtils);
         controlDto = ControlDto.builder()
                 .requestType(RequestTypeEnum.LOCAL_UIL_SEARCH)
                 .eftiPlatformUrl("platformUrl")
