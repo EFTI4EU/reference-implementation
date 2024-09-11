@@ -72,7 +72,7 @@ class MetadataServiceTest extends AbstractServiceTest {
         service.createOrUpdate(metadataDto);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(), any(), any(), any());
+        verify(auditRegistryLogService).log(any(), any(), any(), any(), any());
         assertEquals(DATA_UUID, argumentCaptor.getValue().getEFTIDataUuid());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getEFTIPlatformUrl());
         assertEquals(GATE_URL, argumentCaptor.getValue().getEFTIGateUrl());
@@ -86,7 +86,7 @@ class MetadataServiceTest extends AbstractServiceTest {
         service.createOrUpdate(metadataDto);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(), any(), any(), any());
+        verify(auditRegistryLogService).log(any(), any(), any(), any(), any());
         assertEquals(DATA_UUID, argumentCaptor.getValue().getEFTIDataUuid());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getEFTIPlatformUrl());
         assertEquals(GATE_URL, argumentCaptor.getValue().getEFTIGateUrl());
@@ -105,7 +105,7 @@ class MetadataServiceTest extends AbstractServiceTest {
         service.createOrUpdate(metadataDto);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(), any(), any(), any());
+        verify(auditRegistryLogService).log(any(), any(), any(), any(), any());
         verify(repository).findByUil(GATE_URL, DATA_UUID, PLATFORM_URL);
         assertEquals(DATA_UUID, argumentCaptor.getValue().getEFTIDataUuid());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getEFTIPlatformUrl());
@@ -135,7 +135,7 @@ class MetadataServiceTest extends AbstractServiceTest {
         service.createOrUpdate(metadataDto);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(), any(), any(), any());
+        verify(auditRegistryLogService).log(any(), any(), any(), any(), any());
         verify(repository).findByUil(GATE_URL, DATA_UUID, PLATFORM_URL);
         assertEquals(DATA_UUID, argumentCaptor.getValue().getEFTIDataUuid());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getEFTIPlatformUrl());
