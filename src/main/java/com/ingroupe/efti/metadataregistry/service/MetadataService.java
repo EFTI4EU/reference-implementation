@@ -28,6 +28,8 @@ import java.util.UUID;
 @Slf4j
 public class MetadataService {
 
+    public static final String FTI_004 = "fti004";
+
     private final MetadataRepository repository;
     private final MetadataMapper mapper;
     private final AuditRegistryLogService logService;
@@ -55,7 +57,7 @@ public class MetadataService {
             log.info("creating new entry for uuid {}", metadataDto.getMetadataUUID());
         }
         this.save(metadataDto);
-        logService.log(metadataDto, gateOwner, gateCountry, bodyBase64);
+        logService.log(metadataDto, gateOwner, gateCountry, bodyBase64, FTI_004);
     }
 
     public void disable(final MetadataDto metadataDto) {
