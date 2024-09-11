@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+    <changeSet author="dfourmaux (generated)" id="1707315732219-1">
+        <createTable tableName="contactinformation">
+            <column autoIncrement="true" name="id" startWith="105" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="contactinformation_pkey"/>
+            </column>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="streetname" type="VARCHAR(300)"/>
+            <column name="buildingnumber" type="VARCHAR(50)"/>
+            <column name="city" type="VARCHAR(255)"/>
+            <column name="additionalline" type="VARCHAR(300)"/>
+            <column name="postalcode" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="dfourmaux (generated)" id="1707315732219-2">
+        <createTable tableName="authority">
+            <column autoIncrement="true" name="id" startWith="53" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="authority_pkey"/>
+            </column>
+            <column name="country" type="VARCHAR(2)"/>
+            <column name="legalcontact" type="INTEGER"/>
+            <column name="workingcontact" type="INTEGER"/>
+            <column name="isemergencyservice" type="BOOLEAN"/>
+            <column name="name" type="VARCHAR(100)"/>
+            <column name="nationaluniqueidentifier" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="dfourmaux (generated)" id="1707315732219-3">
+        <createTable tableName="error">
+            <column autoIncrement="true" name="id" startWith="375" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="error_pkey"/>
+            </column>
+            <column name="errorcode" type="VARCHAR(255)"/>
+            <column name="errordescription" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="dfourmaux (generated)" id="1707315732219-4">
+        <createTable tableName="control">
+            <column autoIncrement="true" name="id" startWith="56" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="control_pkey"/>
+            </column>
+            <column name="eftidatauuid" type="VARCHAR(36)"/>
+            <column name="requestuuid" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="requesttype" type="VARCHAR(55)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eftiplatformurl" type="VARCHAR(255)"/>
+            <column name="eftigateurl" type="VARCHAR(255)"/>
+            <column name="subseteurequested" type="VARCHAR(225)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subsetmsrequested" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="createddate" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastmodifieddate" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eftidata" type="BYTEA"/>
+            <column name="transportmetadata" type="JSONB"/>
+            <column name="fromgateurl" type="VARCHAR(255)"/>
+            <column name="authority" type="INTEGER"/>
+            <column name="error" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="dfourmaux (generated)" id="1707315732219-5">
+        <createTable tableName="request">
+            <column autoIncrement="true" name="id" startWith="105" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="request_pkey"/>
+            </column>
+            <column name="control" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="edeliverymessageid" type="VARCHAR(72)"/>
+            <column defaultValueNumeric="0" name="retry" type="INTEGER"/>
+            <column name="reponsedata" type="BYTEA"/>
+            <column name="nextretrydate" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="createddate" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastmodifieddate" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="gateurldest" type="VARCHAR(255)"/>
+            <column name="error" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="dfourmaux (generated)" id="1707315732219-6">
+        <createTable tableName="shedlock">
+            <column name="name" type="VARCHAR(64)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="shedlock_pkey"/>
+            </column>
+            <column name="lock_until" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="locked_at" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="locked_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="dfourmaux (generated)" id="1707315732219-7">
+        <addForeignKeyConstraint baseColumnNames="legalcontact" baseTableName="authority" constraintName="authority_legalcontact_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="contactinformation" validate="true"/>
+    </changeSet>
+    <changeSet author="dfourmaux (generated)" id="1707315732219-8">
+        <addForeignKeyConstraint baseColumnNames="workingcontact" baseTableName="authority" constraintName="authority_workingcontact_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="contactinformation" validate="true"/>
+    </changeSet>
+    <changeSet author="dfourmaux (generated)" id="1707315732219-9">
+        <addForeignKeyConstraint baseColumnNames="authority" baseTableName="control" constraintName="control_authority_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="authority" validate="true"/>
+    </changeSet>
+    <changeSet author="dfourmaux (generated)" id="1707315732219-10">
+        <addForeignKeyConstraint baseColumnNames="error" baseTableName="control" constraintName="control_error_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="error" validate="true"/>
+    </changeSet>
+    <changeSet author="dfourmaux (generated)" id="1707315732219-11">
+        <addForeignKeyConstraint baseColumnNames="control" baseTableName="request" constraintName="request_control_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="control" validate="true"/>
+    </changeSet>
+    <changeSet author="dfourmaux (generated)" id="1707315732219-12">
+        <addForeignKeyConstraint baseColumnNames="error" baseTableName="request" constraintName="request_error_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="error" validate="true"/>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-13">
+        <addColumn catalogName="efti" tableName="control">
+            <column name="metadatas" type="JSONB"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-14">
+        <addColumn catalogName="efti" tableName="request">
+            <column name="metadatas" type="JSONB"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-15">
+        <createTable tableName="gate">
+            <column autoIncrement="true" name="id" startWith="56" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="gate_pkey"/>
+            </column>
+            <column name="country" type="VARCHAR(10)"/>
+            <column name="url" type="VARCHAR(255)"/>
+            <column name="createddate" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastmodifieddate" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet  author="osouley" id="1707315732219-17">
+        <insert tableName="gate">
+            <column name="id" value="2" />
+            <column name="country" value="BE"/>
+            <column name="url" value="http://efti.gate.borduria.eu" />
+            <column name="createddate" valueDate="CURRENT_TIMESTAMP" />
+            <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP" />
+        </insert>
+    </changeSet>
+    <changeSet  author="osouley" id="1707315732219-18">
+        <insert tableName="gate">
+            <column name="id" value="3" />
+            <column name="country" value="DE"/>
+            <column name="url" value="http://efti.gate.syldavia.eu" />
+            <column name="createddate" valueDate="CURRENT_TIMESTAMP" />
+            <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP" />
+        </insert>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-19">
+        <addColumn catalogName="efti" tableName="request">
+            <column name="note" type="VARCHAR(255)"/>
+            <column name="request_type" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-20">
+        <dropColumn catalogName="efti" tableName="control">
+            <column name="metadatas" type="JSONB"/>
+        </dropColumn>
+        <dropColumn catalogName="efti" tableName="control">
+            <column name="eftidata" type="BYTEA"/>
+        </dropColumn>
+    </changeSet>
+    <changeSet author="dfourmaux" id="1707315732219-21">
+        <update tableName="gate">
+            <column name="country" value="SY" />
+            <where>url = 'http://efti.gate.syldavia.eu'</where>
+        </update>
+    </changeSet>
+    <changeSet author="dfourmaux" id="1707315732219-22">
+        <update tableName="gate">
+            <column name="country" value="BO" />
+            <where>url = 'http://efti.gate.borduria.eu'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

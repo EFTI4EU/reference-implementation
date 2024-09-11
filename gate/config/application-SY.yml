@@ -1,0 +1,38 @@
+spring:
+  rabbitmq:
+    password: sy
+    username: sy
+    virtual-host: sy
+  datasource:
+    control:
+      liquibase:
+        default-schema: eftisy
+    metadata:
+      liquibase:
+        default-schema: eftisy
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth.gate.syldavia.eu:8080/realms/eFTI_SY
+  jpa:
+    properties:
+      hibernate:
+        control_schema: "eftisy"
+        metadata_schema: "eftisy"
+        default_schema: "eftisy"
+  #----- Liquibase -----#
+  liquibase:
+    enabled: true
+    defaultSchema: eftisy
+    parameters:
+      defaultSchema: ${spring.liquibase.defaultSchema}
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+gate:
+  country: SY
+  owner: http://efti.gate.syldavia.eu
+  ap:
+    url: http://efti.gate.syldavia.eu:81/domibus/services/wsplugin
+    username: syldavia_service_account
+    password: Azerty59*1234567

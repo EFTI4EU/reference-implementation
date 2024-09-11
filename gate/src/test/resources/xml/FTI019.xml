@@ -1,0 +1,11 @@
+<body>
+  <requestUuid>67fe38bd-6bf7-4b06-b20e-206264bd639c</requestUuid>
+  <transportMode>ROAD</transportMode>
+  <vehicleID>AA123VV</vehicleID>
+  <vehicleCountry>FR</vehicleCountry>
+  <isDangerousGoods>true</isDangerousGoods>
+  <eFTIGateIndicator>
+    <eFTIGateIndicator>BE</eFTIGateIndicator>
+    <eFTIGateIndicator>FR</eFTIGateIndicator>
+  </eFTIGateIndicator>
+</body>

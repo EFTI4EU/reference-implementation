@@ -1,0 +1,33 @@
+{
+  "id": 0,
+  "status": "RECEIVED",
+  "edeliveryMessageId": null,
+  "retry": 0,
+  "nextRetryDate": null,
+  "createdDate": null,
+  "lastModifiedDate": null,
+  "gateUrlDest": "https://efti.gate.be.eu",
+  "control": {
+    "id": 1,
+    "eftiDataUuid": null,
+    "requestUuid": null,
+    "requestType": null,
+    "status": null,
+    "eftiPlatformUrl": null,
+    "eftiGateUrl": null,
+    "subsetEuRequested": null,
+    "subsetMsRequested": null,
+    "createdDate": null,
+    "lastModifiedDate": null,
+    "eftiData": null,
+    "transportMetaData": null,
+    "fromGateUrl": null,
+    "authority": null,
+    "error": null,
+    "metadataResults": null,
+    "notes": null
+  },
+  "error": null,
+  "requestType": "UIL",
+  "reponseData": null
+}

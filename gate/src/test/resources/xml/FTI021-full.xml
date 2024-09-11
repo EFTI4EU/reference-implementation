@@ -1,0 +1,32 @@
+<body>
+  <eFTIGate>FR</eFTIGate>
+  <requestUuid>67fe38bd-6bf7-4b06-b20e-206264bd639c</requestUuid>
+  <status>COMPLETE</status>
+  <errorDescription>null</errorDescription>
+  <metadata>
+     <metadata>
+        <journeyStart>null</journeyStart>
+        <countryStart>FR</countryStart>
+        <journeyEnd>null</journeyEnd>
+        <countryEnd>FR</countryEnd>
+        <metadataUUID>a19b472d-f873-4d7b-b3e7-fa76449693ae</metadataUUID>
+        <transportVehicles>
+          <transportVehicle>
+              <transportMode>ROAD</transportMode>
+              <sequence>1</sequence>
+              <vehicleCountry>FR</vehicleCountry>
+              <journeyStart>null</journeyStart>
+              <countryStart>FR</countryStart>
+              <journeyEnd>null</journeyEnd>
+              <countryEnd>FR</countryEnd>
+              <vehicleID>AA123VV</vehicleID>
+          </transportVehicle>
+        </transportVehicles>
+        <disabled>false</disabled>
+        <eFTIGateUrl>http://efti.gate.borduria.eu</eFTIGateUrl>
+        <eFTIDataUuid>032ad16a-ce1b-4ed2-a943-3b3975be9657</eFTIDataUuid>
+        <eFTIPlatformUrl>http://efti.platform.acme.com</eFTIPlatformUrl>
+        <isDangerousGoods>true</isDangerousGoods>
+     </metadata>
+  </metadata>
+</body>
