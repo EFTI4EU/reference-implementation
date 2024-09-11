@@ -36,10 +36,12 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                      final String currentGateCountry,
                      final String body,
                      final StatusEnum status,
-                     final boolean isAck) {
+                     final boolean isAck,
+                    final String name) {
 
         final LogRequestDto logRequestDto = LogRequestDto.builder()
                 .authorityName(control.getAuthority() != null ? control.getAuthority().getName() : null)
+                .name(name)
                 .authorityNationalUniqueIdentifier(control.getAuthority() != null ? control.getAuthority().getNationalUniqueIdentifier() : null)
                 .requestingComponentType(messagePartiesDto.getRequestingComponentType())
                 .requestingComponentId(messagePartiesDto.getRequestingComponentId())
