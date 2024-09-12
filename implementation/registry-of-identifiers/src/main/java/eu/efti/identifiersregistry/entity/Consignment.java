@@ -48,6 +48,15 @@ public class Consignment implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
     private List<MainCarriageTransportMovement> mainCarriageTransportMovements;
 
+    public void setMainCarriageTransportMovements(List<MainCarriageTransportMovement> mainCarriageTransportMovements) {
+        this.mainCarriageTransportMovements = mainCarriageTransportMovements;
+        for (int i = 0; i < mainCarriageTransportMovements.size(); i++) {
+            var mctm = mainCarriageTransportMovements.get(i);
+            mctm.setConsignment(this);
+            mctm.setSequenceNumber(i);
+        }
+    }
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
     private List<UsedTransportEquipment> usedTransportEquipments;
 
@@ -56,7 +65,7 @@ public class Consignment implements Serializable {
         for (int i = 0; i < usedTransportEquipments.size(); i++) {
             var ute = usedTransportEquipments.get(i);
             ute.setConsignment(this);
-            ute.getId().setSequenceNumber(i);
+            ute.setSequenceNumber(i);
         }
     }
 }
