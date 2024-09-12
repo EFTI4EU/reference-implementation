@@ -30,12 +30,13 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
     default List<Consignment> searchByCriteria(final SearchWithIdentifiersRequestDto request) {
         return this.findAll((root, query, cb) -> {
             final List<Predicate> predicates = new ArrayList<>();
-
             if (request.getIsDangerousGoods() != null) {
                 Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin = root.join("mainCarriageTransportMovements", JoinType.LEFT);
-                List<Predicate> subQueryPredicate = new ArrayList<>();
-                subQueryPredicate.add(cb.equal(mainCarriageTransportMovementJoin.get(IS_DANGEROUS_GOODS), request.getIsDangerousGoods()));
-                predicates.add(cb.and(subQueryPredicate.toArray(new Predicate[]{})));
+                predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(IS_DANGEROUS_GOODS), request.getIsDangerousGoods())));
+            }
+            if (StringUtils.isNotEmpty(request.getTransportMode())) {
+                Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin = root.join("mainCarriageTransportMovements", JoinType.LEFT);
+                predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(TRANSPORT_MODE), TransportMode.valueOf(request.getTransportMode()))));
             }
             //vehicle subquery
             predicates.add(buildSubQuery(request, cb, root));
@@ -47,11 +48,7 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
     private Predicate buildSubQuery(final SearchWithIdentifiersRequestDto request, final CriteriaBuilder cb, final Root<Consignment> root) {
         final Join<Consignment, UsedTransportEquipment> vehicles = root.join(TRANSPORT_VEHICLES);
         final List<Predicate> subQueryPredicate = new ArrayList<>();
-
         subQueryPredicate.add(cb.equal(cb.upper(vehicles.get(VEHICLE_ID)), request.getVehicleID().toUpperCase()));
-        if (StringUtils.isNotEmpty(request.getTransportMode())) {
-            subQueryPredicate.add(cb.equal(vehicles.get(TRANSPORT_MODE), TransportMode.valueOf(request.getTransportMode())));
-        }
         if (StringUtils.isNotEmpty(request.getVehicleCountry())) {
             subQueryPredicate.add(cb.equal(vehicles.get(VEHICLE_COUNTRY), CountryIndicator.valueOf(request.getVehicleCountry()).toString()));
         }
