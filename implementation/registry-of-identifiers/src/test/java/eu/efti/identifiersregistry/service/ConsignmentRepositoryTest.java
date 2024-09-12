@@ -4,6 +4,7 @@ import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.commons.enums.TransportMode;
 import eu.efti.identifiersregistry.entity.Consignment;
+import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,12 +48,16 @@ class ConsignmentRepositoryTest {
         consignment.setDatasetId("thedatauuid");
         consignment.setPlatformId("theplatformurl");
 
+        MainCarriageTransportMovement movement = new MainCarriageTransportMovement();
+        movement.setDangerousGoodsIndicator(true);
+        consignment.setMainCarriageTransportMovements(List.of(movement));
+
         UsedTransportEquipment equipment1 = new UsedTransportEquipment();
-        equipment1.setEquipmentId("equipmentId1");
+        equipment1.setEquipmentId("vehicleId1");
         equipment1.setRegistrationCountry(CountryIndicator.FR.name());
 
         UsedTransportEquipment equipment2 = new UsedTransportEquipment();
-        equipment2.setEquipmentId("equipmentId2");
+        equipment2.setEquipmentId("vehicleId2");
         equipment2.setRegistrationCountry(CountryIndicator.CY.name());
 
         var usedTransportEquipments = List.of(equipment1, equipment2);
@@ -64,12 +69,16 @@ class ConsignmentRepositoryTest {
         otherConsignment.setDatasetId("thedatauuid");
         otherConsignment.setPlatformId("theplatformurl");
 
+        MainCarriageTransportMovement movement2 = new MainCarriageTransportMovement();
+        movement2.setDangerousGoodsIndicator(false);
+        otherConsignment.setMainCarriageTransportMovements(List.of(movement2));
+
         UsedTransportEquipment equipment3 = new UsedTransportEquipment();
-        equipment3.setEquipmentId("equipmentId3");
+        equipment3.setEquipmentId("vehicleId1");
         equipment3.setRegistrationCountry(CountryIndicator.FR.name());
 
         UsedTransportEquipment equipment4 = new UsedTransportEquipment();
-        equipment4.setEquipmentId("equipmentId4");
+        equipment4.setEquipmentId("vehicleId2");
         equipment4.setRegistrationCountry(CountryIndicator.FR.name());
 
         otherConsignment.setUsedTransportEquipments(List.of(equipment3, equipment4));

@@ -9,12 +9,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class MainCarriageTransportMovement {
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "consignmentId", column = @Column(name = "consignment_id")),
-            @AttributeOverride(name = "ordinal", column = @Column(name = "ordinal"))
-    })
-    private MainCarriageTransportMovementId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(name = "sequence_number")
+    private int sequenceNumber;
 
     @Column(name = "mode_code")
     private short modeCode;
@@ -29,6 +29,6 @@ public class MainCarriageTransportMovement {
     private String usedTransportMeansRegistrationCountry;
 
     @ManyToOne
-    @JoinColumn(name = "consignment_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "consignment_id", referencedColumnName = "id", insertable = true, updatable = false)
     private Consignment consignment;
 }

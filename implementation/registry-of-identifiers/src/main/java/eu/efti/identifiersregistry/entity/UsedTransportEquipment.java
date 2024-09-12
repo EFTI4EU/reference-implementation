@@ -19,14 +19,14 @@ import java.util.List;
 @Table(name = "used_transport_equipment")
 public class UsedTransportEquipment {
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "consignmentId", column = @Column(name = "consignment_id")),
-            @AttributeOverride(name = "sequenceNumber", column = @Column(name = "sequence_number"))
-    })
-    private UsedTransportEquipmentId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-    @Column(name = "id")
+    @Column(name = "sequence_number")
+    private int sequenceNumber;
+
+    @Column(name = "equipmentId")
     private String equipmentId;
 
     @Column(name = "id_scheme_agency_id")
@@ -36,16 +36,9 @@ public class UsedTransportEquipment {
     private String registrationCountry;
 
     @ManyToOne
-    @JoinColumn(name = "consignment_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "consignment_id", referencedColumnName = "id", insertable = true, updatable = false)
     private Consignment consignment;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "usedTransportEquipment", targetEntity = CarriedTransportEquipment.class)
     private List<CarriedTransportEquipment> carriedTransportEquipments;
-
-    public void setConsignment(Consignment consignment) {
-        this.consignment = consignment;
-        if (this.id != null) {
-            this.id.setConsignmentId(consignment.getId());
-        }
-    }
 }

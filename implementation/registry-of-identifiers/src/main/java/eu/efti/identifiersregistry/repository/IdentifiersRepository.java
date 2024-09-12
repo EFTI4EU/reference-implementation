@@ -6,10 +6,7 @@ import eu.efti.commons.enums.TransportMode;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -35,9 +32,10 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
             final List<Predicate> predicates = new ArrayList<>();
 
             if (request.getIsDangerousGoods() != null) {
-                Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin = root.join("mainCarriageTransportMovements");
+                Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin = root.join("mainCarriageTransportMovements", JoinType.LEFT);
                 List<Predicate> subQueryPredicate = new ArrayList<>();
                 subQueryPredicate.add(cb.equal(mainCarriageTransportMovementJoin.get(IS_DANGEROUS_GOODS), request.getIsDangerousGoods()));
+                predicates.add(cb.and(subQueryPredicate.toArray(new Predicate[]{})));
             }
             //vehicle subquery
             predicates.add(buildSubQuery(request, cb, root));

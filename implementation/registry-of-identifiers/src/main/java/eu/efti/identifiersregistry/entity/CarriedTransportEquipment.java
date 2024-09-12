@@ -8,13 +8,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class CarriedTransportEquipment {
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "consignmentId", column = @Column(name = "consignment_id")),
-            @AttributeOverride(name = "transportEquipmentSequenceNumber", column = @Column(name = "transport_equipment_sequence_number")),
-            @AttributeOverride(name = "sequenceNumber", column = @Column(name = "sequence_number"))
-    })
-    private CarriedTransportEquipmentId id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private long id;
+
+    @Column(name = "sequence_number")
+    private int sequenceNumber;
 
     @Column(name = "equipment_id")
     private String equipmentId;
