@@ -93,7 +93,7 @@ public class ControlService {
     }
 
     public RequestUuidDto createIdentifiersControl(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
-        log.info("create Identifiers control for vehicleId : {}", identifiersRequestDto.getVehicleID());
+        log.info("create Consignment control for vehicleId : {}", identifiersRequestDto.getVehicleID());
         return createControl(identifiersRequestDto, ControlUtils.fromLocalIdentifiersControl(identifiersRequestDto, RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH));
     }
 
@@ -180,7 +180,7 @@ public class ControlService {
                 getRequestService(saveControl.getRequestType()).createAndSendRequest(saveControl, destinationUrl);
             }
         });
-        log.info("Identifiers control with request uuid '{}' has been register", saveControl.getRequestUuid());
+        log.info("Consignment control with request uuid '{}' has been register", saveControl.getRequestUuid());
     }
 
     private <T> void createControlFromType(final T searchDto, final ControlDto controlDto) {

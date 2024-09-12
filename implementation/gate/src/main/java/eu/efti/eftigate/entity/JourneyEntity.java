@@ -1,4 +1,4 @@
-package eu.efti.identifiersregistry.entity;
+package eu.efti.eftigate.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -15,10 +15,8 @@ import lombok.EqualsAndHashCode;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
-@EqualsAndHashCode(callSuper = true)
-@MappedSuperclass
 @Data
-public abstract class JourneyEntity extends AbstractModel implements Serializable {
+public abstract class JourneyEntity implements Serializable {
 
     @JsonSerialize(using = OffsetDateTimeSerializer.class)
     @JsonDeserialize(using = OffsetDateTimeDeserializer.class)

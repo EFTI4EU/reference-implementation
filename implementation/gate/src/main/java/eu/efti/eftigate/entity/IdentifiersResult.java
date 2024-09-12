@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.OffsetDateTimeSerializer;
-import eu.efti.identifiersregistry.entity.TransportVehicle;
 import eu.efti.identifiersregistry.utils.OffsetDateTimeDeserializer;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -42,7 +41,7 @@ public class IdentifiersResult implements Serializable {
     private String identifiersUUID;
     @NotEmpty(message = "TRANSPORT_VEHICLES_MISSING")
     @Valid
-    private List<TransportVehicle> transportVehicles;
+    private List<TransportVehicleEntity> transportVehicles;
     @JsonIgnore
     private boolean isDisabled;
 }

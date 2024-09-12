@@ -1,0 +1,62 @@
+package eu.efti.identifiersregistry.entity;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.io.Serializable;
+import java.time.OffsetDateTime;
+import java.util.List;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "consignment")
+public class Consignment implements Serializable {
+
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id
+    @Column(name = "id")
+    private long id;
+    @Column(name = "platform_id")
+    private String platformId;
+    @Column(name = "dataset_id")
+    private String datasetId;
+    @Column(name = "gate_id")
+    private String gateId;
+    @Column(name = "carrier_acceptance_datetime")
+    private OffsetDateTime carrierAcceptanceDatetime;
+    @Column(name = "delivery_event_actual_occurrence_datetime")
+    private OffsetDateTime deliveryEventActualOccurrenceDatetime;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
+    private List<MainCarriageTransportMovement> mainCarriageTransportMovements;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
+    private List<UsedTransportEquipment> usedTransportEquipments;
+
+    public void setUsedTransportEquipments(List<UsedTransportEquipment> usedTransportEquipments) {
+        this.usedTransportEquipments = usedTransportEquipments;
+        for (int i = 0; i < usedTransportEquipments.size(); i++) {
+            var ute = usedTransportEquipments.get(i);
+            ute.setConsignment(this);
+            ute.getId().setSequenceNumber(i);
+        }
+    }
+}

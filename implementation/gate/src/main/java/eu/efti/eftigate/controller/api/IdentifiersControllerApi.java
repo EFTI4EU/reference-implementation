@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Tag(name = "Identifiers controller" , description = "Interface to search with Identifiers")
+@Tag(name = "Consignment controller" , description = "Interface to search with Consignment")
 @RequestMapping("/v1")
 public interface IdentifiersControllerApi {
 
-    @Operation(summary = "Send Search Request", description = "Send a search request to retrieve an efti data with Identifiers")
+    @Operation(summary = "Send Search Request", description = "Send a search request to retrieve an efti data with Consignment")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema())),
@@ -33,7 +33,7 @@ public interface IdentifiersControllerApi {
     @Secured(Roles.ROLE_ROAD_CONTROLER)
     ResponseEntity<RequestUuidDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto);
 
-    @Operation(summary = "Get an identifiers request", description = "Get a identifiers request for a given request uuid")
+    @Operation(summary = "Get an consignment request", description = "Get a consignment request for a given request uuid")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema())),

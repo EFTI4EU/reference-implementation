@@ -16,14 +16,10 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
 import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.eftigate.dto.RabbitRequestDto;
-import eu.efti.eftigate.entity.ControlEntity;
-import eu.efti.eftigate.entity.IdentifiersRequestEntity;
-import eu.efti.eftigate.entity.IdentifiersResult;
-import eu.efti.eftigate.entity.IdentifiersResults;
+import eu.efti.eftigate.entity.*;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
-import eu.efti.identifiersregistry.entity.TransportVehicle;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,7 +63,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class IdentifiersRequestServiceTest extends BaseServiceTest {
+class ConsignmentRequestServiceTest extends BaseServiceTest {
     private static final String DATA_UUID = "12345678-ab12-4ab6-8999-123456789abc";
     private static final String PLATFORM_URL = "http://efti.platform.truc.eu";
 
@@ -109,8 +105,8 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         identifiersResult1 = IdentifiersResult.builder()
                 .eFTIDataUuid(DATA_UUID)
                 .eFTIPlatformUrl(PLATFORM_URL)
-                .transportVehicles(List.of(TransportVehicle.builder()
-                        .vehicleId("abc123").vehicleCountry(CountryIndicator.FR).build(), TransportVehicle.builder()
+                .transportVehicles(List.of(TransportVehicleEntity.builder()
+                        .vehicleId("abc123").vehicleCountry(CountryIndicator.FR).build(), TransportVehicleEntity.builder()
                         .vehicleId("abc124").vehicleCountry(CountryIndicator.BE).build())).build();
         identifiersRequestService = new IdentifiersRequestService(identifiersRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties, identifiersService, requestUpdaterService, serializeUtils, logManager);
 
@@ -473,7 +469,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         final Exception exception = assertThrows(RequestNotFoundException.class, () -> {
             identifiersRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         });
-        assertEquals("couldn't find Identifiers request for messageId: messageId", exception.getMessage());
+        assertEquals("couldn't find Consignment request for messageId: messageId", exception.getMessage());
     }
 
     @Test

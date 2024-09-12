@@ -1,29 +1,50 @@
 package eu.efti.identifiersregistry;
 
 import eu.efti.commons.dto.IdentifiersDto;
-import eu.efti.identifiersregistry.entity.Identifiers;
+import eu.efti.commons.dto.TransportVehicleDto;
+import eu.efti.identifiersregistry.entity.Consignment;
+import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class IdentifiersMapper {
 
-    private final ModelMapper mapper;
-
-    public Identifiers dtoToEntity(final IdentifiersDto identifiersDto) {
-        return mapper.map(identifiersDto, Identifiers.class);
+    public Consignment dtoToEntity(final IdentifiersDto identifiersDto) {
+        Consignment consignment = new Consignment();
+        consignment.setGateId(identifiersDto.getEFTIGateUrl());
+        consignment.setPlatformId(identifiersDto.getEFTIPlatformUrl());
+        consignment.setDatasetId(identifiersDto.getEFTIDataUuid());
+        ArrayList<UsedTransportEquipment> usedTransportEquipments = new ArrayList<>();
+        identifiersDto.getTransportVehicles().forEach(transportVehicle -> {
+            UsedTransportEquipment usedTransportEquipment = new UsedTransportEquipment();
+            usedTransportEquipment.setEquipmentId(transportVehicle.getVehicleId());
+            usedTransportEquipment.setRegistrationCountry(transportVehicle.getVehicleCountry());
+            usedTransportEquipments.add(usedTransportEquipment);
+        });
+        consignment.setUsedTransportEquipments(usedTransportEquipments);
+        return consignment;
     }
 
-    public IdentifiersDto entityToDto(final Identifiers identifiersEntity) {
-        return mapper.map(identifiersEntity, IdentifiersDto.class);
+    public IdentifiersDto entityToDto(final Consignment consignmentEntity) {
+        IdentifiersDto dto = new IdentifiersDto();
+        dto.setEFTIGateUrl(consignmentEntity.getGateId());
+        dto.setEFTIPlatformUrl(consignmentEntity.getPlatformId());
+        dto.setEFTIDataUuid(consignmentEntity.getDatasetId());
+        consignmentEntity.getUsedTransportEquipments().forEach(usedTransportEquipment -> {
+            TransportVehicleDto transportVehicleDto = new TransportVehicleDto();
+            transportVehicleDto.setVehicleId(usedTransportEquipment.getEquipmentId());
+            transportVehicleDto.setVehicleCountry(usedTransportEquipment.getRegistrationCountry());
+            dto.getTransportVehicles().add(transportVehicleDto);
+        });
+        return dto;
     }
 
-    public List<IdentifiersDto> entityListToDtoList(final List<Identifiers> identifiersEntity) {
-        return Arrays.asList(mapper.map(identifiersEntity, IdentifiersDto[].class));
+    public List<IdentifiersDto> entityListToDtoList(final List<Consignment> consignmentEntity) {
+        return consignmentEntity.stream().map(this::entityToDto).toList();
     }
 }
