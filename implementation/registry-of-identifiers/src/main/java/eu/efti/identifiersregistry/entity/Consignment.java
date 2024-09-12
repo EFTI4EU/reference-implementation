@@ -1,6 +1,5 @@
 package eu.efti.identifiersregistry.entity;
 
-import eu.efti.commons.model.AbstractModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +19,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -30,9 +28,9 @@ import java.util.List;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "consignment")
-public class Consignment extends AbstractModel implements Serializable {
+public class Consignment implements Serializable {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     @Column(name = "id")
     private long id;
@@ -48,26 +46,17 @@ public class Consignment extends AbstractModel implements Serializable {
     private OffsetDateTime deliveryEventActualOccurrenceDatetime;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
-    private List<MainCarriageTransportMovement> mainCarriageTransportMovements = new ArrayList<>();
-
-    public void setMainCarriageTransportMovements(List<MainCarriageTransportMovement> mainCarriageTransportMovements) {
-        this.mainCarriageTransportMovements.forEach(mctm -> mctm.setConsignment(null));
-        this.mainCarriageTransportMovements.clear();
-        this.mainCarriageTransportMovements.addAll(mainCarriageTransportMovements);
-        this.mainCarriageTransportMovements.forEach(mctm -> mctm.setConsignment(this));
-    }
+    private List<MainCarriageTransportMovement> mainCarriageTransportMovements;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
-    private List<UsedTransportEquipment> usedTransportEquipments = new ArrayList<>();
+    private List<UsedTransportEquipment> usedTransportEquipments;
 
     public void setUsedTransportEquipments(List<UsedTransportEquipment> usedTransportEquipments) {
-        this.usedTransportEquipments.forEach(ute -> ute.setConsignment(null));
-        this.usedTransportEquipments.clear();
-        this.usedTransportEquipments.addAll(usedTransportEquipments);
+        this.usedTransportEquipments = usedTransportEquipments;
         for (int i = 0; i < usedTransportEquipments.size(); i++) {
             var ute = usedTransportEquipments.get(i);
             ute.setConsignment(this);
-            ute.setSequenceNumber(i);
+            ute.getId().setSequenceNumber(i);
         }
     }
 }

@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(IdentifiersController.class)
 @ContextConfiguration(classes = {IdentifiersController.class})
 @ExtendWith(SpringExtension.class)
-class IdentifiersControllerTest {
+class ConsignmentControllerTest {
 
     public static final String REQUEST_UUID = "requestUuid";
 
