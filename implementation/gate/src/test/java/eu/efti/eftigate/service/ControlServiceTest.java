@@ -120,7 +120,7 @@ class ControlServiceTest extends AbstractServiceTest {
                         .username(username).build()).build();
         controlService = new ControlService(controlRepository, eftiGateUrlResolver, identifiersService, mapperUtils,
                 requestServiceFactory, logManager, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
-                gateProperties );
+                gateProperties);
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
         final StatusEnum status = StatusEnum.PENDING;
         final AuthorityDto authorityDto = AuthorityDto.builder()
@@ -202,7 +202,7 @@ class ControlServiceTest extends AbstractServiceTest {
         transportVehicleDto.setJourneyStart(LocalDateTime.now().toString());
         transportVehicleDto.setJourneyStart(LocalDateTime.now().plusHours(5L).toString());
 
-        identifiersDto.setDangerousGoods(true);
+        identifiersDto.setIsDangerousGoods(true);
         identifiersDto.setIdentifiersUUID(identifiersUuid);
         identifiersDto.setDisabled(false);
         identifiersDto.setCountryStart("FR");
@@ -223,7 +223,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         identifiersResultsDto.setIdentifiersResult(Collections.singletonList(identifiersResultDto));
 
-        setField(controlService,"timeoutValue", 60);
+        setField(controlService, "timeoutValue", 60);
     }
 
     @Test
@@ -527,7 +527,6 @@ class ControlServiceTest extends AbstractServiceTest {
         when(eftiGateUrlResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("http://italie.it"));
 
 
-
         final RequestUuidDto requestUuidDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(identifiersRequestService, times(1)).createAndSendRequest(any(), any());
@@ -586,7 +585,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(controlRepository, times(0)).save(any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.VEHICLE_ID_INCORRECT_FORMAT.name(), requestUuidDtoResult.getErrorCode());
-        assertEquals(ErrorCodesEnum.VEHICLE_ID_INCORRECT_FORMAT.getMessage(),requestUuidDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.VEHICLE_ID_INCORRECT_FORMAT.getMessage(), requestUuidDtoResult.getErrorDescription());
     }
 
     @Test
@@ -599,7 +598,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(controlRepository, times(0)).save(any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.VEHICLE_COUNTRY_INCORRECT.name(), requestUuidDtoResult.getErrorCode());
-        assertEquals(ErrorCodesEnum.VEHICLE_COUNTRY_INCORRECT.getMessage(),requestUuidDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.VEHICLE_COUNTRY_INCORRECT.getMessage(), requestUuidDtoResult.getErrorDescription());
     }
 
     @Test
@@ -612,7 +611,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(controlRepository, times(0)).save(any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.TRANSPORT_MODE_INCORRECT.name(), requestUuidDtoResult.getErrorCode());
-        assertEquals(ErrorCodesEnum.TRANSPORT_MODE_INCORRECT.getMessage(),requestUuidDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.TRANSPORT_MODE_INCORRECT.getMessage(), requestUuidDtoResult.getErrorDescription());
     }
 
     @Test
@@ -711,7 +710,7 @@ class ControlServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void shouldGetControlWithCriteria_whenControlExistsAndIsUnique(){
+    void shouldGetControlWithCriteria_whenControlExistsAndIsUnique() {
         //Arrange
         final RequestEntity expectedRequest = new UilRequestEntity();
         uilRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
@@ -725,7 +724,7 @@ class ControlServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void shouldThrowException_whenControlExistsAndIsNotUnique(){
+    void shouldThrowException_whenControlExistsAndIsNotUnique() {
         //Arrange
         final UilRequestEntity firstRequest = new UilRequestEntity();
         firstRequest.setStatus(RequestStatusEnum.IN_PROGRESS);
@@ -746,7 +745,7 @@ class ControlServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void shouldReturnNull_whenNoControlFound(){
+    void shouldReturnNull_whenNoControlFound() {
         //Arrange
         when(controlRepository.findByCriteria(anyString(), any(RequestStatusEnum.class))).thenReturn(null);
         //Act
@@ -757,7 +756,7 @@ class ControlServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void shouldNotUpdatePendingControl_whenControlRequestIsInProgessAndIsNotTimeout(){
+    void shouldNotUpdatePendingControl_whenControlRequestIsInProgessAndIsNotTimeout() {
         //Arrange
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
@@ -771,7 +770,7 @@ class ControlServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void shouldUpdatePendingControlToComplete_whenControlhasRequestsInSuccessAndRequestsHaveNoData(){
+    void shouldUpdatePendingControlToComplete_whenControlhasRequestsInSuccessAndRequestsHaveNoData() {
         //Arrange
         uilRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
         controlEntity.setStatus(StatusEnum.PENDING);
@@ -787,7 +786,7 @@ class ControlServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void shouldUpdatePendingControlToError_whenControlhasRequestInError(){
+    void shouldUpdatePendingControlToError_whenControlhasRequestInError() {
         //Arrange
         identifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
@@ -803,7 +802,7 @@ class ControlServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void shouldUpdatePendingControls(){
+    void shouldUpdatePendingControls() {
         //Arrange
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
@@ -819,7 +818,7 @@ class ControlServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void shouldSaveControl(){
+    void shouldSaveControl() {
         //Arrange
         when(controlRepository.save(any())).thenReturn(controlEntity);
 
@@ -831,7 +830,7 @@ class ControlServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void shouldSaveControlDto(){
+    void shouldSaveControlDto() {
         //Arrange
         when(controlRepository.save(any())).thenReturn(controlEntity);
 

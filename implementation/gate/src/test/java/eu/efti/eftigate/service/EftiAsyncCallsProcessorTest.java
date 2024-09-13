@@ -51,7 +51,7 @@ class EftiAsyncCallsProcessorTest {
         final AuthorityDto authorityDto = new AuthorityDto();
 
 
-        identifiersDto.setDangerousGoods(true);
+        identifiersDto.setIsDangerousGoods(true);
         identifiersDto.setIdentifiersUUID(identifiersUuid);
         identifiersDto.setDisabled(false);
         identifiersDto.setCountryStart("FR");

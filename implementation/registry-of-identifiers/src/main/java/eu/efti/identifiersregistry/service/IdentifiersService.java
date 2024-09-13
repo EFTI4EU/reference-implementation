@@ -46,8 +46,7 @@ public class IdentifiersService {
         final Optional<Consignment> entityOptional = repository.findByUil(identifiersDto.getEFTIGateUrl(),
                 identifiersDto.getEFTIDataUuid(), identifiersDto.getEFTIPlatformUrl());
 
-        // FIXME: the platform is always generating the data set id, not the gate
-        if(entityOptional.isPresent()) {
+        if (entityOptional.isPresent()) {
             identifiersDto.setId(entityOptional.get().getId());
             identifiersDto.setIdentifiersUUID(entityOptional.get().getDatasetId());
             log.info("updating Consignment for uuid {}", identifiersDto.getIdentifiersUUID());
@@ -82,7 +81,7 @@ public class IdentifiersService {
         }
 
         final Set<ConstraintViolation<IdentifiersDto>> violations = validator.validate(identifiersDto);
-        if(!violations.isEmpty()){
+        if (!violations.isEmpty()) {
             final String message = String.format("rejecting consignment for uil (gate=%s, uuid=%s, platform=%s) because %s",
                     identifiersDto.getEFTIGateUrl(), identifiersDto.getEFTIPlatformUrl(), identifiersDto.getEFTIPlatformUrl(), violations);
             log.error(message);
