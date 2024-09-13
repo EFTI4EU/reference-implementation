@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.ingroupe.efti</groupId>
+        <groupId>eu.efti</groupId>
         <artifactId>gate-parent</artifactId>
         <version>${revision}</version>
     </parent>
@@ -47,22 +47,22 @@
 
         <!-- efti -->
         <dependency>
-            <groupId>com.ingroupe.efti</groupId>
+            <groupId>eu.efti</groupId>
             <artifactId>edelivery-ap-connector</artifactId>
             <version>0.4.2-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.ingroupe.efti</groupId>
+            <groupId>eu.efti</groupId>
             <artifactId>commons</artifactId>
             <version>0.4.2-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.ingroupe.efti</groupId>
+            <groupId>eu.efti</groupId>
             <artifactId>metadata-registry</artifactId>
             <version>0.4.2-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.ingroupe.efti</groupId>
+            <groupId>eu.efti</groupId>
             <artifactId>efti-logger</artifactId>
             <version>0.4.2-SNAPSHOT</version>
         </dependency>

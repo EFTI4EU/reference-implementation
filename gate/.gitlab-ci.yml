@@ -4,7 +4,7 @@ stages:
   - build_and_deploy
 
 variables:
-  MAVEN_GROUPEID: com.ingroupe.efti
+  MAVEN_GROUPEID: eu.efti
   MAVEN_ARTIFACTID: efti-gate
   MAVEN_EXTENSION: jar
   VERSION_ARTEFACT_SNAPSHOT: 0.4.2-SNAPSHOT
