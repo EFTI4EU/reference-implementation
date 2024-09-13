@@ -12,10 +12,7 @@ public class MainCarriageTransportMovement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @Column(name = "sequence_number")
-    private int sequenceNumber;
-
+    
     @Column(name = "mode_code")
     private short modeCode;
 

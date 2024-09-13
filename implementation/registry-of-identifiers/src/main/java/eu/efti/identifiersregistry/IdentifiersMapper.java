@@ -35,12 +35,14 @@ public class IdentifiersMapper {
         dto.setEFTIGateUrl(consignmentEntity.getGateId());
         dto.setEFTIPlatformUrl(consignmentEntity.getPlatformId());
         dto.setEFTIDataUuid(consignmentEntity.getDatasetId());
-        consignmentEntity.getUsedTransportEquipments().forEach(usedTransportEquipment -> {
-            TransportVehicleDto transportVehicleDto = new TransportVehicleDto();
-            transportVehicleDto.setVehicleId(usedTransportEquipment.getEquipmentId());
-            transportVehicleDto.setVehicleCountry(usedTransportEquipment.getRegistrationCountry());
-            dto.getTransportVehicles().add(transportVehicleDto);
-        });
+        if (consignmentEntity.getUsedTransportEquipments() != null) {
+            consignmentEntity.getUsedTransportEquipments().forEach(usedTransportEquipment -> {
+                TransportVehicleDto transportVehicleDto = new TransportVehicleDto();
+                transportVehicleDto.setVehicleId(usedTransportEquipment.getEquipmentId());
+                transportVehicleDto.setVehicleCountry(usedTransportEquipment.getRegistrationCountry());
+                dto.getTransportVehicles().add(transportVehicleDto);
+            });
+        }
         return dto;
     }
 

@@ -26,7 +26,7 @@ public class UsedTransportEquipment {
     @Column(name = "sequence_number")
     private int sequenceNumber;
 
-    @Column(name = "equipmentId")
+    @Column(name = "equipment_id")
     private String equipmentId;
 
     @Column(name = "id_scheme_agency_id")

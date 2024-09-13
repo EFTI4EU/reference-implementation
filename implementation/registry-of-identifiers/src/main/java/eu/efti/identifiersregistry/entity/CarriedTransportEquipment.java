@@ -23,9 +23,6 @@ public class CarriedTransportEquipment {
     private String schemeAgencyId;
 
     @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "consignment_id", referencedColumnName = "consignment_id", insertable = false, updatable = false),
-            @JoinColumn(name = "transport_equipment_sequence_number", referencedColumnName = "sequence_number", insertable = false, updatable = false)
-    })
+    @JoinColumn(name = "used_transport_equipment_id", referencedColumnName = "id", insertable = true, updatable = false)
     private UsedTransportEquipment usedTransportEquipment;
 }
