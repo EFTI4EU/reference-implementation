@@ -13,7 +13,7 @@ services:
       - ./rabbitmq/rabbitmq-defs.json:/etc/rabbitmq/definitions.json
     networks:
       efti:
-      
+
   platform-ACME:
     image: openjdk:17
     depends_on:
@@ -28,7 +28,7 @@ services:
       - 8893:5005
     networks:
       efti:
-    
+
   platform-MASSIVE:
     image: openjdk:17
     depends_on:
@@ -61,7 +61,7 @@ services:
 
   efti-gate-BO:
     env_file:
-      -   ./gate/ENV/BO.env
+      - ./gate/ENV/BO.env
     image: openjdk:17
     depends_on:
       - keycloak
@@ -122,7 +122,7 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: efti
     ports:
-      - 9000:5432
+      - 9001:5432
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
     networks:
@@ -142,7 +142,7 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.5
-    command: ["start-dev", "--import-realm", "-Dkeycloak.profile.feature.upload_scripts=enabled"]
+    command: [ "start-dev", "--import-realm", "-Dkeycloak.profile.feature.upload_scripts=enabled" ]
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=secret
@@ -163,6 +163,6 @@ services:
           - auth.gate.listenbourg.eu
 
 networks:
-    efti:
-      name: efti-network
-      external: true
+  efti:
+    name: efti-network
+    external: true
