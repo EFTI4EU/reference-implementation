@@ -103,7 +103,7 @@ public class ControlEntity extends AbstractModel implements Serializable {
     private ErrorEntity error;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "consignment")
+    @Column(name = "identifiers")
     private IdentifiersResults identifiersResults;
 
     public boolean isExternalAsk() {

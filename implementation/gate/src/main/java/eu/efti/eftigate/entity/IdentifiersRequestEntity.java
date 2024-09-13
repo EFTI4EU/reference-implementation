@@ -19,6 +19,6 @@ import org.hibernate.type.SqlTypes;
 @EqualsAndHashCode(callSuper = true)
 public class IdentifiersRequestEntity extends RequestEntity {
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "consignment")
+    @Column(name = "identifiers")
     private IdentifiersResults identifiersResults;
 }
