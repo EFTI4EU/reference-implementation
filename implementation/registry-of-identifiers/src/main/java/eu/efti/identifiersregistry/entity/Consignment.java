@@ -50,11 +50,7 @@ public class Consignment implements Serializable {
 
     public void setMainCarriageTransportMovements(List<MainCarriageTransportMovement> mainCarriageTransportMovements) {
         this.mainCarriageTransportMovements = mainCarriageTransportMovements;
-        for (int i = 0; i < mainCarriageTransportMovements.size(); i++) {
-            var mctm = mainCarriageTransportMovements.get(i);
-            mctm.setConsignment(this);
-            mctm.setSequenceNumber(i);
-        }
+        mainCarriageTransportMovements.forEach(mctm -> mctm.setConsignment(this));
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
