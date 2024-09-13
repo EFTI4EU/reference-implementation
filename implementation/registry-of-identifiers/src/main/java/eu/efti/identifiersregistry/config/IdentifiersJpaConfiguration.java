@@ -36,13 +36,13 @@ public class IdentifiersJpaConfiguration {
     private String schema;
 
     @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.consignment")
+    @ConfigurationProperties(prefix = "spring.datasource.identifiers")
     public DataSource identifiersDataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.consignment.liquibase")
+    @ConfigurationProperties(prefix = "spring.datasource.identifiers.liquibase")
     public LiquibaseProperties identifiersLiquibaseProperties() {
         return new LiquibaseProperties();
     }
