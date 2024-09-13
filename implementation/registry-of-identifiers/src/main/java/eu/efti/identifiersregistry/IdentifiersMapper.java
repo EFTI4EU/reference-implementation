@@ -16,6 +16,7 @@ public class IdentifiersMapper {
 
     public Consignment dtoToEntity(final IdentifiersDto identifiersDto) {
         Consignment consignment = new Consignment();
+        consignment.setId(identifiersDto.getId());
         consignment.setGateId(identifiersDto.getEFTIGateUrl());
         consignment.setPlatformId(identifiersDto.getEFTIPlatformUrl());
         consignment.setDatasetId(identifiersDto.getEFTIDataUuid());

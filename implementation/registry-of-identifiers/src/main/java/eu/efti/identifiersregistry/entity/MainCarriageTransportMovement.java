@@ -7,12 +7,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "main_carriage_transport_movement")
 public class MainCarriageTransportMovement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    
+
     @Column(name = "mode_code")
     private short modeCode;
 

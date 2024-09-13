@@ -51,7 +51,7 @@ public class ControlEntity extends AbstractModel implements Serializable {
 
     @Column(name = "eftidatauuid")
     private String eftiDataUuid;
-    
+
     @Column(name = "requestuuid")
     private String requestUuid;
 
@@ -86,21 +86,24 @@ public class ControlEntity extends AbstractModel implements Serializable {
     private String fromGateUrl;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "control", fetch = FetchType.EAGER)
-    @ToString.Exclude @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<RequestEntity> requests;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "authority", referencedColumnName = "id")
-    @ToString.Exclude @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private AuthorityEntity authority;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "error", referencedColumnName = "id")
-    @ToString.Exclude @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private ErrorEntity error;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "consignment")
+    @Column(name = "identifiers")
     private IdentifiersResults identifiersResults;
 
     public boolean isExternalAsk() {

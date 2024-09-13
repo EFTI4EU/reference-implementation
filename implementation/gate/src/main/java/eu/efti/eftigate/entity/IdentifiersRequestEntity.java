@@ -17,8 +17,8 @@ import org.hibernate.type.SqlTypes;
 @Setter
 @Convert(attributeName = "entityAttrName", converter = JsonBinaryType.class)
 @EqualsAndHashCode(callSuper = true)
-public class IdentifiersRequestEntity extends RequestEntity{
+public class IdentifiersRequestEntity extends RequestEntity {
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "consignment")
+    @Column(name = "identifiers")
     private IdentifiersResults identifiersResults;
 }

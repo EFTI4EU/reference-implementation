@@ -27,10 +27,10 @@ CREATE TABLE used_transport_equipment
 (
     id                   bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     consignment_id       bigint NOT NULL REFERENCES consignment (id),
-    sequence_number      int    NOT NULL,               --eFTI987
-    equipment_id         text CHECK (LENGTH(id) <= 17), --eFTI374
+    sequence_number      int    NOT NULL,                         --eFTI987
+    equipment_id         text CHECK (LENGTH(equipment_id) <= 17), --eFTI374
     id_scheme_agency_id  text,
-    registration_country text                           --eFTI578
+    registration_country text                                     --eFTI578
 );
 
 CREATE TABLE carried_transport_equipment

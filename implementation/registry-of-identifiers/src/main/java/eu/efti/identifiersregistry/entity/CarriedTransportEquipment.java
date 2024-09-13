@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "carried_transport_equipment")
 public class CarriedTransportEquipment {
 
     @Id
