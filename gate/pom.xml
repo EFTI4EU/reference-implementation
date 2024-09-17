@@ -9,9 +9,9 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>efti-gate</artifactId>
-    <name>efti-gate</name>
-    <description>efti-gate</description>
+    <artifactId>gate</artifactId>
+    <name>gate</name>
+    <description>gate</description>
 
     <dependencies>
         <dependency>
