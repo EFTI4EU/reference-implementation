@@ -63,7 +63,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ConsignmentRequestServiceTest extends BaseServiceTest {
+class IdentifiersRequestServiceTest extends BaseServiceTest {
     private static final String DATA_UUID = "12345678-ab12-4ab6-8999-123456789abc";
     private static final String PLATFORM_URL = "http://efti.platform.truc.eu";
 
@@ -83,7 +83,6 @@ class ConsignmentRequestServiceTest extends BaseServiceTest {
     private final IdentifiersRequestEntity identifiersRequestEntity = new IdentifiersRequestEntity();
     private final IdentifiersRequestEntity secondIdentifiersRequestEntity = new IdentifiersRequestEntity();
     private final IdentifiersRequestDto identifiersRequestDto = new IdentifiersRequestDto();
-
 
 
     @Override
@@ -142,7 +141,7 @@ class ConsignmentRequestServiceTest extends BaseServiceTest {
         assertEquals(identifiersResult1.getTransportVehicles().size(), requestDtoArgumentCaptor.getValue().getIdentifiersResultsDto().getIdentifiersResult().get(0).getTransportVehicles().size());
         assertEquals(SUCCESS, requestDtoArgumentCaptor.getValue().getStatus());
     }
-    
+
     @Test
     void trySendDomibusSuccessTest() throws SendRequestException, JsonProcessingException {
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
@@ -398,7 +397,7 @@ class ConsignmentRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldUpdateSentRequestStatus_whenRequestIsExternal(){
+    void shouldUpdateSentRequestStatus_whenRequestIsExternal() {
         identifiersRequestDto.getControl().setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         when(mapperUtils.requestToRequestDto(identifiersRequestEntity, IdentifiersRequestDto.class)).thenReturn(identifiersRequestDto);
         when(mapperUtils.requestDtoToRequestEntity(identifiersRequestDto, IdentifiersRequestEntity.class)).thenReturn(identifiersRequestEntity);
@@ -411,7 +410,7 @@ class ConsignmentRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldUpdateSentRequestStatus_whenRequestIsNotExternal(){
+    void shouldUpdateSentRequestStatus_whenRequestIsNotExternal() {
         identifiersRequestDto.getControl().setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         when(mapperUtils.requestToRequestDto(identifiersRequestEntity, IdentifiersRequestDto.class)).thenReturn(identifiersRequestDto);
         when(mapperUtils.requestDtoToRequestEntity(identifiersRequestDto, IdentifiersRequestEntity.class)).thenReturn(identifiersRequestEntity);
@@ -424,7 +423,7 @@ class ConsignmentRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldBuildRequestBody_whenRemoteGateSentResponse(){
+    void shouldBuildRequestBody_whenRemoteGateSentResponse() {
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         controlDto.setIdentifiersResults(identifiersResultsDto);
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
@@ -444,7 +443,7 @@ class ConsignmentRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldBuildRequestBody_whenLocalGateSendsRequest(){
+    void shouldBuildRequestBody_whenLocalGateSendsRequest() {
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         controlDto.setIdentifiersResults(identifiersResultsDto);
         controlDto.setTransportIdentifiers(searchParameter);
@@ -458,7 +457,7 @@ class ConsignmentRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldFindRequestByMessageId_whenRequestExists(){
+    void shouldFindRequestByMessageId_whenRequestExists() {
         when(identifiersRequestRepository.findByEdeliveryMessageId(anyString())).thenReturn(identifiersRequestEntity);
         final IdentifiersRequestEntity requestByMessageId = identifiersRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         assertNotNull(requestByMessageId);

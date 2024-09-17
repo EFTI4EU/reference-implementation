@@ -28,9 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(IdentifiersController.class)
-@ContextConfiguration(classes= {IdentifiersController.class})
+@ContextConfiguration(classes = {IdentifiersController.class})
 @ExtendWith(SpringExtension.class)
-class ConsignmentControllerTest {
+class IdentifiersControllerTest {
 
     public static final String REQUEST_UUID = "requestUuid";
 
@@ -41,6 +41,7 @@ class ConsignmentControllerTest {
 
     @MockBean
     ControlService controlService;
+
     @BeforeEach
     void before() {
         identifiersResponseDto.setStatus(StatusEnum.COMPLETE);
@@ -54,9 +55,9 @@ class ConsignmentControllerTest {
 
         Mockito.when(controlService.createIdentifiersControl(identifiersRequestDto)).thenReturn(
                 RequestUuidDto.builder()
-                .status(StatusEnum.PENDING)
-                .requestUuid(REQUEST_UUID)
-                .build());
+                        .status(StatusEnum.PENDING)
+                        .requestUuid(REQUEST_UUID)
+                        .build());
 
         String result = mockMvc.perform(post("/v1/getIdentifiers")
                         .with(csrf())

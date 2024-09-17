@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class SearchWithConsignmentRequestDtoValidatorTest {
+class SearchWithIdentifiersRequestDtoValidatorTest {
 
     @Test
     void shouldValidateAllFieldsEmpty() {
@@ -57,8 +57,8 @@ class SearchWithConsignmentRequestDtoValidatorTest {
     }
 
     private boolean containsError(final Set<ConstraintViolation<SearchWithIdentifiersRequestDto>> violations, final ErrorCodesEnum error) {
-        for(final ConstraintViolation<SearchWithIdentifiersRequestDto> violation : violations ) {
-            if(violation.getMessage().equals(error.name())) {
+        for (final ConstraintViolation<SearchWithIdentifiersRequestDto> violation : violations) {
+            if (violation.getMessage().equals(error.name())) {
                 return true;
             }
         }
