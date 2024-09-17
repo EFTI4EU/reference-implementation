@@ -63,7 +63,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ConsignmentRequestServiceTest extends BaseServiceTest {
+class IdentifiersRequestServiceTest extends BaseServiceTest {
     private static final String DATA_UUID = "12345678-ab12-4ab6-8999-123456789abc";
     private static final String PLATFORM_URL = "http://efti.platform.truc.eu";
 
