@@ -1,12 +1,14 @@
 package eu.efti.identifiersregistry;
 
 import eu.efti.v1.codes.CountryCode;
+import eu.efti.v1.codes.TransportEquipmentCategoryCode;
 import eu.efti.v1.consignment.identifier.*;
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import eu.efti.v1.types.DateTime;
 import eu.efti.v1.types.Identifier17;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigInteger;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
@@ -34,6 +36,13 @@ public class IdentifiersMapperTest {
         consignment.getMainCarriageTransportMovement().add(movement);
         request.setConsignment(consignment);
 
+        LogisticsTransportEquipment equipment = new LogisticsTransportEquipment();
+        equipment.setId(toIdentifier17("123", "UN"));
+        equipment.setRegistrationCountry(tradeCountryOf(CountryCode.AE));
+        equipment.setSequenceNumber(BigInteger.ONE);
+        equipment.setCategoryCode(TransportEquipmentCategoryCode.BPQ);
+        request.getConsignment().getUsedTransportEquipment().add(equipment);
+
         IdentifiersMapper identifiersMapper = new IdentifiersMapper();
         eu.efti.identifiersregistry.entity.Consignment internalConsignment = identifiersMapper.dtoToEntity(request);
         assertEquals("datasetId", internalConsignment.getDatasetId());
@@ -45,6 +54,13 @@ public class IdentifiersMapperTest {
         assertEquals(true, internalConsignment.getMainCarriageTransportMovements().get(0).isDangerousGoodsIndicator());
         assertEquals("123", internalConsignment.getMainCarriageTransportMovements().get(0).getUsedTransportMeansId());
         assertEquals("AE", internalConsignment.getMainCarriageTransportMovements().get(0).getUsedTransportMeansRegistrationCountry());
+
+        // check the equipment got mapped
+        assertEquals(1, internalConsignment.getUsedTransportEquipments().size());
+        assertEquals("123", internalConsignment.getUsedTransportEquipments().get(0).getEquipmentId());
+        assertEquals("AE", internalConsignment.getUsedTransportEquipments().get(0).getRegistrationCountry());
+        assertEquals(1, internalConsignment.getUsedTransportEquipments().get(0).getSequenceNumber());
+
     }
 
     private static TradeCountry tradeCountryOf(CountryCode countryCode) {

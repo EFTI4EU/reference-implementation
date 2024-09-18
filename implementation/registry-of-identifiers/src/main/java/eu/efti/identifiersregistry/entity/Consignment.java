@@ -63,10 +63,8 @@ public class Consignment implements Serializable {
         this.usedTransportEquipments.forEach(ute -> ute.setConsignment(null));
         this.usedTransportEquipments.clear();
         this.usedTransportEquipments.addAll(usedTransportEquipments);
-        for (int i = 0; i < usedTransportEquipments.size(); i++) {
-            var ute = usedTransportEquipments.get(i);
+        for (var ute : usedTransportEquipments) {
             ute.setConsignment(this);
-            ute.setSequenceNumber(i);
         }
     }
 }
