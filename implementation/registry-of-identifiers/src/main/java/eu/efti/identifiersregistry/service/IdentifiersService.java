@@ -5,9 +5,11 @@ import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.identifiersregistry.IdentifiersMapper;
+import eu.efti.identifiersregistry.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.exception.InvalidIdentifiersException;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
+import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -40,10 +42,8 @@ public class IdentifiersService {
 
     public void createOrUpdate(final IdentifiersDto identifiersDto) {
         final String bodyBase64 = serializeUtils.mapObjectToBase64String(identifiersDto);
-
         this.enrichAndValidate(identifiersDto, bodyBase64);
-
-        final Optional<Consignment> entityOptional = repository.findByUil(identifiersDto.getEFTIGateUrl(),
+        final Optional<Consignment> entityOptional = repository.findByUil(gateOwner,
                 identifiersDto.getEFTIDataUuid(), identifiersDto.getEFTIPlatformUrl());
 
         if (entityOptional.isPresent()) {
@@ -52,10 +52,32 @@ public class IdentifiersService {
             log.info("updating Consignment for uuid {}", identifiersDto.getIdentifiersUUID());
         } else {
             identifiersDto.setIdentifiersUUID(UUID.randomUUID().toString());
-            log.info("creating new entry for uuid {}", identifiersDto.getIdentifiersUUID());
+            log.info("creating new entry for dataset id {}", identifiersDto.getEFTIDataUuid());
         }
         this.save(identifiersDto);
         logService.log(identifiersDto, gateOwner, gateCountry, bodyBase64);
+    }
+
+    public void createOrUpdate(final SaveIdentifiersRequestWrapper identifiersDto) {
+        //final String bodyBase64 = serializeUtils.mapObjectToBase64String(identifiersDto);
+        final SaveIdentifiersRequest identifiers = identifiersDto.getSaveIdentifiersRequest();
+
+        final Optional<Consignment> entityOptional = repository.findByUil(gateOwner,
+                identifiers.getDatasetId(), identifiersDto.getPlatformId());
+
+        Consignment consignment = mapper.dtoToEntity(identifiers);
+        consignment.setGateId(gateOwner);
+        consignment.setPlatformId(identifiersDto.getPlatformId());
+        consignment.setDatasetId(identifiers.getDatasetId());
+
+        if (entityOptional.isPresent()) {
+            consignment.setId(entityOptional.get().getId());
+            log.info("updating Consignment for uuid {}", consignment.getId());
+        } else {
+            log.info("creating new entry for dataset id {}", identifiers.getDatasetId());
+        }
+        this.save(consignment);
+        //logService.log(identifiersDto, gateOwner, gateCountry, bodyBase64);
     }
 
     public void disable(final IdentifiersDto identifiersDto) {
@@ -93,5 +115,9 @@ public class IdentifiersService {
 
     private IdentifiersDto save(final IdentifiersDto identifiersDto) {
         return mapper.entityToDto(repository.save(mapper.dtoToEntity(identifiersDto)));
+    }
+
+    private IdentifiersDto save(final Consignment consignment) {
+        return mapper.entityToDto(repository.save(consignment));
     }
 }
