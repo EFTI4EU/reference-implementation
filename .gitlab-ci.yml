@@ -4,15 +4,12 @@ stages:
 
 variables:
   COMPONENT:
-    value: "dev"
+    value: "NONE"
     options:
-      - "dev"
-      - "int"
-      - "qlf"
-      - "crt"
-      - "ppd"
-      - "prd"
-    description: "The deployment target. Set to 'dev' by default."
+      - "NONE"
+      - "gate"
+      - "platform-gate-simulator"
+    description: "The component target. Set to 'none' by default."
   DEPLOY_ENVIRONMENT:
     value: "dev"
     options:
@@ -23,12 +20,6 @@ variables:
       - "ppd"
       - "prd"
     description: "The deployment target. Set to 'dev' by default."
-  REBUILD_COMPONENT_IMAGE:
-    value: "true"
-    options:
-      - "true"
-      - "false"
-    description: "Allow to rebuild or no the component Image. Set to 'true' by default."
   REBUILD_COMPONENT_IMAGE:
     value: "true"
     options:
