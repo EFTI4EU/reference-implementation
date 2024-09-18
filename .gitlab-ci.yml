@@ -4,9 +4,8 @@ stages:
 
 variables:
   COMPONENT:
-    value: "NONE"
+    value: "gate"
     options:
-      - "NONE"
       - "gate"
       - "platform-gate-simulator"
     description: "The component target. Set to 'none' by default."
