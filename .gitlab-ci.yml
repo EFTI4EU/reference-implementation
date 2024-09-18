@@ -81,7 +81,7 @@ display_deployment_informations:
 display_deployment_informations_v2:
   stage: afterbuild
   needs:
-    - $DEPLOY_ENVIRONMENT_test
+    - dev_test
   script:
     - echo "--------------------- STARTING COMPONENT $CI_PROJECT_NAME DEPLOYMENT ..."
     - echo " MAVEN_GROUPEID -> $MAVEN_GROUPEID "
