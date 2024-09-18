@@ -56,8 +56,8 @@ include:
   inputs:
     job-prefix: $DEPLOY_ENVIRONMENT
     job-stage: gate
-  rules:
-  - if: $COMPONENT == "gate"
+  # rules:
+  # - if: $COMPONENT == "gate"
 # - local: "platform-gate-simulator/deploy.yml"
 #   inputs:
 #     job-prefix: $DEPLOY_ENVIRONMENT
