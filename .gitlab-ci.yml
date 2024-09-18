@@ -70,8 +70,9 @@ include:
 display_deployment_informations:
   stage: prebuild
   script:
-  - echo "--------------------- STARTING COMPONENT $CI_PROJECT_NAME DEPLOYMENT ..."
-  - echo " COMPONENT -> $COMPONENT "
-  - echo " DEPLOY_ENVIRONMENT -> $DEPLOY_ENVIRONMENT "
-  - echo " REBUILD_COMPONENT_IMAGE -> $REBUILD_COMPONENT_IMAGE "
-  - echo " LABEL -> $LABEL " 
+    - echo "--------------------- STARTING COMPONENT $CI_PROJECT_NAME DEPLOYMENT ..."
+    - echo " COMPONENT -> $COMPONENT "
+    - echo " DEPLOY_ENVIRONMENT -> $DEPLOY_ENVIRONMENT "
+    - echo " REBUILD_COMPONENT_IMAGE -> $REBUILD_COMPONENT_IMAGE "
+    - echo " LABEL -> $LABEL " 
+  when: manual
