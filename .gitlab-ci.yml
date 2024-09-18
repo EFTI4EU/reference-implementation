@@ -1,6 +1,6 @@
 stages:
   - prebuild
-  - gate
+  - build_and_deploy
   - platform-gate-simulator
   - afterbuild
 
