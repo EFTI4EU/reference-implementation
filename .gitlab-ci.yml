@@ -52,7 +52,7 @@ default:
   - $GL_RUNNER
 
 include:
-- local: "gate/gate/gate.yml"
+- local: "gate/gate.yml"
   inputs:
     job-prefix: $DEPLOY_ENVIRONMENT
     job-stage: gate
