@@ -4,7 +4,7 @@ spec:
       default: ""
       description: "Define a prefix for the job name"
     job-stage:      # Optional string input with a default value when not provided
-      default: prepare
+      default: build_and_deploy
 ---
 variables:
   MAVEN_GROUPEID: eu.efti
@@ -12,8 +12,9 @@ variables:
   MAVEN_EXTENSION: jar
   VERSION_ARTEFACT_SNAPSHOT: 0.4.2-SNAPSHOT
   VERSION_ARTEFACT_RELEASE: 0.4.1
+  FLUENT: "true"
 
-"$[[ inputs.job-prefix | expand_vars ]]_test":
+"$[[ inputs.job-prefix | expand_vars ]]_build_and_deploy_microservices":
   stage: $[[ inputs.job-stage ]]
   script:
   - echo "I'm environment $DEPLOY_ENVIRONMENT && $COMPONENT"

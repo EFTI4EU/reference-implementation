@@ -39,12 +39,25 @@ variables:
 
 workflow:
   rules:
-    - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int")
+    - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int") && $LABEL == "NONE"
       variables:
+        NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti
+        SA: ${DEPLOY_ENVIRONMENT}-efti-sa
         GL_RUNNER: k8s-devint
-        TOTO: $COMPONENT
-    - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "qlf" || $DEPLOY_ENVIRONMENT == "crt" || $DEPLOY_ENVIRONMENT == "ppd" || $DEPLOY_ENVIRONMENT == "prd")
+    - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int") && ($LABEL != "NONE" || $LABEL != null)
       variables:
+        NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti-mock
+        SA: ${DEPLOY_ENVIRONMENT}-efti-mock-sa
+        GL_RUNNER: k8s-devint
+    - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "qlf" && $LABEL == "NONE"
+      variables:
+        NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti
+        SA: ${DEPLOY_ENVIRONMENT}-efti-sa
+        GL_RUNNER: k8s-prod
+    - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "qlf" && ($LABEL != "NONE" || $LABEL != null)
+      variables:
+        NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti-mock
+        SA: ${DEPLOY_ENVIRONMENT}-efti-mock-sa
         GL_RUNNER: k8s-prod
     - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_REF_NAME !~ "develop"
       when: never
@@ -58,7 +71,6 @@ include:
 - local: "gate/gate.yml"
   inputs:
     job-prefix: $DEPLOY_ENVIRONMENT
-    job-stage: gate
   rules:
   - if: $COMPONENT == "gate"
 - local: "gate/test.yml"
