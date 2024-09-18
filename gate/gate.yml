@@ -6,6 +6,13 @@ spec:
     job-stage:      # Optional string input with a default value when not provided
       default: prepare
 ---
+variables:
+  MAVEN_GROUPEID: eu.efti
+  MAVEN_ARTIFACTID: efti-gate
+  MAVEN_EXTENSION: jar
+  VERSION_ARTEFACT_SNAPSHOT: 0.4.2-SNAPSHOT
+  VERSION_ARTEFACT_RELEASE: 0.4.1
+
 "$[[ inputs.job-prefix | expand_vars ]]_test":
   stage: $[[ inputs.job-stage ]]
   script:

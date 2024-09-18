@@ -2,6 +2,7 @@ stages:
   - prebuild
   - gate
   - platform-gate-simulator
+  - afterbuild
 
 variables:
   COMPONENT:
@@ -75,4 +76,17 @@ display_deployment_informations:
     - echo " DEPLOY_ENVIRONMENT -> $DEPLOY_ENVIRONMENT "
     - echo " REBUILD_COMPONENT_IMAGE -> $REBUILD_COMPONENT_IMAGE "
     - echo " LABEL -> $LABEL " 
+  when: manual
+
+display_deployment_informations_v2:
+  stage: afterbuild
+  needs:
+    - $DEPLOY_ENVIRONMENT_test
+  script:
+    - echo "--------------------- STARTING COMPONENT $CI_PROJECT_NAME DEPLOYMENT ..."
+    - echo " MAVEN_GROUPEID -> $MAVEN_GROUPEID "
+    - echo " MAVEN_ARTIFACTID -> $MAVEN_ARTIFACTID "
+    - echo " MAVEN_EXTENSION -> $MAVEN_EXTENSION "
+    - echo " VERSION_ARTEFACT_SNAPSHOT -> $VERSION_ARTEFACT_SNAPSHOT " 
+    - echo " VERSION_ARTEFACT_RELEASE -> $VERSION_ARTEFACT_RELEASE " 
   when: manual
