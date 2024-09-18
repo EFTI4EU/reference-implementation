@@ -1,4 +1,5 @@
 stages:
+  - prebuild
   - gate
   - platform-gate-simulator
 
@@ -58,10 +59,19 @@ include:
     job-prefix: $DEPLOY_ENVIRONMENT
     job-stage: gate
   rules:
-  - if: $TOTO == "gate"
+  - if: $COMPONENT == "gate"
 # - local: "platform-gate-simulator/deploy.yml"
 #   inputs:
 #     job-prefix: $DEPLOY_ENVIRONMENT
 #     job-stage: platform-gate-simulator
 #   rules:
 #   - if: $COMPONENT == "platform-gate-simulator"
+
+display_deployment_informations:
+  stage: prebuild
+  script:
+  - echo "--------------------- STARTING COMPONENT $CI_PROJECT_NAME DEPLOYMENT ..."
+  - echo " COMPONENT -> $COMPONENT "
+  - echo " DEPLOY_ENVIRONMENT -> $DEPLOY_ENVIRONMENT "
+  - echo " REBUILD_COMPONENT_IMAGE -> $REBUILD_COMPONENT_IMAGE "
+  - echo " LABEL -> $LABEL " 
