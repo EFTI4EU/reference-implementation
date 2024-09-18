@@ -40,6 +40,7 @@ workflow:
     - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int")
       variables:
         GL_RUNNER: k8s-devint
+        TOTO: $COMPONENT
     - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "qlf" || $DEPLOY_ENVIRONMENT == "crt" || $DEPLOY_ENVIRONMENT == "ppd" || $DEPLOY_ENVIRONMENT == "prd")
       variables:
         GL_RUNNER: k8s-prod
@@ -56,8 +57,8 @@ include:
   inputs:
     job-prefix: $DEPLOY_ENVIRONMENT
     job-stage: gate
-  # rules:
-  # - if: $COMPONENT == "gate"
+  rules:
+  - if: $TOTO == "gate"
 # - local: "platform-gate-simulator/deploy.yml"
 #   inputs:
 #     job-prefix: $DEPLOY_ENVIRONMENT
