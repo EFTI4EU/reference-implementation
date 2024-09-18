@@ -1,0 +1,19 @@
+spec:
+  inputs:
+    job-prefix:     # Mandatory string input
+      default: ""
+      description: "Define a prefix for the job name"
+    job-stage:      # Optional string input with a default value when not provided
+      default: prepare
+---
+"$[[ inputs.job-prefix | expand_vars ]]_test":
+  stage: $[[ inputs.job-stage ]]
+  needs:
+    - ${$DEPLOY_ENVIRONMENT}_test
+  script:
+    - echo "--------------------- STARTING COMPONENT $CI_PROJECT_NAME DEPLOYMENT ..."
+    - echo " MAVEN_GROUPEID -> $MAVEN_GROUPEID "
+    - echo " MAVEN_ARTIFACTID -> $MAVEN_ARTIFACTID "
+    - echo " MAVEN_EXTENSION -> $MAVEN_EXTENSION "
+    - echo " VERSION_ARTEFACT_SNAPSHOT -> $VERSION_ARTEFACT_SNAPSHOT " 
+    - echo " VERSION_ARTEFACT_RELEASE -> $VERSION_ARTEFACT_RELEASE " 
