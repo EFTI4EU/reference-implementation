@@ -1,0 +1,67 @@
+stages:
+  - gate
+  - platform-gate-simulator
+
+variables:
+  COMPONENT:
+    value: "dev"
+    options:
+      - "dev"
+      - "int"
+      - "qlf"
+      - "crt"
+      - "ppd"
+      - "prd"
+    description: "The deployment target. Set to 'dev' by default."
+  DEPLOY_ENVIRONMENT:
+    value: "dev"
+    options:
+      - "dev"
+      - "int"
+      - "qlf"
+      - "crt"
+      - "ppd"
+      - "prd"
+    description: "The deployment target. Set to 'dev' by default."
+  REBUILD_COMPONENT_IMAGE:
+    value: "true"
+    options:
+      - "true"
+      - "false"
+    description: "Allow to rebuild or no the component Image. Set to 'true' by default."
+  REBUILD_COMPONENT_IMAGE:
+    value: "true"
+    options:
+      - "true"
+      - "false"
+    description: "Allow to rebuild or no the component Image. Set to 'true' by default."
+  LABEL:
+    value: "NONE"
+    options:
+      - "NONE"
+      - "bo"
+      - "li"
+      - "sy"
+    description: "The label of component. Set to 'NONE' for default gate."
+
+workflow:
+  rules:
+    - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int")
+      variables:
+        GL_RUNNER: k8s-devint
+    - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "qlf" || $DEPLOY_ENVIRONMENT == "crt" || $DEPLOY_ENVIRONMENT == "ppd" || $DEPLOY_ENVIRONMENT == "prd")
+      variables:
+        GL_RUNNER: k8s-prod
+    - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_REF_NAME !~ "develop"
+      when: never
+    - when: always
+
+default:
+  tags:
+  - $GL_RUNNER
+
+include:
+- local: "gate/gate/gate.yml"
+  inputs:
+    job-prefix: $DEPLOY_ENVIRONMENT
+    job-stage: gate
