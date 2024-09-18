@@ -61,6 +61,6 @@ include:
 - local: "platform-gate-simulator/deploy.yml"
   inputs:
     job-prefix: $DEPLOY_ENVIRONMENT
-    job-stage: gate
+    job-stage: platform-gate-simulator
   rules:
   - if: $COMPONENT == "platform-gate-simulator"
