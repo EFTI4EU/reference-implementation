@@ -6,10 +6,10 @@ spec:
     job-stage:      # Optional string input with a default value when not provided
       default: prepare
 ---
-"$[[ inputs.job-prefix | expand_vars ]]_test":
+"$[[ inputs.job-prefix | expand_vars ]]_display":
   stage: $[[ inputs.job-stage ]]
   needs:
-    - ${$DEPLOY_ENVIRONMENT}_test
+    - "$[[ inputs.job-prefix | expand_vars ]]_test"
   script:
     - echo "--------------------- STARTING COMPONENT $CI_PROJECT_NAME DEPLOYMENT ..."
     - echo " MAVEN_GROUPEID -> $MAVEN_GROUPEID "
