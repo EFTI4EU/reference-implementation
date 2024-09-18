@@ -4,8 +4,9 @@ stages:
 
 variables:
   COMPONENT:
-    value: "gate"
+    value: "NONE"
     options:
+      - "NONE"
       - "gate"
       - "platform-gate-simulator"
     description: "The component target. Set to 'none' by default."
@@ -57,9 +58,9 @@ include:
     job-stage: gate
   rules:
   - if: $COMPONENT == "gate"
-- local: "platform-gate-simulator/deploy.yml"
-  inputs:
-    job-prefix: $DEPLOY_ENVIRONMENT
-    job-stage: platform-gate-simulator
-  rules:
-  - if: $COMPONENT == "platform-gate-simulator"
+# - local: "platform-gate-simulator/deploy.yml"
+#   inputs:
+#     job-prefix: $DEPLOY_ENVIRONMENT
+#     job-stage: platform-gate-simulator
+#   rules:
+#   - if: $COMPONENT == "platform-gate-simulator"
