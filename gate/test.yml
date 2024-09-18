@@ -9,7 +9,7 @@ spec:
 "$[[ inputs.job-prefix | expand_vars ]]_display":
   stage: $[[ inputs.job-stage ]]
   needs:
-    - dev_test
+  - dev_test
   script:
     - echo "--------------------- STARTING COMPONENT $CI_PROJECT_NAME DEPLOYMENT ..."
     - echo " MAVEN_GROUPEID -> $MAVEN_GROUPEID "
