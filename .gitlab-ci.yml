@@ -95,4 +95,5 @@ display_deployment_informations:
     - echo " REBUILD_COMPONENT_IMAGE -> $REBUILD_COMPONENT_IMAGE "
     - echo " LABEL -> $LABEL "
     - echo " PATH -> $CI_PROJECT_DIR "
+    - echo " PROJECT_NAME -> $CI_PROJECT_NAME "
   when: manual
