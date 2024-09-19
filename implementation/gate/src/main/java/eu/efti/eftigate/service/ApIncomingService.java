@@ -11,7 +11,7 @@ import eu.efti.edeliveryapconnector.service.NotificationService;
 import eu.efti.eftigate.service.request.EftiRequestUpdater;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
-import eu.efti.identifiersregistry.dto.SaveIdentifiersRequestWrapper;
+import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import lombok.AllArgsConstructor;

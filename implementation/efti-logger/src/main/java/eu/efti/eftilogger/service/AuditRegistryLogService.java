@@ -1,6 +1,7 @@
 package eu.efti.eftilogger.service;
 
 import eu.efti.commons.dto.IdentifiersDto;
+import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -49,12 +50,36 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .interfaceType(edelivery)
                 .build());
     }
-        public void log(final IdentifiersDto identifiersDto,
+
+    public void log(final IdentifiersDto identifiersDto,
                     final String currentGateId,
                     final String currentGateCountry,
                     final String body) {
         this.log(identifiersDto, currentGateId, currentGateCountry, body, null);
 
+    }
+
+    public void log(final SaveIdentifiersRequestWrapper requestWrapper, final String currentGateId, final String currentGateCountry, final String body) {
+        this.log(LogRegistryDto.builder()
+                .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
+                .componentType(ComponentType.GATE)
+                .componentId(currentGateId)
+                .componentCountry(currentGateCountry)
+                .requestingComponentType(ComponentType.PLATFORM)
+                .requestingComponentId(requestWrapper.getPlatformId())
+                .requestingComponentCountry(currentGateCountry)
+                .respondingComponentType(ComponentType.GATE)
+                .respondingComponentId(currentGateId)
+                .respondingComponentCountry(currentGateCountry)
+                .messageContent(body)
+                .statusMessage(StatusEnum.COMPLETE.name())
+                .errorCodeMessage("")
+                .errorDescriptionMessage("")
+                .timeoutComponentType(TIMEOUT_COMPONENT_TYPE)
+                .identifiersId(requestWrapper.getSaveIdentifiersRequest().getDatasetId())
+                .eFTIDataId(requestWrapper.getSaveIdentifiersRequest().getDatasetId())
+                .interfaceType("EDELIVERY")
+                .build());
     }
 
     @Override

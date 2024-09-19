@@ -72,15 +72,14 @@ public class IdentifiersMapper {
     }
 
     private OffsetDateTime fromDateTime(DateTime dateTime) {
-        switch (dateTime.getFormatId()) {
-            case "102":
+        return switch (dateTime.getFormatId()) {
+            case "102" -> {
                 LocalDate localDate = LocalDate.parse(dateTime.getValue(), DateTimeFormatter.ofPattern("yyyyMMdd"));
-                return localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
-            case "205":
-                return OffsetDateTime.parse(dateTime.getValue(), DateTimeFormatter.ofPattern("yyyyMMddHHmmZ"));
-            default:
-                throw new RuntimeException("Unsupported formatId: " + dateTime.getFormatId());
-        }
+                yield localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
+            }
+            case "205" -> OffsetDateTime.parse(dateTime.getValue(), DateTimeFormatter.ofPattern("yyyyMMddHHmmZ"));
+            default -> throw new RuntimeException("Unsupported formatId: " + dateTime.getFormatId());
+        };
     }
 
     public Consignment dtoToEntity(SaveIdentifiersRequest request) {

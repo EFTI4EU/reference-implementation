@@ -1,4 +1,4 @@
-package eu.efti.identifiersregistry.dto;
+package eu.efti.commons.dto;
 
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import lombok.AllArgsConstructor;

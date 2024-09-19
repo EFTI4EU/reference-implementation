@@ -51,12 +51,6 @@
 
         <dependency>
             <groupId>eu.efti</groupId>
-            <artifactId>edelivery-ap-connector</artifactId>
-            <version>0.4.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.efti</groupId>
             <artifactId>efti-logger</artifactId>
             <version>0.4.1-SNAPSHOT</version>
         </dependency>

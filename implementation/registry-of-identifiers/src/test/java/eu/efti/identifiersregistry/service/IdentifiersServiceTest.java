@@ -1,11 +1,16 @@
 package eu.efti.identifiersregistry.service;
 
 import eu.efti.commons.dto.IdentifiersDto;
+import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.TransportVehicleDto;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.exception.InvalidIdentifiersException;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
+import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
+import eu.efti.v1.consignment.identifier.TransportEvent;
+import eu.efti.v1.edelivery.SaveIdentifiersRequest;
+import eu.efti.v1.types.DateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class ConsignmentServiceTest extends AbstractServiceTest {
+class IdentifiersServiceTest extends AbstractServiceTest {
 
     public static final String GATE_URL = "http://efti.gate.borduria.eu";
     public static final String DATA_UUID = "12345678-ab12-4ab6-8999-123456789abc";
@@ -33,6 +38,7 @@ class ConsignmentServiceTest extends AbstractServiceTest {
     @Mock
     private IdentifiersRepository repository;
 
+    private SaveIdentifiersRequestWrapper saveIdentifiersRequestWrapper;
     private IdentifiersDto identifiersDto;
     private Consignment consignment;
 
@@ -52,10 +58,36 @@ class ConsignmentServiceTest extends AbstractServiceTest {
                         TransportVehicleDto.builder()
                                 .vehicleId("abc124").countryStart("osef").countryEnd("IT").build())).build();
 
+        SaveIdentifiersRequest identifiersRequest = defaultSaveIdentifiersRequest();
+        saveIdentifiersRequestWrapper = new SaveIdentifiersRequestWrapper(PLATFORM_URL, identifiersRequest);
+
+
         consignment = Consignment.builder()
                 .gateId(GATE_URL)
                 .datasetId(DATA_UUID)
                 .platformId(PLATFORM_URL).build();
+    }
+
+    private static SaveIdentifiersRequest defaultSaveIdentifiersRequest() {
+        var occurenceDateTime = new DateTime();
+        occurenceDateTime.setValue("202107111200+0100");
+        occurenceDateTime.setFormatId("205");
+
+        TransportEvent transportEvent = new TransportEvent();
+        transportEvent.setActualOccurrenceDateTime(occurenceDateTime);
+
+        var acceptanceDate = new DateTime();
+        acceptanceDate.setValue("202107111200+0100");
+        acceptanceDate.setFormatId("205");
+
+        SupplyChainConsignment sourceConsignment = new SupplyChainConsignment();
+        sourceConsignment.setDeliveryEvent(transportEvent);
+        sourceConsignment.setCarrierAcceptanceDateTime(acceptanceDate);
+
+        SaveIdentifiersRequest identifiersRequest = new SaveIdentifiersRequest();
+        identifiersRequest.setDatasetId(DATA_UUID);
+        identifiersRequest.setConsignment(sourceConsignment);
+        return identifiersRequest;
     }
 
     @Test
@@ -63,10 +95,10 @@ class ConsignmentServiceTest extends AbstractServiceTest {
         when(repository.save(any())).thenReturn(consignment);
         final ArgumentCaptor<Consignment> argumentCaptor = ArgumentCaptor.forClass(Consignment.class);
 
-        service.createOrUpdate(identifiersDto);
+        service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(), any(), any(), any());
+        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any());
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());
         assertEquals(GATE_URL, argumentCaptor.getValue().getGateId());
@@ -77,10 +109,10 @@ class ConsignmentServiceTest extends AbstractServiceTest {
         when(repository.save(any())).thenReturn(consignment);
         final ArgumentCaptor<Consignment> argumentCaptor = ArgumentCaptor.forClass(Consignment.class);
 
-        service.createOrUpdate(identifiersDto);
+        service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(), any(), any(), any());
+        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any());
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());
         assertEquals(GATE_URL, argumentCaptor.getValue().getGateId());
@@ -92,10 +124,10 @@ class ConsignmentServiceTest extends AbstractServiceTest {
         when(repository.findByUil(GATE_URL, DATA_UUID, PLATFORM_URL)).thenReturn(Optional.empty());
         final ArgumentCaptor<Consignment> argumentCaptor = ArgumentCaptor.forClass(Consignment.class);
 
-        service.createOrUpdate(identifiersDto);
+        service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(), any(), any(), any());
+        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any());
         verify(repository).findByUil(GATE_URL, DATA_UUID, PLATFORM_URL);
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());
@@ -122,21 +154,14 @@ class ConsignmentServiceTest extends AbstractServiceTest {
         when(repository.findByUil(GATE_URL, DATA_UUID, PLATFORM_URL)).thenReturn(Optional.of(Consignment.builder().build()));
         final ArgumentCaptor<Consignment> argumentCaptor = ArgumentCaptor.forClass(Consignment.class);
 
-        service.createOrUpdate(identifiersDto);
+        service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(), any(), any(), any());
+        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any());
         verify(repository).findByUil(GATE_URL, DATA_UUID, PLATFORM_URL);
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());
         assertEquals(GATE_URL, argumentCaptor.getValue().getGateId());
-    }
-
-    @Test
-    void shouldThrowIfIdentifiersNotValid() {
-        identifiersDto.setEFTIDataUuid("wrong");
-
-        assertThrows(InvalidIdentifiersException.class, () -> service.createOrUpdate(identifiersDto));
     }
 
     @Test
