@@ -93,5 +93,6 @@ display_deployment_informations:
     - echo " COMPONENT -> $COMPONENT "
     - echo " DEPLOY_ENVIRONMENT -> $DEPLOY_ENVIRONMENT "
     - echo " REBUILD_COMPONENT_IMAGE -> $REBUILD_COMPONENT_IMAGE "
-    - echo " LABEL -> $LABEL " 
+    - echo " LABEL -> $LABEL "
+    - echo " PATH -> $CI_PROJECT_DIR "
   when: manual
