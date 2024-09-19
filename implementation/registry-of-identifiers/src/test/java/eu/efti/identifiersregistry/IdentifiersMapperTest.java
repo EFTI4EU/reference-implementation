@@ -36,11 +36,19 @@ public class IdentifiersMapperTest {
         consignment.getMainCarriageTransportMovement().add(movement);
         request.setConsignment(consignment);
 
+
         LogisticsTransportEquipment equipment = new LogisticsTransportEquipment();
         equipment.setId(toIdentifier17("123", "UN"));
         equipment.setRegistrationCountry(tradeCountryOf(CountryCode.AE));
         equipment.setSequenceNumber(BigInteger.ONE);
         equipment.setCategoryCode(TransportEquipmentCategoryCode.BPQ);
+
+        // Add CarriedTransportEquipment
+        AssociatedTransportEquipment carriedEquipment = new AssociatedTransportEquipment();
+        carriedEquipment.setId(toIdentifier17("456", "UN"));
+        carriedEquipment.setSequenceNumber(BigInteger.TWO);
+        equipment.getCarriedTransportEquipment().add(carriedEquipment);
+
         request.getConsignment().getUsedTransportEquipment().add(equipment);
 
         IdentifiersMapper identifiersMapper = new IdentifiersMapper();
@@ -61,6 +69,10 @@ public class IdentifiersMapperTest {
         assertEquals("AE", internalConsignment.getUsedTransportEquipments().get(0).getRegistrationCountry());
         assertEquals(1, internalConsignment.getUsedTransportEquipments().get(0).getSequenceNumber());
 
+        // Check that carried equipment got mapped
+        assertEquals(1, internalConsignment.getUsedTransportEquipments().get(0).getCarriedTransportEquipments().size());
+        assertEquals("456", internalConsignment.getUsedTransportEquipments().get(0).getCarriedTransportEquipments().get(0).getEquipmentId());
+        assertEquals(2, internalConsignment.getUsedTransportEquipments().get(0).getCarriedTransportEquipments().get(0).getSequenceNumber());
     }
 
     private static TradeCountry tradeCountryOf(CountryCode countryCode) {

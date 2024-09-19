@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -40,5 +41,5 @@ public class UsedTransportEquipment {
     private Consignment consignment;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "usedTransportEquipment", targetEntity = CarriedTransportEquipment.class)
-    private List<CarriedTransportEquipment> carriedTransportEquipments;
+    private List<CarriedTransportEquipment> carriedTransportEquipments = new ArrayList<>();
 }

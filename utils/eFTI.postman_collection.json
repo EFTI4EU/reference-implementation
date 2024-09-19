@@ -499,7 +499,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"isDangerousGoods\": true,\r\n    \"journeyStart\": \"2024-01-26T10:54:51+01:00\",\r\n    \"countryStart\": \"FR\",\r\n    \"journeyEnd\": \"2025-01-27T10:54:51+01:00\",\r\n    \"countryEnd\": \"FR\",\r\n    \"transportVehicles\": [\r\n        {\r\n            \"transportMode\": \"ROAD\",\r\n            \"sequence\": 1,\r\n            \"vehicleID\": \"AA123BB\",\r\n            \"vehicleCountry\": \"FR\",\r\n            \"journeyStart\": \"2024-01-26T10:54:51+01:00\",\r\n            \"countryStart\": \"FR\",\r\n            \"journeyEnd\": \"2025-01-27T10:54:51+01:00\",\r\n            \"countryEnd\": \"FRANCE\"\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n  \"consignment\": {\r\n    \"carrierAcceptanceDateTime\": {\r\n      \"formatId\": \"205\",\r\n      \"value\": \"202310011000+0000\"\r\n    },\r\n    \"deliveryEvent\": {\r\n      \"actualOccurrenceDateTime\": {\r\n        \"formatId\": \"205\",\r\n        \"value\": \"202310021500+0000\"\r\n      }\r\n    },\r\n    \"mainCarriageTransportMovement\": [\r\n      {\r\n        \"dangerousGoodsIndicator\": false,\r\n        \"modeCode\": \"1\",\r\n        \"usedTransportMeans\": {\r\n          \"id\": {\r\n            \"schemeAgencyId\": \"UN\",\r\n            \"value\": \"12345\"\r\n          },\r\n          \"registrationCountry\": {\r\n            \"code\": \"DE\"\r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"usedTransportEquipment\": [\r\n      {\r\n        \"carriedTransportEquipment\": [\r\n          {\r\n            \"id\": {\r\n              \"schemeAgencyId\": \"UN\",\r\n              \"value\": \"67890\"\r\n            },\r\n            \"sequenceNumber\": 1\r\n          }\r\n        ],\r\n        \"categoryCode\": \"AE\",\r\n        \"id\": {\r\n          \"schemeAgencyId\": \"UN\",\r\n          \"value\": \"54321\"\r\n        },\r\n        \"registrationCountry\": {\r\n          \"code\": \"FR\"\r\n        },\r\n        \"sequenceNumber\": 2\r\n      }\r\n    ]\r\n  },\r\n  \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -809,43 +809,6 @@
 								}
 							},
 							"response": []
-						},
-						{
-							"name": "Gate to Gate UIL",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_fr_url}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.ttf.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/requestUil",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"requestUil"
-									]
-								}
-							},
-							"response": []
 						}
 					]
 				},
@@ -1141,6 +1104,43 @@
 							"response": []
 						},
 						{
+							"name": "Post UIL Control Copy",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_bo_domain}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"authority\" : {\r\n        \"country\": \"SY\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gate_sy_url}}/v1/requestUil",
+									"host": [
+										"{{gate_sy_url}}"
+									],
+									"path": [
+										"v1",
+										"requestUil"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "get Request Uuid",
 							"event": [
 								{
@@ -1175,9 +1175,7 @@
 									}
 								],
 								"url": {
-
 									"raw": "{{gate_sy_url}}/v1/requestUil?requestUuid=6d84d0dc-1846-4602-ae32-e50fabc43a91",
-
 									"host": [
 										"{{gate_sy_url}}"
 									],
@@ -1188,9 +1186,7 @@
 									"query": [
 										{
 											"key": "requestUuid",
-
 											"value": "6d84d0dc-1846-4602-ae32-e50fabc43a91"
-
 										}
 									]
 								}
@@ -1305,80 +1301,6 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_bo_domain}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_sy_url}}/v1/requestUil",
-									"host": [
-										"{{gate_sy_url}}"
-									],
-									"path": [
-										"v1",
-										"requestUil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Post UIL Control Copy",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_bo_domain}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"authority\" : {\r\n        \"country\": \"SY\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_sy_url}}/v1/requestUil",
-									"host": [
-										"{{gate_sy_url}}"
-									],
-									"path": [
-										"v1",
-										"requestUil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Post UIL Control Copy",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_sy_url}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.massivedynamic.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1574,7 +1496,6 @@
 									],
 									"path": [
 										"identifiers",
-
 										"upload"
 									]
 								}

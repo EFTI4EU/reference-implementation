@@ -2,9 +2,11 @@ package eu.efti.identifiersregistry;
 
 import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.dto.TransportVehicleDto;
+import eu.efti.identifiersregistry.entity.CarriedTransportEquipment;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
+import eu.efti.v1.consignment.identifier.AssociatedTransportEquipment;
 import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import eu.efti.v1.types.DateTime;
@@ -102,8 +104,17 @@ public class IdentifiersMapper {
         consignment.setUsedTransportEquipments(sourceConsignment.getUsedTransportEquipment().stream().map(equipment -> {
             UsedTransportEquipment usedTransportEquipment = new UsedTransportEquipment();
             usedTransportEquipment.setEquipmentId(equipment.getId().getValue());
+            usedTransportEquipment.setIdSchemeAgencyId(equipment.getId().getSchemeAgencyId());
             usedTransportEquipment.setRegistrationCountry(equipment.getRegistrationCountry().getCode().value());
             usedTransportEquipment.setSequenceNumber(equipment.getSequenceNumber().intValue());
+
+            equipment.getCarriedTransportEquipment().forEach(carriedEquipment -> {
+                CarriedTransportEquipment carriedTransportEquipment = new CarriedTransportEquipment();
+                carriedTransportEquipment.setEquipmentId(carriedEquipment.getId().getValue());
+                carriedTransportEquipment.setSchemeAgencyId(carriedEquipment.getId().getSchemeAgencyId());
+                carriedTransportEquipment.setSequenceNumber(carriedEquipment.getSequenceNumber().intValue());
+                usedTransportEquipment.getCarriedTransportEquipments().add(carriedTransportEquipment);
+            });
             return usedTransportEquipment;
         }).toList());
         return consignment;
