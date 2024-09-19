@@ -2,7 +2,7 @@ package eu.efti.platformgatesimulator.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import eu.efti.v1.edelivery.SaveIdentifiersRequest;
+import eu.efti.v1.json.SaveIdentifiersRequest;
 import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
 import eu.efti.edeliveryapconnector.dto.ApRequestDto;
@@ -18,6 +18,7 @@ import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.platformgatesimulator.config.GateProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,10 +41,12 @@ public class ApIncomingService {
     private final GateProperties gateProperties;
     private final ReaderService readerService;
     private final XmlMapper xmlMapper;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     public void uploadIdentifiers(final SaveIdentifiersRequest identifiersDto) throws JsonProcessingException {
+        eu.efti.v1.edelivery.SaveIdentifiersRequest edeliveryRequest = modelMapper.map(identifiersDto, eu.efti.v1.edelivery.SaveIdentifiersRequest.class);
         final ApRequestDto apRequestDto = ApRequestDto.builder()
-                .requestId(1L).body(xmlMapper.writeValueAsString(identifiersDto))
+                .requestId(1L).body(xmlMapper.writeValueAsString(edeliveryRequest))
                 .apConfig(buildApConf())
                 .receiver(gateProperties.getGate())
                 .sender(gateProperties.getOwner())

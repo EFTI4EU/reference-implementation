@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.platformgatesimulator.exception.UploadException;
 import eu.efti.platformgatesimulator.service.ApIncomingService;
 import eu.efti.platformgatesimulator.service.ReaderService;
-import eu.efti.v1.edelivery.SaveIdentifiersRequest;
+import eu.efti.v1.json.SaveIdentifiersRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ public class IdentifiersController {
     public ResponseEntity<String> uploadFile(@RequestPart final MultipartFile file) {
         if (file == null || file.isEmpty()) {
             log.error("No file sent");
-            return new ResponseEntity("Error, no file sent", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error, no file sent", HttpStatus.BAD_REQUEST);
         }
         log.info("try to upload file");
         try {
