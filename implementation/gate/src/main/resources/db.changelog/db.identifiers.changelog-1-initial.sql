@@ -4,6 +4,8 @@
 CREATE TABLE consignment
 (
     id                                        bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    create_date                               timestamp,
+    last_modified_date                        timestamp,
     gate_id                                   text NOT NULL,
     platform_id                               text NOT NULL,
     dataset_id                                text NOT NULL,

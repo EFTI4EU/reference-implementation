@@ -1,5 +1,6 @@
 package eu.efti.identifiersregistry.entity;
 
+import eu.efti.commons.model.AbstractModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,7 +30,7 @@ import java.util.List;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "consignment")
-public class Consignment implements Serializable {
+public class Consignment extends AbstractModel implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
