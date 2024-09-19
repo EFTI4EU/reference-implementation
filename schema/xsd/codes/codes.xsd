@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://efti.eu/v1/codes"
+            elementFormDefault="qualified">
+  <xsd:include schemaLocation="ISO_ISO2AlphaLanguageCode_2006-10-27.xsd"/>
+  <xsd:include schemaLocation="ISO_ISOTwo-letterCountryCode_SecondEdition2006.xsd"/>
+  <xsd:include schemaLocation="ISO_ISO3AlphaCurrencyCode_2012-08-31.xsd"/>
+  <xsd:include schemaLocation="UNECE_TransportModeCode_2.xsd"/>
+  <xsd:include schemaLocation="UNECE_TransportEquipmentCategoryCode_D23A.xsd"/>
+
+</xsd:schema>

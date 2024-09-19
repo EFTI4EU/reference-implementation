@@ -2,7 +2,8 @@
     xmlns="http://efti.eu/v1/consignment/identifier"
     xmlns:ed="http://efti.eu/v1/edelivery"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery.xsd">
+    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+    status="200">
 
   <ed:consignment>
     <!-- eFTI39 -->

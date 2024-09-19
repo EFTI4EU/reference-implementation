@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:efti="http://efti.eu/v1/consignment/identifier" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:types="http://efti.eu/v1/types" targetNamespace="http://efti.eu/v1/consignment/identifier"
-            elementFormDefault="qualified">
-  <xsd:import namespace="http://efti.eu/v1/types" schemaLocation="types/main.xsd"/>
+            xmlns:types="http://efti.eu/v1/types" xmlns:codes="http://efti.eu/v1/codes"
+            targetNamespace="http://efti.eu/v1/consignment/identifier" elementFormDefault="qualified">
+  <xsd:import namespace="http://efti.eu/v1/types" schemaLocation="types/types.xsd"/>
+  <xsd:import namespace="http://efti.eu/v1/codes" schemaLocation="codes/codes.xsd"/>
   <xsd:element name="consignment" type="efti:SupplyChainConsignment"/>
   <xsd:complexType name="AssociatedTransportEquipment">
     <xsd:sequence>
@@ -51,7 +52,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="categoryCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="categoryCode" type="codes:TransportEquipmentCategoryCode" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003767" id="Logistics_ Transport Equipment. Category. Code"/>
@@ -147,7 +148,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="modeCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="modeCode" type="codes:TransportModeCode" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003839" id="Logistics_ Transport Movement. Mode. Code"/>
@@ -238,7 +239,7 @@
   </xsd:complexType>
   <xsd:complexType name="TradeCountry">
     <xsd:sequence>
-      <xsd:element name="code" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="code" type="codes:CountryCode" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01002553" id="Trade_ Country. Identification. Identifier"/>

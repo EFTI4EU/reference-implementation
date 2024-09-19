@@ -1,9 +1,9 @@
-<ed:uilResponse
-    xmlns="http://efti.eu/v1/consignment/common"
+<ed:saveIdentifiersRequest
+    xmlns="http://efti.eu/v1/consignment/identifier"
     xmlns:ed="http://efti.eu/v1/edelivery"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-    status="200">
+    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/platform.xsd"
+    datasetId="12331232">
 
   <consignment>
     <!-- eFTI39 -->
@@ -55,4 +55,4 @@
 
     </usedTransportEquipment>
   </consignment>
-</ed:uilResponse>
+</ed:saveIdentifiersRequest>

@@ -1,15 +1,20 @@
 eDelivery xsd schemas v0.5
 ===
 
-This contains edelivery xsd schema proposals for edelivery message payloads in 
-Gate to Gate communication (v0.5).
+This contains edelivery xsd schema proposals for edelivery message payloads (v0.5) in 
+- Gate to gate (g2g) communication:
+  - **identifierQuery** -> identifierResponse - find consignments (identifier subset only) matching the given identifier
+  - **uilQuery** -> uilResponse - find consignment (in a given subset) using uil
+- Platform to gate (p2g) communication:
+  - **saveIdentifiersRequest** -> saveIdentifiersResponse - save consignment identifiers to the gate. This request is used to create and update the identifier dataset.
+- Gate to platform (g2p) communication
+  - **uilQuery** -> uilResponse - find consignment (in a given subset) using uil
 
-- **edelivery.xsd** - edelivery message payloads in gate to gate communication:
-  - identifier-query / identifier-response - find consignments (identifier subset only) matching the given identifier
-  - uil-query / uil-response - find consignment (in a given subset) using uil
-- **consignment-common.xsd** - efti common dataset consignment
-- **consignment-identifier.xsd** - identifier subset of efti common dataset consignment.
-- **consignment-dummy.xsd** - dummy efti common dataset consignment (same as identifier schema, used only for development purposes)
+Schemas:
+- **[edelivery/gate.xsd](edelivery/gate.xsd)** - edelivery message payloads for gates. Includes platform payloads and g2g payloads. This contains all the message payloads.
+- **[edelivery/platform.xsd](edelivery/platform.xsd)** - edelivery message payloads for platforms. Contains message payloads for p2g and g2p.
+- **[consignment-common.xsd](consignment-common.xsd)** - efti common dataset consignment
+- **[consignment-identifier.xsd](consignment-identifier.xsd)** - identifier subset of efti common dataset consignment.
 
 Model
 -
@@ -43,6 +48,7 @@ Examples
 XML example documents:
 
 - consignment.xml - example consignment xml document (identifier subset of efti common dataset)
+- consignment-common.xml - example consignment xml document of common dataset
 - identifier-query - example payload for identifiers search request to other gate
 - identifier-response - example payload for identifiers search response to other gate
 - uil-query - example payload for uil query request to other gate

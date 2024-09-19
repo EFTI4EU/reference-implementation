@@ -1,7 +1,7 @@
 <identifierQuery
     xmlns="http://efti.eu/v1/edelivery"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery.xsd">
+    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd">
 
   <identifier type="means">ASB-123</identifier>
   <registrationCountryCode>FI</registrationCountryCode>

@@ -1,105 +1,98 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:efti-id="http://efti.eu/v1/consignment/identifier"
             xmlns:efti="http://efti.eu/v1/consignment/common"
             xmlns:efti-ed="http://efti.eu/v1/edelivery"
             targetNamespace="http://efti.eu/v1/edelivery"
             elementFormDefault="qualified">
 
-  <xsd:import namespace="http://efti.eu/v1/consignment/identifier" schemaLocation="consignment-identifier.xsd"/>
   <xsd:import namespace="http://efti.eu/v1/consignment/common" schemaLocation="consignment-common.xsd"/>
-
-  <xsd:element name="identifierQuery" type="efti-ed:IdentifierQuery"/>
-  <xsd:element name="identifierResponse" type="efti-ed:IdentifierResponse"/>
-
-  <xsd:element name="uilQuery" type="efti-ed:UILQuery"/>
-  <xsd:element name="uilResponse" type="efti-ed:UILResponse"/>
 
   <xsd:complexType name="UIL">
     <xsd:sequence>
-      <xsd:element name="gateId" type="xsd:string"/>
-      <xsd:element name="platformId" type="xsd:string"/>
-      <xsd:element name="datasetId" type="xsd:string"/>
+      <xsd:element name="gateId" type="xsd:token"/>
+      <xsd:element name="platformId" type="xsd:token"/>
+      <xsd:element name="datasetId" type="xsd:token"/>
     </xsd:sequence>
   </xsd:complexType>
 
-  <xsd:simpleType name="IdentifierType">
+  <xsd:simpleType name="ResponseStatus">
     <xsd:annotation>
       <xsd:documentation>
-        Identifier types used in the identifier query
-        - means: eFTI618 - transport means identifier
-        - equipment: eFTI374 - transport equipment identifier
-        - carried: eFTI448 - carried transport equipment identifier
+        Duration units used in Efti from UNECE Recommendation 20 (UNECE (UN/EDIFACT) codes 6411)
+        See https://unece.org/trade/uncefact/cl-recommendations
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:token">
-      <xsd:enumeration value="means"/>
-      <xsd:enumeration value="equipment"/>
-      <xsd:enumeration value="carried"/>
+      <xsd:enumeration value="200">
+        <xsd:annotation>
+          <xsd:documentation>
+            OK - Standard response for successful requests
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="400">
+        <xsd:annotation>
+          <xsd:documentation>
+            Bad Request - The gate cannot or will not process the request due to an apparent client error
+            (e.g., malformed request syntax, size too large).
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="404">
+        <xsd:annotation>
+          <xsd:documentation>
+            Not Found - The requested resource e.g. consignment does not exist.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="500">
+        <xsd:annotation>
+          <xsd:documentation>
+            Internal Server Error - Any internal error in the gate.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="501">
+        <xsd:annotation>
+          <xsd:documentation>
+            Not Implemented - Gate does not support this version of the service.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="502">
+        <xsd:annotation>
+          <xsd:documentation>
+            Bad Gateway - Gate received an invalid response from the platform
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="503">
+        <xsd:annotation>
+          <xsd:documentation>
+            Service Unavailable - The server cannot handle the request (because it is overloaded or down for maintenance).
+            Generally, this is a temporary state.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="504">
+        <xsd:annotation>
+          <xsd:documentation>
+            Gateway Timeout - The gate did not receive a timely response from the platform
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:complexType name="Identifier">
+  <xsd:complexType name="Response">
     <xsd:annotation>
       <xsd:documentation>
-        An identifier in an identifier query.
-      </xsd:documentation>
-    </xsd:annotation>
-    <xsd:simpleContent>
-      <xsd:extension base="xsd:token">
-        <xsd:attribute name="type">
-          <xsd:simpleType>
-            <xsd:list itemType='efti-ed:IdentifierType'/>
-          </xsd:simpleType>
-        </xsd:attribute>
-        <xsd:attribute name="schemeAgencyId" type="xsd:token"/>
-      </xsd:extension>
-    </xsd:simpleContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="IdentifierQuery">
-    <xsd:annotation>
-      <xsd:documentation>
-        Query request message to find consignments matching the given identifier.
-        Required identifier parameter can match to fields (eFTI618, eFTI374, eFTI448) in the identifier subset.
-        Optional parameters can be used to further filter out possible duplicate identifiers:
-        - registrationCountryCode - eFTI578/eFTI620 registration country of the identifier
-        - modeCode - eFTI581 main carriage transport movement mode code
-        - dangerousGoodsIndicator - eFTI1451 main carriage transport movement dangerous goods indicator
-        Returns consignments in identifier subset with UIL.
+        Any edelivery payload response
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
-      <xsd:element name="identifier" type="efti-ed:Identifier"/>
-      <xsd:element name="registrationCountryCode" type="xsd:token" minOccurs="0"/>
-      <xsd:element name="modeCode" type="xsd:token" minOccurs="0"/>
-      <xsd:element name="dangerousGoodsIndicator" type="xsd:boolean" minOccurs="0" />
+      <xsd:element name="description" type="xsd:string" minOccurs="0"/>
     </xsd:sequence>
-  </xsd:complexType>
-
-  <xsd:complexType name="Consignment">
-    <xsd:annotation>
-      <xsd:documentation>
-        Consignment in identifier subset including UIL
-      </xsd:documentation>
-    </xsd:annotation>
-    <xsd:complexContent>
-      <xsd:extension base="efti-id:SupplyChainConsignment">
-        <xsd:sequence>
-          <xsd:element name="uil" type="efti-ed:UIL" />
-        </xsd:sequence>
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="IdentifierResponse">
-    <xsd:annotation>
-      <xsd:documentation>
-        Response payload to the identifier request. Returns consignments in identifier subset.
-      </xsd:documentation>
-    </xsd:annotation>
-    <xsd:sequence>
-      <xsd:element name="consignment" type="efti-ed:Consignment" minOccurs="0" maxOccurs="unbounded"/>
-    </xsd:sequence>
+    <xsd:attribute name="status" type="efti-ed:ResponseStatus" use="required"/>
   </xsd:complexType>
 
   <xsd:complexType name="UILQuery">
@@ -124,9 +117,16 @@
         If consignment does not exist return empty response.
       </xsd:documentation>
     </xsd:annotation>
-    <xsd:sequence>
-      <xsd:element ref="efti:consignment" minOccurs="0" />
-    </xsd:sequence>
+    <xsd:complexContent>
+      <xsd:extension base="efti-ed:Response">
+        <xsd:sequence>
+          <xsd:element ref="efti:consignment" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
+
+  <xsd:element name="uilQuery" type="efti-ed:UILQuery"/>
+  <xsd:element name="uilResponse" type="efti-ed:UILResponse"/>
 </xsd:schema>
 

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:efti="http://efti.eu/v1/consignment/common" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:types="http://efti.eu/v1/types" targetNamespace="http://efti.eu/v1/consignment/common"
-            elementFormDefault="qualified">
-  <xsd:import namespace="http://efti.eu/v1/types" schemaLocation="types/main.xsd"/>
+            xmlns:types="http://efti.eu/v1/types" xmlns:codes="http://efti.eu/v1/codes"
+            targetNamespace="http://efti.eu/v1/consignment/common" elementFormDefault="qualified">
+  <xsd:import namespace="http://efti.eu/v1/types" schemaLocation="types/types.xsd"/>
+  <xsd:import namespace="http://efti.eu/v1/codes" schemaLocation="codes/codes.xsd"/>
   <xsd:element name="consignment" type="efti:SupplyChainConsignment"/>
   <xsd:complexType name="AssociatedTransportEquipment">
     <xsd:sequence>
@@ -18,7 +19,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="categoryCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="categoryCode" type="codes:TransportEquipmentCategoryCode" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003413" id="Associated_ Transport Equipment. Category. Code"/>
@@ -166,7 +167,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="usedCapacityCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="usedCapacityCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014628" id="Associated_ Transport Equipment. Used Capacity. Code"/>
@@ -197,7 +198,7 @@
   </xsd:complexType>
   <xsd:complexType name="AttachedTransportEquipment">
     <xsd:sequence>
-      <xsd:element name="categoryCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="categoryCode" type="codes:TransportEquipmentCategoryCode" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003418" id="Attached_ Transport Equipment. Category. Code"/>
@@ -373,7 +374,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="typeCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="typeCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006148" id="Cross-Border_ Regulatory Procedure. Type. Code"/>
@@ -400,7 +401,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="statementCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="statementCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003524" id="Document_ Authentication. Statement. Code"/>
@@ -678,7 +679,7 @@
           <xsd:documentation>A stated condition of this logistics package.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="typeCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="typeCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003697" id="Logistics_ Package. Type. Code"/>
@@ -713,7 +714,7 @@
   </xsd:complexType>
   <xsd:complexType name="LogisticsRiskAnalysisResult">
     <xsd:sequence>
-      <xsd:element name="consignmentRiskRelatedCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="consignmentRiskRelatedCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01013047" id="Logistics_ Risk Analysis Result. Consignment Risk_ Related. Code"/>
@@ -747,7 +748,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="levelCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="levelCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01013050" id="Logistics_ Risk Analysis Result. Level. Code"/>
@@ -758,7 +759,7 @@
           <xsd:documentation>The code specifying the level for this logistics risk analysis result.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="screeningMethodCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="screeningMethodCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014742" id="Logistics_ Risk Analysis Result. Screening_ Method. Code"/>
@@ -770,7 +771,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="securityExemptionCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="securityExemptionCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014743" id="Logistics_ Risk Analysis Result. Security_ Exemption. Code"/>
@@ -786,7 +787,7 @@
   </xsd:complexType>
   <xsd:complexType name="LogisticsSeal">
     <xsd:sequence>
-      <xsd:element name="conditionCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="conditionCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003717" id="Logistics_ Seal. Condition. Code"/>
@@ -825,7 +826,7 @@
           <xsd:documentation>The party issuing this logistics seal.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="sealingPartyRoleCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="sealingPartyRoleCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003718" id="Logistics_ Seal. Sealing Party Role. Code"/>
@@ -856,7 +857,7 @@
           <xsd:documentation>A monetary value applied to this logistics service charge.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="calculationBasisCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="calculationBasisCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003733" id="Logistics_ Service Charge. Calculation Basis. Code"/>
@@ -882,7 +883,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="id" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="id" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003722" id="Logistics_ Service Charge. Identification. Identifier"/>
@@ -892,7 +893,7 @@
           <xsd:documentation>The unique identifier for this logistics service charge.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="payingPartyRoleCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="payingPartyRoleCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003732" id="Logistics_ Service Charge. Paying Party Role. Code"/>
@@ -905,7 +906,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="paymentArrangementCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="paymentArrangementCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003724" id="Logistics_ Service Charge. Payment Arrangement. Code"/>
@@ -967,7 +968,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="categoryCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="categoryCode" type="codes:TransportEquipmentCategoryCode" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003767" id="Logistics_ Transport Equipment. Category. Code"/>
@@ -981,7 +982,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="fullEmptyCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="fullEmptyCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003771" id="Logistics_ Transport Equipment. Used Capacity. Code"/>
@@ -1146,7 +1147,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="sizeTypeCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="sizeTypeCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003768" id="Logistics_ Transport Equipment. Characteristic. Code"/>
@@ -1236,7 +1237,7 @@
           <xsd:documentation>Spatial dimensions specified for this logistics means of transport.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="typeCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="typeCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003820" id="Logistics_ Transport Means. Type. Code"/>
@@ -1369,7 +1370,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="modeCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="modeCode" type="codes:TransportModeCode" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003839" id="Logistics_ Transport Movement. Mode. Code"/>
@@ -1451,7 +1452,7 @@
           <xsd:documentation>A measure of a condition for this measurement.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="typeCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="typeCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003895" id="Measurement. Type. Code"/>
@@ -1484,7 +1485,7 @@
           <xsd:documentation>A content, expressed as text, of this note.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="subjectCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="subjectCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01002523" id="Note. Subject. Code"/>
@@ -1536,7 +1537,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="radioactivePackageTransportIndexCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="radioactivePackageTransportIndexCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014745" id="Radioactive_ Material. Radioactive Package Transport Index. Code"/>
@@ -1659,7 +1660,7 @@
           <xsd:documentation>The trade related party that issues this referenced document.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="referenceTypeCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="referenceTypeCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006036" id="Referenced_ Document. Reference_ Type. Code"/>
@@ -1670,7 +1671,7 @@
           <xsd:documentation>The code specifying the reference type of this referenced document.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="subtypeCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="subtypeCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014905" id="Referenced_ Document. Subtype. Code"/>
@@ -1680,7 +1681,7 @@
           <xsd:documentation>A code specifying a subtype of this referenced document.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="typeCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="typeCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01001577" id="Referenced_ Document. Type. Code"/>
@@ -1846,7 +1847,7 @@
   </xsd:complexType>
   <xsd:complexType name="SpecifiedCondition">
     <xsd:sequence>
-      <xsd:element name="actionCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="actionCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014755" id="Specified_ Condition. Action. Code"/>
@@ -1896,7 +1897,7 @@
           <xsd:documentation>A calibrated measurement specified for this specified condition.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="statementCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="statementCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015639" id="Specified_ Condition. Statement. Code"/>
@@ -1952,7 +1953,7 @@ The text of the stated condition."
           <xsd:documentation>A statement, expressed as text, for this specified condition.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="subjectTypeCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="subjectTypeCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014753" id="Specified_ Condition. Subject_ Type. Code"/>
@@ -1999,7 +2000,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="SpecifiedFuel">
     <xsd:sequence>
-      <xsd:element name="typeCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="typeCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015619" id="Specified_ Fuel. Type. Code"/>
@@ -2061,7 +2062,7 @@ The text of the stated condition."
           <xsd:documentation>An identifier of this specified licence.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="typeCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="typeCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015044" id="Specified_ Licence. Type. Code"/>
@@ -2573,7 +2574,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="paymentArrangementCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="paymentArrangementCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006139" id="Supply Chain_ Consignment. Payment Arrangement. Code"/>
@@ -2961,7 +2962,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="countryCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="countryCode" type="codes:CountryCode" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004546" id="Trade_ Address. Country. Identifier"/>
@@ -3108,7 +3109,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="postcode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="postcode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004535" id="Trade_ Address. Postcode. Code"/>
@@ -3280,7 +3281,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="TradeCountry">
     <xsd:sequence>
-      <xsd:element name="code" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="code" type="codes:CountryCode" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01002553" id="Trade_ Country. Identification. Identifier"/>
@@ -3517,7 +3518,7 @@ The text of the stated condition."
           <xsd:documentation>The specified representative person for this trade party.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="roleCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="roleCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004599" id="Trade_ Party. Role. Code"/>
@@ -3579,7 +3580,7 @@ The text of the stated condition."
           <xsd:documentation>The quantity on which the trade price is based.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="categoryTypeCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="categoryTypeCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015438" id="Trade_ Price. Category_ Type. Code"/>
@@ -3620,7 +3621,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="operationalCategoryCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="operationalCategoryCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004760" id="Transport_ Cargo. Operational Category. Code"/>
@@ -3634,7 +3635,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="statisticalClassificationCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="statisticalClassificationCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004761" id="Transport_ Cargo. Statistical Classification. Code"/>
@@ -3647,7 +3648,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="typeCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="typeCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004758" id="Transport_ Cargo. Type. Code"/>
@@ -3768,7 +3769,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="hazardCategoryCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="hazardCategoryCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006213" id="Transport_ Dangerous Goods. Hazard_ Category. Code"/>
@@ -3802,7 +3803,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="hazardTypeCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="hazardTypeCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004779" id="Transport_ Dangerous Goods. Hazard Type. Code"/>
@@ -3846,7 +3847,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="limitedQuantityCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="limitedQuantityCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01008331" id="Transport_ Dangerous Goods. Limited Quantity. Code"/>
@@ -3886,7 +3887,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="packagingDangerLevelCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="packagingDangerLevelCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004774" id="Transport_ Dangerous Goods. Packaging Danger Level. Code"/>
@@ -4067,7 +4068,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="tunnelRestrictionCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="tunnelRestrictionCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01006211" id="Transport_ Dangerous Goods. Tunnel Restriction. Code"/>
@@ -4080,7 +4081,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="uNDGID" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="uNDGID" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004763" id="Transport_ Dangerous Goods. UNDG Identification. Code"/>
@@ -4264,7 +4265,7 @@ The text of the stated condition."
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="typeCode" type="xsd:string" minOccurs="0" maxOccurs="1">
+      <xsd:element name="typeCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004793" id="Transport_ Event. Type. Code"/>
@@ -4357,7 +4358,7 @@ The text of the stated condition."
   </xsd:complexType>
   <xsd:complexType name="TransportService">
     <xsd:sequence>
-      <xsd:element name="conditionTypeCode" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="conditionTypeCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004842" id="Transport_ Service. Condition_ Type. Code"/>
