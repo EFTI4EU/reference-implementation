@@ -27,7 +27,7 @@ variables:
   trigger:
     include:
       - project: "kube/build"
-        file: "build_ms.yml"
+        file: "build_${ROOT_PROJECT]_ms.yml"
         ref: "mock"
     forward:
       pipeline_variables: true
