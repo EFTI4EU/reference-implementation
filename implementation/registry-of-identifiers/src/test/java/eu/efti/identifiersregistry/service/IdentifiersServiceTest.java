@@ -1,11 +1,8 @@
 package eu.efti.identifiersregistry.service;
 
-import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
-import eu.efti.commons.dto.TransportVehicleDto;
 import eu.efti.identifiersregistry.entity.Consignment;
-import eu.efti.identifiersregistry.exception.InvalidIdentifiersException;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
 import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
 import eu.efti.v1.consignment.identifier.TransportEvent;
@@ -19,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,7 +35,6 @@ class IdentifiersServiceTest extends AbstractServiceTest {
     private IdentifiersRepository repository;
 
     private SaveIdentifiersRequestWrapper saveIdentifiersRequestWrapper;
-    private IdentifiersDto identifiersDto;
     private Consignment consignment;
 
     @BeforeEach
@@ -49,14 +44,6 @@ class IdentifiersServiceTest extends AbstractServiceTest {
 
         ReflectionTestUtils.setField(service, "gateOwner", "http://efti.gate.borduria.eu");
         ReflectionTestUtils.setField(service, "gateCountry", "BO");
-
-        identifiersDto = IdentifiersDto.builder()
-                .eFTIDataUuid(DATA_UUID)
-                .eFTIPlatformUrl(PLATFORM_URL)
-                .transportVehicles(List.of(TransportVehicleDto.builder()
-                                .vehicleId("abc123").countryStart("FR").countryEnd("toto").build(),
-                        TransportVehicleDto.builder()
-                                .vehicleId("abc124").countryStart("osef").countryEnd("IT").build())).build();
 
         SaveIdentifiersRequest identifiersRequest = defaultSaveIdentifiersRequest();
         saveIdentifiersRequestWrapper = new SaveIdentifiersRequestWrapper(PLATFORM_URL, identifiersRequest);
@@ -162,16 +149,6 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());
         assertEquals(GATE_URL, argumentCaptor.getValue().getGateId());
-    }
-
-    @Test
-    void shouldDisable() {
-        when(repository.save(any())).thenReturn(consignment);
-        final ArgumentCaptor<Consignment> captor = ArgumentCaptor.forClass(Consignment.class);
-        service.disable(identifiersDto);
-
-        verify(repository).save(captor.capture());
-        assertNotNull(captor.getValue());
     }
 
     @Test

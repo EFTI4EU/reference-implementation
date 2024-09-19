@@ -6,7 +6,6 @@ import eu.efti.identifiersregistry.entity.CarriedTransportEquipment;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
-import eu.efti.v1.consignment.identifier.AssociatedTransportEquipment;
 import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import eu.efti.v1.types.DateTime;
@@ -17,36 +16,11 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class IdentifiersMapper {
-
-    public Consignment dtoToEntity(final IdentifiersDto identifiersDto) {
-        Consignment consignment = new Consignment();
-        consignment.setId(identifiersDto.getId());
-        consignment.setGateId(identifiersDto.getEFTIGateUrl());
-        consignment.setPlatformId(identifiersDto.getEFTIPlatformUrl());
-        consignment.setDatasetId(identifiersDto.getEFTIDataUuid());
-
-        if (identifiersDto.getIsDangerousGoods() != null) {
-            MainCarriageTransportMovement mainCarriageTransportMovement = new MainCarriageTransportMovement();
-            mainCarriageTransportMovement.setDangerousGoodsIndicator(identifiersDto.getIsDangerousGoods());
-            consignment.setMainCarriageTransportMovements(List.of(mainCarriageTransportMovement));
-        }
-
-        ArrayList<UsedTransportEquipment> usedTransportEquipments = new ArrayList<>();
-        identifiersDto.getTransportVehicles().forEach(transportVehicle -> {
-            UsedTransportEquipment usedTransportEquipment = new UsedTransportEquipment();
-            usedTransportEquipment.setEquipmentId(transportVehicle.getVehicleId());
-            usedTransportEquipment.setRegistrationCountry(transportVehicle.getVehicleCountry());
-            usedTransportEquipments.add(usedTransportEquipment);
-        });
-        consignment.setUsedTransportEquipments(usedTransportEquipments);
-        return consignment;
-    }
 
     public IdentifiersDto entityToDto(final Consignment consignmentEntity) {
         IdentifiersDto dto = new IdentifiersDto();
@@ -54,9 +28,8 @@ public class IdentifiersMapper {
         dto.setEFTIPlatformUrl(consignmentEntity.getPlatformId());
         dto.setEFTIDataUuid(consignmentEntity.getDatasetId());
         if (consignmentEntity.getMainCarriageTransportMovements() != null) {
-            consignmentEntity.getMainCarriageTransportMovements().forEach(mainCarriageTransportMovement -> {
-                dto.setIsDangerousGoods(mainCarriageTransportMovement.isDangerousGoodsIndicator());
-            });
+            consignmentEntity.getMainCarriageTransportMovements().forEach(mainCarriageTransportMovement ->
+                    dto.setIsDangerousGoods(mainCarriageTransportMovement.isDangerousGoodsIndicator()));
         }
         if (consignmentEntity.getUsedTransportEquipments() != null) {
             consignmentEntity.getUsedTransportEquipments().forEach(usedTransportEquipment -> {

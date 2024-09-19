@@ -17,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -57,11 +55,6 @@ public class IdentifiersService {
         logService.log(identifiersDto, gateOwner, gateCountry, bodyBase64);
     }
 
-    public void disable(final IdentifiersDto identifiersDto) {
-        identifiersDto.setDisabled(true);
-        this.save(identifiersDto);
-    }
-
     public boolean existByUIL(final String dataUuid, final String gate, final String platform) {
         return this.repository.findByUil(gate, dataUuid, platform).isPresent();
     }
@@ -69,10 +62,6 @@ public class IdentifiersService {
     @Transactional("identifiersTransactionManager")
     public List<IdentifiersDto> search(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
         return mapper.entityListToDtoList(this.repository.searchByCriteria(identifiersRequestDto));
-    }
-
-    private IdentifiersDto save(final IdentifiersDto identifiersDto) {
-        return mapper.entityToDto(repository.save(mapper.dtoToEntity(identifiersDto)));
     }
 
     private IdentifiersDto save(final Consignment consignment) {

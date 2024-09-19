@@ -59,7 +59,7 @@ public class IdentifiersMapperTest {
 
         assertEquals(1, internalConsignment.getMainCarriageTransportMovements().size());
         assertEquals(1, internalConsignment.getMainCarriageTransportMovements().get(0).getModeCode());
-        assertEquals(true, internalConsignment.getMainCarriageTransportMovements().get(0).isDangerousGoodsIndicator());
+        assertTrue(internalConsignment.getMainCarriageTransportMovements().get(0).isDangerousGoodsIndicator());
         assertEquals("123", internalConsignment.getMainCarriageTransportMovements().get(0).getUsedTransportMeansId());
         assertEquals("AE", internalConsignment.getMainCarriageTransportMovements().get(0).getUsedTransportMeansRegistrationCountry());
 
