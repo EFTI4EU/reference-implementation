@@ -130,7 +130,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
 
     @Override
     public void receiveGateRequest(final NotificationDto notificationDto) {
-        throw new UnsupportedOperationException("Forward Operations not supported for Identifiers");
+        throw new UnsupportedOperationException("Forward Operations not supported for Consignment");
     }
 
     @Override
@@ -171,7 +171,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     @Override
     protected IdentifiersRequestEntity findRequestByMessageIdOrThrow(final String eDeliveryMessageId) {
         return Optional.ofNullable(this.identifiersRequestRepository.findByEdeliveryMessageId(eDeliveryMessageId))
-                .orElseThrow(() -> new RequestNotFoundException("couldn't find Identifiers request for messageId: " + eDeliveryMessageId));
+                .orElseThrow(() -> new RequestNotFoundException("couldn't find Consignment request for messageId: " + eDeliveryMessageId));
     }
 
     @Override

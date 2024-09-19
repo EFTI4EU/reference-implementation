@@ -100,9 +100,9 @@ public class ControlService {
                 .fromUilControl(uilDto, gateProperties.isCurrentGate(uilDto.getEFTIGateUrl()) ? RequestTypeEnum.LOCAL_UIL_SEARCH : RequestTypeEnum.EXTERNAL_UIL_SEARCH));
     }
 
-    public RequestUuidDto createIdentifiersControl(final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {
-        log.info("create identifiers control for vehicleID : {}", searchWithIdentifiersRequestDto.getVehicleID());
-        return createControl(searchWithIdentifiersRequestDto, ControlUtils.fromLocalIdentifiersControl(searchWithIdentifiersRequestDto, RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH));
+    public RequestUuidDto createIdentifiersControl(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
+        log.info("create Consignment control for vehicleId : {}", identifiersRequestDto.getVehicleID());
+        return createControl(identifiersRequestDto, ControlUtils.fromLocalIdentifiersControl(identifiersRequestDto, RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH));
     }
 
     public NoteResponseDto createNoteRequestForControl(final NotesDto notesDto) {

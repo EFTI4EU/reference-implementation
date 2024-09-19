@@ -1,5 +1,4 @@
-package eu.efti.identifiersregistry.entity;
-
+package eu.efti.eftigate.entity;
 import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.commons.enums.TransportMode;
 import jakarta.persistence.Column;
@@ -19,7 +18,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 
@@ -28,14 +26,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "transportvehicle")
-public class TransportVehicle extends JourneyEntity implements Serializable {
+public class TransportVehicleEntity extends JourneyEntity implements Serializable {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id")
     private int id;
     @Enumerated(EnumType.STRING)
     private TransportMode transportMode;
@@ -43,7 +35,4 @@ public class TransportVehicle extends JourneyEntity implements Serializable {
     private String vehicleID;
     @Enumerated(EnumType.STRING)
     private CountryIndicator vehicleCountry;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="identifiers")
-    Identifiers identifiers;
 }

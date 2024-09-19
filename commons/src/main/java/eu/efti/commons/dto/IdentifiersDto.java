@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -32,7 +33,7 @@ public class IdentifiersDto extends AbstractUilDto {
     private String identifiersUUID;
     @NotEmpty(message = "TRANSPORT_VEHICLES_MISSING")
     @Valid
-    private List<TransportVehicleDto> transportVehicles;
+    private List<TransportVehicleDto> transportVehicles = new ArrayList<>();
     @JsonProperty("isDisabled")
     @XmlElement(name = "isDisabled")
     private boolean isDisabled;

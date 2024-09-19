@@ -1,6 +1,6 @@
 package eu.efti.identifiersregistry.config;
 
-import eu.efti.identifiersregistry.entity.Identifiers;
+import eu.efti.identifiersregistry.entity.Consignment;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +57,7 @@ public class IdentifiersJpaConfiguration {
             @Qualifier("identifiersDataSource") final DataSource dataSource,
             final EntityManagerFactoryBuilder builder) {
         return builder.dataSource(dataSource)
-                .packages(Identifiers.class)
+                .packages(Consignment.class)
                 .properties(jpaProperties())
                 .build();
     }

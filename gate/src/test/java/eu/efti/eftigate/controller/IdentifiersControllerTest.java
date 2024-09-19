@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(IdentifiersController.class)
-@ContextConfiguration(classes= {IdentifiersController.class})
+@ContextConfiguration(classes = {IdentifiersController.class})
 @ExtendWith(SpringExtension.class)
 class IdentifiersControllerTest {
 
@@ -41,6 +41,7 @@ class IdentifiersControllerTest {
 
     @MockBean
     ControlService controlService;
+
     @BeforeEach
     void before() {
         identifiersResponseDto.setStatus(StatusEnum.COMPLETE);
@@ -54,9 +55,9 @@ class IdentifiersControllerTest {
 
         Mockito.when(controlService.createIdentifiersControl(identifiersRequestDto)).thenReturn(
                 RequestUuidDto.builder()
-                .status(StatusEnum.PENDING)
-                .requestUuid(REQUEST_UUID)
-                .build());
+                        .status(StatusEnum.PENDING)
+                        .requestUuid(REQUEST_UUID)
+                        .build());
 
         String result = mockMvc.perform(post("/v1/getIdentifiers")
                         .with(csrf())

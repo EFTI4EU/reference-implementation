@@ -19,7 +19,6 @@ import eu.efti.eftigate.entity.IdentifiersResult;
 import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.service.gate.EftiGateUrlResolver;
-import eu.efti.identifiersregistry.entity.TransportVehicle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -56,7 +55,6 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
     protected final IdentifiersResults identifiersResults = new IdentifiersResults();
     protected final IdentifiersResultDto identifiersResultDto = new IdentifiersResultDto();
     protected final IdentifiersResultsDto identifiersResultsDto = new IdentifiersResultsDto();
-    protected final TransportVehicle transportVehicle = new TransportVehicle();
 
     protected final SearchParameter searchParameter = new SearchParameter();
 
@@ -103,7 +101,6 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         identifiersResult.setCountryEnd("FR");
         identifiersResult.setDisabled(false);
         identifiersResult.setIsDangerousGoods(true);
-        identifiersResult.setTransportVehicles(List.of(transportVehicle));
         identifiersResults.setIdentifiersResult(Collections.singletonList(identifiersResult));
 
         identifiersResultDto.setCountryStart("FR");
