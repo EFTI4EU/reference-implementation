@@ -73,12 +73,6 @@ include:
     job-prefix: $DEPLOY_ENVIRONMENT
   rules:
   - if: $COMPONENT == "gate"
-- local: "gate/test.yml"
-  inputs:
-    job-prefix: $DEPLOY_ENVIRONMENT
-    job-stage: afterbuild
-  rules:
-  - if: $COMPONENT == "gate"
 # - local: "platform-gate-simulator/deploy.yml"
 #   inputs:
 #     job-prefix: $DEPLOY_ENVIRONMENT
