@@ -57,12 +57,16 @@
         Returns consignments in identifier subset with UIL.
       </xsd:documentation>
     </xsd:annotation>
-    <xsd:sequence>
-      <xsd:element name="identifier" type="efti-ed:Identifier"/>
-      <xsd:element name="registrationCountryCode" type="xsd:token" minOccurs="0"/>
-      <xsd:element name="modeCode" type="xsd:token" minOccurs="0"/>
-      <xsd:element name="dangerousGoodsIndicator" type="xsd:boolean" minOccurs="0"/>
-    </xsd:sequence>
+    <xsd:complexContent>
+      <xsd:extension base="efti-ed:Request">
+        <xsd:sequence>
+          <xsd:element name="identifier" type="efti-ed:Identifier"/>
+          <xsd:element name="registrationCountryCode" type="xsd:token" minOccurs="0"/>
+          <xsd:element name="modeCode" type="xsd:token" minOccurs="0"/>
+          <xsd:element name="dangerousGoodsIndicator" type="xsd:boolean" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:complexType name="Consignment">
