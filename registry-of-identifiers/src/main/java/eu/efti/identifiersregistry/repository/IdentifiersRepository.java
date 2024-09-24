@@ -52,6 +52,9 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
         if (StringUtils.isNotEmpty(request.getVehicleCountry())) {
             subQueryPredicate.add(cb.equal(vehicles.get(VEHICLE_COUNTRY), CountryIndicator.valueOf(request.getVehicleCountry()).toString()));
         }
+        if (StringUtils.isNotEmpty(request.getTransportMode())) {
+            subQueryPredicate.add(cb.equal(vehicles.get(TRANSPORT_MODE), TransportMode.valueOf(request.getTransportMode())));
+        }
         return cb.and(subQueryPredicate.toArray(new Predicate[]{}));
     }
 }

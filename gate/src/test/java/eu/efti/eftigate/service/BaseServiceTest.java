@@ -93,8 +93,6 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlEntity.setSubsetMsRequested(controlDto.getSubsetMsRequested());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
-        this.controlEntity.setEftiData(controlDto.getEftiData());
-        this.controlEntity.setTransportIdentifiers(controlDto.getTransportIdentifiers());
         this.controlEntity.setFromGateUrl(controlDto.getFromGateUrl());
 
         identifiersResult.setCountryStart("FR");

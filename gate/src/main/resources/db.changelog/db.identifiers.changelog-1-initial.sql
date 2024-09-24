@@ -4,8 +4,8 @@
 CREATE TABLE consignment
 (
     id                                        bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    create_date                               timestamp,
-    last_modified_date                        timestamp,
+    createddate                               timestamp,
+    lastmodifieddate                          timestamp,
     gate_id                                   text NOT NULL,
     platform_id                               text NOT NULL,
     dataset_id                                text NOT NULL,
@@ -37,11 +37,9 @@ CREATE TABLE used_transport_equipment
 
 CREATE TABLE carried_transport_equipment
 (
-    id                                  bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    consignment_id                      bigint NOT NULL,
-    transport_equipment_sequence_number int    NOT NULL,
-    sequence_number                     int    NOT NULL,                         --eFTI1000
-    equipment_id                        text CHECK (LENGTH(equipment_id) <= 17), --eFTI374
-    id_scheme_agency_id                 text,
-    used_transport_equipment_id         bigint references used_transport_equipment (id)
+    id                          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    sequence_number             int NOT NULL,                            --eFTI1000
+    equipment_id                text CHECK (LENGTH(equipment_id) <= 17), --eFTI374
+    id_scheme_agency_id         text,
+    used_transport_equipment_id bigint references used_transport_equipment (id)
 );

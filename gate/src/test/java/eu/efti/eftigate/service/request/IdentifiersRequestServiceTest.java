@@ -20,10 +20,10 @@ import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
 import eu.efti.eftigate.entity.IdentifiersResult;
 import eu.efti.eftigate.entity.IdentifiersResults;
+import eu.efti.eftigate.entity.TransportVehicleEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
-import eu.efti.identifiersregistry.entity.TransportVehicle;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -109,8 +109,8 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         identifiersResult = IdentifiersResult.builder()
                 .eFTIDataUuid(DATA_UUID)
                 .eFTIPlatformUrl(PLATFORM_URL)
-                .transportVehicles(List.of(TransportVehicle.builder()
-                        .vehicleID("abc123").vehicleCountry(CountryIndicator.FR).build(), TransportVehicle.builder()
+                .transportVehicles(List.of(TransportVehicleEntity.builder()
+                        .vehicleID("abc123").vehicleCountry(CountryIndicator.FR).build(), TransportVehicleEntity.builder()
                         .vehicleID("abc124").vehicleCountry(CountryIndicator.BE).build())).build();
         IdentifiersRequestService = new IdentifiersRequestService(identifiersRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties,
                 identifiersService, requestUpdaterService, serializeUtils, logManager, identifiersControlUpdateDelegateService);
@@ -306,7 +306,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         final Exception exception = assertThrows(RequestNotFoundException.class, () -> {
             IdentifiersRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         });
-        assertEquals("couldn't find Identifiers request for messageId: messageId", exception.getMessage());
+        assertEquals("couldn't find Consignment request for messageId: messageId", exception.getMessage());
     }
 
     @ParameterizedTest
