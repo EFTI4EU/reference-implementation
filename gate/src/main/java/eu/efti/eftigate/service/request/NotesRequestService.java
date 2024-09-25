@@ -111,7 +111,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
 
     @Override
     public void receiveGateRequest(final NotificationDto notificationDto) {
-        throw new UnsupportedOperationException("Forward Operations not supported for Identifiers");
+        throw new UnsupportedOperationException("Forward Operations not supported for Consignment");
     }
 
     @Override

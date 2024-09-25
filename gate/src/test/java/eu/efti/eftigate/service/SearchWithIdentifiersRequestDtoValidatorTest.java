@@ -57,8 +57,8 @@ class SearchWithIdentifiersRequestDtoValidatorTest {
     }
 
     private boolean containsError(final Set<ConstraintViolation<SearchWithIdentifiersRequestDto>> violations, final ErrorCodesEnum error) {
-        for(final ConstraintViolation<SearchWithIdentifiersRequestDto> violation : violations ) {
-            if(violation.getMessage().equals(error.name())) {
+        for (final ConstraintViolation<SearchWithIdentifiersRequestDto> violation : violations) {
+            if (violation.getMessage().equals(error.name())) {
                 return true;
             }
         }

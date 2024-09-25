@@ -3,7 +3,6 @@ package eu.efti.eftigate.service;
 import eu.efti.commons.dto.AuthorityDto;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.IdentifiersDto;
-import eu.efti.commons.dto.IdentifiersRequestDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.TransportVehicleDto;
 import eu.efti.eftigate.config.GateProperties;
@@ -27,9 +26,9 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class EftiAsyncCallsProcessorTest {
     @Mock
-    private IdentifiersRequestService metadataRequestService;
+    private IdentifiersRequestService identifiersRequestService;
     @Mock
-    private IdentifiersService metadataService;
+    private IdentifiersService identifiersService;
     @Mock
     private LogManager logManager;
     @Mock
@@ -38,11 +37,11 @@ class EftiAsyncCallsProcessorTest {
     @InjectMocks
     private EftiAsyncCallsProcessor eftiAsyncCallsProcessor;
 
-    private final SearchWithIdentifiersRequestDto SearchWithIdentifiersRequestDto = new SearchWithIdentifiersRequestDto();
+    private final SearchWithIdentifiersRequestDto identifiersRequestDto = new SearchWithIdentifiersRequestDto();
 
     IdentifiersDto identifiersDto = new IdentifiersDto();
 
-    private final String metadataUuid = UUID.randomUUID().toString();
+    private final String identifiersUuid = UUID.randomUUID().toString();
     TransportVehicleDto transportVehicleDto = new TransportVehicleDto();
     private final ControlDto controlDto = new ControlDto();
 
@@ -51,28 +50,31 @@ class EftiAsyncCallsProcessorTest {
     public void before() {
         final AuthorityDto authorityDto = new AuthorityDto();
 
+
         identifiersDto.setIsDangerousGoods(true);
-        identifiersDto.setIdentifiersUUID(metadataUuid);
+        identifiersDto.setIdentifiersUUID(identifiersUuid);
         identifiersDto.setDisabled(false);
         identifiersDto.setCountryStart("FR");
         identifiersDto.setCountryEnd("FR");
         identifiersDto.setTransportVehicles(Collections.singletonList(transportVehicleDto));
 
-        this.SearchWithIdentifiersRequestDto.setVehicleID("abc123");
-        this.SearchWithIdentifiersRequestDto.setVehicleCountry("FR");
-        this.SearchWithIdentifiersRequestDto.setAuthority(authorityDto);
-        this.SearchWithIdentifiersRequestDto.setTransportMode("ROAD");
+
+        this.identifiersRequestDto.setVehicleID("abc123");
+        this.identifiersRequestDto.setVehicleCountry("FR");
+        this.identifiersRequestDto.setAuthority(authorityDto);
+        this.identifiersRequestDto.setTransportMode("ROAD");
     }
 
     @Test
-    void checkLocalRepoTest_whenMetadataIsNotPresentInRegistry() {
+    void checkLocalRepoTest_whenIdentifiersIsNotPresentInRegistry() {
         //Arrange
 
         //Act
-        eftiAsyncCallsProcessor.checkLocalRepoAsync(SearchWithIdentifiersRequestDto, controlDto);
+        eftiAsyncCallsProcessor.checkLocalRepoAsync(identifiersRequestDto, controlDto);
 
         //Assert
-        verify(metadataService, times(1)).search(SearchWithIdentifiersRequestDto);
-        verify(metadataRequestService, times(1)).createRequest(any(ControlDto.class), any(), anyList());
+        verify(identifiersService, times(1)).search(identifiersRequestDto);
+        verify(identifiersRequestService, times(1)).createRequest(any(ControlDto.class), any(), anyList());
+        verify(logManager, times(2)).logRegistryIdentifiers(any(), any(), any());
     }
 }

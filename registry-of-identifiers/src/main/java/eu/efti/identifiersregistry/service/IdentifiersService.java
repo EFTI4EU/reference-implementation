@@ -5,7 +5,7 @@ import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.identifiersregistry.IdentifiersMapper;
-import eu.efti.identifiersregistry.entity.Identifiers;
+import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.exception.InvalidIdentifiersException;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
 import jakarta.validation.ConstraintViolation;
@@ -45,13 +45,13 @@ public class IdentifiersService {
 
         this.enrichAndValidate(identifiersDto, bodyBase64);
 
-        final Optional<Identifiers> entityOptional = repository.findByUil(identifiersDto.getEFTIGateUrl(),
+        final Optional<Consignment> entityOptional = repository.findByUil(identifiersDto.getEFTIGateUrl(),
                 identifiersDto.getEFTIDataUuid(), identifiersDto.getEFTIPlatformUrl());
 
-        if(entityOptional.isPresent()) {
+        if (entityOptional.isPresent()) {
             identifiersDto.setId(entityOptional.get().getId());
-            identifiersDto.setIdentifiersUUID(entityOptional.get().getIdentifiersUUID());
-            log.info("updating Identifiers for uuid {}", identifiersDto.getIdentifiersUUID());
+            identifiersDto.setIdentifiersUUID(entityOptional.get().getDatasetId());
+            log.info("updating Consignment for uuid {}", identifiersDto.getIdentifiersUUID());
         } else {
             identifiersDto.setIdentifiersUUID(UUID.randomUUID().toString());
             log.info("creating new entry for uuid {}", identifiersDto.getIdentifiersUUID());
@@ -84,8 +84,8 @@ public class IdentifiersService {
         }
 
         final Set<ConstraintViolation<IdentifiersDto>> violations = validator.validate(identifiersDto);
-        if(!violations.isEmpty()){
-            final String message = String.format("rejecting identifiers for uil (gate=%s, uuid=%s, platform=%s) because %s",
+        if (!violations.isEmpty()) {
+            final String message = String.format("rejecting consignment for uil (gate=%s, uuid=%s, platform=%s) because %s",
                     identifiersDto.getEFTIGateUrl(), identifiersDto.getEFTIPlatformUrl(), identifiersDto.getEFTIPlatformUrl(), violations);
             log.error(message);
 

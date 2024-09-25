@@ -38,8 +38,6 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
-        <!--lombok-->
-        <lombok.version>1.18.28</lombok.version>
         <!--spring cloud-->
         <spring-cloud.version>2022.0.4</spring-cloud.version>
         <openfeign.version>11.7</openfeign.version>
@@ -92,6 +90,16 @@
         <module>gate</module>
         <module>platform-gate-simulator</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.34</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <pluginManagement>
