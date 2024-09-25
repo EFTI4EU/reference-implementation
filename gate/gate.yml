@@ -27,7 +27,7 @@ variables:
     - when: always
   trigger:
     include:
-      - project: "kube/build/projects/efti/"
+      - project: "kube/build/template/projects/efti/"
         file: "build.yml"
         ref: "kustomize"
     forward:
