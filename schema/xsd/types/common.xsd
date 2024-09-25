@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:types="http://efti.eu/v1/types"
+            targetNamespace="http://efti.eu/v1/types" elementFormDefault="qualified">
+  <xsd:simpleType name="Decimal16d6">
+    <xsd:restriction base="xsd:decimal">
+      <xsd:totalDigits value="16"/>
+      <xsd:fractionDigits value="6"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="Identifier17">
+    <xsd:simpleContent>
+      <xsd:extension base="types:LimitedString17">
+        <xsd:attribute name="schemeAgencyId" type="xsd:token"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="Identifier35">
+    <xsd:simpleContent>
+      <xsd:extension base="types:LimitedString35">
+        <xsd:attribute name="schemeAgencyId" type="xsd:token"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="Identifier512">
+    <xsd:simpleContent>
+      <xsd:extension base="types:LimitedString512">
+        <xsd:attribute name="schemeAgencyId" type="xsd:token"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="Identifier7">
+    <xsd:simpleContent>
+      <xsd:extension base="types:LimitedString7">
+        <xsd:attribute name="schemeAgencyId" type="xsd:token"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="Identifier70">
+    <xsd:simpleContent>
+      <xsd:extension base="types:LimitedString70">
+        <xsd:attribute name="schemeAgencyId" type="xsd:token"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:simpleType name="Integer16">
+    <xsd:restriction base="xsd:integer">
+      <xsd:totalDigits value="16"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="Integer8">
+    <xsd:restriction base="xsd:integer">
+      <xsd:totalDigits value="8"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="LimitedString128">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="128"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="LimitedString17">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="17"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="LimitedString256">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="256"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="LimitedString35">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="35"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="LimitedString512">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="512"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="LimitedString7">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="7"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="LimitedString70">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="70"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>

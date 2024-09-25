@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:types="http://efti.eu/v1/types"
+    targetNamespace="http://efti.eu/v1/types"
+    elementFormDefault="qualified">
+
+  <xsd:simpleType name="DateTimeValue">
+    <xsd:restriction base="xsd:token">
+      <xsd:maxLength value="20"/>
+      <xsd:minLength value="8"/>
+      <xsd:pattern value="[0-9\-+]*"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DateTimeFormat">
+    <xsd:annotation>
+      <xsd:documentation>
+        ISO 8601 (UNECE (UN/EDIFACT) codes 2379)
+        102 = CCYYMMDD
+        203 = CCYYMMDDHHMM
+        205 = CCYYMMDDHHMMZHHMM
+
+        See https://unece.org/fileadmin/DAM/trade/untdid/d17a/tred/tred2379.htm
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="102"/>
+      <xsd:enumeration value="203"/>
+      <xsd:enumeration value="205"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="DateTime">
+    <xsd:simpleContent>
+      <xsd:extension base="types:DateTimeValue">
+        <xsd:attribute name="formatId" type="types:DateTimeFormat"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+</xsd:schema>
