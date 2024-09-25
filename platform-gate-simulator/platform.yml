@@ -12,42 +12,6 @@ variables:
   MAVEN_EXTENSION: tar
   VERSION_ARTEFACT_SNAPSHOT: 1.0-SNAPSHOT
   VERSION_ARTEFACT_RELEASE: 0.4.0
-  MS_ARTEFACT_PATTERN: $MS_ARTEFACT_PATTERN
-  # TAG: ${DEPLOY_ENVIRONMENT}_${VERSION_ARTEFACT}
-  IMAGE_TAG: $CI_PROJECT_NAME:$TAG
-  IMAGE: $HARBOR_HOST/$HARBOR_PROJECT/$IMAGE_TAG
-  BRANCH_REFORMAT: $CI_COMMIT_REF_NAME
-  MAVEN_ARTIFACTID: $MAVEN_ARTIFACTID 
-
-workflow:
-  rules:
-    # if the pipeline is on the default branch, then change the GL_RUNNER variable
-    - if: $DEPLOY_ENVIRONMENT == "poc"
-      variables:
-        VERSION_ARTEFACT: $VERSION_ARTEFACT_SNAPSHOT
-        ARTEFACT: $MAVEN_ARTIFACTID-$VERSION_ARTEFACT.$MAVEN_EXTENSION
-        GET_URL_ARTEFACT: $URI_JENKINS 
-    - if: $DEPLOY_ENVIRONMENT == "dev" && ($LABEL == null || $LABEL == "NONE")
-      variables:
-        REPO: "snapshots"
-        VERSION_ARTEFACT: $VERSION_ARTEFACT_SNAPSHOT
-        TAG: test
-    - if: $DEPLOY_ENVIRONMENT == "int" && ($LABEL == null || $LABEL == "NONE")
-      variables:
-        REPO: "releases"
-        VERSION_ARTEFACT: $VERSION_ARTEFACT_RELEASE
-        TAG: test
-    - if: $DEPLOY_ENVIRONMENT == "dev" && $LABEL != "NONE"
-      variables:
-        REPO: "snapshots"
-        VERSION_ARTEFACT: $VERSION_ARTEFACT_SNAPSHOT
-        TAG: ${LABEL}_test
-    - if: $DEPLOY_ENVIRONMENT == "int" && $LABEL != "NONE"
-      variables:
-        REPO: "releases"
-        VERSION_ARTEFACT: $VERSION_ARTEFACT_RELEASE
-        TAG: ${LABEL}_test
-    - when: always
 
 "$[[ inputs.job-prefix | expand_vars ]]_build_and_deploy_portal_hors_prod":
   stage: $[[ inputs.job-stage ]]
@@ -58,20 +22,11 @@ workflow:
       variables:
         TAG: PREVIEW
       when: manual
-    - when: never
   trigger:
     include:
-      # - project: "kube/build"
-      #   file: "build_portal.yml"
-      #   ref: "kustomize"
       - project: "kube/build"
-        file: "template/common/get_artefact_nexus.yml"
+        file: "template/projects/efti/portal.yml"
         ref: "kustomize"
-        inputs:
-          job-prefix: $DEPLOY_ENVIRONMENT
-          job-stage: prepare
-        rules:
-          - if: $REBUILD_COMPONENT_IMAGE == "true"
     forward:
       pipeline_variables: true
     strategy: depend
