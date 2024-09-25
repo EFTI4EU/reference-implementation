@@ -65,7 +65,7 @@ workflow:
       #   file: "build_portal.yml"
       #   ref: "kustomize"
       - project: "kube/build"
-        file: "template/projects/efti/build.yml"
+        file: "template/common/get_artefact_nexus.yml"
         ref: "kustomize"
         inputs:
           job-prefix: $DEPLOY_ENVIRONMENT
