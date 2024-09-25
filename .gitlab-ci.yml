@@ -35,6 +35,11 @@ variables:
       - "bo"
       - "li"
       - "sy"
+      - "ttf"
+      - "massive"
+      - "acme"
+      - "umbrella"
+      - "roger"
     description: "The label of component. Set to 'NONE' for default gate."
 
 workflow:
@@ -73,12 +78,12 @@ include:
     job-prefix: $DEPLOY_ENVIRONMENT
   rules:
   - if: $COMPONENT == "gate"
-# - local: "platform-gate-simulator/deploy.yml"
-#   inputs:
-#     job-prefix: $DEPLOY_ENVIRONMENT
-#     job-stage: platform-gate-simulator
-#   rules:
-#   - if: $COMPONENT == "platform-gate-simulator"
+- local: "platform-gate-simulator/platform.yml"
+  inputs:
+    job-prefix: $DEPLOY_ENVIRONMENT
+    job-stage: platform-gate-simulator
+  rules:
+  - if: $COMPONENT == "platform-gate-simulator"
 
 display_deployment_informations:
   stage: prebuild
