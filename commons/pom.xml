@@ -57,5 +57,38 @@
             <version>2.17.2</version>
         </dependency>
     </dependencies>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>xjc</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <locale>en</locale>
+                    <sourceType>XmlSchema</sourceType>
+                    <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
+                    <sources>
+                        <source>../schema/xsd/edelivery/gate.xsd</source>
+                    </sources>
+                    <xjcSourceExcludeFilters>
+                        <filter implementation="org.codehaus.mojo.jaxb2.shared.filters.pattern.PatternFileFilter">
+                            <patterns>
+                                <pattern>\.md</pattern>
+                                <pattern>\.xml</pattern>
+                            </patterns>
+                        </filter>
+                    </xjcSourceExcludeFilters>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

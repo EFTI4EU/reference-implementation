@@ -184,8 +184,6 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlEntity.setSubsetMsRequested(controlDto.getSubsetMsRequested());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
-        this.controlEntity.setEftiData(controlDto.getEftiData());
-        this.controlEntity.setTransportIdentifiers(controlDto.getTransportIdentifiers());
         this.controlEntity.setFromGateUrl(controlDto.getFromGateUrl());
 
 
@@ -633,6 +631,7 @@ class ControlServiceTest extends AbstractServiceTest {
                         .vehicleCountry("FR")
                         .isDangerousGoods(true)
                         .build())
+
                 .build();
         final IdentifiersMessageBodyDto messageBodyDto = IdentifiersMessageBodyDto.builder()
                 .transportMode("ROAD")
@@ -786,7 +785,6 @@ class ControlServiceTest extends AbstractServiceTest {
 
         //Assert
         assertThat(controlEntity.getStatus()).isEqualTo(StatusEnum.COMPLETE);
-        assertNull(controlEntity.getEftiData());
     }
 
     @Test

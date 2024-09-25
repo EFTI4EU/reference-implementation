@@ -5,13 +5,10 @@ import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.identifiersregistry.IdentifiersMapper;
+import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.identifiersregistry.entity.Consignment;
-import eu.efti.identifiersregistry.exception.InvalidIdentifiersException;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
+import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -40,30 +35,26 @@ public class IdentifiersService {
     @Value("${gate.country}")
     private String gateCountry;
 
-    public void createOrUpdate(final IdentifiersDto identifiersDto) {
+    public void createOrUpdate(final SaveIdentifiersRequestWrapper identifiersDto) {
         final String bodyBase64 = serializeUtils.mapObjectToBase64String(identifiersDto);
+        final SaveIdentifiersRequest identifiers = identifiersDto.getSaveIdentifiersRequest();
 
-        this.enrichAndValidate(identifiersDto, bodyBase64);
+        final Optional<Consignment> entityOptional = repository.findByUil(gateOwner,
+                identifiers.getDatasetId(), identifiersDto.getPlatformId());
 
-        final Optional<Consignment> entityOptional = repository.findByUil(identifiersDto.getEFTIGateUrl(),
-                identifiersDto.getEFTIDataUuid(), identifiersDto.getEFTIPlatformUrl());
+        Consignment consignment = mapper.dtoToEntity(identifiers);
+        consignment.setGateId(gateOwner);
+        consignment.setPlatformId(identifiersDto.getPlatformId());
+        consignment.setDatasetId(identifiers.getDatasetId());
 
         if (entityOptional.isPresent()) {
-            identifiersDto.setId(entityOptional.get().getId());
-            identifiersDto.setIdentifiersUUID(entityOptional.get().getDatasetId());
-            log.info("updating Consignment for uuid {}", identifiersDto.getIdentifiersUUID());
+            consignment.setId(entityOptional.get().getId());
+            log.info("updating Consignment for uuid {}", consignment.getId());
         } else {
-            identifiersDto.setIdentifiersUUID(UUID.randomUUID().toString());
-            log.info("creating new entry for uuid {}", identifiersDto.getIdentifiersUUID());
+            log.info("creating new entry for dataset id {}", identifiers.getDatasetId());
         }
-        this.save(identifiersDto);
+        this.save(consignment);
         logService.log(identifiersDto, gateOwner, gateCountry, bodyBase64, FTI_004);
-
-    }
-
-    public void disable(final IdentifiersDto identifiersDto) {
-        identifiersDto.setDisabled(true);
-        this.save(identifiersDto);
     }
 
     public boolean existByUIL(final String dataUuid, final String gate, final String platform) {
@@ -75,26 +66,7 @@ public class IdentifiersService {
         return mapper.entityListToDtoList(this.repository.searchByCriteria(identifiersRequestDto));
     }
 
-    private void enrichAndValidate(final IdentifiersDto identifiersDto, final String bodyBase64) {
-        identifiersDto.setEFTIGateUrl(gateOwner);
-
-        final Validator validator;
-        try (final ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
-            validator = factory.getValidator();
-        }
-
-        final Set<ConstraintViolation<IdentifiersDto>> violations = validator.validate(identifiersDto);
-        if (!violations.isEmpty()) {
-            final String message = String.format("rejecting consignment for uil (gate=%s, uuid=%s, platform=%s) because %s",
-                    identifiersDto.getEFTIGateUrl(), identifiersDto.getEFTIPlatformUrl(), identifiersDto.getEFTIPlatformUrl(), violations);
-            log.error(message);
-
-            logService.log(identifiersDto, gateOwner, gateCountry, bodyBase64, violations.iterator().next().getMessage());
-            throw new InvalidIdentifiersException(message);
-        }
-    }
-
-    private IdentifiersDto save(final IdentifiersDto identifiersDto) {
-        return mapper.entityToDto(repository.save(mapper.dtoToEntity(identifiersDto)));
+    private IdentifiersDto save(final Consignment consignment) {
+        return mapper.entityToDto(repository.save(consignment));
     }
 }

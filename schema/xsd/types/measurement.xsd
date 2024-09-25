@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:types="http://efti.eu/v1/types"
+    targetNamespace="http://efti.eu/v1/types"
+    elementFormDefault="qualified">
+
+  <xsd:simpleType name="MeasureValue">
+    <xsd:restriction base="xsd:decimal">
+      <xsd:totalDigits value="16"/>
+      <xsd:fractionDigits value="6"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="AirFlowUnitMeasure">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:decimal">
+        <xsd:attribute name="unitId" type="xsd:token"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:simpleType name="DurationUnit">
+    <xsd:annotation>
+      <xsd:documentation>
+        Duration units used in Efti from UNECE Recommendation 20 (UNECE (UN/EDIFACT) codes 6411)
+        See https://unece.org/trade/uncefact/cl-recommendations
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="DAY"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="DurationUnitMeasure">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:decimal">
+        <xsd:attribute name="unitId" type="types:DurationUnit"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="FileSizeUnitMeasure">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:decimal">
+        <xsd:attribute name="unitId" type="xsd:token"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:simpleType name="LinearUnit">
+    <xsd:annotation>
+      <xsd:documentation>
+        Linear units used in Efti from UNECE Recommendation 20 (UNECE (UN/EDIFACT) codes 6411)
+        See https://unece.org/trade/uncefact/cl-recommendations
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="MTR"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="LinearUnitMeasure">
+    <xsd:simpleContent>
+      <xsd:extension base="types:MeasureValue">
+        <xsd:attribute name="unitId" type="xsd:token"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:simpleType name="TemperatureUnit">
+    <xsd:annotation>
+      <xsd:documentation>
+        Temperature units used in Efti from UNECE Recommendation 20 (UNECE (UN/EDIFACT) codes 6411)
+        See https://unece.org/trade/uncefact/cl-recommendations
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="CEL"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="TemperatureUnitMeasure">
+    <xsd:simpleContent>
+      <xsd:extension base="types:MeasureValue">
+        <xsd:attribute name="unitId" type="xsd:token"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:simpleType name="VolumeUnit">
+    <xsd:annotation>
+      <xsd:documentation>
+        Volume units used in Efti from UNECE Recommendation 20 (UNECE (UN/EDIFACT) codes 6411)
+        See https://unece.org/trade/uncefact/cl-recommendations
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="MTQ"/>
+      <xsd:enumeration value="LTR"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="VolumeUnitMeasure">
+    <xsd:simpleContent>
+      <xsd:extension base="types:MeasureValue">
+        <xsd:attribute name="unitId" type="types:VolumeUnit"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:simpleType name="WeightUnit">
+    <xsd:annotation>
+      <xsd:documentation>
+        Mass (weight) units used in Efti from UNECE Recommendation 20 (UNECE (UN/EDIFACT) codes 6411)
+        See https://unece.org/trade/uncefact/cl-recommendations
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="GRM"/>
+      <xsd:enumeration value="KGM"/>
+      <xsd:enumeration value="TNE"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="WeightUnitMeasure">
+    <xsd:simpleContent>
+      <xsd:extension base="types:MeasureValue">
+        <xsd:attribute name="unitId" type="types:WeightUnit"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="UnitMeasure">
+    <xsd:simpleContent>
+      <xsd:extension base="types:MeasureValue">
+        <xsd:attribute name="unitId" type="xsd:token"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="Measure">
+    <xsd:simpleContent>
+      <xsd:extension base="types:MeasureValue">
+        <xsd:attribute name="unitId" type="xsd:token"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+</xsd:schema>
