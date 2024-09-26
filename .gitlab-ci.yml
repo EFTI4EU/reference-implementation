@@ -33,7 +33,6 @@ variables:
     options:
       - "NONE"
       - "bo"
-      - "li"
       - "sy"
       - "ttf"
       - "massive"
