@@ -13,7 +13,7 @@ variables:
   VERSION_ARTEFACT_SNAPSHOT: 1.0-SNAPSHOT
   VERSION_ARTEFACT_RELEASE: 0.4.0
 
-"$[[ inputs.job-prefix | expand_vars ]]_build_and_deploy_portal_hors_prod":
+"$[[ inputs.job-prefix | expand_vars ]]_build_and_deploy_microservices":
   stage: $[[ inputs.job-stage ]]
   rules:
     - if: $DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int"
@@ -25,7 +25,7 @@ variables:
   trigger:
     include:
       - project: "kube/build"
-        file: "template/projects/efti/portal.yml"
+        file: "template/projects/efti/microservice.yml"
         ref: "kustomize"
     forward:
       pipeline_variables: true

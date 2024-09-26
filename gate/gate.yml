@@ -28,7 +28,7 @@ variables:
   trigger:
     include:
       - project: "kube/build"
-        file: "template/projects/efti/build.yml"
+        file: "template/projects/efti/microservice.yml"
         ref: "kustomize"
     forward:
       pipeline_variables: true
