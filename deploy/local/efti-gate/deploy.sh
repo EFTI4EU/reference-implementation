@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Stop on fail
+set -e
+
 projectPomFile=../../../implementation/pom.xml
 
 echo "Cleaning up..."
