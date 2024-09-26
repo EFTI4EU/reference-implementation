@@ -1,0 +1,457 @@
+openapi: 3.0.1
+info:
+  title: Efti Gate
+  description: Efti gate
+  version: '1.0'
+servers:
+  - url: http://localhost:8880
+    description: Generated server url
+security:
+  - login: []
+tags:
+  - name: Consignment controller
+    description: Interface to search with Consignment
+  - name: Note controller
+    description: 'Interface to send notes to a platform '
+  - name: Request controller
+    description: Interface to manage dataset request
+paths:
+  /v1/requestUil:
+    get:
+      tags:
+        - Request controller
+      summary: Get an UIL request
+      description: Get an UIL request for a given request uuid
+      operationId: getRequestUil
+      parameters:
+        - name: requestUuid
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RequestUuidDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+    post:
+      tags:
+        - Request controller
+      summary: Send a UIL request
+      description: Allow to send a request for a dataset based on uil
+      operationId: requestUil
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UilDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RequestUuidDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+  /v1/notes:
+    post:
+      tags:
+        - Note controller
+      summary: Send note
+      description: Send a note to a platform for a given control
+      operationId: createNote
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotesDto'
+        required: true
+      responses:
+        '202':
+          description: Accepted
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NoteResponseDto'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NoteResponseDto'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NoteResponseDto'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NoteResponseDto'
+        '500':
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NoteResponseDto'
+  /v1/getIdentifiers:
+    get:
+      tags:
+        - Consignment controller
+      summary: Get an consignment request
+      description: Get a consignment request for a given request uuid
+      operationId: getIdentifiersResult
+      parameters:
+        - name: requestUuid
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/IdentifiersResponseDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+    post:
+      tags:
+        - Consignment controller
+      summary: Send Search Request
+      description: Send a search request to retrieve an efti data with Consignment
+      operationId: getIdentifiers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchWithIdentifiersRequestDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RequestUuidDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+components:
+  schemas:
+    AuthorityDto:
+      required:
+        - country
+        - isEmergencyService
+        - legalContact
+        - name
+        - nationalUniqueIdentifier
+        - workingContact
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        country:
+          type: string
+        legalContact:
+          $ref: '#/components/schemas/ContactInformationDto'
+        workingContact:
+          $ref: '#/components/schemas/ContactInformationDto'
+        isEmergencyService:
+          type: boolean
+        name:
+          type: string
+        nationalUniqueIdentifier:
+          type: string
+      example: see AuthorityDto
+    ContactInformationDto:
+      required:
+        - buildingNumber
+        - city
+        - email
+        - postalCode
+        - streetName
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        email:
+          maxLength: 255
+          minLength: 0
+          type: string
+        streetName:
+          maxLength: 300
+          minLength: 0
+          type: string
+        buildingNumber:
+          maxLength: 50
+          minLength: 0
+          type: string
+        city:
+          maxLength: 100
+          minLength: 0
+          type: string
+        additionalLine:
+          maxLength: 300
+          minLength: 0
+          type: string
+        postalCode:
+          maxLength: 50
+          minLength: 0
+          type: string
+    UilDto:
+      required:
+        - authority
+        - eFTIDataUuid
+        - eFTIGateUrl
+        - eFTIPlatformUrl
+      type: object
+      properties:
+        authority:
+          $ref: '#/components/schemas/AuthorityDto'
+        eFTIGateUrl:
+          maxLength: 255
+          minLength: 0
+          pattern: \w+:(\/?\/?)[^\s]+
+          type: string
+          example: regex = \w+:(\/?\/?)[^\s]+
+        eFTIDataUuid:
+          maxLength: 36
+          minLength: 0
+          pattern: '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}'
+          type: string
+          example: regex = [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}
+        eFTIPlatformUrl:
+          maxLength: 255
+          minLength: 0
+          pattern: \w+:(\/?\/?)[^\s]+
+          type: string
+          example: regex = \w+:(\/?\/?)[^\s]+
+    RequestUuidDto:
+      required:
+        - requestUuid
+        - status
+      type: object
+      properties:
+        requestUuid:
+          type: string
+        status:
+          type: string
+          enum:
+            - PENDING
+            - COMPLETE
+            - ERROR
+            - TIMEOUT
+        errorCode:
+          type: string
+        errorDescription:
+          type: string
+        eFTIData:
+          type: array
+          items:
+            type: string
+            format: byte
+    NotesDto:
+      required:
+        - eFTIDataUuid
+        - eFTIGateUrl
+        - eFTIPlatformUrl
+      type: object
+      properties:
+        requestUuid:
+          type: string
+        note:
+          maxLength: 255
+          minLength: 0
+          type: string
+        eFTIGateUrl:
+          maxLength: 255
+          minLength: 0
+          pattern: \w+:(\/?\/?)[^\s]+
+          type: string
+          example: regex = \w+:(\/?\/?)[^\s]+
+        eFTIDataUuid:
+          maxLength: 36
+          minLength: 0
+          pattern: '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}'
+          type: string
+          example: regex = [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}
+        eFTIPlatformUrl:
+          maxLength: 255
+          minLength: 0
+          pattern: \w+:(\/?\/?)[^\s]+
+          type: string
+          example: regex = \w+:(\/?\/?)[^\s]+
+    NoteResponseDto:
+      required:
+        - message
+      type: object
+      properties:
+        message:
+          type: string
+        errorCode:
+          type: string
+        errorDescription:
+          type: string
+    SearchWithIdentifiersRequestDto:
+      required:
+        - authority
+        - vehicleID
+      type: object
+      properties:
+        transportMode:
+          type: string
+        vehicleID:
+          pattern: ^[A-Za-z0-9]*$
+          type: string
+        vehicleCountry:
+          type: string
+        authority:
+          $ref: '#/components/schemas/AuthorityDto'
+        isDangerousGoods:
+          type: boolean
+        eFTIGateIndicator:
+          type: array
+          items:
+            type: string
+    IdentifiersResponseDto:
+      type: object
+      properties:
+        eFTIGate:
+          type: string
+          enum:
+            - AT
+            - BE
+            - BG
+            - HR
+            - CY
+            - CZ
+            - DK
+            - EE
+            - FI
+            - FR
+            - DE
+            - GR
+            - HU
+            - IE
+            - IT
+            - LV
+            - LT
+            - LU
+            - MT
+            - NL
+            - PL
+            - PT
+            - RO
+            - SK
+            - SI
+            - ES
+            - SE
+            - SY
+            - LI
+            - BO
+        requestUuid:
+          type: string
+        status:
+          type: string
+          enum:
+            - PENDING
+            - COMPLETE
+            - ERROR
+            - TIMEOUT
+        errorCode:
+          type: string
+        errorDescription:
+          type: string
+        identifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentifiersResultDto'
+      xml:
+        name: body
+    IdentifiersResultDto:
+      required:
+        - transportVehicles
+      type: object
+      properties:
+        journeyStart:
+          type: string
+        countryStart:
+          type: string
+        journeyEnd:
+          type: string
+        countryEnd:
+          type: string
+        identifiersUUID:
+          type: string
+        transportVehicles:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransportVehicleDto'
+        eFTIGateUrl:
+          type: string
+        eFTIDataUuid:
+          type: string
+        eFTIPlatformUrl:
+          type: string
+        isDangerousGoods:
+          type: boolean
+    TransportVehicleDto:
+      required:
+        - vehicleID
+      type: object
+      properties:
+        transportMode:
+          type: string
+        sequence:
+          maximum: 999
+          type: integer
+          format: int32
+        vehicleCountry:
+          type: string
+        journeyStart:
+          type: string
+        countryStart:
+          type: string
+        journeyEnd:
+          type: string
+        countryEnd:
+          type: string
+        vehicleID:
+          pattern: ^[A-Za-z0-9]*$
+          type: string
+  securitySchemes:
+    login:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://auth.gate.borduria.eu:8080/realms/eFTI_BO/protocol/openid-connect/auth
+          scopes:
+            none: none

@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "620c582a-af93-4a7e-a33e-4aac4c77993c",
+		"_postman_id": "17e1803a-ec5b-4acf-b2f7-268df6d89754",
 		"name": "eFTI",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "36219283"
+		"_exporter_id": "30836777"
 	},
 	"item": [
 		{
@@ -102,7 +102,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_bo_domain}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"eFTIGateUrl\": \"http://efti.gate.borduria.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -282,7 +282,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_sy_domain}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.massivedynamic.com\",\r\n    \"authority\" : {\r\n        \"country\": \"BO\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"eFTIGateUrl\": \"http://efti.gate.syldavia.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.massivedynamic.com\",\r\n    \"authority\" : {\r\n        \"country\": \"BO\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -319,7 +319,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_li_domain}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.umbrellainc.com\",\r\n    \"authority\" : {\r\n        \"country\": \"BO\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"eFTIGateUrl\": \"http://efti.gate.listenbourg.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.umbrellainc.com\",\r\n    \"authority\" : {\r\n        \"country\": \"BO\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -334,6 +334,43 @@
 									"path": [
 										"v1",
 										"requestUil"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Post Note",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"requestUuid\": \"8eac5f10-cc39-4a25-aca5-e43604611bd0\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"eFTIGateUrl\": \"http://efti.gate.borduria.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"note\":\"The inspection did not reveal any anomalies. We recommend that you replace the tires as they are on the verge of wear\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gate_bo_url}}/v1/notes",
+									"host": [
+										"{{gate_bo_url}}"
+									],
+									"path": [
+										"v1",
+										"notes"
 									]
 								}
 							},
@@ -610,7 +647,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_li_url}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.umbrellainc.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"eFTIGateUrl\": \"http://efti.gate.listenbourg.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.umbrellainc.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -809,6 +846,43 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Post Note",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"requestUuid\": \"09c7a0cd-64b2-44fc-b2bd-27eefb0a2a17\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.umbrellainc.com\",\r\n    \"eFTIGateUrl\": \"http://efti.gate.listenbourg.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"note\":\"The inspection did not reveal any anomalies. We recommend that you replace the tires as they are on the verge of wear\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gate_li_url}}/v1/notes",
+									"host": [
+										"{{gate_li_url}}"
+									],
+									"path": [
+										"v1",
+										"notes"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -972,7 +1046,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.umbrellainc.com\",\r\n    \"isDangerousGoods\": true,\r\n    \"journeyStart\": \"2024-01-26T10:54:51+01:00\",\r\n    \"countryStart\": \"FR\",\r\n    \"journeyEnd\": \"2025-01-27T10:54:51+01:00\",\r\n    \"countryEnd\": \"FR\",\r\n    \"transportVehicles\": [\r\n        {\r\n            \"transportMode\": \"ROAD\",\r\n            \"sequence\": 1,\r\n            \"vehicleID\": \"AA123BB\",\r\n            \"vehicleCountry\": \"FR\",\r\n            \"journeyStart\": \"2024-01-26T10:54:51+01:00\",\r\n            \"countryStart\": \"FR\",\r\n            \"journeyEnd\": \"2025-01-27T10:54:51+01:00\",\r\n            \"countryEnd\": \"FRANCE\"\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n  \"consignment\": {\r\n    \"carrierAcceptanceDateTime\": {\r\n      \"formatId\": \"205\",\r\n      \"value\": \"202310011000+0000\"\r\n    },\r\n    \"deliveryEvent\": {\r\n      \"actualOccurrenceDateTime\": {\r\n        \"formatId\": \"205\",\r\n        \"value\": \"202310021500+0000\"\r\n      }\r\n    },\r\n    \"mainCarriageTransportMovement\": [\r\n      {\r\n        \"dangerousGoodsIndicator\": false,\r\n        \"modeCode\": \"1\",\r\n        \"usedTransportMeans\": {\r\n          \"id\": {\r\n            \"schemeAgencyId\": \"UN\",\r\n            \"value\": \"12345\"\r\n          },\r\n          \"registrationCountry\": {\r\n            \"code\": \"DE\"\r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"usedTransportEquipment\": [\r\n      {\r\n        \"carriedTransportEquipment\": [\r\n          {\r\n            \"id\": {\r\n              \"schemeAgencyId\": \"UN\",\r\n              \"value\": \"67890\"\r\n            },\r\n            \"sequenceNumber\": 1\r\n          }\r\n        ],\r\n        \"categoryCode\": \"AE\",\r\n        \"id\": {\r\n          \"schemeAgencyId\": \"UN\",\r\n          \"value\": \"54321\"\r\n        },\r\n        \"registrationCountry\": {\r\n          \"code\": \"FR\"\r\n        },\r\n        \"sequenceNumber\": 2\r\n      }\r\n    ]\r\n  },\r\n  \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1083,44 +1157,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_sy_domain}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.massivedynamic.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_sy_url}}/v1/requestUil",
-									"host": [
-										"{{gate_sy_url}}"
-									],
-									"path": [
-										"v1",
-										"requestUil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Post UIL Control Copy",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_bo_domain}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"authority\" : {\r\n        \"country\": \"SY\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"eFTIGateUrl\": \"http://efti.gate.syldavia.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.massivedynamic.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1319,6 +1356,43 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Post Note",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"requestUuid\": \"09c7a0cd-64b2-44fc-b2bd-27eefb0a2a17\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.massivedynamic.com\",\r\n    \"eFTIGateUrl\": \"http://efti.gate.syldavia.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"note\":\"The inspection did not reveal any anomalies. We recommend that you replace the tires as they are on the verge of wear\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gate_sy_url}}/v1/notes",
+									"host": [
+										"{{gate_sy_url}}"
+									],
+									"path": [
+										"v1",
+										"notes"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -1482,7 +1556,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.massivedynamic.com\",\r\n    \"isDangerousGoods\": true,\r\n    \"journeyStart\": \"2024-01-26T10:54:51+01:00\",\r\n    \"countryStart\": \"FR\",\r\n    \"journeyEnd\": \"2025-01-27T10:54:51+01:00\",\r\n    \"countryEnd\": \"FR\",\r\n    \"transportVehicles\": [\r\n        {\r\n            \"transportMode\": \"ROAD\",\r\n            \"sequence\": 1,\r\n            \"vehicleID\": \"AA123BB\",\r\n            \"vehicleCountry\": \"FR\",\r\n            \"journeyStart\": \"2024-01-26T10:54:51+01:00\",\r\n            \"countryStart\": \"FR\",\r\n            \"journeyEnd\": \"2025-01-27T10:54:51+01:00\",\r\n            \"countryEnd\": \"FRANCE\"\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n  \"consignment\": {\r\n    \"carrierAcceptanceDateTime\": {\r\n      \"formatId\": \"205\",\r\n      \"value\": \"202310011000+0000\"\r\n    },\r\n    \"deliveryEvent\": {\r\n      \"actualOccurrenceDateTime\": {\r\n        \"formatId\": \"205\",\r\n        \"value\": \"202310021500+0000\"\r\n      }\r\n    },\r\n    \"mainCarriageTransportMovement\": [\r\n      {\r\n        \"dangerousGoodsIndicator\": false,\r\n        \"modeCode\": \"1\",\r\n        \"usedTransportMeans\": {\r\n          \"id\": {\r\n            \"schemeAgencyId\": \"UN\",\r\n            \"value\": \"12345\"\r\n          },\r\n          \"registrationCountry\": {\r\n            \"code\": \"DE\"\r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"usedTransportEquipment\": [\r\n      {\r\n        \"carriedTransportEquipment\": [\r\n          {\r\n            \"id\": {\r\n              \"schemeAgencyId\": \"UN\",\r\n              \"value\": \"67890\"\r\n            },\r\n            \"sequenceNumber\": 1\r\n          }\r\n        ],\r\n        \"categoryCode\": \"AE\",\r\n        \"id\": {\r\n          \"schemeAgencyId\": \"UN\",\r\n          \"value\": \"54321\"\r\n        },\r\n        \"registrationCountry\": {\r\n          \"code\": \"FR\"\r\n        },\r\n        \"sequenceNumber\": 2\r\n      }\r\n    ]\r\n  },\r\n  \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
