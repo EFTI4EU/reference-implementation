@@ -1,8 +1,7 @@
-package eu.efti.platform.service;
+package eu.efti.platformgatesimulator.service;
 
 import eu.efti.platformgatesimulator.config.GateProperties;
 import eu.efti.platformgatesimulator.exception.UploadException;
-import eu.efti.platformgatesimulator.service.ReaderService;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

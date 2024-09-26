@@ -1,4 +1,4 @@
-package eu.efti.platform.service;
+package eu.efti.platformgatesimulator.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;

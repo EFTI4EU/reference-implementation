@@ -1,4 +1,4 @@
-package eu.efti.platform.service;
+package eu.efti.platformgatesimulator.service;
 
 import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
@@ -7,8 +7,6 @@ import eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto;
 import eu.efti.edeliveryapconnector.service.NotificationService;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.platformgatesimulator.config.GateProperties;
-import eu.efti.platformgatesimulator.service.ApIncomingService;
-import eu.efti.platformgatesimulator.service.ReaderService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
