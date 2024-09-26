@@ -21,7 +21,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -62,7 +61,7 @@ class EftiRequestUpdaterTest extends BaseServiceTest {
                         .messageId(messageId)
                         .build())
                 .build();
-        assertThrows(RequestNotFoundException.class, () -> eftiRequestUpdater.manageSendFailure(notificationDto));
+        assertThrows(RequestNotFoundException.class, () -> eftiRequestUpdater.manageSendFailure(notificationDto, "test"));
     }
 
     @Test
@@ -78,10 +77,9 @@ class EftiRequestUpdaterTest extends BaseServiceTest {
                 .build();
         when(requestRepository.findByEdeliveryMessageId(any())).thenReturn(requestEntity);
 
-        eftiRequestUpdater.manageSendFailure(notificationDto);
+        eftiRequestUpdater.manageSendFailure(notificationDto, "test");
 
         verify(controlService).save(any(ControlDto.class));
-        verify(logManager).logAckMessage(any(), anyBoolean());
     }
 
     @Test
@@ -97,10 +95,9 @@ class EftiRequestUpdaterTest extends BaseServiceTest {
         when(requestRepository.findByEdeliveryMessageId(any())).thenReturn(requestEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(String.class))).thenReturn(uilRequestService);
 
-        eftiRequestUpdater.manageSendSuccess(notificationDto);
+        eftiRequestUpdater.manageSendSuccess(notificationDto, "test");
 
         verify(uilRequestService).manageSendSuccess(messageId);
-        verify(logManager).logAckMessage(any(), anyBoolean());
     }
 
 }

@@ -23,6 +23,8 @@ import java.util.Optional;
 @Slf4j
 public class IdentifiersService {
 
+    public static final String FTI_004 = "fti004";
+
     private final IdentifiersRepository repository;
     private final IdentifiersMapper mapper;
     private final AuditRegistryLogService logService;
@@ -52,7 +54,7 @@ public class IdentifiersService {
             log.info("creating new entry for dataset id {}", identifiers.getDatasetId());
         }
         this.save(consignment);
-        logService.log(identifiersDto, gateOwner, gateCountry, bodyBase64);
+        logService.log(identifiersDto, gateOwner, gateCountry, bodyBase64, FTI_004);
     }
 
     public boolean existByUIL(final String dataUuid, final String gate, final String platform) {

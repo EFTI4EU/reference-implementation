@@ -34,14 +34,14 @@ class AuditRegistryLogServiceTest extends AbstractTestService {
     @Test
     void shouldLogCreation() {
         final String expected = "\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"PLATFORM\",\"requestingComponentId\":\"platformUrl\",\"requestingComponentCountry\":\"gateCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"gateId\",\"respondingComponentCountry\":\"gateCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"\",\"errorDescriptionMessage\":\"\",\"timeoutComponentType\":\"timeoutComponentType\",\"identifiersId\":\"identifiersUid\",\"eFTIDataId\":\"dataUid\",\"interfaceType\":\"EDELIVERY\",\"eftidataId\":\"dataUid\"";
-        auditRegistryLogService.log(identifiersDto, gateId, gateCountry, body);
+        auditRegistryLogService.log(identifiersDto, gateId, gateCountry, body, "name");
         assertThat(logWatcher.list.get(0).getFormattedMessage()).contains(expected);
     }
 
     @Test
     void shouldLogCreationError() {
-        final String expected = "\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"PLATFORM\",\"requestingComponentId\":\"platformUrl\",\"requestingComponentCountry\":\"gateCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"gateId\",\"respondingComponentCountry\":\"gateCountry\",\"messageContent\":\"body\",\"statusMessage\":\"ERROR\",\"errorCodeMessage\":\"VEHICLE_ID_MISSING\",\"errorDescriptionMessage\":\"VehicleId missing.\",\"timeoutComponentType\":\"timeoutComponentType\",\"identifiersId\":\"identifiersUid\",\"eFTIDataId\":\"dataUid\",\"interfaceType\":\"EDELIVERY\",\"eftidataId\":\"dataUid\"";
-        auditRegistryLogService.log(identifiersDto, gateId, gateCountry, body, "VEHICLE_ID_MISSING");
+        final String expected = "\"name\":\"name\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"PLATFORM\",\"requestingComponentId\":\"platformUrl\",\"requestingComponentCountry\":\"gateCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"gateId\",\"respondingComponentCountry\":\"gateCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"\",\"errorDescriptionMessage\":\"\",\"timeoutComponentType\":\"timeoutComponentType\",\"identifiersId\":\"identifiersUid\",\"eFTIDataId\":\"dataUid\",\"interfaceType\":\"EDELIVERY\",\"eftidataId\":\"dataUid\"";
+        auditRegistryLogService.log(identifiersDto, gateId, gateCountry, body, "name");
         assertThat(logWatcher.list.get(0).getFormattedMessage()).contains(expected);
     }
 }

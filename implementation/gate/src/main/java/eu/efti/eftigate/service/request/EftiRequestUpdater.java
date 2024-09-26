@@ -32,20 +32,20 @@ public class EftiRequestUpdater {
     private final MapperUtils mapperUtils;
 
 
-    public void manageSendFailure(final NotificationDto notificationDto) {
+    public void manageSendFailure(final NotificationDto notificationDto, final String name) {
         final RequestDto requestDto = getRequestDtoFromMessageId(notificationDto.getMessageId());
         this.updateStatus(requestDto, SEND_ERROR);
-        logManager.logAckMessage(requestDto.getControl(), false);
+        logManager.logAckMessage(requestDto.getControl(), false, name);
     }
 
-    public void manageSendSuccess(final NotificationDto notificationDto) {
+    public void manageSendSuccess(final NotificationDto notificationDto, final String name) {
         final RequestDto requestDto = getRequestDtoFromMessageId(notificationDto.getMessageId());
         if (List.of(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, RequestTypeEnum.EXTERNAL_UIL_SEARCH, RequestTypeEnum.LOCAL_UIL_SEARCH).contains(requestDto.getControl().getRequestType())) {
             getRequestService(requestDto.getRequestType().name()).manageSendSuccess(notificationDto.getMessageId());
         } else {
             log.info(" sent message {} successfully", notificationDto.getMessageId());
         }
-        logManager.logAckMessage(requestDto.getControl(), true);
+        logManager.logAckMessage(requestDto.getControl(), true, name);
     }
 
     private RequestService<?> getRequestService(final String requestType) {

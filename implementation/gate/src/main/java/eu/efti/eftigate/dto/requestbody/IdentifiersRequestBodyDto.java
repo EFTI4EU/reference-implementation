@@ -22,9 +22,9 @@ import java.util.List;
 public class IdentifiersRequestBodyDto {
     private String requestUuid;
     private String transportMode;
-    @JsonProperty("vehicleId")
     private String vehicleID;
     private String vehicleCountry;
+    @JsonProperty("isDangerousGoods")
     private Boolean isDangerousGoods;
     @JsonProperty("eFTIGateIndicator")
     private List<@Valid @ValueOfEnum(enumClass = CountryIndicator.class, message = "GATE_INDICATOR_INCORRECT") String> eFTIGateIndicator;
@@ -34,7 +34,7 @@ public class IdentifiersRequestBodyDto {
         final IdentifiersRequestBodyDto identifiersRequestBodyDto = new IdentifiersRequestBodyDto();
         identifiersRequestBodyDto.setRequestUuid(controlDto.getRequestUuid());
         if (searchParameter != null){
-            identifiersRequestBodyDto.setVehicleID(searchParameter.getVehicleId());
+            identifiersRequestBodyDto.setVehicleID(searchParameter.getVehicleID());
             identifiersRequestBodyDto.setTransportMode(searchParameter.getTransportMode());
             identifiersRequestBodyDto.setIsDangerousGoods(searchParameter.getIsDangerousGoods());
             identifiersRequestBodyDto.setVehicleCountry(searchParameter.getVehicleCountry());

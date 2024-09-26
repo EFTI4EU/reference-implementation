@@ -24,7 +24,7 @@ public class IdentifiersController implements IdentifiersControllerApi {
 
     @Override
     public ResponseEntity<RequestUuidDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto) {
-        log.info("POST on /getConsignment with param vehicleId {}", identifiersRequestDto.getVehicleID());
+        log.info("POST on /getConsignment with param vehicleID {}", identifiersRequestDto.getVehicleID());
         return new ResponseEntity<>(controlService.createIdentifiersControl(identifiersRequestDto), HttpStatus.ACCEPTED);
     }
 

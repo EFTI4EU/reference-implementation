@@ -1,5 +1,6 @@
 package eu.efti.eftigate.service.request;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.commons.dto.IdentifiersDto;
@@ -8,15 +9,17 @@ import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.TransportVehicleDto;
 import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.commons.enums.EDeliveryAction;
-import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
-import eu.efti.commons.enums.StatusEnum;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
 import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.eftigate.dto.RabbitRequestDto;
-import eu.efti.eftigate.entity.*;
+import eu.efti.eftigate.entity.ControlEntity;
+import eu.efti.eftigate.entity.IdentifiersRequestEntity;
+import eu.efti.eftigate.entity.IdentifiersResult;
+import eu.efti.eftigate.entity.IdentifiersResults;
+import eu.efti.eftigate.entity.TransportVehicleEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
@@ -39,7 +42,6 @@ import org.xmlunit.matchers.CompareMatcher;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
@@ -57,7 +59,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -71,7 +72,9 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     private IdentifiersService identifiersService;
     @Mock
     private IdentifiersRequestRepository identifiersRequestRepository;
-    private IdentifiersRequestService identifiersRequestService;
+    @Mock
+    private IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService;
+    private IdentifiersRequestService IdentifiersRequestService;
     @Captor
     private ArgumentCaptor<IdentifiersRequestDto> requestDtoArgumentCaptor;
     @Captor
@@ -79,10 +82,11 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     @Captor
     private ArgumentCaptor<ControlEntity> controlEntityArgumentCaptor;
     private IdentifiersDto identifiersDto;
-    private IdentifiersResult identifiersResult1;
+    private IdentifiersResult identifiersResult;
     private final IdentifiersRequestEntity identifiersRequestEntity = new IdentifiersRequestEntity();
     private final IdentifiersRequestEntity secondIdentifiersRequestEntity = new IdentifiersRequestEntity();
     private final IdentifiersRequestDto identifiersRequestDto = new IdentifiersRequestDto();
+
 
 
     @Override
@@ -98,18 +102,17 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                 .eFTIDataUuid(DATA_UUID)
                 .eFTIPlatformUrl(PLATFORM_URL)
                 .transportVehicles(List.of(TransportVehicleDto.builder()
-                        .vehicleId("abc123").countryStart("FR").vehicleCountry("FR").countryEnd("toto").build(), TransportVehicleDto.builder()
-                        .vehicleId("abc124").countryStart("BE").vehicleCountry("BE").countryEnd("IT").build())).build();
+                        .vehicleID("abc123").countryStart("FR").vehicleCountry("FR").countryEnd("toto").build(), TransportVehicleDto.builder()
+                        .vehicleID("abc124").countryStart("BE").vehicleCountry("BE").countryEnd("IT").build())).build();
 
-        identifiersResult1 = IdentifiersResult.builder()
+        identifiersResult = IdentifiersResult.builder()
                 .eFTIDataUuid(DATA_UUID)
                 .eFTIPlatformUrl(PLATFORM_URL)
                 .transportVehicles(List.of(TransportVehicleEntity.builder()
-                        .vehicleId("abc123").vehicleCountry(CountryIndicator.FR).build(), TransportVehicleEntity.builder()
-                        .vehicleId("abc124").vehicleCountry(CountryIndicator.BE).build())).build();
-        identifiersRequestService = new IdentifiersRequestService(identifiersRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties, identifiersService, requestUpdaterService, serializeUtils, logManager);
-
-        final Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(IdentifiersRequestService.class);
+                        .vehicleID("abc123").vehicleCountry(CountryIndicator.FR).build(), TransportVehicleEntity.builder()
+                        .vehicleID("abc124").vehicleCountry(CountryIndicator.BE).build())).build();
+        IdentifiersRequestService = new IdentifiersRequestService(identifiersRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties,
+                identifiersService, requestUpdaterService, serializeUtils, logManager, identifiersControlUpdateDelegateService);
     }
 
     @Test
@@ -118,10 +121,10 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         when(identifiersRequestRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
 
         //Act
-        identifiersRequestService.createAndSendRequest(controlDto, "https://efti.platform.borduria.eu");
+        IdentifiersRequestService.createAndSendRequest(controlDto, "https://efti.platform.borduria.eu");
 
         //Assert
-        verify(mapperUtils, times(2)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
+        verify(mapperUtils, times(1)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
         assertEquals("https://efti.platform.borduria.eu", requestDtoArgumentCaptor.getValue().getGateUrlDest());
     }
 
@@ -131,22 +134,20 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
 
         //Act
-        identifiersRequestService.createRequest(controlDto, SUCCESS, Collections.singletonList(identifiersDto));
+        IdentifiersRequestService.createRequest(controlDto, SUCCESS, Collections.singletonList(identifiersDto));
 
         //Assert
         verify(mapperUtils).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
-        assertEquals(identifiersResult1.getIdentifiersUUID(), requestDtoArgumentCaptor.getValue().getIdentifiersResultsDto().getIdentifiersResult().get(0).getIdentifiersUUID());
-        assertEquals(identifiersResult1.getEFTIDataUuid(), requestDtoArgumentCaptor.getValue().getIdentifiersResultsDto().getIdentifiersResult().get(0).getEFTIDataUuid());
-        assertEquals(identifiersResult1.getEFTIPlatformUrl(), requestDtoArgumentCaptor.getValue().getIdentifiersResultsDto().getIdentifiersResult().get(0).getEFTIPlatformUrl());
-        assertEquals(identifiersResult1.getTransportVehicles().size(), requestDtoArgumentCaptor.getValue().getIdentifiersResultsDto().getIdentifiersResult().get(0).getTransportVehicles().size());
+        assertEquals(identifiersResult.getIdentifiersUUID(), requestDtoArgumentCaptor.getValue().getIdentifiersResultsDto().getIdentifiersResult().get(0).getIdentifiersUUID());
+        assertEquals(identifiersResult.getEFTIDataUuid(), requestDtoArgumentCaptor.getValue().getIdentifiersResultsDto().getIdentifiersResult().get(0).getEFTIDataUuid());
+        assertEquals(identifiersResult.getEFTIPlatformUrl(), requestDtoArgumentCaptor.getValue().getIdentifiersResultsDto().getIdentifiersResult().get(0).getEFTIPlatformUrl());
+        assertEquals(identifiersResult.getTransportVehicles().size(), requestDtoArgumentCaptor.getValue().getIdentifiersResultsDto().getIdentifiersResult().get(0).getTransportVehicles().size());
         assertEquals(SUCCESS, requestDtoArgumentCaptor.getValue().getStatus());
     }
 
     @Test
     void trySendDomibusSuccessTest() throws SendRequestException, JsonProcessingException {
-        when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
-
-        identifiersRequestService.sendRequest(requestDto);
+        IdentifiersRequestService.sendRequest(requestDto);
         verify(rabbitSenderService).sendMessageToRabbit(any(), any(), any());
     }
 
@@ -163,10 +164,9 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         when(controlService.createControlFrom(any(), any(), any())).thenReturn(controlDto);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
         //Act
-        identifiersRequestService.manageMessageReceive(notificationDto);
+        IdentifiersRequestService.manageMessageReceive(notificationDto);
 
         //assert
-        verify(controlService).getControlForCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS);
         verify(controlService).createControlFrom(any(), any(), any());
         verify(identifiersRequestRepository, times(2)).save(any());
         verify(identifiersService).search(any());
@@ -174,207 +174,39 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldManageMessageReceiveAndUpdateExistingControlStatusAsComplete() throws IOException {
+    void shouldManageMessageReceiveAndUpdateExistingControlRequests() {
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
                         .messageId(MESSAGE_ID)
                         .body(testFile("/xml/FTI021-full.xml"))
-                        .fromPartyId("gate")
+                        .fromPartyId("borduria.eu")
                         .build())
                 .build();
         controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
-        identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
-        identifiersRequestEntity.setGateUrlDest("gate");
-
+        identifiersRequestEntity.setStatus(IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
-        when(controlService.getControlForCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS)).thenReturn(controlEntity);
-        when(mapperUtils.identifierResultDtosToIdentifierEntities(anyList())).thenReturn(List.of(identifiersResult1));
+        when(controlService.existsByCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(true);
 
         //Act
-        identifiersRequestService.manageMessageReceive(notificationDto);
+        IdentifiersRequestService.manageMessageReceive(notificationDto);
 
         //assert
-        verify(controlService, never()).createControlFrom(any(), any(), any());
-        verify(identifiersService, never()).search(any());
-        verify(rabbitSenderService, never()).sendMessageToRabbit(any(), any(), any());
-
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertEquals(COMPLETE, controlEntityArgumentCaptor.getValue().getStatus());
-        assertEquals(SUCCESS, controlEntityArgumentCaptor.getValue().getRequests().iterator().next().getStatus());
-        assertFalse(controlEntityArgumentCaptor.getValue().getIdentifiersResults().getIdentifiersResult().isEmpty());
-        final IdentifiersRequestEntity identifiersRequest = (IdentifiersRequestEntity) controlEntityArgumentCaptor.getValue().getRequests().iterator().next();
-        assertFalse(identifiersRequest.getIdentifiersResults().getIdentifiersResult().isEmpty());
-    }
-
-    @Test
-    void shouldManageMessageReceiveAndUpdateExistingControlStatusAsError_whenSomeRequestsAreInErrorStatus() throws IOException {
-        final NotificationDto notificationDto = NotificationDto.builder()
-                .notificationType(NotificationType.RECEIVED)
-                .content(NotificationContentDto.builder()
-                        .messageId(MESSAGE_ID)
-                        .body(testFile("/xml/FTI021-full.xml"))
-                        .fromPartyId("gate")
-                        .build())
-                .build();
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
-        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
-        identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
-        identifiersRequestEntity.setGateUrlDest("gate");
-        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-        when(controlService.getControlForCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS)).thenReturn(controlEntity);
-        when(mapperUtils.identifierResultDtosToIdentifierEntities(anyList())).thenReturn(List.of(identifiersResult1));
-
-        //Act
-        identifiersRequestService.manageMessageReceive(notificationDto);
-
-        //assert
-        verify(controlService, never()).createControlFrom(any(), any(), any());
-        verify(identifiersService, never()).search(any());
-        verify(rabbitSenderService, never()).sendMessageToRabbit(any(), any(), any());
-
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertEquals(StatusEnum.ERROR, controlEntityArgumentCaptor.getValue().getStatus());
-        assertFalse(controlEntityArgumentCaptor.getValue().getIdentifiersResults().getIdentifiersResult().isEmpty());
-        final IdentifiersRequestEntity identifiersRequest = (IdentifiersRequestEntity) controlEntityArgumentCaptor.getValue().getRequests().iterator().next();
-        assertFalse(identifiersRequest.getIdentifiersResults().getIdentifiersResult().isEmpty());
-    }
-
-    @Test
-    void shouldManageMessageReceiveAndUpdateExistingControlStatusAsTimeout_whenSomeRequestsAreInTimeoutStatus() throws IOException {
-        final NotificationDto notificationDto = NotificationDto.builder()
-                .notificationType(NotificationType.RECEIVED)
-                .content(NotificationContentDto.builder()
-                        .messageId(MESSAGE_ID)
-                        .body(testFile("/xml/FTI021-full.xml"))
-                        .fromPartyId("gate")
-                        .build())
-                .build();
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
-        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.TIMEOUT);
-        identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
-        identifiersRequestEntity.setGateUrlDest("gate");
-        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-        when(controlService.getControlForCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS)).thenReturn(controlEntity);
-        when(mapperUtils.identifierResultDtosToIdentifierEntities(anyList())).thenReturn(List.of(identifiersResult1));
-
-        //Act
-        identifiersRequestService.manageMessageReceive(notificationDto);
-
-        //assert
-        verify(controlService, never()).createControlFrom(any(), any(), any());
-        verify(identifiersService, never()).search(any());
-        verify(rabbitSenderService, never()).sendMessageToRabbit(any(), any(), any());
-
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertEquals(StatusEnum.TIMEOUT, controlEntityArgumentCaptor.getValue().getStatus());
-        assertFalse(controlEntityArgumentCaptor.getValue().getIdentifiersResults().getIdentifiersResult().isEmpty());
-        final IdentifiersRequestEntity identifiersRequest = (IdentifiersRequestEntity) controlEntityArgumentCaptor.getValue().getRequests().iterator().next();
-        assertFalse(identifiersRequest.getIdentifiersResults().getIdentifiersResult().isEmpty());
-    }
-
-    @Test
-    void shouldManageMessageReceiveAndUpdateExistingControlStatusAseRROR_whenOneRequestsIsInErrorStatus() throws IOException {
-        final NotificationDto notificationDto = NotificationDto.builder()
-                .notificationType(NotificationType.RECEIVED)
-                .content(NotificationContentDto.builder()
-                        .messageId(MESSAGE_ID)
-                        .body(testFile("/xml/FTI021-full.xml"))
-                        .fromPartyId("gate")
-                        .build())
-                .build();
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
-        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.TIMEOUT);
-        identifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
-        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-        when(controlService.getControlForCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS)).thenReturn(controlEntity);
-        when(mapperUtils.identifierResultDtosToIdentifierEntities(anyList())).thenReturn(List.of(identifiersResult1));
-
-        //Act
-        identifiersRequestService.manageMessageReceive(notificationDto);
-
-        //assert
-        verify(controlService, never()).createControlFrom(any(), any(), any());
-        verify(identifiersService, never()).search(any());
-        verify(rabbitSenderService, never()).sendMessageToRabbit(any(), any(), any());
-
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertEquals(StatusEnum.ERROR, controlEntityArgumentCaptor.getValue().getStatus());
-        assertFalse(controlEntityArgumentCaptor.getValue().getIdentifiersResults().getIdentifiersResult().isEmpty());
-    }
-
-    @Test
-    void shouldManageMessageReceiveAndUpdateExistingControlIdentifiers() {
-        final NotificationDto notificationDto = NotificationDto.builder()
-                .notificationType(NotificationType.RECEIVED)
-                .content(NotificationContentDto.builder()
-                        .messageId(MESSAGE_ID)
-                        .body(testFile("/xml/FTI021-full.xml"))
-                        .build())
-                .build();
-        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
-        identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
-        identifiersRequestEntity.setIdentifiersResults(identifiersResults);
-        controlEntity.setRequests(List.of(identifiersRequestEntity));
-        controlEntity.setIdentifiersResults(identifiersResults);
-
-        when(controlService.getControlForCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS)).thenReturn(controlEntity);
-        when(mapperUtils.identifierResultDtosToIdentifierEntities(anyList())).thenReturn(List.of(identifiersResult1));
-
-        //Act
-        identifiersRequestService.manageMessageReceive(notificationDto);
-
-        //assert
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertEquals(2, controlEntityArgumentCaptor.getValue().getIdentifiersResults().getIdentifiersResult().size());
-        final IdentifiersRequestEntity identifiersRequest = (IdentifiersRequestEntity) controlEntityArgumentCaptor.getValue().getRequests().iterator().next();
-        assertEquals(1, identifiersRequest.getIdentifiersResults().getIdentifiersResult().size());
+        verify(identifiersControlUpdateDelegateService).updateExistingControl(anyString(), anyString(), anyString());
+        verify(identifiersControlUpdateDelegateService).setControlNextStatus("67fe38bd-6bf7-4b06-b20e-206264bd639c");
     }
 
     @Test
     void allRequestsContainsDataTest_whenFalse() {
-        assertFalse(identifiersRequestService.allRequestsContainsData(List.of(identifiersRequestEntity)));
+        assertFalse(IdentifiersRequestService.allRequestsContainsData(List.of(identifiersRequestEntity)));
     }
 
     @Test
     void allRequestsContainsDataTest_whenTrue() {
         //Arrange
-        identifiersRequestEntity.setIdentifiersResults(new IdentifiersResults(List.of(identifiersResult1)));
+        identifiersRequestEntity.setIdentifiersResults(new IdentifiersResults(List.of(identifiersResult)));
         //Act and Assert
-        assertTrue(identifiersRequestService.allRequestsContainsData(List.of(identifiersRequestEntity)));
-    }
-
-    @Test
-    void getDataFromRequestsTest() {
-        //Arrange
-        final IdentifiersResult identifiersResult1 = new IdentifiersResult();
-        identifiersResult1.setCountryStart("FR");
-        identifiersResult1.setCountryEnd("FR");
-        identifiersResult1.setDisabled(false);
-        identifiersResult1.setDangerousGoods(true);
-
-        final IdentifiersResults identifiersResults1 = new IdentifiersResults();
-        identifiersResults1.setIdentifiersResult(List.of(identifiersResult1));
-
-        final IdentifiersResult identifiersResult2 = new IdentifiersResult();
-        identifiersResult2.setCountryStart("FR");
-        identifiersResult2.setCountryEnd("FR");
-        identifiersResult2.setDisabled(false);
-        identifiersResult2.setDangerousGoods(true);
-
-        final IdentifiersResults identifiersResults2 = new IdentifiersResults();
-        identifiersResults2.setIdentifiersResult(List.of(identifiersResult2));
-
-        identifiersRequestEntity.setIdentifiersResults(identifiersResults1);
-        secondIdentifiersRequestEntity.setIdentifiersResults(identifiersResults2);
-
-        final ControlEntity controlEntity = ControlEntity.builder().requests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity)).build();
-        //Act
-        identifiersRequestService.setDataFromRequests(controlEntity);
-
-        //Assert
-        assertNotNull(controlEntity.getIdentifiersResults());
-        assertEquals(2, controlEntity.getIdentifiersResults().getIdentifiersResult().size());
+        assertTrue(IdentifiersRequestService.allRequestsContainsData(List.of(identifiersRequestEntity)));
     }
 
     @Test
@@ -382,7 +214,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         identifiersRequestEntity.setEdeliveryMessageId(MESSAGE_ID);
         when(identifiersRequestRepository.findByControlRequestTypeAndStatusAndEdeliveryMessageId(any(), any(), any())).thenReturn(identifiersRequestEntity);
 
-        identifiersRequestService.manageSendSuccess(MESSAGE_ID);
+        IdentifiersRequestService.manageSendSuccess(MESSAGE_ID);
 
         verify(identifiersRequestRepository).save(requestEntityArgumentCaptor.capture());
         assertEquals(COMPLETE, requestEntityArgumentCaptor.getValue().getControl().getStatus());
@@ -392,38 +224,37 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     @Test
     void shouldNotUpdateControlAndRequestStatus_AndLogMessage_whenResponseSentSuccessfully() {
         identifiersRequestEntity.setEdeliveryMessageId(MESSAGE_ID);
-        identifiersRequestService.manageSendSuccess(MESSAGE_ID);
-
+        IdentifiersRequestService.manageSendSuccess(MESSAGE_ID);
     }
 
     @Test
-    void shouldUpdateSentRequestStatus_whenRequestIsExternal() {
+    void shouldUpdateSentRequestStatus_whenRequestIsExternal(){
         identifiersRequestDto.getControl().setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         when(mapperUtils.requestToRequestDto(identifiersRequestEntity, IdentifiersRequestDto.class)).thenReturn(identifiersRequestDto);
         when(mapperUtils.requestDtoToRequestEntity(identifiersRequestDto, IdentifiersRequestEntity.class)).thenReturn(identifiersRequestEntity);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
 
-        identifiersRequestService.updateSentRequestStatus(identifiersRequestDto, MESSAGE_ID);
+        IdentifiersRequestService.updateSentRequestStatus(identifiersRequestDto, MESSAGE_ID);
 
         verify(mapperUtils, times(1)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
         assertEquals(RESPONSE_IN_PROGRESS, identifiersRequestDto.getStatus());
     }
 
     @Test
-    void shouldUpdateSentRequestStatus_whenRequestIsNotExternal() {
+    void shouldUpdateSentRequestStatus_whenRequestIsNotExternal(){
         identifiersRequestDto.getControl().setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         when(mapperUtils.requestToRequestDto(identifiersRequestEntity, IdentifiersRequestDto.class)).thenReturn(identifiersRequestDto);
         when(mapperUtils.requestDtoToRequestEntity(identifiersRequestDto, IdentifiersRequestEntity.class)).thenReturn(identifiersRequestEntity);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
 
-        identifiersRequestService.updateSentRequestStatus(identifiersRequestDto, MESSAGE_ID);
+        IdentifiersRequestService.updateSentRequestStatus(identifiersRequestDto, MESSAGE_ID);
 
         verify(mapperUtils, times(1)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
         assertEquals(IN_PROGRESS, identifiersRequestDto.getStatus());
     }
 
     @Test
-    void shouldBuildRequestBody_whenRemoteGateSentResponse() {
+    void shouldBuildRequestBody_whenRemoteGateSentResponse(){
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         controlDto.setIdentifiersResults(identifiersResultsDto);
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
@@ -435,15 +266,15 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
 
         final String expectedRequestBody = testFile("/xml/FTI021.xml");
 
-        when(controlService.buildIdentifiersResponse(any())).thenReturn(identifiersResponseDto);
+        when(controlService.buildIdentifiersResponse(any(), anyList())).thenReturn(identifiersResponseDto);
 
-        final String requestBody = identifiersRequestService.buildRequestBody(rabbitRequestDto);
+        final String requestBody = IdentifiersRequestService.buildRequestBody(rabbitRequestDto);
 
         assertThat(StringUtils.deleteWhitespace(expectedRequestBody), CompareMatcher.isIdenticalTo(requestBody));
     }
 
     @Test
-    void shouldBuildRequestBody_whenLocalGateSendsRequest() {
+    void shouldBuildRequestBody_whenLocalGateSendsRequest(){
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         controlDto.setIdentifiersResults(identifiersResultsDto);
         controlDto.setTransportIdentifiers(searchParameter);
@@ -451,59 +282,30 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         rabbitRequestDto.setControl(controlDto);
         final String expectedRequestBody = testFile("/xml/FTI013.xml");
 
-        final String requestBody = identifiersRequestService.buildRequestBody(rabbitRequestDto);
+        final String requestBody = IdentifiersRequestService.buildRequestBody(rabbitRequestDto);
 
         assertThat(StringUtils.deleteWhitespace(expectedRequestBody), CompareMatcher.isIdenticalTo(requestBody));
     }
 
     @Test
-    void shouldFindRequestByMessageId_whenRequestExists() {
+    void shouldFindRequestByMessageId_whenRequestExists(){
         when(identifiersRequestRepository.findByEdeliveryMessageId(anyString())).thenReturn(identifiersRequestEntity);
-        final IdentifiersRequestEntity requestByMessageId = identifiersRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
+        final IdentifiersRequestEntity requestByMessageId = IdentifiersRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         assertNotNull(requestByMessageId);
     }
 
     @Test
     void shouldThrowException_whenFindRequestByMessageId_andRequestDoesNotExists() {
         final Exception exception = assertThrows(RequestNotFoundException.class, () -> {
-            identifiersRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
+            IdentifiersRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         });
         assertEquals("couldn't find Consignment request for messageId: messageId", exception.getMessage());
-    }
-
-    @Test
-    void shouldUpdateControlWithIdentifiers_whenControlHasNotIdentifiers() {
-        controlEntity.setIdentifiersResults(null);
-        when(controlService.getByRequestUuid(anyString())).thenReturn(Optional.of(controlEntity));
-        when(mapperUtils.identifierDtosToIdentifierEntities(anyList())).thenReturn(List.of(identifiersResult1));
-
-        identifiersRequestService.updateControlIdentifiers(controlDto, List.of(identifiersDto));
-
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertNotNull(controlEntityArgumentCaptor.getValue().getIdentifiersResults());
-        assertFalse(controlEntityArgumentCaptor.getValue().getIdentifiersResults().getIdentifiersResult().isEmpty());
-        assertEquals(1, controlEntityArgumentCaptor.getValue().getIdentifiersResults().getIdentifiersResult().size());
-        assertEquals(List.of(identifiersResult1), controlEntityArgumentCaptor.getValue().getIdentifiersResults().getIdentifiersResult());
-    }
-
-    @Test
-    void shouldUpdateControlWithIdentifiers_whenControlHasIdentifiers() {
-        controlEntity.setIdentifiersResults(identifiersResults);
-        when(controlService.getByRequestUuid(anyString())).thenReturn(Optional.of(controlEntity));
-        when(mapperUtils.identifierDtosToIdentifierEntities(anyList())).thenReturn(List.of(identifiersResult1));
-
-        identifiersRequestService.updateControlIdentifiers(controlDto, List.of(identifiersDto));
-
-        verify(controlService).save(controlEntityArgumentCaptor.capture());
-        assertNotNull(controlEntityArgumentCaptor.getValue().getIdentifiersResults());
-        assertFalse(controlEntityArgumentCaptor.getValue().getIdentifiersResults().getIdentifiersResult().isEmpty());
-        assertEquals(2, controlEntityArgumentCaptor.getValue().getIdentifiersResults().getIdentifiersResult().size());
     }
 
     @ParameterizedTest
     @MethodSource("getArgumentsForEdeliveryActionSupport")
     void supports_ShouldReturnTrueForIdentifiers(final EDeliveryAction eDeliveryAction, final boolean expectedResult) {
-        assertEquals(expectedResult, identifiersRequestService.supports(eDeliveryAction));
+        assertEquals(expectedResult, IdentifiersRequestService.supports(eDeliveryAction));
     }
 
     private static Stream<Arguments> getArgumentsForEdeliveryActionSupport() {
@@ -519,7 +321,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     @ParameterizedTest
     @MethodSource("getArgumentsForRequestTypeEnumSupport")
     void supports_ShouldReturnTrueForIdentifiers(final RequestTypeEnum requestTypeEnum, final boolean expectedResult) {
-        assertEquals(expectedResult, identifiersRequestService.supports(requestTypeEnum));
+        assertEquals(expectedResult, IdentifiersRequestService.supports(requestTypeEnum));
     }
 
     private static Stream<Arguments> getArgumentsForRequestTypeEnumSupport() {
@@ -535,3 +337,4 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     }
 
 }
+

@@ -26,17 +26,12 @@ public class EftiAsyncCallsProcessor {
 
     @Async
     public void checkLocalRepoAsync(final SearchWithIdentifiersRequestDto identifiersRequestDto, final ControlDto savedControl) {
-        final List<IdentifiersDto> identifiersDtoList = identifiersService.search(identifiersRequestDto);
-        logManager.logLocalRegistryMessage(savedControl, identifiersDtoList);
-        final IdentifiersRequestDto request = identifiersRequestService.createRequest(savedControl, RequestStatusEnum.SUCCESS, identifiersDtoList);
-        if (shouldUpdateControl(savedControl, request, identifiersDtoList)) {
-            identifiersRequestService.updateControlIdentifiers(request.getControl(), identifiersDtoList);
-        }
-    }
 
-    private static boolean shouldUpdateControl(final ControlDto savedControl, final IdentifiersRequestDto request, final List<IdentifiersDto> identifiersDtoList) {
-        return request != null && RequestStatusEnum.SUCCESS.equals(request.getStatus())
-                && CollectionUtils.isNotEmpty(identifiersDtoList)
-                && RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH.equals(savedControl.getRequestType());
+        //log fti015
+        logManager.logRegistryIdentifiers(savedControl, null, LogManager.FTI_015);
+        final List<IdentifiersDto> metadataDtoList = identifiersService.search(identifiersRequestDto);
+        //logfti016
+        logManager.logRegistryIdentifiers(savedControl, metadataDtoList, LogManager.FTI_016);
+        identifiersRequestService.createRequest(savedControl, RequestStatusEnum.SUCCESS, metadataDtoList);
     }
 }

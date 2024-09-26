@@ -31,7 +31,6 @@ public class EftiGateUrlResolver {
             final List<CountryIndicator> requestedCountryIndicators = identifiersRequestDto.getEFTIGateIndicator().stream().map(CountryIndicator::valueOf).toList();
             final List<GateEntity> registeredDestinationGates = gateRepository.findByCountryIn(requestedCountryIndicators);
             destinationGatesIndicatorMap =  mapRequestedCountriesToRegisteredGates(requestedCountryIndicators, registeredDestinationGates);
-
         } else {
             destinationGatesIndicatorMap = CollectionUtils.emptyIfNull(gateRepository.findAll())
                     .stream()

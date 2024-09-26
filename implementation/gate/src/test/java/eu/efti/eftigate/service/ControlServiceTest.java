@@ -4,6 +4,7 @@ import eu.efti.commons.dto.*;
 import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
+import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.edeliveryapconnector.dto.IdentifiersMessageBodyDto;
@@ -24,6 +25,7 @@ import eu.efti.eftigate.service.request.NotesRequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -181,15 +184,13 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlEntity.setSubsetMsRequested(controlDto.getSubsetMsRequested());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
-        this.controlEntity.setEftiData(controlDto.getEftiData());
-        this.controlEntity.setTransportIdentifiers(controlDto.getTransportIdentifiers());
         this.controlEntity.setFromGateUrl(controlDto.getFromGateUrl());
 
 
         identifiersResult.setCountryStart("FR");
         identifiersResult.setCountryEnd("FR");
         identifiersResult.setDisabled(false);
-        identifiersResult.setDangerousGoods(true);
+        identifiersResult.setIsDangerousGoods(true);
 
         identifiersResults.setIdentifiersResult(Collections.singletonList(identifiersResult));
 
@@ -212,14 +213,14 @@ class ControlServiceTest extends AbstractServiceTest {
         identifiersResult.setCountryStart("FR");
         identifiersResult.setCountryEnd("FR");
         identifiersResult.setDisabled(false);
-        identifiersResult.setDangerousGoods(true);
+        identifiersResult.setIsDangerousGoods(true);
 
         identifiersResults.setIdentifiersResult(Collections.singletonList(identifiersResult));
 
         identifiersResultDto.setCountryStart("FR");
         identifiersResultDto.setCountryEnd("FR");
         identifiersResultDto.setDisabled(false);
-        identifiersResultDto.setDangerousGoods(true);
+        identifiersResultDto.setIsDangerousGoods(true);
 
         identifiersResultsDto.setIdentifiersResult(Collections.singletonList(identifiersResultDto));
 
@@ -248,8 +249,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, times(1)).createAndSendRequest(any(), any());
         verify(controlRepository, times(1)).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager, never()).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager, never()).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertNull(requestUuidDtoResult.getErrorCode());
         assertNull(requestUuidDtoResult.getErrorDescription());
@@ -264,8 +265,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, times(1)).createAndSendRequest(any(), any());
         verify(controlRepository, times(1)).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager, never()).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager, never()).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertNull(requestUuidDtoResult.getErrorCode());
         assertNull(requestUuidDtoResult.getErrorDescription());
@@ -281,8 +282,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(controlRepository, never()).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.UIL_GATE_MISSING.name(), requestUuidDtoResult.getErrorCode());
         assertEquals("Missing parameter eFTIGateUrl", requestUuidDtoResult.getErrorDescription());
@@ -297,8 +298,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(controlRepository, times(0)).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.UIL_GATE_INCORRECT_FORMAT.name(), requestUuidDtoResult.getErrorCode());
         assertEquals("Gate format incorrect.", requestUuidDtoResult.getErrorDescription());
@@ -314,8 +315,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(controlRepository, never()).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.UIL_PLATFORM_MISSING.name(), requestUuidDtoResult.getErrorCode());
         assertEquals("Missing parameter eFTIPlatformUrl", requestUuidDtoResult.getErrorDescription());
@@ -330,8 +331,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(controlRepository, times(0)).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.UIL_PLATFORM_INCORRECT_FORMAT.name(), requestUuidDtoResult.getErrorCode());
         assertEquals("Platform format incorrect.", requestUuidDtoResult.getErrorDescription());
@@ -347,8 +348,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(controlRepository, never()).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.UIL_UUID_MISSING.name(), requestUuidDtoResult.getErrorCode());
         assertEquals("Missing parameter eFTIDataUuid", requestUuidDtoResult.getErrorDescription());
@@ -363,8 +364,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(uilRequestService, never()).createAndSendRequest(any(), any());
         verify(controlRepository, times(0)).save(any());
-        verify(logManager).logAppRequest(any(), any());
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppRequest(any(), any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(ErrorCodesEnum.UIL_UUID_INCORRECT_FORMAT.name(), requestUuidDtoResult.getErrorCode());
         assertEquals("Uuid format incorrect.", requestUuidDtoResult.getErrorDescription());
@@ -382,7 +383,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         verify(controlRepository, times(1)).findByRequestUuid(any());
 
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(requestUuidDtoResult.getRequestUuid(), controlEntity.getRequestUuid());
     }
@@ -395,10 +396,8 @@ class ControlServiceTest extends AbstractServiceTest {
         final RequestUuidDto requestUuidDtoResult = controlService.getControlEntity(requestUuid);
 
         verify(controlRepository, times(1)).findByRequestUuid(any());
-        verify(identifiersRequestService, never()).setDataFromRequests(any());
-        verify(uilRequestService, never()).setDataFromRequests(any());
 
-        verify(logManager).logAppResponse(any(), any());
+        verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(requestUuidDtoResult.getRequestUuid(), controlEntity.getRequestUuid());
     }
@@ -463,7 +462,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(controlRepository, times(1)).findByRequestUuid(any());
         assertNotNull(requestUuidDtoResult);
         assertEquals(StatusEnum.ERROR, requestUuidDtoResult.getStatus());
-        assertNull(requestUuidDtoResult.getEFTIData());
+        assertEquals(0, requestUuidDtoResult.getEFTIData().length);
     }
 
     @Test
@@ -627,11 +626,12 @@ class ControlServiceTest extends AbstractServiceTest {
                 .eftiGateUrl("france")
                 .fromGateUrl("https://efti.gate.france.eu")
                 .transportIdentifiers(SearchParameter.builder()
-                        .vehicleId("AA123VV")
+                        .vehicleID("AA123VV")
                         .transportMode("ROAD")
                         .vehicleCountry("FR")
                         .isDangerousGoods(true)
                         .build())
+
                 .build();
         final IdentifiersMessageBodyDto messageBodyDto = IdentifiersMessageBodyDto.builder()
                 .transportMode("ROAD")
@@ -649,22 +649,24 @@ class ControlServiceTest extends AbstractServiceTest {
                 .eftiGateUrl("france")
                 .fromGateUrl("https://efti.gate.france.eu")
                 .transportIdentifiers(SearchParameter.builder()
-                        .vehicleId("AA123VV")
+                        .vehicleID("AA123VV")
                         .transportMode("ROAD")
                         .vehicleCountry("FR")
                         .isDangerousGoods(true)
                         .build())
+                .eftiData(ArrayUtils.EMPTY_BYTE_ARRAY)
+                .identifiersResults(IdentifiersResultsDto.builder().identifiersResult(new LinkedList<>()).build())
                 .build();
         when(controlRepository.save(any())).thenReturn(identifiersControl);
         //Act
-        final ControlDto cretaedControlDto = controlService.createControlFrom(messageBodyDto, "https://efti.gate.france.eu", identifiersResultsDto);
+        final ControlDto createdControlDto = controlService.createControlFrom(messageBodyDto, "https://efti.gate.france.eu", identifiersResultsDto);
         //Assert
-        assertThat(cretaedControlDto)
+        assertThat(createdControlDto)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(expectedControl);
         verify(controlRepository, times(1)).save(any());
-        verify(mapperUtils, times(1)).controlDtoToControEntity(any());
+        verify(mapperUtils, times(1)).controlDtoToControlEntity(any());
         verify(mapperUtils, times(1)).controlEntityToControlDto(any());
     }
 
@@ -761,6 +763,7 @@ class ControlServiceTest extends AbstractServiceTest {
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
         controlEntity.setStatus(StatusEnum.PENDING);
+        controlEntity.setCreatedDate(LocalDateTime.now());
 
         //Act
         controlService.updatePendingControl(controlEntity);
@@ -782,7 +785,6 @@ class ControlServiceTest extends AbstractServiceTest {
 
         //Assert
         assertThat(controlEntity.getStatus()).isEqualTo(StatusEnum.COMPLETE);
-        assertNull(controlEntity.getEftiData());
     }
 
     @Test
@@ -805,10 +807,15 @@ class ControlServiceTest extends AbstractServiceTest {
     void shouldUpdatePendingControls() {
         //Arrange
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
+        identifiersRequestEntity.setRequestType(RequestType.IDENTIFIER.name());
         controlEntity.setRequests(List.of(identifiersRequestEntity));
         controlEntity.setStatus(StatusEnum.PENDING);
-        when(controlRepository.findByCriteria(anyString(), anyInt())).thenReturn(List.of(controlEntity));
+        controlEntity.setCreatedDate(LocalDateTime.now().minusSeconds(100));
 
+        when(controlRepository.findByCriteria(any(), anyInt())).thenReturn(List.of(controlEntity));
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
+        when(requestServiceFactory.getRequestServiceByRequestType(anyString())).thenReturn(identifiersRequestService);
+        when(controlRepository.save(any(ControlEntity.class))).thenReturn(controlEntity);
 
         //Act
         final int updatedControls = controlService.updatePendingControls();

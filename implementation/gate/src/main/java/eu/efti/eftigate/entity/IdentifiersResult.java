@@ -29,7 +29,8 @@ public class IdentifiersResult implements Serializable {
     private String eFTIDataUuid;
     @JsonProperty("eFTIPlatformUrl")
     private String eFTIPlatformUrl;
-    private boolean isDangerousGoods;
+    @JsonProperty("isDangerousGoods")
+    private Boolean isDangerousGoods;
     @JsonSerialize(using = OffsetDateTimeSerializer.class)
     @JsonDeserialize(using = OffsetDateTimeDeserializer.class)
     private OffsetDateTime journeyStart;

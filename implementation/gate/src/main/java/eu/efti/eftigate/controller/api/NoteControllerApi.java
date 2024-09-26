@@ -19,7 +19,8 @@ public interface NoteControllerApi {
 
     @Operation(summary = "Send note", description = "Send a note to a platform for a given control")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "202", description = "Accepted"),
+            @ApiResponse(responseCode = "400", description = "Bad Request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "500", description = "Internal server error")

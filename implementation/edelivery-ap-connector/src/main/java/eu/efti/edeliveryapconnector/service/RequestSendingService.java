@@ -23,6 +23,7 @@ import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.eb
 import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Service;
 import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
+import eu.efti.edeliveryapconnector.constant.ApConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -33,18 +34,6 @@ import javax.mail.util.ByteArrayDataSource;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import static eu.efti.edeliveryapconnector.constant.ApConstant.FINAL_RECIPIENT_PROPERTY_KEY;
-import static eu.efti.edeliveryapconnector.constant.ApConstant.FINAL_RECIPIENT_PROPERTY_VALUE;
-import static eu.efti.edeliveryapconnector.constant.ApConstant.MIME_TYPE;
-import static eu.efti.edeliveryapconnector.constant.ApConstant.ORIGINAL_SENDER_PROPERTY_KEY;
-import static eu.efti.edeliveryapconnector.constant.ApConstant.ORIGINAL_SENDER_PROPERTY_VALUE;
-import static eu.efti.edeliveryapconnector.constant.ApConstant.PARTY_FROM_ROLE;
-import static eu.efti.edeliveryapconnector.constant.ApConstant.PARTY_TO_ROLE;
-import static eu.efti.edeliveryapconnector.constant.ApConstant.PARTY_TYPE;
-import static eu.efti.edeliveryapconnector.constant.ApConstant.PAYLOAD_HREF;
-import static eu.efti.edeliveryapconnector.constant.ApConstant.SERVICE_TYPE;
-import static eu.efti.edeliveryapconnector.constant.ApConstant.SERVICE_VALUE;
-import static eu.efti.edeliveryapconnector.constant.ApConstant.TEXT_PLAIN;
 import static org.springframework.util.MimeTypeUtils.TEXT_XML_VALUE;
 
 @Slf4j
@@ -78,10 +67,10 @@ public class RequestSendingService extends AbstractApService {
         final LargePayloadType largePayloadType = new LargePayloadType();
 
         largePayloadType.setContentType(TEXT_XML_VALUE);
-        largePayloadType.setPayloadId(PAYLOAD_HREF);
+        largePayloadType.setPayloadId(ApConstant.PAYLOAD_HREF);
         final DataSource ds;
         try {
-            ds = new ByteArrayDataSource(requestDto.getBody(), TEXT_PLAIN);
+            ds = new ByteArrayDataSource(requestDto.getBody(), ApConstant.TEXT_PLAIN);
         } catch (final IOException e) {
             throw new SendRequestException("error while building request body for request " + requestDto.getRequestId(), e);
         }
@@ -108,11 +97,11 @@ public class RequestSendingService extends AbstractApService {
     private MessageProperties createMessageProperties() {
         final MessageProperties messageProperties = new MessageProperties();
         final Property property = new Property();
-        property.setName(ORIGINAL_SENDER_PROPERTY_KEY);
-        property.setValue(ORIGINAL_SENDER_PROPERTY_VALUE);
+        property.setName(ApConstant.ORIGINAL_SENDER_PROPERTY_KEY);
+        property.setValue(ApConstant.ORIGINAL_SENDER_PROPERTY_VALUE);
         final Property property2 = new Property();
-        property2.setName(FINAL_RECIPIENT_PROPERTY_KEY);
-        property2.setValue(FINAL_RECIPIENT_PROPERTY_VALUE);
+        property2.setName(ApConstant.FINAL_RECIPIENT_PROPERTY_KEY);
+        property2.setValue(ApConstant.FINAL_RECIPIENT_PROPERTY_VALUE);
         messageProperties.getProperty().add(property);
         messageProperties.getProperty().add(property2);
         return messageProperties;
@@ -121,11 +110,11 @@ public class RequestSendingService extends AbstractApService {
     private PayloadInfo createPayloadInfo() {
         final PayloadInfo payloadInfo = new PayloadInfo();
         final PartInfo partInfo = new PartInfo();
-        partInfo.setHref(PAYLOAD_HREF);
+        partInfo.setHref(ApConstant.PAYLOAD_HREF);
         final PartProperties partProperties = new PartProperties();
         final Property property1 = new Property();
         property1.setValue(TEXT_XML_VALUE);
-        property1.setName(MIME_TYPE);
+        property1.setName(ApConstant.MIME_TYPE);
         partProperties.getProperty().add(property1);
         partInfo.setPartProperties(partProperties);
         payloadInfo.getPartInfo().add(partInfo);
@@ -135,8 +124,8 @@ public class RequestSendingService extends AbstractApService {
     private CollaborationInfo createCollaborationInfo(final EDeliveryAction eDeliveryAction) {
         final CollaborationInfo collaborationInfo = new CollaborationInfo();
         final Service service = new Service();
-        service.setType(SERVICE_TYPE);
-        service.setValue(SERVICE_VALUE);
+        service.setType(ApConstant.SERVICE_TYPE);
+        service.setValue(ApConstant.SERVICE_VALUE);
         collaborationInfo.setAction(eDeliveryAction.getValue());
         collaborationInfo.setService(service);
 
@@ -145,13 +134,13 @@ public class RequestSendingService extends AbstractApService {
 
     private PartyInfo createPartyInfo(final ApRequestDto requestDto) {
         final From from = new From();
-        from.setRole(PARTY_FROM_ROLE);
+        from.setRole(ApConstant.PARTY_FROM_ROLE);
         final PartyId sender = createPartyId(requestDto.getSender());
         from.setPartyId(sender);
 
         final To to = new To();
         final PartyId receiver = createPartyId(requestDto.getReceiver());
-        to.setRole(PARTY_TO_ROLE);
+        to.setRole(ApConstant.PARTY_TO_ROLE);
         to.setPartyId(receiver);
 
         final PartyInfo partyInfo = new PartyInfo();
@@ -162,7 +151,7 @@ public class RequestSendingService extends AbstractApService {
 
     private PartyId createPartyId(final String value) {
         final PartyId partyId = new PartyId();
-        partyId.setType(PARTY_TYPE);
+        partyId.setType(ApConstant.PARTY_TYPE);
         partyId.setValue(value);
         return partyId;
     }

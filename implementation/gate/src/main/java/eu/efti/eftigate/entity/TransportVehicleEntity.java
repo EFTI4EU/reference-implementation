@@ -32,7 +32,7 @@ public class TransportVehicleEntity extends JourneyEntity implements Serializabl
     @Enumerated(EnumType.STRING)
     private TransportMode transportMode;
     private int sequence;
-    private String vehicleId;
+    private String vehicleID;
     @Enumerated(EnumType.STRING)
     private CountryIndicator vehicleCountry;
 }

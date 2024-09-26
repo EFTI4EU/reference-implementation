@@ -1,5 +1,7 @@
 package eu.efti.eftigate.service.request;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
@@ -14,6 +16,7 @@ import eu.efti.edeliveryapconnector.dto.NotificationType;
 import eu.efti.eftigate.EftiTestUtils;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.entity.NoteRequestEntity;
+import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.NotesRequestRepository;
@@ -30,6 +33,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.LoggerFactory;
 import org.xmlunit.matchers.CompareMatcher;
 
 import java.io.IOException;
@@ -75,6 +79,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
 
         controlEntity.setRequests(List.of(uilRequestEntity, noteRequestEntity));
         notesRequestService = new NotesRequestService(notesRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
+        final Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(NotesRequestService.class);
     }
 
     @Test
@@ -117,12 +122,8 @@ class NotesRequestServiceTest extends BaseServiceTest {
     @Test
     void allRequestsContainsDataTest() {
         //Act and Assert
-        assertThrows(UnsupportedOperationException.class, () -> notesRequestService.allRequestsContainsData(List.of(noteRequestEntity)));
-    }
-
-    @Test
-    void setDataFromRequestsTest() {
-        assertThrows(UnsupportedOperationException.class, () -> notesRequestService.setDataFromRequests(controlEntity));
+        final List<RequestEntity> noteRequestEntityList = List.of(noteRequestEntity);
+        assertThrows(UnsupportedOperationException.class, () -> notesRequestService.allRequestsContainsData(noteRequestEntityList));
     }
 
     @Test
@@ -139,7 +140,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
                 .messageId("")
                 .content(NotificationContentDto.builder()
                         .messageId(MESSAGE_ID)
-                        .body(testFile("/xml/FTI026.xml"))
+                        .body(EftiTestUtils.testFile("/xml/FTI026.xml"))
                         .fromPartyId("gate")
                         .build())
                 .build();

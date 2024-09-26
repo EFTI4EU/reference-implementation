@@ -13,7 +13,6 @@ import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.dto.requestbody.NotesRequestBodyDto;
-import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.NoteRequestEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
@@ -72,11 +71,6 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
 
     @Override
     public boolean allRequestsContainsData(final List<RequestEntity> controlEntityRequests) {
-        throw new UnsupportedOperationException("Operation not allowed for Note Request");
-    }
-
-    @Override
-    public void setDataFromRequests(final ControlEntity controlEntity) {
         throw new UnsupportedOperationException("Operation not allowed for Note Request");
     }
 

@@ -28,7 +28,7 @@ public class IdentifiersResultDto implements Serializable {
     @JsonProperty("eFTIPlatformUrl")
     private String eFTIPlatformUrl;
     @JsonProperty("isDangerousGoods")
-    private boolean isDangerousGoods;
+    private Boolean isDangerousGoods;
     private String journeyStart;
     private String countryStart;
     private String journeyEnd;

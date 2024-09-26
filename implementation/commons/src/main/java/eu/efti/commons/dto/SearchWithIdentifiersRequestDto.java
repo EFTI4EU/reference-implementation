@@ -31,6 +31,7 @@ public class SearchWithIdentifiersRequestDto implements ValidableDto {
     private String vehicleID;
     @ValueOfEnum(enumClass = CountryIndicator.class, message = "VEHICLE_COUNTRY_INCORRECT")
     private String vehicleCountry;
+    @JsonProperty("isDangerousGoods")
     private Boolean isDangerousGoods;
     @JsonProperty("eFTIGateIndicator")
     private List<@Valid @ValueOfEnum(enumClass = CountryIndicator.class, message = "GATE_INDICATOR_INCORRECT") String> eFTIGateIndicator;

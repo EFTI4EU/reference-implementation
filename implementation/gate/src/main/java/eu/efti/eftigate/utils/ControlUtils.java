@@ -82,7 +82,7 @@ public class ControlUtils {
 
         final ControlDto controlDto = getControlFrom(requestTypeEnum, authorityDto, UUID.randomUUID().toString());
         controlDto.setTransportIdentifiers(SearchParameter.builder()
-                .vehicleId(identifiersRequestDto.getVehicleID())
+                .vehicleID(identifiersRequestDto.getVehicleID())
                 .transportMode(identifiersRequestDto.getTransportMode())
                 .vehicleCountry(identifiersRequestDto.getVehicleCountry())
                 .isDangerousGoods(identifiersRequestDto.getIsDangerousGoods())
@@ -96,7 +96,7 @@ public class ControlUtils {
         controlDto.setEftiGateUrl(eftiGateUrl);
         controlDto.setFromGateUrl(fromGateUrl);
         controlDto.setTransportIdentifiers(SearchParameter.builder()
-                .vehicleId(messageBodyDto.getVehicleID())
+                .vehicleID(messageBodyDto.getVehicleID())
                 .transportMode(messageBodyDto.getTransportMode())
                 .vehicleCountry(messageBodyDto.getVehicleCountry())
                 .isDangerousGoods(messageBodyDto.getIsDangerousGoods())

@@ -66,7 +66,6 @@
             <column name="lastmodifieddate" type="TIMESTAMP WITHOUT TIME ZONE">
                 <constraints nullable="false"/>
             </column>
-            <column name="eftidata" type="BYTEA"/>
             <column name="transportidentifiers" type="JSONB"/>
             <column name="fromgateurl" type="VARCHAR(255)"/>
             <column name="authority" type="INTEGER"/>
@@ -129,11 +128,6 @@
     </changeSet>
     <changeSet author="dfourmaux (generated)" id="1707315732219-12">
         <addForeignKeyConstraint baseColumnNames="error" baseTableName="request" constraintName="request_error_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="error" validate="true"/>
-    </changeSet>
-    <changeSet author="osouley" id="1707315732219-13">
-        <addColumn catalogName="efti" tableName="control">
-            <column name="identifiers" type="JSONB"/>
-        </addColumn>
     </changeSet>
     <changeSet author="osouley" id="1707315732219-14">
         <addColumn catalogName="efti" tableName="request">

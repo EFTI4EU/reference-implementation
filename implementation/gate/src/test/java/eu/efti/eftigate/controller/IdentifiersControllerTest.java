@@ -105,6 +105,4 @@ class IdentifiersControllerTest {
                 .assertThat("$.status", is("COMPLETE"));
         ;
     }
-
-
 }

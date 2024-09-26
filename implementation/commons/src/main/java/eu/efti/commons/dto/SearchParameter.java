@@ -12,7 +12,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchParameter implements Serializable {
-    private String vehicleId;
+    private String vehicleID;
     private Boolean isDangerousGoods;
     private String vehicleCountry;
     private String transportMode;

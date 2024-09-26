@@ -1,7 +1,7 @@
 package eu.efti.platformgatesimulator.service;
 
-import eu.efti.platformgatesimulator.config.GateProperties;
 import eu.efti.platformgatesimulator.exception.UploadException;
+import eu.efti.platformgatesimulator.config.GateProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;

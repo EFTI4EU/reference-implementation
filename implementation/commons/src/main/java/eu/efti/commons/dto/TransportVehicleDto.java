@@ -29,7 +29,7 @@ public class TransportVehicleDto implements Serializable {
     @Length(max = 17, message = "VEHICLE_ID_TOO_LONG")
     @Pattern(regexp = "^[A-Za-z0-9]*$", message = "VEHICLE_ID_INCORRECT_FORMAT")
     @JsonProperty("vehicleID")
-    private String vehicleId;
+    private String vehicleID;
     private String vehicleCountry;
     private String journeyStart;
     private String countryStart;

@@ -1,5 +1,6 @@
 package eu.efti.eftilogger.service;
 
+import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.enums.ErrorCodesEnum;
@@ -22,15 +23,47 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
     private static final LogMarkerEnum MARKER = LogMarkerEnum.REGISTRY;
     private final SerializeUtils serializeUtils;
 
-    public void log(final IdentifiersDto identifiersDto,
-                    final String currentGateId,
-                    final String currentGateCountry,
-                    final String body,
-                    final String errorCode) {
+    public void logByControlDto(final ControlDto controlDto,
+                                final String currentGateId,
+                                final String currentGateCountry,
+                                final String body,
+                                final String errorCode,
+                                final String name) {
         final boolean isError = errorCode != null;
         final String edelivery = "EDELIVERY";
         this.log(LogRegistryDto.builder()
                 .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
+                .name(name)
+                .componentType(ComponentType.GATE)
+                .componentId(currentGateId)
+                .componentCountry(currentGateCountry)
+                .requestingComponentType(ComponentType.PLATFORM)
+                .requestingComponentId(controlDto.getEftiPlatformUrl())
+                .requestingComponentCountry(currentGateCountry)
+                .respondingComponentType(ComponentType.GATE)
+                .respondingComponentId(currentGateId)
+                .respondingComponentCountry(currentGateCountry)
+                .messageContent(body)
+                .statusMessage(isError ? StatusEnum.ERROR.name() : StatusEnum.COMPLETE.name())
+                .errorCodeMessage(isError ? errorCode : "")
+                .errorDescriptionMessage(isError ? ErrorCodesEnum.valueOf(errorCode).getMessage() : "")
+                .timeoutComponentType(TIMEOUT_COMPONENT_TYPE)
+                .eFTIDataId(controlDto.getEftiDataUuid())
+                .interfaceType(edelivery)
+                .build());
+    }
+
+    public void log(final IdentifiersDto identifiersDto,
+                    final String currentGateId,
+                    final String currentGateCountry,
+                    final String body,
+                    final String errorCode,
+                    final String name) {
+        final boolean isError = errorCode != null;
+        final String edelivery = "EDELIVERY";
+        this.log(LogRegistryDto.builder()
+                .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
+                .name(name)
                 .componentType(ComponentType.GATE)
                 .componentId(currentGateId)
                 .componentCountry(currentGateCountry)
@@ -54,12 +87,17 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
     public void log(final IdentifiersDto identifiersDto,
                     final String currentGateId,
                     final String currentGateCountry,
-                    final String body) {
-        this.log(identifiersDto, currentGateId, currentGateCountry, body, null);
+                    final String body,
+                    final String name) {
+        this.log(identifiersDto, currentGateId, currentGateCountry, body, null, name);
 
     }
 
-    public void log(final SaveIdentifiersRequestWrapper requestWrapper, final String currentGateId, final String currentGateCountry, final String body) {
+    public void log(final SaveIdentifiersRequestWrapper requestWrapper,
+                    final String currentGateId,
+                    final String currentGateCountry,
+                    final String body,
+                    final String name) {
         this.log(LogRegistryDto.builder()
                 .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
                 .componentType(ComponentType.GATE)

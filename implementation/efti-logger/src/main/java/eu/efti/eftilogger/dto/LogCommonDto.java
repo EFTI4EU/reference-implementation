@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 public class LogCommonDto {
 
     private String messageDate;
+    private String name;
     private ComponentType componentType;
     private String componentId;
     private String componentCountry;

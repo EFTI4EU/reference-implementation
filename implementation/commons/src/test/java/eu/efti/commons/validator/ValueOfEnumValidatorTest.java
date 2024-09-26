@@ -1,7 +1,6 @@
 package eu.efti.commons.validator;
 
 import eu.efti.commons.enums.CountryIndicator;
-import eu.efti.commons.validator.ValueOfEnum;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;

@@ -66,7 +66,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.uilDto.setEFTIDataUuid("uuid");
         this.uilDto.setEFTIPlatformUrl("plateform");
 
-        searchParameter.setVehicleId("AA123VV");
+        searchParameter.setVehicleID("AA123VV");
         searchParameter.setVehicleCountry(CountryIndicator.BE.toString());
         searchParameter.setTransportMode(TransportMode.ROAD.toString());
 
@@ -91,20 +91,18 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlEntity.setSubsetMsRequested(controlDto.getSubsetMsRequested());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
-        this.controlEntity.setEftiData(controlDto.getEftiData());
-        this.controlEntity.setTransportIdentifiers(controlDto.getTransportIdentifiers());
         this.controlEntity.setFromGateUrl(controlDto.getFromGateUrl());
 
         identifiersResult.setCountryStart("FR");
         identifiersResult.setCountryEnd("FR");
         identifiersResult.setDisabled(false);
-        identifiersResult.setDangerousGoods(true);
+        identifiersResult.setIsDangerousGoods(true);
         identifiersResults.setIdentifiersResult(Collections.singletonList(identifiersResult));
 
         identifiersResultDto.setCountryStart("FR");
         identifiersResultDto.setCountryEnd("FR");
         identifiersResultDto.setDisabled(false);
-        identifiersResultDto.setDangerousGoods(true);
+        identifiersResultDto.setIsDangerousGoods(true);
         identifiersResultsDto.setIdentifiersResult(Collections.singletonList(identifiersResultDto));
     }
 

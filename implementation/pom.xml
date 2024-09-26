@@ -6,18 +6,18 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.12</version>
+        <version>3.2.8</version>
     </parent>
 
     <groupId>eu.efti</groupId>
-    <artifactId>gate</artifactId>
+    <artifactId>gate-parent</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
-    <name>gate</name>
+    <name>gate-parent</name>
     <description>gate</description>
 
     <properties>
-        <revision>0.4.1-SNAPSHOT</revision>
+        <revision>0.4.2-SNAPSHOT</revision>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/../coverage-aggregate/target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>

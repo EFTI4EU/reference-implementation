@@ -1,7 +1,14 @@
 package eu.efti.eftigate.service.request;
 
-import eu.efti.commons.dto.*;
+
+import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.IdentifiersDto;
+import eu.efti.commons.dto.IdentifiersRequestDto;
+import eu.efti.commons.dto.IdentifiersResponseDto;
+import eu.efti.commons.dto.IdentifiersResultDto;
+import eu.efti.commons.dto.IdentifiersResultsDto;
+import eu.efti.commons.dto.RequestDto;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
@@ -14,7 +21,6 @@ import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.dto.requestbody.IdentifiersRequestBodyDto;
-import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
 import eu.efti.eftigate.entity.IdentifiersResult;
 import eu.efti.eftigate.entity.IdentifiersResults;
@@ -28,7 +34,6 @@ import eu.efti.eftigate.service.RabbitSenderService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -54,19 +59,23 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     @Lazy
     private final IdentifiersService identifiersService;
     private final IdentifiersRequestRepository identifiersRequestRepository;
+    private final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService;
+
 
     public IdentifiersRequestService(final IdentifiersRequestRepository identifiersRequestRepository,
-                                     final MapperUtils mapperUtils,
-                                     final RabbitSenderService rabbitSenderService,
-                                     final ControlService controlService,
-                                     final GateProperties gateProperties,
-                                     final IdentifiersService identifiersService,
-                                     final RequestUpdaterService requestUpdaterService,
-                                     final SerializeUtils serializeUtils,
-                                     final LogManager logManager) {
+                                  final MapperUtils mapperUtils,
+                                  final RabbitSenderService rabbitSenderService,
+                                  final ControlService controlService,
+                                  final GateProperties gateProperties,
+                                  final IdentifiersService identifiersService,
+                                  final RequestUpdaterService requestUpdaterService,
+                                  final SerializeUtils serializeUtils,
+                                  final LogManager logManager,
+                                  final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService) {
         super(mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
         this.identifiersService = identifiersService;
         this.identifiersRequestRepository = identifiersRequestRepository;
+        this.identifiersControlUpdateDelegateService = identifiersControlUpdateDelegateService;
     }
 
 
@@ -79,23 +88,13 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     @Override
-    public void setDataFromRequests(final ControlEntity controlEntity) {
-        final List<IdentifiersResult> identifiersResults = controlEntity.getRequests().stream()
-                .filter(IdentifiersRequestEntity.class::isInstance)
-                .map(IdentifiersRequestEntity.class::cast)
-                .flatMap(request -> request.getIdentifiersResults().getIdentifiersResult().stream())
-                .toList();
-        controlEntity.setIdentifiersResults(new IdentifiersResults(identifiersResults));
-    }
-
-    @Override
     public void manageMessageReceive(final NotificationDto notificationDto) {
         final String bodyFromNotification = notificationDto.getContent().getBody();
         if (StringUtils.isNotBlank(bodyFromNotification)){
             final String requestUuid = getRequestUuid(bodyFromNotification);
-            final ControlEntity existingControl = getControlService().getControlForCriteria(requestUuid, RequestStatusEnum.IN_PROGRESS);
-            if (existingControl != null) {
-                updateExistingControl(bodyFromNotification, existingControl, notificationDto);
+            if (getControlService().existsByCriteria(requestUuid)) {
+                identifiersControlUpdateDelegateService.updateExistingControl(bodyFromNotification, requestUuid, notificationDto.getContent().getFromPartyId());
+                identifiersControlUpdateDelegateService.setControlNextStatus(requestUuid);
             } else {
                 handleNewControlRequest(notificationDto, bodyFromNotification);
             }
@@ -113,142 +112,6 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
             this.updateStatus(externalRequest, SUCCESS);
         }
     }
-
-    @Override
-    protected void sendRequest(final RequestDto requestDto) {
-        final RequestDto updatedRequest = this.updateStatus(requestDto, RequestStatusEnum.RESPONSE_IN_PROGRESS);
-        super.sendRequest(updatedRequest);
-    }
-
-    @Override
-    public void updateSentRequestStatus(final RequestDto requestDto, final String edeliveryMessageId) {
-        requestDto.setEdeliveryMessageId(edeliveryMessageId);
-        this.updateStatus(requestDto, isExternalRequest(requestDto) ? RequestStatusEnum.RESPONSE_IN_PROGRESS : RequestStatusEnum.IN_PROGRESS);
-
-    }
-
-    private void handleNewControlRequest(final NotificationDto notificationDto, final String bodyFromNotification) {
-        final IdentifiersMessageBodyDto requestMessage = getSerializeUtils().mapXmlStringToClass(bodyFromNotification, IdentifiersMessageBodyDto.class);
-        final List<IdentifiersDto> identifiersDtoList = identifiersService.search(buildIdentifiersRequestDtoFrom(requestMessage));
-        final IdentifiersResultsDto identifiersResultsDto = buildIdentifiersResultDto(identifiersDtoList);
-        final ControlDto controlDto = getControlService().createControlFrom(requestMessage, notificationDto.getContent().getFromPartyId(), identifiersResultsDto);
-        final RequestDto request = createReceivedRequest(controlDto, identifiersDtoList);
-        sendRequest(request);
-    }
-
-    private void updateExistingControl(final String bodyFromNotification, final ControlEntity existingControl, final NotificationDto notificationDto) {
-        final IdentifiersResponseDto response = getSerializeUtils().mapXmlStringToClass(bodyFromNotification, IdentifiersResponseDto.class);
-        final List<IdentifiersResultDto> identifiersResultDtos = response.getIdentifiers();
-        final IdentifiersResults identifiersResults = buildIdentifiersResultFrom(identifiersResultDtos);
-        updateControlIdentifiers(existingControl, identifiersResults, identifiersResultDtos);
-        updateControlRequests(existingControl.getRequests(), identifiersResults, notificationDto);
-        if (!StatusEnum.ERROR.equals(existingControl.getStatus())) {
-            existingControl.setStatus(getControlStatus(existingControl));
-        }
-        getControlService().save(existingControl);
-    }
-
-    private StatusEnum getControlStatus(final ControlEntity existingControl) {
-        final StatusEnum currentControlStatus = existingControl.getStatus();
-        final List<RequestEntity> requests = existingControl.getRequests();
-        if (requests.stream().allMatch(requestEntity -> RequestStatusEnum.SUCCESS == requestEntity.getStatus())) {
-            return StatusEnum.COMPLETE;
-        } else if (shouldSetTimeout(requests)) {
-            return StatusEnum.TIMEOUT;
-        } else if (requests.stream().anyMatch(requestEntity -> RequestStatusEnum.ERROR == requestEntity.getStatus())) {
-            return StatusEnum.ERROR;
-        }
-        return currentControlStatus;
-    }
-
-    private static boolean shouldSetTimeout(final List<RequestEntity> requests) {
-        return requests.stream().anyMatch(requestEntity -> RequestStatusEnum.TIMEOUT == requestEntity.getStatus())
-                && requests.stream().noneMatch(requestEntity -> RequestStatusEnum.ERROR == requestEntity.getStatus());
-    }
-
-    private void updateControlIdentifiers(final ControlEntity existingControl, final IdentifiersResults identifiersResults, final List<IdentifiersResultDto> identifiersResultDtos) {
-        final IdentifiersResults controlIdentifiersResults = existingControl.getIdentifiersResults();
-        if (controlIdentifiersResults == null || controlIdentifiersResults.getIdentifiersResult().isEmpty()) {
-            existingControl.setIdentifiersResults(identifiersResults);
-        } else {
-            final ArrayList<IdentifiersResult> currentIdentifiers = new ArrayList<>(controlIdentifiersResults.getIdentifiersResult());
-            final List<IdentifiersResult> responseIdentifiers = getMapperUtils().identifierResultDtosToIdentifierEntities(identifiersResultDtos);
-            existingControl.setIdentifiersResults(IdentifiersResults.builder().identifiersResult(ListUtils.union(currentIdentifiers, responseIdentifiers)).build());
-        }
-    }
-
-    private void updateControlRequests(final List<RequestEntity> pendingRequests, final IdentifiersResults identifiersResults, final NotificationDto notificationDto) {
-        CollectionUtils.emptyIfNull(pendingRequests).stream()
-                .filter(requestEntity -> isRequestWaitingSentNotification(notificationDto, requestEntity))
-                .map(IdentifiersRequestEntity.class::cast)
-                .forEach(requestEntity -> {
-                    requestEntity.setIdentifiersResults(identifiersResults);
-                    requestEntity.setStatus(RequestStatusEnum.SUCCESS);
-                });
-    }
-
-    private static boolean isRequestWaitingSentNotification(final NotificationDto notificationDto, final RequestEntity requestEntity) {
-        return RequestStatusEnum.IN_PROGRESS == requestEntity.getStatus()
-                && requestEntity.getGateUrlDest() != null
-                && requestEntity.getGateUrlDest().equalsIgnoreCase(notificationDto.getContent().getFromPartyId());
-    }
-
-    public IdentifiersRequestDto createRequest(final ControlDto controlDto, final RequestStatusEnum status, final List<IdentifiersDto> identifiersDtoList) {
-        final IdentifiersRequestDto requestDto = save(buildRequestDto(controlDto, status, identifiersDtoList));
-        log.info("Request has been register with controlId : {}", requestDto.getControl().getId());
-        return requestDto;
-    }
-
-    private RequestDto buildRequestDto(final ControlDto controlDto, final RequestStatusEnum status, final List<IdentifiersDto> identifiersDtoList) {
-        return IdentifiersRequestDto.builder()
-                .retry(0)
-                .control(controlDto)
-                .status(status)
-                .identifiersResultsDto(buildIdentifiersResultDto(identifiersDtoList))
-                .gateUrlDest(controlDto.getFromGateUrl())
-                .requestType(RequestType.IDENTIFIER)
-                .build();
-    }
-
-    private RequestDto createReceivedRequest(final ControlDto controlDto, final List<IdentifiersDto> identifiersDtoList) {
-        final RequestDto request = createRequest(controlDto, RECEIVED, identifiersDtoList);
-        final ControlDto updatedControl = getControlService().getControlByRequestUuid(controlDto.getRequestUuid());
-        if (StatusEnum.COMPLETE == updatedControl.getStatus()) {
-            request.setStatus(RequestStatusEnum.RESPONSE_IN_PROGRESS);
-        }
-        request.setControl(updatedControl);
-        return request;
-    }
-
-    private SearchWithIdentifiersRequestDto buildIdentifiersRequestDtoFrom(final IdentifiersMessageBodyDto messageBody) {
-        return SearchWithIdentifiersRequestDto.builder()
-                .vehicleID(messageBody.getVehicleID())
-                .isDangerousGoods(messageBody.getIsDangerousGoods())
-                .transportMode(messageBody.getTransportMode())
-                .vehicleCountry(messageBody.getVehicleCountry())
-                .build();
-    }
-
-    public IdentifiersResultsDto buildIdentifiersResultDto(final List<IdentifiersDto> identifiersDtos) {
-        final List<IdentifiersResultDto> identifiersResultDtos = getMapperUtils().identifierDtosToIdentifiersResultDto(identifiersDtos);
-        return IdentifiersResultsDto.builder()
-                .identifiersResult(identifiersResultDtos)
-                .build();
-    }
-
-    public IdentifiersResults buildIdentifiersResult(final List<IdentifiersDto> identifiersDtos) {
-        final List<IdentifiersResult> identifiersResults = getMapperUtils().identifierDtosToIdentifierEntities(identifiersDtos);
-        return IdentifiersResults.builder()
-                .identifiersResult(identifiersResults)
-                .build();
-    }
-    private IdentifiersResults buildIdentifiersResultFrom(final List<IdentifiersResultDto> identifiersResultDtos) {
-        final List<IdentifiersResult> identifiersResultList = getMapperUtils().identifierResultDtosToIdentifierEntities(identifiersResultDtos);
-        return IdentifiersResults.builder()
-                .identifiersResult(identifiersResultList)
-                .build();
-    }
-
 
     @Override
     public boolean supports(final RequestTypeEnum requestTypeEnum) {
@@ -279,7 +142,11 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     public String buildRequestBody(final RabbitRequestDto requestDto) {
         final ControlDto controlDto = requestDto.getControl();
         if (EXTERNAL_ASK_IDENTIFIERS_SEARCH == controlDto.getRequestType()) { //remote sending response
-            final IdentifiersResponseDto identifiersResponseDto = getControlService().buildIdentifiersResponse(controlDto);
+            List<IdentifiersResultDto> identifiersResultDtos = new ArrayList<>();
+            if (requestDto.getIdentifiersResults() != null){
+                identifiersResultDtos = getMapperUtils().identifierResultEntitiesToIdentifiersResultDtos(requestDto.getIdentifiersResults().getIdentifiersResult());
+            }
+            final IdentifiersResponseDto identifiersResponseDto = getControlService().buildIdentifiersResponse(controlDto, identifiersResultDtos);
             return getSerializeUtils().mapObjectToXmlString(identifiersResponseDto);
         } else { //local sending request
             final IdentifiersRequestBodyDto identifiersRequestBodyDto = IdentifiersRequestBodyDto.fromControl(controlDto);
@@ -307,17 +174,63 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 .orElseThrow(() -> new RequestNotFoundException("couldn't find Consignment request for messageId: " + eDeliveryMessageId));
     }
 
-    public void updateControlIdentifiers(final ControlDto control, final List<IdentifiersDto> identifiersDtoList) {
-        getControlService().getByRequestUuid(control.getRequestUuid()).ifPresent(controlEntity -> {
-            if (controlEntity.getIdentifiersResults() == null || controlEntity.getIdentifiersResults().getIdentifiersResult().isEmpty())
-            {
-                controlEntity.setIdentifiersResults(buildIdentifiersResult(identifiersDtoList));
-            } else {
-                final ArrayList<IdentifiersResult> existingIdentifiers = new ArrayList<>(controlEntity.getIdentifiersResults().getIdentifiersResult());
-                final List<IdentifiersResult> responseIdentifiers = getMapperUtils().identifierDtosToIdentifierEntities(identifiersDtoList);
-                controlEntity.setIdentifiersResults(IdentifiersResults.builder().identifiersResult(ListUtils.union(existingIdentifiers, responseIdentifiers)).build());
-            }
-            getControlService().save(controlEntity);
-        });
+    @Override
+    public void updateSentRequestStatus(final RequestDto requestDto, final String edeliveryMessageId) {
+        requestDto.setEdeliveryMessageId(edeliveryMessageId);
+        this.updateStatus(requestDto, isExternalRequest(requestDto) ? RESPONSE_IN_PROGRESS : RequestStatusEnum.IN_PROGRESS);
+
+    }
+
+    private void handleNewControlRequest(final NotificationDto notificationDto, final String bodyFromNotification) {
+        final IdentifiersMessageBodyDto requestMessage = getSerializeUtils().mapXmlStringToClass(bodyFromNotification, IdentifiersMessageBodyDto.class);
+        final List<IdentifiersDto> identifiersDtoList = identifiersService.search(buildIdentifiersRequestDtoFrom(requestMessage));
+        final IdentifiersResultsDto identifiersResults = buildIdentifiersResultDto(identifiersDtoList);
+        final ControlDto controlDto = getControlService().createControlFrom(requestMessage, notificationDto.getContent().getFromPartyId(), identifiersResults);
+        final RequestDto request = createReceivedRequest(controlDto, identifiersDtoList);
+        final RequestDto updatedRequest = this.updateStatus(request, RESPONSE_IN_PROGRESS);
+        super.sendRequest(updatedRequest);
+    }
+
+    private RequestDto createReceivedRequest(final ControlDto controlDto, final List<IdentifiersDto> identifiersDtos) {
+        final RequestDto request = createRequest(controlDto, RECEIVED, identifiersDtos);
+        final ControlDto updatedControl = getControlService().getControlByRequestUuid(controlDto.getRequestUuid());
+        if (StatusEnum.COMPLETE == updatedControl.getStatus()) {
+            request.setStatus(RESPONSE_IN_PROGRESS);
+        }
+        request.setControl(updatedControl);
+        return request;
+    }
+
+    public IdentifiersRequestDto createRequest(final ControlDto controlDto, final RequestStatusEnum status, final List<IdentifiersDto> identifiersDtoList) {
+        final IdentifiersRequestDto requestDto = save(buildRequestDto(controlDto, status, identifiersDtoList));
+        log.info("Request has been register with controlId : {}", requestDto.getControl().getId());
+        return requestDto;
+    }
+
+    private RequestDto buildRequestDto(final ControlDto controlDto, final RequestStatusEnum status, final List<IdentifiersDto> identifiersDtoList) {
+        return IdentifiersRequestDto.builder()
+                .retry(0)
+                .control(controlDto)
+                .status(status)
+                .identifiersResultsDto(buildIdentifiersResultDto(identifiersDtoList))
+                .gateUrlDest(controlDto.getFromGateUrl())
+                .requestType(RequestType.IDENTIFIER)
+                .build();
+    }
+
+    private SearchWithIdentifiersRequestDto buildIdentifiersRequestDtoFrom(final IdentifiersMessageBodyDto messageBody) {
+        return SearchWithIdentifiersRequestDto.builder()
+                .vehicleID(messageBody.getVehicleID())
+                .isDangerousGoods(messageBody.getIsDangerousGoods())
+                .transportMode(messageBody.getTransportMode())
+                .vehicleCountry(messageBody.getVehicleCountry())
+                .build();
+    }
+
+    public IdentifiersResultsDto buildIdentifiersResultDto(final List<IdentifiersDto> identifiersDtos) {
+        final List<IdentifiersResultDto> identifiersResultList = getMapperUtils().identifierDtosToIdentifiersResultDto(identifiersDtos);
+        return IdentifiersResultsDto.builder()
+                .identifiersResult(identifiersResultList)
+                .build();
     }
 }

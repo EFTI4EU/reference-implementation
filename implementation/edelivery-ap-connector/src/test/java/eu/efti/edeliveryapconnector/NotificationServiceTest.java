@@ -9,6 +9,7 @@ import eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto;
 import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.NotificationService;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,7 +53,7 @@ class NotificationServiceTest {
         final Optional<NotificationDto> result  = service.consume(receivedNotificationDto);
         assertTrue(result.isPresent());
         assertEquals(messageId, result.get().getMessageId());
-        assertEquals(NotificationType.SEND_FAILURE, result.get().getNotificationType());
+        Assertions.assertEquals(NotificationType.SEND_FAILURE, result.get().getNotificationType());
     }
 
     @Test

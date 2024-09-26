@@ -1,5 +1,7 @@
 package eu.efti.eftigate.service.request;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +23,7 @@ import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.UilRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
+import eu.efti.eftigate.EftiTestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +36,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.LoggerFactory;
 import org.xmlunit.matchers.CompareMatcher;
 
 import java.util.List;
@@ -136,7 +140,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         uilRequestService.receiveGateRequest(notificationDto);
 
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
-        verify(logManager).logReceivedMessage(any(), any(), any());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any());
         assertEquals(RequestStatusEnum.SUCCESS, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
 
@@ -170,7 +174,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         uilRequestService.receiveGateRequest(notificationDto);
 
-        verify(logManager).logReceivedMessage(any(), any(), any());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any());
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
         assertEquals(RequestStatusEnum.ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
@@ -206,7 +210,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         uilRequestService.receiveGateRequest(notificationDto);
 
-        verify(logManager).logReceivedMessage(any(), any(), any());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any());
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
         assertEquals(RequestStatusEnum.ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
@@ -238,7 +242,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         uilRequestService.receiveGateRequest(notificationDto);
 
-        verify(logManager).logReceivedMessage(any(), anyString(), anyString());
+        verify(logManager).logReceivedMessage(any(), anyString(), anyString(), anyString());
         verify(controlService).createUilControl(argumentCaptorControlDto.capture());
         assertEquals(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, argumentCaptorControlDto.getValue().getRequestType());
     }
@@ -285,7 +289,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         uilRequestService.updateWithResponse(notificationDto);
 
-        verify(controlService, times(3)).save(controlEntityArgumentCaptor.capture());
+        verify(controlService, times(2)).save(controlEntityArgumentCaptor.capture());
         assertEquals(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, controlEntityArgumentCaptor.getValue().getRequestType());
     }
 
@@ -390,23 +394,6 @@ class UilRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void getDataFromRequestsTest() {
-        //Arrange
-        final byte[] data1 = {10, 20, 30, 40};
-        final byte[] data2 = {60, 80, 70, 10};
-
-        uilRequestEntity.setReponseData(data1);
-        secondUilRequestEntity.setReponseData(data2);
-        final ControlEntity controlEntity = ControlEntity.builder().requests(List.of(uilRequestEntity, secondUilRequestEntity)).build();
-        //Act
-        uilRequestService.setDataFromRequests(controlEntity);
-
-        //Assert
-        assertNotNull(controlEntity.getEftiData());
-        assertEquals(8, controlEntity.getEftiData().length);
-    }
-
-    @Test
     void shouldUpdateControlAndRequestStatus_whenResponseSentSuccessfullyForExternalRequest() {
         uilRequestEntity.setEdeliveryMessageId(MESSAGE_ID);
         when(uilRequestRepository.findByControlRequestTypeAndStatusAndEdeliveryMessageId(any(), any(), any())).thenReturn(uilRequestEntity);
@@ -432,7 +419,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         rabbitRequestDto.setEFTIPlatformUrl("http://example.com");
         rabbitRequestDto.setStatus(RequestStatusEnum.RESPONSE_IN_PROGRESS);
 
-        final String expectedRequestBody = testFile("/xml/FTI022.xml");
+        final String expectedRequestBody = EftiTestUtils.testFile("/xml/FTI022.xml");
 
         final String requestBody = uilRequestService.buildRequestBody(rabbitRequestDto);
 
@@ -446,7 +433,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         rabbitRequestDto.setControl(controlDto);
         rabbitRequestDto.setStatus(RequestStatusEnum.RECEIVED);
 
-        final String expectedRequestBody = testFile("/xml/FTI020.xml");
+        final String expectedRequestBody = EftiTestUtils.testFile("/xml/FTI020.xml");
 
         final String requestBody = uilRequestService.buildRequestBody(rabbitRequestDto);
 

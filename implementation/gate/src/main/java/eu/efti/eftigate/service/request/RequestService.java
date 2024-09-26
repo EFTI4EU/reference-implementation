@@ -8,14 +8,13 @@ import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
-import eu.efti.edeliveryapconnector.dto.ApConfigDto;
 import eu.efti.commons.utils.SerializeUtils;
+import eu.efti.edeliveryapconnector.dto.ApConfigDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
-import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.service.ControlService;
@@ -42,13 +41,12 @@ import static eu.efti.commons.constant.EftiGateConstants.EXTERNAL_REQUESTS_TYPES
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
 import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
-import static eu.efti.commons.enums.RequestStatusEnum.SEND_ERROR;
+import static eu.efti.commons.enums.RequestStatusEnum.TIMEOUT;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
 @Getter
-
 public abstract class RequestService<T extends RequestEntity> {
     private final MapperUtils mapperUtils;
     private final RabbitSenderService rabbitSenderService;
@@ -65,8 +63,6 @@ public abstract class RequestService<T extends RequestEntity> {
     private String eftiKeySendMessage;
 
     public abstract boolean allRequestsContainsData(List<RequestEntity> controlEntityRequests);
-
-    public abstract void setDataFromRequests(ControlEntity controlEntity);
 
     public abstract void manageMessageReceive(final NotificationDto notificationDto);
 
@@ -90,10 +86,6 @@ public abstract class RequestService<T extends RequestEntity> {
 
     protected abstract T findRequestByMessageIdOrThrow(final String eDeliveryMessageId);
 
-    public void manageSendFailure(final NotificationDto notificationDto) {
-        this.updateStatus(findRequestByMessageIdOrThrow(notificationDto.getMessageId()), SEND_ERROR);
-    }
-
     public void createAndSendRequest(final ControlDto controlDto, final String destinationUrl){
         this.createAndSendRequest(controlDto, destinationUrl, RequestStatusEnum.RECEIVED);
     }
@@ -112,7 +104,7 @@ public abstract class RequestService<T extends RequestEntity> {
         return requestDto;
     }
 
-    protected void sendRequest(final RequestDto requestDto) {
+    public void sendRequest(final RequestDto requestDto) {
         try {
             rabbitSenderService.sendMessageToRabbit(eftiSendMessageExchange, eftiKeySendMessage, requestDto);
         } catch (final JsonProcessingException e) {
@@ -166,13 +158,13 @@ public abstract class RequestService<T extends RequestEntity> {
     public void updateSentRequestStatus(final RequestDto requestDto, final String edeliveryMessageId) {
         requestDto.setEdeliveryMessageId(edeliveryMessageId);
         final RequestStatusEnum requestStatus = requestDto.getStatus();
-        if (!(RESPONSE_IN_PROGRESS.equals(requestStatus) || ERROR.equals(requestStatus))){
+        if (!(RESPONSE_IN_PROGRESS.equals(requestStatus) || ERROR.equals(requestStatus) || TIMEOUT.equals(requestStatus))){
             requestDto.setStatus(IN_PROGRESS);
         }
         this.save(requestDto);
     }
 
-    protected void markMessageAsDownloaded(String eDeliveryMessageId){
+    protected void markMessageAsDownloaded(final String eDeliveryMessageId){
         try {
             getRequestUpdaterService().setMarkedAsDownload(createApConfig(), eDeliveryMessageId);
         } catch (final MalformedURLException e) {
@@ -199,5 +191,10 @@ public abstract class RequestService<T extends RequestEntity> {
                 .status(status)
                 .gateUrlDest(controlDto.getFromGateUrl())
                 .build();
+    }
+
+    public void notifyTimeout(final RequestDto requestDto) {
+        requestDto.setGateUrlDest(requestDto.getControl().getFromGateUrl());
+        sendRequest(requestDto);
     }
 }

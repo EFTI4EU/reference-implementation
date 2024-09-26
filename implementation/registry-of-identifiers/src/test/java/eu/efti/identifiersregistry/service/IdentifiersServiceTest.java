@@ -85,7 +85,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any());
+        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());
         assertEquals(GATE_URL, argumentCaptor.getValue().getGateId());
@@ -99,7 +99,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any());
+        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());
         assertEquals(GATE_URL, argumentCaptor.getValue().getGateId());
@@ -114,7 +114,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any());
+        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
         verify(repository).findByUil(GATE_URL, DATA_UUID, PLATFORM_URL);
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());
@@ -144,7 +144,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any());
+        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
         verify(repository).findByUil(GATE_URL, DATA_UUID, PLATFORM_URL);
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());

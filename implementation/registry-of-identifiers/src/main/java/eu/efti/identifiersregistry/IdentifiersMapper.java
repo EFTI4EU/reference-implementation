@@ -34,7 +34,7 @@ public class IdentifiersMapper {
         if (consignmentEntity.getUsedTransportEquipments() != null) {
             consignmentEntity.getUsedTransportEquipments().forEach(usedTransportEquipment -> {
                 TransportVehicleDto transportVehicleDto = new TransportVehicleDto();
-                transportVehicleDto.setVehicleId(usedTransportEquipment.getEquipmentId());
+                transportVehicleDto.setVehicleID(usedTransportEquipment.getEquipmentId());
                 transportVehicleDto.setVehicleCountry(usedTransportEquipment.getRegistrationCountry());
                 dto.getTransportVehicles().add(transportVehicleDto);
             });

@@ -75,6 +75,6 @@ class EftiAsyncCallsProcessorTest {
         //Assert
         verify(identifiersService, times(1)).search(identifiersRequestDto);
         verify(identifiersRequestService, times(1)).createRequest(any(ControlDto.class), any(), anyList());
-        verify(logManager).logLocalRegistryMessage(any(), any());
+        verify(logManager, times(2)).logRegistryIdentifiers(any(), any(), any());
     }
 }
