@@ -65,12 +65,13 @@ public class IdentifiersMapper {
         consignment.setCarrierAcceptanceDatetime(fromDateTime(sourceConsignment.getCarrierAcceptanceDateTime()));
         consignment.setDeliveryEventActualOccurrenceDatetime(fromDateTime(sourceConsignment.getDeliveryEvent().getActualOccurrenceDateTime()));
 
-        consignment.setMainCarriageTransportMovements(sourceConsignment.getMainCarriageTransportMovement().stream().map(movement -> {
+        consignment.getMainCarriageTransportMovements().addAll(sourceConsignment.getMainCarriageTransportMovement().stream().map(movement -> {
             MainCarriageTransportMovement mainCarriageTransportMovement = new MainCarriageTransportMovement();
             mainCarriageTransportMovement.setDangerousGoodsIndicator(movement.isDangerousGoodsIndicator());
             mainCarriageTransportMovement.setModeCode(Short.parseShort(movement.getModeCode()));
             mainCarriageTransportMovement.setUsedTransportMeansId(movement.getUsedTransportMeans().getId().getValue());
             mainCarriageTransportMovement.setUsedTransportMeansRegistrationCountry(movement.getUsedTransportMeans().getRegistrationCountry().getCode().value());
+            mainCarriageTransportMovement.setConsignment(consignment);
             return mainCarriageTransportMovement;
         }).toList());
 
@@ -81,13 +82,15 @@ public class IdentifiersMapper {
             usedTransportEquipment.setRegistrationCountry(equipment.getRegistrationCountry().getCode().value());
             usedTransportEquipment.setSequenceNumber(equipment.getSequenceNumber().intValue());
 
-            equipment.getCarriedTransportEquipment().forEach(carriedEquipment -> {
+            usedTransportEquipment.getCarriedTransportEquipments().addAll(equipment.getCarriedTransportEquipment().stream().map(carriedEquipment -> {
                 CarriedTransportEquipment carriedTransportEquipment = new CarriedTransportEquipment();
                 carriedTransportEquipment.setEquipmentId(carriedEquipment.getId().getValue());
                 carriedTransportEquipment.setSchemeAgencyId(carriedEquipment.getId().getSchemeAgencyId());
                 carriedTransportEquipment.setSequenceNumber(carriedEquipment.getSequenceNumber().intValue());
-                usedTransportEquipment.getCarriedTransportEquipments().add(carriedTransportEquipment);
-            });
+                carriedTransportEquipment.setUsedTransportEquipment(usedTransportEquipment);
+                return carriedTransportEquipment;
+            }).toList());
+
             return usedTransportEquipment;
         }).toList());
         return consignment;
