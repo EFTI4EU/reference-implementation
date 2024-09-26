@@ -8,10 +8,10 @@ spec:
 ---
 variables:
   MAVEN_GROUPEID: com.ingroupe.efti
-  MAVEN_ARTIFACTID: efti-portal
-  MAVEN_EXTENSION: tar
-  VERSION_ARTEFACT_SNAPSHOT: 1.0-SNAPSHOT
-  VERSION_ARTEFACT_RELEASE: 0.4.0
+  MAVEN_ARTIFACTID: platform-gate-simulator
+  MAVEN_EXTENSION: jar
+  VERSION_ARTEFACT_SNAPSHOT: 0.4.2-SNAPSHOT
+  VERSION_ARTEFACT_RELEASE: 0.4.1
 
 "$[[ inputs.job-prefix | expand_vars ]]_build_and_deploy_microservices":
   stage: $[[ inputs.job-stage ]]
