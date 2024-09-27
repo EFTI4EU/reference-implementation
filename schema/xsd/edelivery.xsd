@@ -162,10 +162,14 @@
         Save follow-up message to some specific data set identified by UIL.
       </xsd:documentation>
     </xsd:annotation>
-    <xsd:sequence>
-      <xsd:element name="uil" type="efti-ed:UIL"/>
-      <xsd:element name="message" type="xsd:string"/>
-    </xsd:sequence>
+    <xsd:complexContent>
+      <xsd:extension base="efti-ed:Request">
+        <xsd:sequence>
+          <xsd:element name="uil" type="efti-ed:UIL"/>
+          <xsd:element name="message" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:element name="postFollowUpRequest" type="efti-ed:PostFollowUpRequest"/>
