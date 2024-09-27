@@ -37,7 +37,6 @@ variables:
       - "ttf"
       - "massive"
       - "acme"
-      - "umbrella"
       - "roger"
     description: "The label of component. Set to 'NONE' for default gate."
 
