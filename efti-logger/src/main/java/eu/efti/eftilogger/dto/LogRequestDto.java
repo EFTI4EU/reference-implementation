@@ -2,10 +2,12 @@ package eu.efti.eftilogger.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder(toBuilder = true)
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class LogRequestDto extends LogCommonDto {
 
     public final String requestId;

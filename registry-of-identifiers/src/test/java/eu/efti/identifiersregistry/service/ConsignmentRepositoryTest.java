@@ -7,6 +7,7 @@ import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -84,6 +85,11 @@ class ConsignmentRepositoryTest {
         otherConsignment.setUsedTransportEquipments(List.of(equipment3, equipment4));
 
         identifiersRepository.save(otherConsignment);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        openMocks.close();
     }
 
     @Test
