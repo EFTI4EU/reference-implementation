@@ -5,13 +5,6 @@ stages:
   - afterbuild
 
 variables:
-  COMPONENT:
-    value: "NONE"
-    options:
-      - "NONE"
-      - "gate"
-      - "platform-gate-simulator"
-    description: "The component target. Set to 'none' by default."
   DEPLOY_ENVIRONMENT:
     value: "dev"
     options:
@@ -22,12 +15,13 @@ variables:
       - "ppd"
       - "prd"
     description: "The deployment target. Set to 'dev' by default."
-  REBUILD_COMPONENT_IMAGE:
-    value: "true"
+  COMPONENT:
+    value: "NONE"
     options:
-      - "true"
-      - "false"
-    description: "Allow to rebuild or no the component Image. Set to 'true' by default."
+      - "NONE"
+      - "gate"
+      - "platform-gate-simulator"
+    description: "The component target. Set to 'none' by default."
   LABEL:
     value: "NONE"
     options:
@@ -39,6 +33,12 @@ variables:
       - "acme"
       - "roger"
     description: "The label of component. Set to 'NONE' for default gate."
+  REBUILD_COMPONENT_IMAGE:
+    value: "true"
+    options:
+      - "true"
+      - "false"
+    description: "Allow to rebuild or no the component Image. Set to 'true' by default."
 
 workflow:
   rules:
