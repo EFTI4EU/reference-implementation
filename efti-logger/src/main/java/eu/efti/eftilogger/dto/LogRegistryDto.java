@@ -6,7 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 @SuperBuilder(toBuilder = true)
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class LogRegistryDto extends LogCommonDto {
 
     public final String identifiersId;
