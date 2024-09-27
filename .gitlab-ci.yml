@@ -84,16 +84,14 @@ include:
   rules:
   - if: $COMPONENT == "platform-gate-simulator"
 
-display_deployment_informations:
+prepare_env:
   stage: prebuild
   script:
-    - echo "--------------------- STARTING COMPONENT $CI_PROJECT_NAME DEPLOYMENT ..."
-    - echo " PROJECT_NAME -> $CI_PROJECT_NAME "
-    - echo " COMPONENT -> $COMPONENT "
-    - echo " LABEL -> $LABEL "
-    - echo " NAMESPACE -> $NAMESPACE "
-    - echo " SA -> $SA "
-    - echo " DEPLOY_ENVIRONMENT -> $DEPLOY_ENVIRONMENT "
-    - echo " REBUILD_COMPONENT_IMAGE -> $REBUILD_COMPONENT_IMAGE "
-    - echo " PATH -> $CI_PROJECT_DIR "
-  when: manual
+    - echo $CI_PROJECT_PATH
+    - export TOTO=$(echo "$CI_PROJECT_PATH" | cut -d'/' -f3)
+    - echo $TOTO
+    - echo "TOTO=$TOTO" >> build.env
+  artifacts:
+    reports:
+      dotenv: build.env
+  when: always
