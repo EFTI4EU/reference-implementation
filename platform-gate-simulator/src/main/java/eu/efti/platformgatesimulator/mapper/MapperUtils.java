@@ -10,7 +10,6 @@ import eu.efti.v1.json.UsedTransportEquipment;
 import eu.efti.v1.json.UsedTransportMeans;
 
 import java.math.BigInteger;
-import java.util.stream.Collectors;
 
 public class MapperUtils {
 
@@ -32,10 +31,10 @@ public class MapperUtils {
         resultSupplyChainConsignment.setCarrierAcceptanceDateTime(from(sourceConsignment.getCarrierAcceptanceDateTime()));
         resultSupplyChainConsignment.setDeliveryEvent(from(sourceConsignment.getDeliveryEvent()));
         if (sourceConsignment.getMainCarriageTransportMovement() != null) {
-            resultSupplyChainConsignment.getMainCarriageTransportMovement().addAll(sourceConsignment.getMainCarriageTransportMovement().stream().map(this::from).collect(Collectors.toList()));
+            resultSupplyChainConsignment.getMainCarriageTransportMovement().addAll(sourceConsignment.getMainCarriageTransportMovement().stream().map(this::from).toList());
         }
         if (sourceConsignment.getUsedTransportEquipment() != null) {
-            resultSupplyChainConsignment.getUsedTransportEquipment().addAll(sourceConsignment.getUsedTransportEquipment().stream().map(this::from).collect(Collectors.toList()));
+            resultSupplyChainConsignment.getUsedTransportEquipment().addAll(sourceConsignment.getUsedTransportEquipment().stream().map(this::from).toList());
         }
         return resultSupplyChainConsignment;
     }
@@ -50,7 +49,7 @@ public class MapperUtils {
         resultLogisticsTransportEquipment.setId(from(usedTransportEquipment.getId()));
         resultLogisticsTransportEquipment.setRegistrationCountry(from(usedTransportEquipment.getRegistrationCountry()));
         if (usedTransportEquipment.getCarriedTransportEquipment() != null) {
-            resultLogisticsTransportEquipment.getCarriedTransportEquipment().addAll(usedTransportEquipment.getCarriedTransportEquipment().stream().map(this::from).collect(Collectors.toList()));
+            resultLogisticsTransportEquipment.getCarriedTransportEquipment().addAll(usedTransportEquipment.getCarriedTransportEquipment().stream().map(this::from).toList());
         }
         return resultLogisticsTransportEquipment;
     }

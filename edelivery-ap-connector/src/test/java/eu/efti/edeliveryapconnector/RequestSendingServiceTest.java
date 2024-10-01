@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class RequestSendingServiceTest {
 
     private RequestSendingService service;
-    private final static String FOLDER = "src/test/java/resources/wiremock";
+    private static final String FOLDER = "src/test/java/resources/wiremock";
     private WireMockServer wireMockServer;
 
     @BeforeEach
@@ -45,16 +45,16 @@ class RequestSendingServiceTest {
                 .willReturn(aResponse().withBodyFile("response.xml")));
 
         final ApRequestDto requestDto = ApRequestDto
-            .builder()
-            .sender("syldavia")
-            .receiver("borduria")
-            .body("PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPGhlbGxvPndvcmxkPC9oZWxsbz4=")
-            .apConfig(ApConfigDto.
-                    builder()
-                    .url(String.format("http://localhost:%s/domibus/services/wsplugin?wsdl", wireMockServer.port()))
-                    .username("username")
-                    .password("password")
-                    .build()).build();
+                .builder()
+                .sender("syldavia")
+                .receiver("borduria")
+                .body("PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPGhlbGxvPndvcmxkPC9oZWxsbz4=")
+                .apConfig(ApConfigDto.
+                        builder()
+                        .url(String.format("http://localhost:%s/domibus/services/wsplugin?wsdl", wireMockServer.port()))
+                        .username("username")
+                        .password("password")
+                        .build()).build();
 
         final String result = service.sendRequest(requestDto, eDeliveryAction);
         assertEquals("fc0e70cf-8d57-11ee-a62e-0242ac13000d@domibus.eu", result);
@@ -68,16 +68,16 @@ class RequestSendingServiceTest {
         wireMockServer.stubFor(post(urlEqualTo("/domibus/services/wsplugin?wsdl"))
                 .willReturn(aResponse().withBodyFile("response.xml")));
         final ApRequestDto requestDto = ApRequestDto
-            .builder()
-            .sender("syldavia")
-            .receiver("borduria")
-            .body("PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPGhlbGxvPndvcmxkPC9oZWxsbz4=")
-            .apConfig(ApConfigDto.
-                    builder()
-                    .url(String.format("http://localhost:%s/domibus/services/wsplugin?wsdl", wireMockServer.port()))
-                    .username("username")
-                    .password("password")
-                    .build()).build();
+                .builder()
+                .sender("syldavia")
+                .receiver("borduria")
+                .body("PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPGhlbGxvPndvcmxkPC9oZWxsbz4=")
+                .apConfig(ApConfigDto.
+                        builder()
+                        .url(String.format("http://localhost:%s/domibus/services/wsplugin?wsdl", wireMockServer.port()))
+                        .username("username")
+                        .password("password")
+                        .build()).build();
 
         final String result = service.sendRequest(requestDto, eDeliveryAction);
         assertEquals("fc0e70cf-8d57-11ee-a62e-0242ac13000d@domibus.eu", result);

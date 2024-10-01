@@ -6,7 +6,6 @@ import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
-import eu.domibus.plugin.ws.generated.MarkMessageAsDownloadedFault;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +23,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 class RequestUpdaterServiceTest {
 
     private RequestUpdaterService service;
-    private final static String FOLDER = "src/test/java/resources/wiremock";
+    private static final String FOLDER = "src/test/java/resources/wiremock";
     private WireMockServer wireMockServer;
 
     @BeforeEach
@@ -38,7 +37,7 @@ class RequestUpdaterServiceTest {
     }
 
     @Test
-    void setMarkedAsDownloadTest() throws MalformedURLException, MarkMessageAsDownloadedFault {
+    void setMarkedAsDownloadTest() throws MalformedURLException {
         wireMockServer.stubFor(get(urlEqualTo("/domibus/services/wsplugin?wsdl"))
                 .willReturn(aResponse().withBodyFile("WebServicePlugin.wsdl")));
         wireMockServer.stubFor(post(urlEqualTo("/domibus/services/wsplugin?wsdl"))
@@ -52,6 +51,6 @@ class RequestUpdaterServiceTest {
 
         service.setMarkedAsDownload(apConfigDto, "messageId");
 
-        wireMockServer.verify(new CountMatchingStrategy(CountMatchingStrategy.EQUAL_TO,1), postRequestedFor(urlEqualTo("/domibus/services/wsplugin?wsdl")));
+        wireMockServer.verify(new CountMatchingStrategy(CountMatchingStrategy.EQUAL_TO, 1), postRequestedFor(urlEqualTo("/domibus/services/wsplugin?wsdl")));
     }
 }

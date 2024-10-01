@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service;
 
-import com.ingroupe.common.test.log.MemoryAppender;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.IdentifiersResultDto;
 import eu.efti.commons.dto.IdentifiersResultsDto;
@@ -12,6 +11,7 @@ import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.enums.TransportMode;
+import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.entity.ControlEntity;
@@ -26,7 +26,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public abstract class BaseServiceTest extends AbstractServiceTest {

@@ -35,8 +35,6 @@ class ApIncomingServiceTest extends AbstractTest {
 
     @Mock
     private NotificationService notificationService;
-    @Mock
-    private GateProperties gateProperties;
 
     @Mock
     private ReaderService readerService;
@@ -66,14 +64,14 @@ class ApIncomingServiceTest extends AbstractTest {
     @Test
     void manageIncomingNotificationBadFilesTest() throws IOException, InterruptedException {
         final String body = """
-        <body>
-            <requestUuid>reques</requestUuid>
-            <eFTIDataUuid>oki</eFTIDataUuid>
-            <status>oki</status>
-            <errorDescription>oki</errorDescription>
-            <eftiData>oki</eftiData>
-        </body>
-        """;
+                <body>
+                    <requestUuid>reques</requestUuid>
+                    <eFTIDataUuid>oki</eFTIDataUuid>
+                    <status>oki</status>
+                    <errorDescription>oki</errorDescription>
+                    <eftiData>oki</eftiData>
+                </body>
+                """;
 
         final NotificationDto notificationDto = new NotificationDto();
         notificationDto.setContent(NotificationContentDto.builder()
@@ -90,14 +88,14 @@ class ApIncomingServiceTest extends AbstractTest {
     @Test
     void manageIncomingNotificationTest() throws IOException, InterruptedException {
         final String body = """
-        <body>
-            <requestUuid>12345678-ab12-4ab6-8999-123456789abc</requestUuid>
-            <eFTIDataUuid>12345678-ab12-4ab6-8999-123456789abc</eFTIDataUuid>
-            <status>oki</status>
-            <errorDescription>oki</errorDescription>
-            <eftiData>oki</eftiData>
-        </body>
-        """;
+                <body>
+                    <requestUuid>12345678-ab12-4ab6-8999-123456789abc</requestUuid>
+                    <eFTIDataUuid>12345678-ab12-4ab6-8999-123456789abc</eFTIDataUuid>
+                    <status>oki</status>
+                    <errorDescription>oki</errorDescription>
+                    <eftiData>oki</eftiData>
+                </body>
+                """;
 
         final NotificationDto notificationDto = new NotificationDto();
         notificationDto.setContent(NotificationContentDto.builder()

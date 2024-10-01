@@ -2,8 +2,6 @@ package eu.efti.platformgatesimulator.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import eu.efti.platformgatesimulator.mapper.MapperUtils;
-import eu.efti.v1.json.SaveIdentifiersRequest;
 import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
 import eu.efti.edeliveryapconnector.dto.ApRequestDto;
@@ -17,6 +15,8 @@ import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.NotificationService;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.platformgatesimulator.config.GateProperties;
+import eu.efti.platformgatesimulator.mapper.MapperUtils;
+import eu.efti.v1.json.SaveIdentifiersRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +32,7 @@ import static java.lang.Thread.sleep;
 @AllArgsConstructor
 @Slf4j
 public class ApIncomingService {
+    private static final Random RANDOM = new Random();
 
     private final RequestSendingService requestSendingService;
 
@@ -60,7 +61,7 @@ public class ApIncomingService {
     }
 
     public void manageIncomingNotification(final ReceivedNotificationDto receivedNotificationDto) throws IOException, InterruptedException {
-        final int rand = new Random().nextInt(gateProperties.getMaxSleep() - gateProperties.getMinSleep()) + gateProperties.getMinSleep();
+        final int rand = RANDOM.nextInt(gateProperties.getMaxSleep() - gateProperties.getMinSleep()) + gateProperties.getMinSleep();
         sleep(rand);
 
         final Optional<NotificationDto> notificationDto = notificationService.consume(receivedNotificationDto);

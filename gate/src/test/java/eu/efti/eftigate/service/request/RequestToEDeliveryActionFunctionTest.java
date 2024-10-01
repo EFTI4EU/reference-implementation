@@ -42,7 +42,7 @@ class RequestToEDeliveryActionFunctionTest {
 
         final EDeliveryAction applied = requestToEDeliveryActionFunction.apply(actual);
 
-        Assertions.assertEquals(expected, applied);;
+        Assertions.assertEquals(expected, applied);
     }
 
     @Test
@@ -64,7 +64,7 @@ class RequestToEDeliveryActionFunctionTest {
                 arguments(buildRequestDto(EXTERNAL_ASK_UIL_SEARCH, DE_GATE_URL, PENDING), EDeliveryAction.FORWARD_UIL),
                 arguments(buildRequestDto(EXTERNAL_ASK_UIL_SEARCH, FR_GATE_URL, COMPLETE), EDeliveryAction.FORWARD_UIL),
                 arguments(buildRequestDto(NOTE_SEND, FR_GATE_URL, PENDING), null)
-                );
+        );
     }
 
     private static RabbitRequestDto buildRequestDto(final RequestTypeEnum requestType, final String eftiGateUrl, final StatusEnum controlStatus) {

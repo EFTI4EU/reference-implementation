@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 public class AuditRegistryLogService implements LogService<LogRegistryDto> {
 
     private static final LogMarkerEnum MARKER = LogMarkerEnum.REGISTRY;
+    public static final String EDELIVERY = "EDELIVERY";
     private final SerializeUtils serializeUtils;
 
     public void logByControlDto(final ControlDto controlDto,
@@ -30,7 +31,6 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                                 final String errorCode,
                                 final String name) {
         final boolean isError = errorCode != null;
-        final String edelivery = "EDELIVERY";
         this.log(LogRegistryDto.builder()
                 .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
                 .name(name)
@@ -49,7 +49,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .errorDescriptionMessage(isError ? ErrorCodesEnum.valueOf(errorCode).getMessage() : "")
                 .timeoutComponentType(TIMEOUT_COMPONENT_TYPE)
                 .eFTIDataId(controlDto.getEftiDataUuid())
-                .interfaceType(edelivery)
+                .interfaceType(EDELIVERY)
                 .build());
     }
 
@@ -60,7 +60,6 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                     final String errorCode,
                     final String name) {
         final boolean isError = errorCode != null;
-        final String edelivery = "EDELIVERY";
         this.log(LogRegistryDto.builder()
                 .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
                 .name(name)
@@ -80,7 +79,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .timeoutComponentType(TIMEOUT_COMPONENT_TYPE)
                 .identifiersId(identifiersDto.getIdentifiersUUID())
                 .eFTIDataId(identifiersDto.getEFTIDataUuid())
-                .interfaceType(edelivery)
+                .interfaceType(EDELIVERY)
                 .build());
     }
 
@@ -116,7 +115,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .timeoutComponentType(TIMEOUT_COMPONENT_TYPE)
                 .identifiersId(requestWrapper.getSaveIdentifiersRequest().getDatasetId())
                 .eFTIDataId(requestWrapper.getSaveIdentifiersRequest().getDatasetId())
-                .interfaceType("EDELIVERY")
+                .interfaceType(EDELIVERY)
                 .build());
     }
 

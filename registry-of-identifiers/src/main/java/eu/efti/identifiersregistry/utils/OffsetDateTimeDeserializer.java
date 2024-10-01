@@ -1,5 +1,6 @@
 package eu.efti.identifiersregistry.utils;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 
 import java.time.Instant;
@@ -13,6 +14,7 @@ public class OffsetDateTimeDeserializer extends InstantDeserializer<OffsetDateTi
                 fromMilliSeconds -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(fromMilliSeconds.value), fromMilliSeconds.zoneId),
                 fromNanoSeconds -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(fromNanoSeconds.integer, fromNanoSeconds.fraction), fromNanoSeconds.zoneId),
                 (offsetDateTime, zoneId) -> offsetDateTime.withOffsetSameInstant(zoneId.getRules().getOffset(offsetDateTime.toLocalDateTime())),
-                true);
+                true, JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID.enabledByDefault(),
+                JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS.enabledByDefault());
     }
 }

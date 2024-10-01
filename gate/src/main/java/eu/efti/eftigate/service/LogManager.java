@@ -2,7 +2,6 @@ package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.IdentifiersDto;
-import eu.efti.commons.dto.IdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.ValidableDto;
@@ -64,7 +63,7 @@ public class LogManager {
                 .requestingComponentType(ComponentType.GATE)
                 .requestingComponentId(gateProperties.getOwner())
                 .requestingComponentCountry(gateProperties.getCountry())
-                .respondingComponentType(isCurrentGate? ComponentType.PLATFORM : ComponentType.GATE)
+                .respondingComponentType(isCurrentGate ? ComponentType.PLATFORM : ComponentType.GATE)
                 .respondingComponentId(receiver)
                 .respondingComponentCountry(eftiGateUrlResolver.resolve(receiver)).build();
         final StatusEnum status = isSucess ? StatusEnum.COMPLETE : StatusEnum.ERROR;
@@ -83,7 +82,7 @@ public class LogManager {
                 .requestingComponentType(ComponentType.GATE)
                 .requestingComponentId(gateProperties.getOwner())
                 .requestingComponentCountry(gateProperties.getCountry())
-                .respondingComponentType(isCurrentGate? ComponentType.PLATFORM : ComponentType.GATE)
+                .respondingComponentType(isCurrentGate ? ComponentType.PLATFORM : ComponentType.GATE)
                 .respondingComponentId(receiver)
                 .respondingComponentCountry(eftiGateUrlResolver.resolve(receiver)).build();
         final String body = serializeUtils.mapObjectToBase64String(identifiersRequestDto);
@@ -127,8 +126,8 @@ public class LogManager {
     }
 
     public void logRegistryIdentifiers(final ControlDto control,
-                                        final List<IdentifiersDto> metadataDtoList,
-                                        final String name) {
+                                       final List<IdentifiersDto> metadataDtoList,
+                                       final String name) {
         final String body = metadataDtoList != null ? serializeUtils.mapObjectToBase64String(metadataDtoList) : null;
         this.auditRegistryLogService.logByControlDto(control, gateProperties.getOwner(), gateProperties.getCountry(), body, null, name);
     }
@@ -151,7 +150,7 @@ public class LogManager {
                 .respondingComponentCountry(gateProperties.getCountry()).build();
     }
 
-    public void logRequestRegistry(final ControlDto controlDto, final String body ,final String name) {
+    public void logRequestRegistry(final ControlDto controlDto, final String body, final String name) {
         this.auditRegistryLogService.logByControlDto(controlDto, gateProperties.getOwner(), gateProperties.getCountry(), body, null, name);
     }
 

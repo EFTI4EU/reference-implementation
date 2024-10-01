@@ -1,8 +1,8 @@
 package eu.efti.eftigate.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.dto.RequestUuidDto;
 import eu.efti.eftigate.service.ControlService;
@@ -103,6 +103,5 @@ class IdentifiersControllerTest {
                 .assertThat("$.errorCode", is("Uuid not found."))
                 .assertThat("$.errorDescription", is("Error requestUuid not found."))
                 .assertThat("$.status", is("COMPLETE"));
-        ;
     }
 }

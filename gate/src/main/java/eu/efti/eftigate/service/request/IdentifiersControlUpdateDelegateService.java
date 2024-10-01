@@ -40,7 +40,7 @@ public class IdentifiersControlUpdateDelegateService {
         final List<IdentifiersResultDto> identifiersResultDtoList = response.getIdentifiers();
         final IdentifiersResults identifiersResults = buildIdentifiersResultFrom(identifiersResultDtoList);
         final IdentifiersRequestEntity waitingRequest = identifiersRequestRepository.findByControlRequestUuidAndStatusAndGateUrlDest(requestUuid, RequestStatusEnum.IN_PROGRESS, gateUrlDest);
-        if (waitingRequest != null){
+        if (waitingRequest != null) {
             updateControlRequests(waitingRequest, identifiersResults);
         }
     }
@@ -60,7 +60,7 @@ public class IdentifiersControlUpdateDelegateService {
     }
 
     private StatusEnum getControlNextStatus(final StatusEnum currentStatus, final List<RequestStatusEnum> requestStatuses) {
-        if (requestStatuses.stream().allMatch(requestStatusEnum  -> RequestStatusEnum.SUCCESS == requestStatusEnum)) {
+        if (requestStatuses.stream().allMatch(requestStatusEnum -> RequestStatusEnum.SUCCESS == requestStatusEnum)) {
             return StatusEnum.COMPLETE;
         } else if (requestStatuses.stream().anyMatch(requestStatusEnum -> RequestStatusEnum.TIMEOUT == requestStatusEnum)
                 && requestStatuses.stream().noneMatch(requestStatusEnum -> RequestStatusEnum.ERROR == requestStatusEnum)) {
@@ -78,9 +78,9 @@ public class IdentifiersControlUpdateDelegateService {
     }
 
     private IdentifiersResults buildIdentifiersResultFrom(final List<IdentifiersResultDto> identifiersResultDtoList) {
-        final List<IdentifiersResult> IdentifiersResultList = mapperUtils.identifierResultDtosToIdentifierEntities(identifiersResultDtoList);
+        final List<IdentifiersResult> identifiersResultList = mapperUtils.identifierResultDtosToIdentifierEntities(identifiersResultDtoList);
         return IdentifiersResults.builder()
-                .identifiersResult(IdentifiersResultList)
+                .identifiersResult(identifiersResultList)
                 .build();
     }
 }
