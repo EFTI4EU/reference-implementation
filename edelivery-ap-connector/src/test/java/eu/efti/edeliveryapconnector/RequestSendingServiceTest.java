@@ -49,8 +49,7 @@ class RequestSendingServiceTest {
                 .sender("syldavia")
                 .receiver("borduria")
                 .body("PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPGhlbGxvPndvcmxkPC9oZWxsbz4=")
-                .apConfig(ApConfigDto.
-                        builder()
+                .apConfig(ApConfigDto.builder()
                         .url(String.format("http://localhost:%s/domibus/services/wsplugin?wsdl", wireMockServer.port()))
                         .username("username")
                         .password("password")
