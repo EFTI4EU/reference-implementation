@@ -2,7 +2,13 @@ package eu.efti.identifiersregistry;
 
 import eu.efti.v1.codes.CountryCode;
 import eu.efti.v1.codes.TransportEquipmentCategoryCode;
-import eu.efti.v1.consignment.identifier.*;
+import eu.efti.v1.consignment.identifier.AssociatedTransportEquipment;
+import eu.efti.v1.consignment.identifier.LogisticsTransportEquipment;
+import eu.efti.v1.consignment.identifier.LogisticsTransportMeans;
+import eu.efti.v1.consignment.identifier.LogisticsTransportMovement;
+import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
+import eu.efti.v1.consignment.identifier.TradeCountry;
+import eu.efti.v1.consignment.identifier.TransportEvent;
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import eu.efti.v1.types.DateTime;
 import eu.efti.v1.types.Identifier17;
@@ -12,11 +18,12 @@ import java.math.BigInteger;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class IdentifiersMapperTest {
+class IdentifiersMapperTest {
     @Test
-    public void testMapConsignmentToInternalModel() {
+    void testMapConsignmentToInternalModel() {
         SaveIdentifiersRequest request = new SaveIdentifiersRequest();
         request.setDatasetId("datasetId");
         SupplyChainConsignment consignment = new SupplyChainConsignment();

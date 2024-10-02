@@ -2,10 +2,10 @@ package eu.efti.eftigate.service;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import com.ingroupe.common.test.log.MemoryAppender;
 import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.exception.TechnicalException;
+import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.eftigate.config.GateProperties;
@@ -49,9 +49,9 @@ class RabbitListenerServiceTest extends BaseServiceTest {
     private LogManager logManager;
 
 
-    private final static String url = "url";
-    private final static String password = "password";
-    private final static String username = "username";
+    private static final String URL = "url";
+    private static final String PASSWORD = "password";
+    private static final String USERNAME = "username";
 
     private RabbitListenerService rabbitListenerService;
 
@@ -71,9 +71,9 @@ class RabbitListenerServiceTest extends BaseServiceTest {
         final GateProperties gateProperties = GateProperties.builder()
                 .owner("http://france.lol")
                 .ap(GateProperties.ApConfig.builder()
-                        .url(url)
-                        .password(password)
-                        .username(username).build()).build();
+                        .url(URL)
+                        .password(PASSWORD)
+                        .username(USERNAME).build()).build();
 
         rabbitListenerService = new RabbitListenerService(gateProperties, serializeUtils, requestSendingService,
                 requestServiceFactory, apIncomingService, requestToEDeliveryActionFunction, mapperUtils, logManager);
@@ -95,8 +95,8 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
         rabbitListenerService.listenMessageReceiveDeadQueue(message);
 
-        assertTrue(memoryAppender.containedInFormattedLogMessage(message));
-        assertEquals(1,memoryAppender.countEventsForLogger(LOGGER_NAME, Level.ERROR));
+        assertTrue(memoryAppender.containsFormattedLogMessage(message));
+        assertEquals(1, memoryAppender.countEventsForLogger(LOGGER_NAME, Level.ERROR));
     }
 
     @Test
@@ -105,8 +105,8 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
         rabbitListenerService.listenReceiveMessage(message);
 
-        assertTrue(memoryAppender.containedInFormattedLogMessage(message));
-        assertEquals(1,memoryAppender.countEventsForLogger(LOGGER_NAME, Level.INFO));
+        assertTrue(memoryAppender.containsFormattedLogMessage(message));
+        assertEquals(1, memoryAppender.countEventsForLogger(LOGGER_NAME, Level.INFO));
     }
 
     @Test
@@ -130,8 +130,8 @@ class RabbitListenerServiceTest extends BaseServiceTest {
         rabbitListenerService.listenSendMessage(StringUtils.deleteWhitespace(requestJson));
 
         verify(logManager).logSentMessage(any(), any(), anyString(), anyBoolean(), anyBoolean(), any());
-        assertTrue(memoryAppender.containedInFormattedLogMessage("receive message from rabbimq queue"));
-        assertEquals(1,memoryAppender.countEventsForLogger(LOGGER_NAME, Level.INFO));
+        assertTrue(memoryAppender.containsFormattedLogMessage("receive message from rabbimq queue"));
+        assertEquals(1, memoryAppender.countEventsForLogger(LOGGER_NAME, Level.INFO));
     }
 
     @Test()
@@ -163,8 +163,8 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
         rabbitListenerService.listenSendMessageDeadLetter(message);
 
-        assertTrue(memoryAppender.containedInFormattedLogMessage("Receive message for dead queue"));
-        assertEquals(1,memoryAppender.countEventsForLogger(LOGGER_NAME, Level.ERROR));
+        assertTrue(memoryAppender.containsFormattedLogMessage("Receive message for dead queue"));
+        assertEquals(1, memoryAppender.countEventsForLogger(LOGGER_NAME, Level.ERROR));
     }
 }
 

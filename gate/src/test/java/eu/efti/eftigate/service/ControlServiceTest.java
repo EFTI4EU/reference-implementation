@@ -1,7 +1,18 @@
 package eu.efti.eftigate.service;
 
-import eu.efti.commons.dto.*;
+import eu.efti.commons.dto.AuthorityDto;
+import eu.efti.commons.dto.ContactInformationDto;
+import eu.efti.commons.dto.ControlDto;
+import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.IdentifiersDto;
+import eu.efti.commons.dto.IdentifiersResponseDto;
+import eu.efti.commons.dto.IdentifiersResultDto;
+import eu.efti.commons.dto.IdentifiersResultsDto;
+import eu.efti.commons.dto.NotesDto;
+import eu.efti.commons.dto.SearchParameter;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
+import eu.efti.commons.dto.TransportVehicleDto;
+import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
@@ -108,9 +119,9 @@ class ControlServiceTest extends AbstractServiceTest {
     private final String requestUuid = UUID.randomUUID().toString();
     private final String identifiersUuid = UUID.randomUUID().toString();
 
-    private final static String url = "http://france.lol";
-    private final static String password = "password";
-    private final static String username = "username";
+    private static final String URL = "http://france.lol";
+    private static final String PASSWORD = "password";
+    private static final String USERNAME = "username";
 
     @BeforeEach
     public void before() {
@@ -118,9 +129,9 @@ class ControlServiceTest extends AbstractServiceTest {
                 .owner("http://france.lol")
                 .country("FR")
                 .ap(GateProperties.ApConfig.builder()
-                        .url(url)
-                        .password(password)
-                        .username(username).build()).build();
+                        .url(URL)
+                        .password(PASSWORD)
+                        .username(USERNAME).build()).build();
         controlService = new ControlService(controlRepository, eftiGateUrlResolver, identifiersService, mapperUtils,
                 requestServiceFactory, logManager, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
                 gateProperties);

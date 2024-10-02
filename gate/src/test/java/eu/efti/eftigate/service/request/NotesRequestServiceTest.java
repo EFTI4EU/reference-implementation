@@ -3,7 +3,6 @@ package eu.efti.eftigate.service.request;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ingroupe.common.test.log.MemoryAppender;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.NotesRequestDto;
@@ -11,6 +10,7 @@ import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
+import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
@@ -46,7 +46,6 @@ import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
 import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.RECEIVED;
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
-import static eu.efti.eftigate.EftiTestUtils.testFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -117,7 +116,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
         when(notesRequestRepository.save(any())).thenReturn(noteRequestEntity);
         notesRequestService.updateStatus(noteRequestEntity, ERROR);
         verify(notesRequestRepository).save(noteRequestEntityArgumentCaptor.capture());
-        verify(notesRequestRepository,  Mockito.times(1)).save(any(NoteRequestEntity.class));
+        verify(notesRequestRepository, Mockito.times(1)).save(any(NoteRequestEntity.class));
         assertEquals(ERROR, noteRequestEntityArgumentCaptor.getValue().getStatus());
     }
 
@@ -173,8 +172,8 @@ class NotesRequestServiceTest extends BaseServiceTest {
 
         verify(notesRequestRepository).save(noteRequestEntityArgumentCaptor.capture());
         assertEquals(SUCCESS, noteRequestEntityArgumentCaptor.getValue().getStatus());
-        assertTrue(memoryAppender.containedInFormattedLogMessage("sent note message messageId successfully"));
-        assertEquals(1,memoryAppender.countEventsForLogger(NotesRequestService.class.getName(), Level.INFO));
+        assertTrue(memoryAppender.containsFormattedLogMessage("sent note message messageId successfully"));
+        assertEquals(1, memoryAppender.countEventsForLogger(NotesRequestService.class.getName(), Level.INFO));
     }
 
     @Test
@@ -183,7 +182,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldBuildResponseBody_whenRequestReceived(){
+    void shouldBuildResponseBody_whenRequestReceived() {
         controlDto.setRequestType(RequestTypeEnum.NOTE_SEND);
         controlDto.setEftiPlatformUrl("http://efti.platform.acme.com");
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
@@ -200,7 +199,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldFindRequestByMessageId_whenRequestExists(){
+    void shouldFindRequestByMessageId_whenRequestExists() {
         when(notesRequestRepository.findByEdeliveryMessageId(anyString())).thenReturn(noteRequestEntity);
         final NoteRequestEntity requestByMessageId = notesRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         assertNotNull(requestByMessageId);

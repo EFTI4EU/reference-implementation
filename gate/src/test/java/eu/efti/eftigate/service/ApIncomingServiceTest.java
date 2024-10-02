@@ -7,11 +7,7 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
 import eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto;
 import eu.efti.edeliveryapconnector.service.NotificationService;
-import eu.efti.eftigate.config.GateProperties;
-import eu.efti.eftigate.mapper.MapperUtils;
-import eu.efti.eftigate.repository.RequestRepository;
 import eu.efti.eftigate.service.request.EftiRequestUpdater;
-import eu.efti.eftigate.service.request.IdentifiersRequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
@@ -40,26 +36,13 @@ class ApIncomingServiceTest extends BaseServiceTest {
     @Mock
     private RequestServiceFactory requestServiceFactory;
     @Mock
-    private RequestRepository<?> requestRepository;
-    @Mock
     private UilRequestService uilRequestService;
-    @Mock
-    private IdentifiersRequestService identifiersRequestService;
     @Mock
     private IdentifiersService identifiersService;
     @Mock
     private EftiRequestUpdater eftiRequestUpdater;
-    @Mock
-    private LogManager logManager;
-    @Mock
-    private GateProperties gateProperties;
-    @Mock
-    private MapperUtils mapperUtils;
 
-    private final static String url = "url";
-    private final static String password = "password";
-    private final static String username = "username";
-    private final static String xml_body = """
+    private static final String XML_BODY = """
             <identifiers>
                 <eFTIPlatformUrl>https://efti.platform.001.eu</eFTIPlatformUrl>
                 <eFTIDataUuid>ac0bbbc9-f46e-4093-b523-830431fb1001</eFTIDataUuid>
@@ -153,7 +136,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
         final NotificationDto notificationDto = NotificationDto.builder()
                 .content(NotificationContentDto.builder()
                         .messageId(messageId)
-                        .body(xml_body)
+                        .body(XML_BODY)
                         .action(EDeliveryAction.UPLOAD_IDENTIFIERS.getValue())
                         .contentType(MediaType.TEXT_XML_VALUE)
                         .build())
@@ -175,7 +158,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
         final NotificationDto notificationDto = NotificationDto.builder()
                 .content(NotificationContentDto.builder()
                         .messageId(messageId)
-                        .body(xml_body)
+                        .body(XML_BODY)
                         .action("osef")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .build())

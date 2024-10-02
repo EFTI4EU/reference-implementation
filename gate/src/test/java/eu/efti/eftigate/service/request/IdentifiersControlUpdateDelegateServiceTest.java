@@ -2,15 +2,15 @@ package eu.efti.eftigate.service.request;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import com.ingroupe.common.test.log.MemoryAppender;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
+import eu.efti.commons.utils.MemoryAppender;
+import eu.efti.eftigate.EftiTestUtils;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
-import eu.efti.eftigate.EftiTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -120,7 +120,7 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void  shouldGetErrorAsControlNextStatusOverTimeout_whenAtLeastOneRequestIsInErrorStatus() {
+    void shouldGetErrorAsControlNextStatusOverTimeout_whenAtLeastOneRequestIsInErrorStatus() {
         secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.TIMEOUT);
         identifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
         controlEntity.setStatus(StatusEnum.PENDING);

@@ -3,7 +3,6 @@ package eu.efti.eftigate.service.request;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ingroupe.common.test.log.MemoryAppender;
 import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.dto.IdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
@@ -11,6 +10,7 @@ import eu.efti.commons.dto.TransportVehicleDto;
 import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.RequestTypeEnum;
+import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
@@ -75,7 +75,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     private IdentifiersRequestRepository identifiersRequestRepository;
     @Mock
     private IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService;
-    private IdentifiersRequestService IdentifiersRequestService;
+    private IdentifiersRequestService identifiersRequestService;
     @Captor
     private ArgumentCaptor<IdentifiersRequestDto> requestDtoArgumentCaptor;
     @Captor
@@ -87,7 +87,6 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     private final IdentifiersRequestEntity identifiersRequestEntity = new IdentifiersRequestEntity();
     private final IdentifiersRequestEntity secondIdentifiersRequestEntity = new IdentifiersRequestEntity();
     private final IdentifiersRequestDto identifiersRequestDto = new IdentifiersRequestDto();
-
 
 
     @Override
@@ -112,7 +111,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                 .transportVehicles(List.of(TransportVehicleEntity.builder()
                         .vehicleID("abc123").vehicleCountry(CountryIndicator.FR).build(), TransportVehicleEntity.builder()
                         .vehicleID("abc124").vehicleCountry(CountryIndicator.BE).build())).build();
-        IdentifiersRequestService = new IdentifiersRequestService(identifiersRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties,
+        identifiersRequestService = new IdentifiersRequestService(identifiersRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties,
                 identifiersService, requestUpdaterService, serializeUtils, logManager, identifiersControlUpdateDelegateService);
 
         final Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(IdentifiersRequestService.class);
@@ -125,7 +124,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         when(identifiersRequestRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
 
         //Act
-        IdentifiersRequestService.createAndSendRequest(controlDto, "https://efti.platform.borduria.eu");
+        identifiersRequestService.createAndSendRequest(controlDto, "https://efti.platform.borduria.eu");
 
         //Assert
         verify(mapperUtils, times(1)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
@@ -138,7 +137,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
 
         //Act
-        IdentifiersRequestService.createRequest(controlDto, SUCCESS, Collections.singletonList(identifiersDto));
+        identifiersRequestService.createRequest(controlDto, SUCCESS, Collections.singletonList(identifiersDto));
 
         //Assert
         verify(mapperUtils).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
@@ -151,7 +150,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
 
     @Test
     void trySendDomibusSuccessTest() throws SendRequestException, JsonProcessingException {
-        IdentifiersRequestService.sendRequest(requestDto);
+        identifiersRequestService.sendRequest(requestDto);
         verify(rabbitSenderService).sendMessageToRabbit(any(), any(), any());
     }
 
@@ -168,7 +167,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         when(controlService.createControlFrom(any(), any(), any())).thenReturn(controlDto);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
         //Act
-        IdentifiersRequestService.manageMessageReceive(notificationDto);
+        identifiersRequestService.manageMessageReceive(notificationDto);
 
         //assert
         verify(controlService).createControlFrom(any(), any(), any());
@@ -193,7 +192,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         when(controlService.existsByCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(true);
 
         //Act
-        IdentifiersRequestService.manageMessageReceive(notificationDto);
+        identifiersRequestService.manageMessageReceive(notificationDto);
 
         //assert
         verify(identifiersControlUpdateDelegateService).updateExistingControl(anyString(), anyString(), anyString());
@@ -202,7 +201,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
 
     @Test
     void allRequestsContainsDataTest_whenFalse() {
-        assertFalse(IdentifiersRequestService.allRequestsContainsData(List.of(identifiersRequestEntity)));
+        assertFalse(identifiersRequestService.allRequestsContainsData(List.of(identifiersRequestEntity)));
     }
 
     @Test
@@ -210,7 +209,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         //Arrange
         identifiersRequestEntity.setIdentifiersResults(new IdentifiersResults(List.of(identifiersResult)));
         //Act and Assert
-        assertTrue(IdentifiersRequestService.allRequestsContainsData(List.of(identifiersRequestEntity)));
+        assertTrue(identifiersRequestService.allRequestsContainsData(List.of(identifiersRequestEntity)));
     }
 
     @Test
@@ -218,7 +217,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         identifiersRequestEntity.setEdeliveryMessageId(MESSAGE_ID);
         when(identifiersRequestRepository.findByControlRequestTypeAndStatusAndEdeliveryMessageId(any(), any(), any())).thenReturn(identifiersRequestEntity);
 
-        IdentifiersRequestService.manageSendSuccess(MESSAGE_ID);
+        identifiersRequestService.manageSendSuccess(MESSAGE_ID);
 
         verify(identifiersRequestRepository).save(requestEntityArgumentCaptor.capture());
         assertEquals(COMPLETE, requestEntityArgumentCaptor.getValue().getControl().getStatus());
@@ -228,40 +227,40 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     @Test
     void shouldNotUpdateControlAndRequestStatus_AndLogMessage_whenResponseSentSuccessfully() {
         identifiersRequestEntity.setEdeliveryMessageId(MESSAGE_ID);
-        IdentifiersRequestService.manageSendSuccess(MESSAGE_ID);
+        identifiersRequestService.manageSendSuccess(MESSAGE_ID);
 
-        assertTrue(memoryAppender.containedInFormattedLogMessage("sent message messageId successfully"));
-        assertEquals(1,memoryAppender.countEventsForLogger(IdentifiersRequestService.class.getName(), Level.INFO));
+        assertTrue(memoryAppender.containsFormattedLogMessage("sent message messageId successfully"));
+        assertEquals(1, memoryAppender.countEventsForLogger(IdentifiersRequestService.class.getName(), Level.INFO));
     }
 
     @Test
-    void shouldUpdateSentRequestStatus_whenRequestIsExternal(){
+    void shouldUpdateSentRequestStatus_whenRequestIsExternal() {
         identifiersRequestDto.getControl().setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         when(mapperUtils.requestToRequestDto(identifiersRequestEntity, IdentifiersRequestDto.class)).thenReturn(identifiersRequestDto);
         when(mapperUtils.requestDtoToRequestEntity(identifiersRequestDto, IdentifiersRequestEntity.class)).thenReturn(identifiersRequestEntity);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
 
-        IdentifiersRequestService.updateSentRequestStatus(identifiersRequestDto, MESSAGE_ID);
+        identifiersRequestService.updateSentRequestStatus(identifiersRequestDto, MESSAGE_ID);
 
         verify(mapperUtils, times(1)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
         assertEquals(RESPONSE_IN_PROGRESS, identifiersRequestDto.getStatus());
     }
 
     @Test
-    void shouldUpdateSentRequestStatus_whenRequestIsNotExternal(){
+    void shouldUpdateSentRequestStatus_whenRequestIsNotExternal() {
         identifiersRequestDto.getControl().setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         when(mapperUtils.requestToRequestDto(identifiersRequestEntity, IdentifiersRequestDto.class)).thenReturn(identifiersRequestDto);
         when(mapperUtils.requestDtoToRequestEntity(identifiersRequestDto, IdentifiersRequestEntity.class)).thenReturn(identifiersRequestEntity);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
 
-        IdentifiersRequestService.updateSentRequestStatus(identifiersRequestDto, MESSAGE_ID);
+        identifiersRequestService.updateSentRequestStatus(identifiersRequestDto, MESSAGE_ID);
 
         verify(mapperUtils, times(1)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
         assertEquals(IN_PROGRESS, identifiersRequestDto.getStatus());
     }
 
     @Test
-    void shouldBuildRequestBody_whenRemoteGateSentResponse(){
+    void shouldBuildRequestBody_whenRemoteGateSentResponse() {
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         controlDto.setIdentifiersResults(identifiersResultsDto);
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
@@ -275,13 +274,13 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
 
         when(controlService.buildIdentifiersResponse(any(), anyList())).thenReturn(identifiersResponseDto);
 
-        final String requestBody = IdentifiersRequestService.buildRequestBody(rabbitRequestDto);
+        final String requestBody = identifiersRequestService.buildRequestBody(rabbitRequestDto);
 
         assertThat(StringUtils.deleteWhitespace(expectedRequestBody), CompareMatcher.isIdenticalTo(requestBody));
     }
 
     @Test
-    void shouldBuildRequestBody_whenLocalGateSendsRequest(){
+    void shouldBuildRequestBody_whenLocalGateSendsRequest() {
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         controlDto.setIdentifiersResults(identifiersResultsDto);
         controlDto.setTransportIdentifiers(searchParameter);
@@ -289,22 +288,22 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         rabbitRequestDto.setControl(controlDto);
         final String expectedRequestBody = testFile("/xml/FTI013.xml");
 
-        final String requestBody = IdentifiersRequestService.buildRequestBody(rabbitRequestDto);
+        final String requestBody = identifiersRequestService.buildRequestBody(rabbitRequestDto);
 
         assertThat(StringUtils.deleteWhitespace(expectedRequestBody), CompareMatcher.isIdenticalTo(requestBody));
     }
 
     @Test
-    void shouldFindRequestByMessageId_whenRequestExists(){
+    void shouldFindRequestByMessageId_whenRequestExists() {
         when(identifiersRequestRepository.findByEdeliveryMessageId(anyString())).thenReturn(identifiersRequestEntity);
-        final IdentifiersRequestEntity requestByMessageId = IdentifiersRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
+        final IdentifiersRequestEntity requestByMessageId = identifiersRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         assertNotNull(requestByMessageId);
     }
 
     @Test
     void shouldThrowException_whenFindRequestByMessageId_andRequestDoesNotExists() {
         final Exception exception = assertThrows(RequestNotFoundException.class, () -> {
-            IdentifiersRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
+            identifiersRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         });
         assertEquals("couldn't find Consignment request for messageId: messageId", exception.getMessage());
     }
@@ -312,7 +311,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     @ParameterizedTest
     @MethodSource("getArgumentsForEdeliveryActionSupport")
     void supports_ShouldReturnTrueForIdentifiers(final EDeliveryAction eDeliveryAction, final boolean expectedResult) {
-        assertEquals(expectedResult, IdentifiersRequestService.supports(eDeliveryAction));
+        assertEquals(expectedResult, identifiersRequestService.supports(eDeliveryAction));
     }
 
     private static Stream<Arguments> getArgumentsForEdeliveryActionSupport() {
@@ -328,7 +327,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     @ParameterizedTest
     @MethodSource("getArgumentsForRequestTypeEnumSupport")
     void supports_ShouldReturnTrueForIdentifiers(final RequestTypeEnum requestTypeEnum, final boolean expectedResult) {
-        assertEquals(expectedResult, IdentifiersRequestService.supports(requestTypeEnum));
+        assertEquals(expectedResult, identifiersRequestService.supports(requestTypeEnum));
     }
 
     private static Stream<Arguments> getArgumentsForRequestTypeEnumSupport() {

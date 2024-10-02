@@ -65,7 +65,7 @@ class AuditRequestLogServiceTest extends AbstractTestService {
     @Test
     void shouldLogAckTrue() throws JSONException {
         final String expected = "{\"messageDate\":\"2024-07-31 15:05:53\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"sender\",\"requestingComponentCountry\":\"senderCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"receiver\",\"respondingComponentCountry\":\"receiverCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"DEFAULT_ERROR\",\"errorDescriptionMessage\":\"Error\",\"timeoutComponentType\":\"timeoutComponentType\",\"requestId\":\"requestUuid\",\"responseId\":\"responseId\",\"authorityNationalUniqueIdentifier\":\"nui\",\"authorityName\":\"name\",\"officerId\":\"officerId\",\"subsetEURequested\":\"subsetEu\",\"subsetMSRequested\":\"subsetMS\",\"requestType\":\"UIL_ACK\",\"eFTIDataId\":\"dataUuid\"}";
-        auditRequestLogService.log(controlDto, messagePartiesDto, gateId, gateCountry, body, status, true, "name");
+        auditRequestLogService.log(controlDto, messagePartiesDto, GATE_ID, GATE_COUNTRY, BODY, status, true, "name");
         JSONAssert.assertEquals(expected, logWatcher.list.get(0).getFormattedMessage(),
                 new CustomComparator(JSONCompareMode.LENIENT,
                         new Customization("messageDate", (o1, o2) -> true)));
@@ -74,7 +74,7 @@ class AuditRequestLogServiceTest extends AbstractTestService {
     @Test
     void shouldLogAckFalse() throws JSONException {
         final String expected = "{\"messageDate\":\"2024-07-31 15:05:53\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"sender\",\"requestingComponentCountry\":\"senderCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"receiver\",\"respondingComponentCountry\":\"receiverCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"DEFAULT_ERROR\",\"errorDescriptionMessage\":\"Error\",\"timeoutComponentType\":\"timeoutComponentType\",\"requestId\":\"requestUuid\",\"responseId\":\"responseId\",\"authorityNationalUniqueIdentifier\":\"nui\",\"authorityName\":\"name\",\"officerId\":\"officerId\",\"subsetEURequested\":\"subsetEu\",\"subsetMSRequested\":\"subsetMS\",\"requestType\":\"UIL\",\"eFTIDataId\":\"dataUuid\"}";
-        auditRequestLogService.log(controlDto, messagePartiesDto, gateId, gateCountry, body, status, false, "name");
+        auditRequestLogService.log(controlDto, messagePartiesDto, GATE_ID, GATE_COUNTRY, BODY, status, false, "name");
         JSONAssert.assertEquals(expected, logWatcher.list.get(0).getFormattedMessage(),
                 new CustomComparator(JSONCompareMode.LENIENT,
                         new Customization("messageDate", (o1, o2) -> true)));

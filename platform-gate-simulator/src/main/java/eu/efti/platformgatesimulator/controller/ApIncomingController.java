@@ -18,12 +18,6 @@ import java.io.IOException;
 @Slf4j
 public class ApIncomingController {
 
-    private final String SOAP_RESULT = """
-            <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
-               <Body> domibus ws plugin require a response when it call our endpoint </Body>
-            </Envelope>
-           """;
-
     private final ApIncomingService apIncomingService;
 
     @PostMapping("/notification")
@@ -31,6 +25,11 @@ public class ApIncomingController {
         log.info("Notification reçus");
 
         apIncomingService.manageIncomingNotification(receivedNotificationDto);
-        return ResponseEntity.ok().body(SOAP_RESULT);
+        String soapResult = """
+                 <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+                    <Body> domibus ws plugin require a response when it call our endpoint </Body>
+                 </Envelope>
+                """;
+        return ResponseEntity.ok().body(soapResult);
     }
 }
