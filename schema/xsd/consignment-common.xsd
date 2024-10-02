@@ -291,6 +291,7 @@
               <subset id="SK03" status="C"/>
               <subset id="SK04" status="C"/>
               <subset id="SK05" status="C"/>
+              <subset id="identifier" status="O"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>A unique number, mark or name which identifies this associated piece of transport
@@ -464,6 +465,7 @@
                   parentId="ASBIE1092">
               <subset id="EL05" status="O"/>
               <subset id="HU07" status="O"/>
+              <subset id="identifier" status="O"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>The sequence number differentiating this piece of transport equipment from others in a set
@@ -4005,6 +4007,7 @@
               <subset id="SK03" status="SI"/>
               <subset id="SK04" status="SI"/>
               <subset id="SK05" status="SI"/>
+              <subset id="identifier" status="SI"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>A piece of transport equipment carried on this piece of logistics transport equipment, such
@@ -4160,6 +4163,7 @@
               <subset id="SK03" status="C"/>
               <subset id="SK04" status="C"/>
               <subset id="SK05" status="C"/>
+              <subset id="identifier" status="O"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>The code specifying the category for this piece of logistics transport equipment, such as
@@ -4443,6 +4447,7 @@
               <subset id="SK03" status="O"/>
               <subset id="SK04" status="O"/>
               <subset id="SK05" status="O"/>
+              <subset id="identifier" status="O"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>The unique identifier of this piece of logistics transport equipment.</xsd:documentation>
@@ -4657,6 +4662,7 @@
               <subset id="SI01" status="SI"/>
               <subset id="SI02" status="SI"/>
               <subset id="SI03" status="SI"/>
+              <subset id="identifier" status="SI"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>The registration country for this logistics transport equipment.</xsd:documentation>
@@ -4839,6 +4845,7 @@
               <subset id="SK03" status="O"/>
               <subset id="SK04" status="O"/>
               <subset id="SK05" status="O"/>
+              <subset id="identifier" status="O"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>The sequence number differentiating this piece of logistics transport equipment from others
@@ -5099,6 +5106,7 @@
               <subset id="SK03" status="C"/>
               <subset id="SK04" status="C"/>
               <subset id="SK05" status="C"/>
+              <subset id="identifier" status="O"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>An identifier of this logistics means of transport, such as the International Maritime
@@ -5243,6 +5251,7 @@
               <subset id="SI05" status="SI"/>
               <subset id="SI06" status="SI"/>
               <subset id="SK04" status="SI"/>
+              <subset id="identifier" status="SI"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>The country of registration of this logistics means of transport.</xsd:documentation>
@@ -5397,7 +5406,9 @@
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01010121" id="Logistics_ Transport Movement. Dangerous Goods. Indicator"/>
-            <efti id="eFTI1451" format="" definition="" parentId="ASBIE1098"/>
+            <efti id="eFTI1451" format="" definition="" parentId="ASBIE1098">
+              <subset id="identifier" status="O"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>The indication of whether or not dangerous goods are carried for this logistics transport
             movement.
@@ -5637,6 +5648,7 @@
               <subset id="SI06" status="M"/>
               <subset id="SK03" status="M"/>
               <subset id="SK04" status="M"/>
+              <subset id="identifier" status="O"/>
             </efti>
             <efti id="eFTI631" format="n1"
                   definition="The code specifying the mode, such as by air, sea, rail, road or inland waterway, for this pre-carriage transport movement."
@@ -5893,6 +5905,7 @@
               <subset id="SK03" status="SI"/>
               <subset id="SK04" status="SI"/>
               <subset id="SK05" status="SI"/>
+              <subset id="identifier" status="SI"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>The means of transport used for this logistics transport movement.</xsd:documentation>
@@ -10954,6 +10967,7 @@ The text of the stated condition." parentId="ASBIE1130">
               <subset id="SI01" status="M"/>
               <subset id="SI02" status="M"/>
               <subset id="SI03" status="M"/>
+              <subset id="identifier" status="O"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>The date, time, date time or other date time value when this supply chain consignment will
@@ -11675,6 +11689,7 @@ The text of the stated condition." parentId="ASBIE1130">
               <subset id="SE03" status="SI"/>
               <subset id="SI01" status="SI"/>
               <subset id="SI03" status="SI"/>
+              <subset id="identifier" status="SI"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>The delivery event for this supply chain consignment.</xsd:documentation>
@@ -12239,6 +12254,7 @@ The text of the stated condition." parentId="ASBIE1130">
               <subset id="SK03" status="SI"/>
               <subset id="SK04" status="SI"/>
               <subset id="SK05" status="SI"/>
+              <subset id="identifier" status="SI"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>A main carriage logistics transport movement for this supply chain consignment.
@@ -12799,6 +12815,7 @@ The text of the stated condition." parentId="ASBIE1130">
               <subset id="SK03" status="SI"/>
               <subset id="SK04" status="SI"/>
               <subset id="SK05" status="SI"/>
+              <subset id="identifier" status="SI"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>Logistics transport equipment utilized for this supply chain consignment.
@@ -18764,6 +18781,7 @@ The text of the stated condition." parentId="ASBIE1130">
               <subset id="SI01" status="M"/>
               <subset id="SI02" status="M"/>
               <subset id="SI03" status="M"/>
+              <subset id="identifier" status="O"/>
             </efti>
             <efti id="eFTI620" format="a2"
                   definition="The country code of the registration country of the transport means used in the main leg of transportation of the consignment of goods from one place to another."
@@ -18871,6 +18889,7 @@ The text of the stated condition." parentId="ASBIE1130">
               <subset id="SI05" status="C"/>
               <subset id="SI06" status="C"/>
               <subset id="SK04" status="C"/>
+              <subset id="identifier" status="O"/>
             </efti>
           </xsd:appinfo>
           <xsd:documentation>A unique identifier for this trade country.</xsd:documentation>
@@ -24949,6 +24968,7 @@ The text of the stated condition." parentId="ASBIE1130">
               <subset id="SE03" status="O"/>
               <subset id="SI01" status="C"/>
               <subset id="SI03" status="C"/>
+              <subset id="identifier" status="O"/>
             </efti>
             <efti id="eFTI583" format="an..20"
                   definition="The actual date of the loading of the consignment of goods for the main leg of transport event."
