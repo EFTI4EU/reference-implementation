@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Builder
@@ -13,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class SearchParameter implements Serializable {
     private String vehicleID;
-    private String identifierType;
+    private List<String> identifierType;
     private Boolean isDangerousGoods;
     private String vehicleCountry;
     private String transportMode;
