@@ -2,7 +2,6 @@ package eu.efti.identifiersregistry.service;
 
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.enums.CountryIndicator;
-import eu.efti.commons.enums.TransportMode;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
@@ -21,7 +20,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @EnableJpaRepositories(basePackages = {"eu.efti.identifiersregistry.repository"})
 @EntityScan("eu.efti.identifiersregistry.entity")
-class ConsignmentRepositoryTest {
+class IdentifiersRepositoryTest {
 
     @Autowired
     private IdentifiersRepository identifiersRepository;
@@ -48,19 +46,18 @@ class ConsignmentRepositoryTest {
         consignment.setDatasetId("thedatauuid");
         consignment.setPlatformId("theplatformurl");
 
-        MainCarriageTransportMovement movement = new MainCarriageTransportMovement();
-        movement.setDangerousGoodsIndicator(true);
-        consignment.setMainCarriageTransportMovements(List.of(movement));
+        consignment.setMainCarriageTransportMovements(List.of(MainCarriageTransportMovement.builder()
+                .dangerousGoodsIndicator(true)
+                .build()));
 
-        UsedTransportEquipment equipment1 = new UsedTransportEquipment();
-        equipment1.setEquipmentId("vehicleId1");
-        equipment1.setRegistrationCountry(CountryIndicator.FR.name());
-
-        UsedTransportEquipment equipment2 = new UsedTransportEquipment();
-        equipment2.setEquipmentId("vehicleId2");
-        equipment2.setRegistrationCountry(CountryIndicator.CY.name());
-
-        var usedTransportEquipments = List.of(equipment1, equipment2);
+        var usedTransportEquipments = List.of(UsedTransportEquipment.builder()
+                        .equipmentId("vehicleId1")
+                        .registrationCountry(CountryIndicator.FR.name())
+                        .build(),
+                UsedTransportEquipment.builder()
+                        .equipmentId("vehicleId2")
+                        .registrationCountry(CountryIndicator.CY.name())
+                        .build());
         consignment.setUsedTransportEquipments(usedTransportEquipments);
         identifiersRepository.save(consignment);
 
@@ -103,14 +100,36 @@ class ConsignmentRepositoryTest {
 
     @Test
     void shouldGetDataByCriteria() {
-        final SearchWithIdentifiersRequestDto identifiersRequestDto = SearchWithIdentifiersRequestDto.builder().vehicleID("vehicleId1").vehicleCountry(CountryIndicator.FR.name()).build();
-        final List<Consignment> result = identifiersRepository.searchByCriteria(identifiersRequestDto);
-        assertEquals(2, result.size());
+        assertEquals(2, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .vehicleID("vehicleId1")
+                .vehicleCountry(CountryIndicator.FR.name())
+                .build()).size());
 
-        final SearchWithIdentifiersRequestDto identifiersRequestDto2 = SearchWithIdentifiersRequestDto.builder().vehicleID("vehicleId1")
-                .vehicleCountry(CountryIndicator.FR.name()).isDangerousGoods(false).build();
-        final List<Consignment> result2 = identifiersRepository.searchByCriteria(identifiersRequestDto2);
-        assertEquals(1, result2.size());
+        assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .vehicleID("vehicleId1")
+                .vehicleCountry(CountryIndicator.FR.name())
+                .isDangerousGoods(false)
+                .build()).size());
+
+        assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .vehicleID("vehicleId2")
+                .vehicleCountry(CountryIndicator.CY.name())
+                .build()).size());
+
+        assertEquals(2, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .vehicleID("vehicleId2")
+                .build()).size());
+
+        assertEquals(0, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .vehicleID("vehicleId2")
+                .vehicleCountry(CountryIndicator.BE.name())
+                .build()).size());
+
+        assertEquals(0, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .vehicleID("vehicleId2")
+                .vehicleCountry(CountryIndicator.CY.name())
+                .identifierType(List.of("carried"))
+                .build()).size());
     }
 
 }

@@ -29,6 +29,7 @@ public class SearchWithIdentifiersRequestDto implements ValidableDto {
     @Length(max = 17, message = "VEHICLE_ID_TOO_LONG")
     @Pattern(regexp = "^[A-Za-z0-9]*$", message = "VEHICLE_ID_INCORRECT_FORMAT")
     private String vehicleID;
+    private List<String> identifierType;
     @ValueOfEnum(enumClass = CountryIndicator.class, message = "VEHICLE_COUNTRY_INCORRECT")
     private String vehicleCountry;
     @JsonProperty("isDangerousGoods")
@@ -36,7 +37,7 @@ public class SearchWithIdentifiersRequestDto implements ValidableDto {
     @JsonProperty("eFTIGateIndicator")
     private List<@Valid @ValueOfEnum(enumClass = CountryIndicator.class, message = "GATE_INDICATOR_INCORRECT") String> eFTIGateIndicator;
     @Valid
-    @NotNull(message= "AUTHORITY_MISSING")
-    @Schema( example = "see AuthorityDto")
+    @NotNull(message = "AUTHORITY_MISSING")
+    @Schema(example = "see AuthorityDto")
     private AuthorityDto authority;
 }

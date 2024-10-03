@@ -24,13 +24,13 @@ public class IdentifiersController implements IdentifiersControllerApi {
 
     @Override
     public ResponseEntity<RequestUuidDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto) {
-        log.info("POST on /getConsignment with param vehicleID {}", identifiersRequestDto.getVehicleID());
+        log.info("POST on /getIdenifiers with param vehicleID {}", identifiersRequestDto.getVehicleID());
         return new ResponseEntity<>(controlService.createIdentifiersControl(identifiersRequestDto), HttpStatus.ACCEPTED);
     }
 
     @Override
     public ResponseEntity<IdentifiersResponseDto> getIdentifiersResult(final @Parameter String requestUuid) {
-        log.info("GET on /getConsignment with param requestUuid {}", requestUuid);
+        log.info("GET on /getIdentifiers with param requestUuid {}", requestUuid);
         return new ResponseEntity<>(controlService.getIdentifiersResponse(requestUuid), HttpStatus.OK);
     }
 }

@@ -83,6 +83,7 @@ public class ControlUtils {
         final ControlDto controlDto = getControlFrom(requestTypeEnum, authorityDto, UUID.randomUUID().toString());
         controlDto.setTransportIdentifiers(SearchParameter.builder()
                 .vehicleID(identifiersRequestDto.getVehicleID())
+                .identifierType(identifiersRequestDto.getIdentifierType())
                 .transportMode(identifiersRequestDto.getTransportMode())
                 .vehicleCountry(identifiersRequestDto.getVehicleCountry())
                 .isDangerousGoods(identifiersRequestDto.getIsDangerousGoods())
