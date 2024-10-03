@@ -42,4 +42,9 @@ public class UsedTransportEquipment {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "usedTransportEquipment", targetEntity = CarriedTransportEquipment.class)
     private List<CarriedTransportEquipment> carriedTransportEquipments = new ArrayList<>();
+
+    public void setCarriedTransportEquipments(List<CarriedTransportEquipment> carriedTransportEquipments) {
+        carriedTransportEquipments.forEach(eq -> eq.setUsedTransportEquipment(this));
+        this.carriedTransportEquipments = carriedTransportEquipments;
+    }
 }

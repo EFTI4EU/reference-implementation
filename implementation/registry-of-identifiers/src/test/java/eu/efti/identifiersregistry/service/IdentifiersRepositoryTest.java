@@ -2,6 +2,7 @@ package eu.efti.identifiersregistry.service;
 
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.enums.CountryIndicator;
+import eu.efti.identifiersregistry.entity.CarriedTransportEquipment;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
@@ -50,15 +51,14 @@ class IdentifiersRepositoryTest {
                 .dangerousGoodsIndicator(true)
                 .build()));
 
-        var usedTransportEquipments = List.of(UsedTransportEquipment.builder()
+        consignment.setUsedTransportEquipments(List.of(UsedTransportEquipment.builder()
                         .equipmentId("vehicleId1")
                         .registrationCountry(CountryIndicator.FR.name())
                         .build(),
                 UsedTransportEquipment.builder()
                         .equipmentId("vehicleId2")
                         .registrationCountry(CountryIndicator.CY.name())
-                        .build());
-        consignment.setUsedTransportEquipments(usedTransportEquipments);
+                        .build()));
         identifiersRepository.save(consignment);
 
         final Consignment otherConsignment = new Consignment();
@@ -66,19 +66,21 @@ class IdentifiersRepositoryTest {
         otherConsignment.setDatasetId("thedatauuid");
         otherConsignment.setPlatformId("theplatformurl");
 
-        MainCarriageTransportMovement movement2 = new MainCarriageTransportMovement();
-        movement2.setDangerousGoodsIndicator(false);
-        otherConsignment.setMainCarriageTransportMovements(List.of(movement2));
+        otherConsignment.setMainCarriageTransportMovements(List.of(MainCarriageTransportMovement.builder()
+                .dangerousGoodsIndicator(false).build()));
 
-        UsedTransportEquipment equipment3 = new UsedTransportEquipment();
-        equipment3.setEquipmentId("vehicleId1");
-        equipment3.setRegistrationCountry(CountryIndicator.FR.name());
+        UsedTransportEquipment equipment = UsedTransportEquipment.builder()
+                .equipmentId("vehicleId1")
+                .registrationCountry(CountryIndicator.FR.name())
+                .build();
+        equipment.setCarriedTransportEquipments(List.of(CarriedTransportEquipment.builder()
+                .equipmentId("carriedId1")
+                .build()));
 
-        UsedTransportEquipment equipment4 = new UsedTransportEquipment();
-        equipment4.setEquipmentId("vehicleId2");
-        equipment4.setRegistrationCountry(CountryIndicator.FR.name());
-
-        otherConsignment.setUsedTransportEquipments(List.of(equipment3, equipment4));
+        otherConsignment.setUsedTransportEquipments(List.of(equipment,
+                UsedTransportEquipment.builder()
+                        .equipmentId("vehicleId2")
+                        .registrationCountry(CountryIndicator.FR.name()).build()));
 
         identifiersRepository.save(otherConsignment);
     }
@@ -129,6 +131,15 @@ class IdentifiersRepositoryTest {
                 .vehicleID("vehicleId2")
                 .vehicleCountry(CountryIndicator.CY.name())
                 .identifierType(List.of("carried"))
+                .build()).size());
+
+        assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .vehicleID("carriedId1")
+                .identifierType(List.of("carried"))
+                .build()).size());
+
+        assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .vehicleID("carriedId1")
                 .build()).size());
     }
 

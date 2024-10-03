@@ -49,10 +49,10 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         saveIdentifiersRequestWrapper = new SaveIdentifiersRequestWrapper(PLATFORM_URL, identifiersRequest);
 
 
-        consignment = Consignment.builder()
-                .gateId(GATE_URL)
-                .datasetId(DATA_UUID)
-                .platformId(PLATFORM_URL).build();
+        consignment = new Consignment();
+        consignment.setGateId(GATE_URL);
+        consignment.setDatasetId(DATA_UUID);
+        consignment.setPlatformId(PLATFORM_URL);
     }
 
     private static SaveIdentifiersRequest defaultSaveIdentifiersRequest() {
@@ -123,7 +123,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
 
     @Test
     void shouldExistByUil() {
-        when(repository.findByUil(GATE_URL, DATA_UUID, PLATFORM_URL)).thenReturn(Optional.of(Consignment.builder().build()));
+        when(repository.findByUil(GATE_URL, DATA_UUID, PLATFORM_URL)).thenReturn(Optional.of(new Consignment()));
 
         assertTrue(service.existByUIL(DATA_UUID, GATE_URL, PLATFORM_URL));
     }
@@ -138,7 +138,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
     @Test
     void shouldUpdateIfUILFound() {
         when(repository.save(any())).thenReturn(consignment);
-        when(repository.findByUil(GATE_URL, DATA_UUID, PLATFORM_URL)).thenReturn(Optional.of(Consignment.builder().build()));
+        when(repository.findByUil(GATE_URL, DATA_UUID, PLATFORM_URL)).thenReturn(Optional.of(new Consignment()));
         final ArgumentCaptor<Consignment> argumentCaptor = ArgumentCaptor.forClass(Consignment.class);
 
         service.createOrUpdate(saveIdentifiersRequestWrapper);
