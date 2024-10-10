@@ -1,9 +1,8 @@
-<body>
-    <requestUuid>67fe38bd-6bf7-4b06-b20e-206264bd639c</requestUuid>
-    <subsetEU/>
-    <subsetMS/>
-    <authority/>
-    <eFTIData/>
-    <eFTIPlatformUrl>plateform</eFTIPlatformUrl>
-    <eFTIDataUuid>uuid</eFTIDataUuid>
-</body>
+<UILQuery requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c">
+    <uil>
+        <gateId/>
+        <platformId>plateform</platformId>
+        <datasetId>uuid</datasetId>
+    </uil>
+    <subsetId/>
+</UILQuery>

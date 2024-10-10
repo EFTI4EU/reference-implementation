@@ -10,9 +10,9 @@ import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.edeliveryapconnector.dto.IdentifiersMessageBodyDto;
-import eu.efti.edeliveryapconnector.dto.MessageBodyDto;
 import eu.efti.edeliveryapconnector.dto.NotesMessageBodyDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
+import eu.efti.v1.edelivery.UILQuery;
 import lombok.experimental.UtilityClass;
 
 import java.util.UUID;
@@ -25,13 +25,13 @@ public class ControlUtils {
     public static final String SUBSET_EU_REQUESTED = "SubsetEuRequested";
     public static final String SUBSET_MS_REQUESTED = "SubsetMsRequested";
 
-    public static ControlDto fromGateToGateMessageBodyDto(final MessageBodyDto messageBodyDto, final RequestTypeEnum requestTypeEnum, final NotificationDto notificationDto, final String eftiGateUrl) {
+    public static ControlDto fromGateToGateQuery(final UILQuery uilQuery, final RequestTypeEnum requestTypeEnum, final NotificationDto notificationDto, final String eftiGateUrl) {
         final ControlDto controlDto = new ControlDto();
-        controlDto.setEftiDataUuid(messageBodyDto.getEFTIDataUuid());
+        controlDto.setEftiDataUuid(uilQuery.getUil().getDatasetId());
         controlDto.setEftiGateUrl(eftiGateUrl);
         controlDto.setFromGateUrl(notificationDto.getContent().getFromPartyId());
-        controlDto.setEftiPlatformUrl(messageBodyDto.getEFTIPlatformUrl());
-        controlDto.setRequestUuid(messageBodyDto.getRequestUuid());
+        controlDto.setEftiPlatformUrl(uilQuery.getUil().getPlatformId());
+        controlDto.setRequestUuid(uilQuery.getRequestId());
         controlDto.setRequestType(requestTypeEnum);
         controlDto.setStatus(StatusEnum.PENDING);
         controlDto.setSubsetEuRequested(SUBSET_EU_REQUESTED);

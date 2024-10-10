@@ -1,7 +1,5 @@
 package eu.efti.eftigate.service.request;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +34,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.LoggerFactory;
 import org.xmlunit.matchers.CompareMatcher;
 
 import java.util.List;
@@ -45,7 +42,6 @@ import java.util.stream.Stream;
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
 import static eu.efti.commons.enums.StatusEnum.COMPLETE;
-import static eu.efti.eftigate.EftiTestUtils.testFile;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -58,6 +54,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.xmlunit.matchers.CompareMatcher.isIdenticalTo;
+import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 @ExtendWith(MockitoExtension.class)
 class UilRequestServiceTest extends BaseServiceTest {
@@ -113,16 +111,14 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-        <body>
-            <requestUuid>24414689-1abf-4a9f-b4df-de3a491a44c9</requestUuid>
-            <subsetEU></subsetEU>
-            <subsetMS></subsetMS>
-            <authority>null</authority>
-            <eFTIPlatformUrl>http://efti.platform.acme.com</eFTIPlatformUrl>
-            <eFTIDataUuid>12345678-ab12-4ab6-8999-123456789abc</eFTIDataUuid>
-            <eFTIData>oki</eFTIData>
-        </body>
+              <uilResponse>
+                  <consignment>
+                  </consignment>
+                  <status>COMPLETE</status>
+                  <requestId>24414689-1abf-4a9f-b4df-de3a491a44c9</requestId>
+              </uilResponse>
         """;
+
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -150,14 +146,12 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-            <body>
-                <requestUuid>24414689-1abf-4a9f-b4df-de3a491a44c9</requestUuid>
-                <subsetEU></subsetEU>
-                <subsetMS></subsetMS>
-                <authority>null</authority>
-                <eFTIPlatformUrl>http://efti.platform.acme.com</eFTIPlatformUrl>
-                <eFTIDataUuid>12345678-ab12-4ab6-8999-123456789abc</eFTIDataUuid>
-            </body>
+          <uilResponse>
+              <consignment>
+              </consignment>
+              <status>ERROR</status>
+              <requestId>24414689-1abf-4a9f-b4df-de3a491a44c9</requestId>
+          </uilResponse>
         """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -185,15 +179,12 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-            <body>
-                <requestUuid>24414689-1abf-4a9f-b4df-de3a491a44c9</requestUuid>
-                <subsetEU></subsetEU>
-                <subsetMS></subsetMS>
-                <authority>null</authority>
-                <eFTIPlatformUrl>http://efti.platform.acme.com</eFTIPlatformUrl>
-                <eFTIDataUuid>12345678-ab12-4ab6-8999-123456789abc</eFTIDataUuid>
-                <errorDescription>oki</errorDescription>
-            </body>
+          <uilResponse>
+              <consignment>
+              </consignment>
+              <status>ERROR</status>
+              <requestId>24414689-1abf-4a9f-b4df-de3a491a44c9</requestId>
+          </uilResponse>
         """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -219,14 +210,14 @@ class UilRequestServiceTest extends BaseServiceTest {
     void receiveGateRequestSuccessTest() {
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-            <body>
-                <requestUuid>24414689-1abf-4a9f-b4df-de3a491a44c9</requestUuid>
-                <subsetEU></subsetEU>
-                <subsetMS></subsetMS>
-                <authority>null</authority>
-                <eFTIPlatformUrl>http://efti.platform.acme.com</eFTIPlatformUrl>
-                <eFTIDataUuid>12345678-ab12-4ab6-8999-123456789abc</eFTIDataUuid>
-            </body>
+          <UILQuery>
+              <requestId>24414689-1abf-4a9f-b4df-de3a491a44c9</requestId>
+                <uil>
+                  <gateId></gateId>
+                  <platformId></platformId>
+                  <datasetId></datasetId>
+                </uil>
+          </UILQuery>
         """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -423,7 +414,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         final String requestBody = uilRequestService.buildRequestBody(rabbitRequestDto);
 
-        assertThat(StringUtils.deleteWhitespace(expectedRequestBody), CompareMatcher.isIdenticalTo(requestBody));
+        assertThat(expectedRequestBody, isIdenticalTo(requestBody).ignoreWhitespace());
     }
 
     @Test
@@ -437,7 +428,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         final String requestBody = uilRequestService.buildRequestBody(rabbitRequestDto);
 
-        assertThat(StringUtils.deleteWhitespace(expectedRequestBody), CompareMatcher.isIdenticalTo(requestBody));
+        assertThat(expectedRequestBody, isSimilarTo(requestBody).ignoreWhitespace());
     }
 
     @Test
