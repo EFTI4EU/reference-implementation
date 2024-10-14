@@ -3,6 +3,7 @@ package eu.efti.commons.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.commons.enums.StatusEnum;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -35,5 +36,5 @@ public class IdentifiersResponseDto {
     private StatusEnum status;
     private String errorCode;
     private String errorDescription;
-    private List<IdentifiersResultDto> identifiers;
+    private List<ConsignmentDto> identifiers;
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class UsedTransportEquipment {
     private List<CarriedTransportEquipment> carriedTransportEquipments = new ArrayList<>();
 
     public void setCarriedTransportEquipments(List<CarriedTransportEquipment> carriedTransportEquipments) {
-        carriedTransportEquipments.forEach(eq -> eq.setUsedTransportEquipment(this));
+        CollectionUtils.emptyIfNull(carriedTransportEquipments).forEach(eq -> eq.setUsedTransportEquipment(this));
         this.carriedTransportEquipments = carriedTransportEquipments;
     }
 }

@@ -1,8 +1,8 @@
 package eu.efti.eftilogger.service;
 
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -53,7 +53,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .build());
     }
 
-    public void log(final IdentifiersDto identifiersDto,
+    public void log(final ConsignmentDto consignmentDto,
                     final String currentGateId,
                     final String currentGateCountry,
                     final String body,
@@ -68,7 +68,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .componentId(currentGateId)
                 .componentCountry(currentGateCountry)
                 .requestingComponentType(ComponentType.PLATFORM)
-                .requestingComponentId(identifiersDto.getEFTIPlatformUrl())
+                .requestingComponentId(consignmentDto.getPlatformId())
                 .requestingComponentCountry(currentGateCountry)
                 .respondingComponentType(ComponentType.GATE)
                 .respondingComponentId(currentGateId)
@@ -78,18 +78,17 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .errorCodeMessage(isError ? errorCode : "")
                 .errorDescriptionMessage(isError ? ErrorCodesEnum.valueOf(errorCode).getMessage() : "")
                 .timeoutComponentType(TIMEOUT_COMPONENT_TYPE)
-                .identifiersId(identifiersDto.getIdentifiersUUID())
-                .eFTIDataId(identifiersDto.getEFTIDataUuid())
+                .eFTIDataId(consignmentDto.getDatasetId())
                 .interfaceType(edelivery)
                 .build());
     }
 
-    public void log(final IdentifiersDto identifiersDto,
+    public void log(final ConsignmentDto consignmentDto,
                     final String currentGateId,
                     final String currentGateCountry,
                     final String body,
                     final String name) {
-        this.log(identifiersDto, currentGateId, currentGateCountry, body, null, name);
+        this.log(consignmentDto, currentGateId, currentGateCountry, body, null, name);
 
     }
 

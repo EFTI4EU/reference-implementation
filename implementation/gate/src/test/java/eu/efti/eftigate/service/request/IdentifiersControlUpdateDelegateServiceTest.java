@@ -1,7 +1,5 @@
 package eu.efti.eftigate.service.request;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
@@ -9,7 +7,10 @@ import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
-import eu.efti.eftigate.EftiTestUtils;
+import eu.efti.v1.edelivery.Consignment;
+import eu.efti.v1.edelivery.IdentifierResponse;
+import eu.efti.v1.edelivery.UIL;
+import eu.efti.v1.types.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +18,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,17 +54,27 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
 
     @Test
     void shouldUpdateExistingControlRequest() {
+        final IdentifierResponse identifierResponse = new IdentifierResponse();
+        identifierResponse.setRequestId("67fe38bd-6bf7-4b06-b20e-206264bd639c");
+        final Consignment consignment = new Consignment();
+        final UIL uil = new UIL();
+        uil.setPlatformId("platformId");
+        uil.setGateId("gateId");
+        uil.setDatasetId("datasetId");
+        consignment.setUil(uil);
+        consignment.setCarrierAcceptanceDateTime(new DateTime());
+        identifierResponse.getConsignment().add(consignment);
         //Arrange
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
         when(identifiersRequestRepository.findByControlRequestUuidAndStatusAndGateUrlDest("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS, "https://efti.platform.borduria.eu")).thenReturn(identifiersRequestEntity);
         //Act
-        identifiersControlUpdateDelegateService.updateExistingControl(EftiTestUtils.testFile("/xml/FTI021-full.xml"), "67fe38bd-6bf7-4b06-b20e-206264bd639c", "https://efti.platform.borduria.eu");
+        identifiersControlUpdateDelegateService.updateExistingControl(identifierResponse, "https://efti.platform.borduria.eu");
 
         //Assert
         verify(identifiersRequestRepository).save(requestEntityArgumentCaptor.capture());
         assertEquals(RequestStatusEnum.SUCCESS, requestEntityArgumentCaptor.getValue().getStatus());
         assertNotNull(requestEntityArgumentCaptor.getValue().getIdentifiersResults());
-        assertFalse(requestEntityArgumentCaptor.getValue().getIdentifiersResults().getIdentifiersResult().isEmpty());
+        assertFalse(requestEntityArgumentCaptor.getValue().getIdentifiersResults().getConsignments().isEmpty());
     }
 
     @Test

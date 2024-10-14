@@ -7,6 +7,7 @@ import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import eu.efti.v1.types.DateTime;
 import eu.efti.v1.types.Identifier17;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 
 import java.math.BigInteger;
 import java.time.OffsetDateTime;
@@ -14,9 +15,10 @@ import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class IdentifiersMapperTest {
+class IdentifiersMapperTest {
+
     @Test
-    public void testMapConsignmentToInternalModel() {
+    void testMapConsignmentToInternalModel() {
         SaveIdentifiersRequest request = new SaveIdentifiersRequest();
         request.setDatasetId("datasetId");
         SupplyChainConsignment consignment = new SupplyChainConsignment();
@@ -51,8 +53,8 @@ public class IdentifiersMapperTest {
 
         request.getConsignment().getUsedTransportEquipment().add(equipment);
 
-        IdentifiersMapper identifiersMapper = new IdentifiersMapper();
-        eu.efti.identifiersregistry.entity.Consignment internalConsignment = identifiersMapper.dtoToEntity(request);
+        IdentifiersMapper identifiersMapper = new IdentifiersMapper(new ModelMapper());
+        eu.efti.identifiersregistry.entity.Consignment internalConsignment = identifiersMapper.eDeliveryToEntity(request);
         assertEquals("datasetId", internalConsignment.getDatasetId());
         assertEquals(OffsetDateTime.of(2021, 7, 11, 12, 0, 0, 0, ZoneOffset.ofHours(1)), internalConsignment.getCarrierAcceptanceDatetime());
         assertEquals(OffsetDateTime.of(2021, 7, 23, 0, 0, 0, 0, ZoneOffset.UTC), internalConsignment.getDeliveryEventActualOccurrenceDatetime());

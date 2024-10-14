@@ -42,7 +42,7 @@ class RequestToEDeliveryActionFunctionTest {
 
         final EDeliveryAction applied = requestToEDeliveryActionFunction.apply(actual);
 
-        Assertions.assertEquals(expected, applied);;
+        Assertions.assertEquals(expected, applied);
     }
 
     @Test

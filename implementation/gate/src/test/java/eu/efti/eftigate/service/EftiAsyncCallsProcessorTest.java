@@ -2,9 +2,8 @@ package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.AuthorityDto;
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
-import eu.efti.commons.dto.TransportVehicleDto;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.service.request.IdentifiersRequestService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
@@ -15,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.UUID;
 
 import static org.mockito.Mockito.any;
@@ -39,10 +37,9 @@ class EftiAsyncCallsProcessorTest {
 
     private final SearchWithIdentifiersRequestDto identifiersRequestDto = new SearchWithIdentifiersRequestDto();
 
-    IdentifiersDto identifiersDto = new IdentifiersDto();
+    ConsignmentDto consignmentDto = ConsignmentDto.builder().build();
 
     private final String identifiersUuid = UUID.randomUUID().toString();
-    TransportVehicleDto transportVehicleDto = new TransportVehicleDto();
     private final ControlDto controlDto = new ControlDto();
 
 
@@ -51,12 +48,9 @@ class EftiAsyncCallsProcessorTest {
         final AuthorityDto authorityDto = new AuthorityDto();
 
 
-        identifiersDto.setIsDangerousGoods(true);
-        identifiersDto.setIdentifiersUUID(identifiersUuid);
-        identifiersDto.setDisabled(false);
-        identifiersDto.setCountryStart("FR");
-        identifiersDto.setCountryEnd("FR");
-        identifiersDto.setTransportVehicles(Collections.singletonList(transportVehicleDto));
+        consignmentDto.setGateId("gateId");
+        consignmentDto.setDatasetId("datasetId");
+        consignmentDto.setPlatformId("platformId");
 
 
         this.identifiersRequestDto.setVehicleID("abc123");

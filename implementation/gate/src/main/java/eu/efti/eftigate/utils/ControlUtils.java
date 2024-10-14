@@ -9,9 +9,9 @@ import eu.efti.commons.dto.SearchParameter;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
-import eu.efti.edeliveryapconnector.dto.IdentifiersMessageBodyDto;
 import eu.efti.edeliveryapconnector.dto.NotesMessageBodyDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
+import eu.efti.v1.edelivery.IdentifierQuery;
 import eu.efti.v1.edelivery.UILQuery;
 import lombok.experimental.UtilityClass;
 
@@ -91,18 +91,18 @@ public class ControlUtils {
         return controlDto;
     }
 
-    public static ControlDto fromExternalIdentifiersControl(final IdentifiersMessageBodyDto messageBodyDto, final RequestTypeEnum requestTypeEnum, final String fromGateUrl, final String eftiGateUrl, final IdentifiersResultsDto identifiersResultsDto) {
-        final ControlDto controlDto = getControlFrom(requestTypeEnum, null, messageBodyDto.getRequestUuid());
+    public static ControlDto fromExternalIdentifiersControl(final IdentifierQuery identifierQuery, final RequestTypeEnum requestTypeEnum, final String fromGateUrl, final String eftiGateUrl, final IdentifiersResultsDto identifiersResultsDto) {
+        final ControlDto controlDto = getControlFrom(requestTypeEnum, null, identifierQuery.getRequestId());
         //to check
         controlDto.setEftiGateUrl(eftiGateUrl);
         controlDto.setFromGateUrl(fromGateUrl);
         controlDto.setTransportIdentifiers(SearchParameter.builder()
-                .vehicleID(messageBodyDto.getVehicleID())
-                .transportMode(messageBodyDto.getTransportMode())
-                .vehicleCountry(messageBodyDto.getVehicleCountry())
-                .isDangerousGoods(messageBodyDto.getIsDangerousGoods())
+                .vehicleID(identifierQuery.getIdentifier().getValue())
+                .transportMode(identifierQuery.getModeCode())
+                .vehicleCountry(identifierQuery.getRegistrationCountryCode())
+                .isDangerousGoods(identifierQuery.isDangerousGoodsIndicator())
                 .build());
-        controlDto.setIdentifiersResults(identifiersResultsDto);
+        controlDto.setIdentifiersResults(identifiersResultsDto.getConsignments());
         return controlDto;
     }
 

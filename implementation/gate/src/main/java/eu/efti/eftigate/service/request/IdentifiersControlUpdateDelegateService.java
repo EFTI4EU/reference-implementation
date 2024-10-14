@@ -1,17 +1,15 @@
 package eu.efti.eftigate.service.request;
 
-import eu.efti.commons.dto.IdentifiersResponseDto;
-import eu.efti.commons.dto.IdentifiersResultDto;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
-import eu.efti.eftigate.entity.IdentifiersResult;
 import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
 import eu.efti.eftigate.service.ControlService;
+import eu.efti.v1.edelivery.IdentifierResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +33,9 @@ public class IdentifiersControlUpdateDelegateService {
     }
 
     @Transactional("controlTransactionManager")
-    public void updateExistingControl(final String bodyFromNotification, final String requestUuid, final String gateUrlDest) {
-        final IdentifiersResponseDto response = serializeUtils.mapXmlStringToClass(bodyFromNotification, IdentifiersResponseDto.class);
-        final List<IdentifiersResultDto> identifiersResultDtoList = response.getIdentifiers();
-        final IdentifiersResults identifiersResults = buildIdentifiersResultFrom(identifiersResultDtoList);
-        final IdentifiersRequestEntity waitingRequest = identifiersRequestRepository.findByControlRequestUuidAndStatusAndGateUrlDest(requestUuid, RequestStatusEnum.IN_PROGRESS, gateUrlDest);
+    public void updateExistingControl(final IdentifierResponse response, final String gateUrlDest) {
+        final IdentifiersResults identifiersResults = IdentifiersResults.builder().consignments(mapperUtils.eDeliveryToDto(response.getConsignment())).build();
+        final IdentifiersRequestEntity waitingRequest = identifiersRequestRepository.findByControlRequestUuidAndStatusAndGateUrlDest(response.getRequestId(), RequestStatusEnum.IN_PROGRESS, gateUrlDest);
         if (waitingRequest != null){
             updateControlRequests(waitingRequest, identifiersResults);
         }
@@ -75,12 +71,5 @@ public class IdentifiersControlUpdateDelegateService {
         waitingRequest.setIdentifiersResults(identifiersResults);
         waitingRequest.setStatus(RequestStatusEnum.SUCCESS);
         identifiersRequestRepository.save(waitingRequest);
-    }
-
-    private IdentifiersResults buildIdentifiersResultFrom(final List<IdentifiersResultDto> identifiersResultDtoList) {
-        final List<IdentifiersResult> IdentifiersResultList = mapperUtils.identifierResultDtosToIdentifierEntities(identifiersResultDtoList);
-        return IdentifiersResults.builder()
-                .identifiersResult(IdentifiersResultList)
-                .build();
     }
 }

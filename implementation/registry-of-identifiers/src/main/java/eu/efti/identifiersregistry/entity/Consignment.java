@@ -9,7 +9,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -26,6 +25,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "consignment")
@@ -52,8 +52,10 @@ public class Consignment extends AbstractModel implements Serializable {
     public void setMainCarriageTransportMovements(List<MainCarriageTransportMovement> mainCarriageTransportMovements) {
         this.mainCarriageTransportMovements.forEach(mctm -> mctm.setConsignment(null));
         this.mainCarriageTransportMovements.clear();
-        this.mainCarriageTransportMovements.addAll(mainCarriageTransportMovements);
-        this.mainCarriageTransportMovements.forEach(mctm -> mctm.setConsignment(this));
+        if(mainCarriageTransportMovements != null) {
+            this.mainCarriageTransportMovements.addAll(mainCarriageTransportMovements);
+            this.mainCarriageTransportMovements.forEach(mctm -> mctm.setConsignment(this));
+        }
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
@@ -62,9 +64,9 @@ public class Consignment extends AbstractModel implements Serializable {
     public void setUsedTransportEquipments(List<UsedTransportEquipment> usedTransportEquipments) {
         this.usedTransportEquipments.forEach(ute -> ute.setConsignment(null));
         this.usedTransportEquipments.clear();
-        this.usedTransportEquipments.addAll(usedTransportEquipments);
-        for (var ute : usedTransportEquipments) {
-            ute.setConsignment(this);
+        if(usedTransportEquipments != null) {
+            this.usedTransportEquipments.addAll(usedTransportEquipments);
+            this.usedTransportEquipments.forEach(ute -> ute.setConsignment(this));
         }
     }
 }

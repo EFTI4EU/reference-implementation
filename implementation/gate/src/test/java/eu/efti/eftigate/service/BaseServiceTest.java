@@ -1,11 +1,11 @@
 package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.IdentifiersResultDto;
 import eu.efti.commons.dto.IdentifiersResultsDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.SearchParameter;
 import eu.efti.commons.dto.UilDto;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
@@ -14,10 +14,11 @@ import eu.efti.commons.enums.TransportMode;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.entity.ControlEntity;
-import eu.efti.eftigate.entity.IdentifiersResult;
 import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.service.gate.EftiGateUrlResolver;
+import eu.efti.identifiersregistry.entity.Consignment;
+import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -49,9 +50,9 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
     protected final ControlEntity controlEntity = new ControlEntity();
 
     protected final RequestDto requestDto = new RequestDto();
-    protected final IdentifiersResult identifiersResult = new IdentifiersResult();
+    protected final Consignment identifiersResult = new Consignment();
+    protected final ConsignmentDto identifiersResultDto = new ConsignmentDto();
     protected final IdentifiersResults identifiersResults = new IdentifiersResults();
-    protected final IdentifiersResultDto identifiersResultDto = new IdentifiersResultDto();
     protected final IdentifiersResultsDto identifiersResultsDto = new IdentifiersResultsDto();
 
     protected final SearchParameter searchParameter = new SearchParameter();
@@ -93,17 +94,20 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
         this.controlEntity.setFromGateUrl(controlDto.getFromGateUrl());
 
-        identifiersResult.setCountryStart("FR");
-        identifiersResult.setCountryEnd("FR");
-        identifiersResult.setDisabled(false);
-        identifiersResult.setIsDangerousGoods(true);
-        identifiersResults.setIdentifiersResult(Collections.singletonList(identifiersResult));
+        identifiersResult.setGateId("France");
+        identifiersResult.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
+        identifiersResult.setPlatformId("http://efti.platform.truc.eu");
+        identifiersResult.setUsedTransportEquipments(List.of(UsedTransportEquipment.builder()
+                        .equipmentId("vehicleId1")
+                        .registrationCountry(CountryIndicator.FR.name())
+                        .build(),
+                UsedTransportEquipment.builder()
+                        .equipmentId("vehicleId2")
+                        .registrationCountry(CountryIndicator.CY.name())
+                        .build()));
+        identifiersResults.setConsignments(Collections.singletonList(identifiersResultDto));
 
-        identifiersResultDto.setCountryStart("FR");
-        identifiersResultDto.setCountryEnd("FR");
-        identifiersResultDto.setDisabled(false);
-        identifiersResultDto.setIsDangerousGoods(true);
-        identifiersResultsDto.setIdentifiersResult(Collections.singletonList(identifiersResultDto));
+        identifiersResultsDto.setConsignments(Collections.singletonList(identifiersResultDto));
     }
 
     protected <T extends RequestEntity> void setEntityRequestCommonAttributes(final T requestEntity) {

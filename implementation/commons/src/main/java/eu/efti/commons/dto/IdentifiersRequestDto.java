@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class IdentifiersRequestDto extends RequestDto {
-    private IdentifiersResultsDto identifiersResultsDto;
+    private IdentifiersResultsDto identifiersResults;
     public IdentifiersRequestDto(final ControlDto controlDto) {
         super(controlDto);
         setRequestType(RequestType.IDENTIFIER);

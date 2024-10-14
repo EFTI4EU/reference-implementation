@@ -103,6 +103,5 @@ class IdentifiersControllerTest {
                 .assertThat("$.errorCode", is("Uuid not found."))
                 .assertThat("$.errorDescription", is("Error requestUuid not found."))
                 .assertThat("$.status", is("COMPLETE"));
-        ;
     }
 }
