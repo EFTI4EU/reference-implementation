@@ -10,13 +10,14 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftigate.mapper.MapperUtils;
+import eu.efti.identifiersregistry.IdentifiersMapper;
 import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
 
 public abstract class AbstractServiceTest {
 
     @Spy
-    public final MapperUtils mapperUtils = new MapperUtils(createModelMapper());
+    public final MapperUtils mapperUtils = new MapperUtils(createModelMapper(), new IdentifiersMapper(createModelMapper()));
 
     public final SerializeUtils serializeUtils = new SerializeUtils(objectMapper(), xmlMapper());
 

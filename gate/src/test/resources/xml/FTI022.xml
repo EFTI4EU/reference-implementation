@@ -1,8 +1,4 @@
-<body>
-    <requestUuid>67fe38bd-6bf7-4b06-b20e-206264bd639c</requestUuid>
-    <status>COMPLETE</status>
-    <errorDescription/>
-    <eFTIDataUuid>uuid</eFTIDataUuid>
-    <eFTIData/>
-    <eFTIPlatformUrl/>
-</body>
+<UILResponse status="COMPLETE" requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c">
+    <wstxns1:consignment xmlns:wstxns1="http://efti.eu/v1/consignment/common"/>
+    <description/>
+</UILResponse>

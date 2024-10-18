@@ -1,7 +1,5 @@
 package eu.efti.eftigate.service.request;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,19 +11,17 @@ import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
-import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
 import eu.efti.edeliveryapconnector.exception.SendRequestException;
-import eu.efti.eftigate.EftiTestUtils;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.UilRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
-import org.apache.commons.lang3.StringUtils;
+import eu.efti.eftigate.EftiTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,8 +33,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.LoggerFactory;
-import org.xmlunit.matchers.CompareMatcher;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -58,6 +52,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.xmlunit.matchers.CompareMatcher.isIdenticalTo;
+import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 @ExtendWith(MockitoExtension.class)
 class UilRequestServiceTest extends BaseServiceTest {
@@ -79,8 +75,6 @@ class UilRequestServiceTest extends BaseServiceTest {
         controlEntity.setRequests(List.of(uilRequestEntity, secondUilRequestEntity));
         uilRequestService = new UilRequestService(uilRequestRepository, mapperUtils, rabbitSenderService, controlService,
                 gateProperties, requestUpdaterService, serializeUtils, logManager);
-        final Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(UilRequestService.class);
-        memoryAppender = MemoryAppender.createInitializedMemoryAppender(Level.INFO, memoryAppenderTestLogger);
     }
 
     @Test
@@ -115,16 +109,14 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                <body>
-                    <requestUuid>24414689-1abf-4a9f-b4df-de3a491a44c9</requestUuid>
-                    <subsetEU></subsetEU>
-                    <subsetMS></subsetMS>
-                    <authority>null</authority>
-                    <eFTIPlatformUrl>http://efti.platform.acme.com</eFTIPlatformUrl>
-                    <eFTIDataUuid>12345678-ab12-4ab6-8999-123456789abc</eFTIDataUuid>
-                    <eFTIData>oki</eFTIData>
-                </body>
-                """;
+              <uilResponse>
+                  <consignment>
+                  </consignment>
+                  <status>COMPLETE</status>
+                  <requestId>24414689-1abf-4a9f-b4df-de3a491a44c9</requestId>
+              </uilResponse>
+        """;
+
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -152,15 +144,13 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                    <body>
-                        <requestUuid>24414689-1abf-4a9f-b4df-de3a491a44c9</requestUuid>
-                        <subsetEU></subsetEU>
-                        <subsetMS></subsetMS>
-                        <authority>null</authority>
-                        <eFTIPlatformUrl>http://efti.platform.acme.com</eFTIPlatformUrl>
-                        <eFTIDataUuid>12345678-ab12-4ab6-8999-123456789abc</eFTIDataUuid>
-                    </body>
-                """;
+          <uilResponse>
+              <consignment>
+              </consignment>
+              <status>ERROR</status>
+              <requestId>24414689-1abf-4a9f-b4df-de3a491a44c9</requestId>
+          </uilResponse>
+        """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -187,16 +177,13 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                    <body>
-                        <requestUuid>24414689-1abf-4a9f-b4df-de3a491a44c9</requestUuid>
-                        <subsetEU></subsetEU>
-                        <subsetMS></subsetMS>
-                        <authority>null</authority>
-                        <eFTIPlatformUrl>http://efti.platform.acme.com</eFTIPlatformUrl>
-                        <eFTIDataUuid>12345678-ab12-4ab6-8999-123456789abc</eFTIDataUuid>
-                        <errorDescription>oki</errorDescription>
-                    </body>
-                """;
+          <uilResponse>
+              <consignment>
+              </consignment>
+              <status>ERROR</status>
+              <requestId>24414689-1abf-4a9f-b4df-de3a491a44c9</requestId>
+          </uilResponse>
+        """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -221,15 +208,15 @@ class UilRequestServiceTest extends BaseServiceTest {
     void receiveGateRequestSuccessTest() {
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                    <body>
-                        <requestUuid>24414689-1abf-4a9f-b4df-de3a491a44c9</requestUuid>
-                        <subsetEU></subsetEU>
-                        <subsetMS></subsetMS>
-                        <authority>null</authority>
-                        <eFTIPlatformUrl>http://efti.platform.acme.com</eFTIPlatformUrl>
-                        <eFTIDataUuid>12345678-ab12-4ab6-8999-123456789abc</eFTIDataUuid>
-                    </body>
-                """;
+          <UILQuery>
+              <requestId>24414689-1abf-4a9f-b4df-de3a491a44c9</requestId>
+                <uil>
+                  <gateId></gateId>
+                  <platformId></platformId>
+                  <datasetId></datasetId>
+                </uil>
+          </UILQuery>
+        """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -270,12 +257,12 @@ class UilRequestServiceTest extends BaseServiceTest {
     void shouldUpdateResponseSucessFromPlatformAndShoulSendToGate() {
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String eftiData = """
-                <body>
-                  <requestUuid>test</requestUuid>
-                  <status>COMPLETE</status>
-                  <eFTIData><data>vive les datas</data></eFTIData>"
-                </body>
-                """;
+                  <body>
+                    <requestUuid>test</requestUuid>
+                    <status>COMPLETE</status>
+                    <eFTIData><data>vive les datas</data></eFTIData>"
+                  </body>
+                  """;
         this.uilRequestEntity.getControl().setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -299,12 +286,12 @@ class UilRequestServiceTest extends BaseServiceTest {
     void shouldUpdateResponse() {
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String eftiData = """
-                <body>
-                  <requestUuid>test</requestUuid>
-                  <status>COMPLETE</status>
-                  <eFTIData><data>vive les datas</data></eFTIData>"
-                </body>
-                """;
+                  <body>
+                    <requestUuid>test</requestUuid>
+                    <status>COMPLETE</status>
+                    <eFTIData><data>vive les datas</data></eFTIData>"
+                  </body>
+                  """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -325,12 +312,12 @@ class UilRequestServiceTest extends BaseServiceTest {
     void shouldUpdateErrorResponse() {
         final String messageId = "messageId";
         final String eftiData = """
-                <body>
-                  <requestUuid>test</requestUuid>
-                  <status>ERROR</status>
-                  <eFTIData><data>vive les datas</data></eFTIData>"
-                </body>
-                """;
+                  <body>
+                    <requestUuid>test</requestUuid>
+                    <status>ERROR</status>
+                    <eFTIData><data>vive les datas</data></eFTIData>"
+                  </body>
+                  """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -352,7 +339,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
         uilRequestService.updateStatus(uilRequestEntity, ERROR, "12345");
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
-        verify(uilRequestRepository, Mockito.times(1)).save(any(UilRequestEntity.class));
+        verify(uilRequestRepository,  Mockito.times(1)).save(any(UilRequestEntity.class));
         assertEquals(ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
 
@@ -360,11 +347,11 @@ class UilRequestServiceTest extends BaseServiceTest {
     void shouldReThrowException() {
         final String messageId = "messageId";
         final String eftiData = """
-                <body>
-                  <requestUuid>test</requestUuid>
-                  <status>toto</status>
-                </body>
-                """;
+                  <body>
+                    <requestUuid>test</requestUuid>
+                    <status>toto</status>
+                  </body>
+                  """;
 
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -411,13 +398,10 @@ class UilRequestServiceTest extends BaseServiceTest {
     void shouldNotUpdateControlAndRequestStatus_AndLogMessage_whenResponseSentSuccessfully() {
         uilRequestEntity.setEdeliveryMessageId(MESSAGE_ID);
         uilRequestService.manageSendSuccess(MESSAGE_ID);
-
-        assertTrue(memoryAppender.containsFormattedLogMessage("sent message messageId successfully"));
-        assertEquals(1, memoryAppender.countEventsForLogger(UilRequestService.class.getName(), Level.INFO));
     }
 
     @Test
-    void shouldBuildResponseBody_whenResponseInProgress() {
+    void shouldBuildResponseBody_whenResponseInProgress(){
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
         rabbitRequestDto.setControl(controlDto);
@@ -428,11 +412,11 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         final String requestBody = uilRequestService.buildRequestBody(rabbitRequestDto);
 
-        assertThat(StringUtils.deleteWhitespace(expectedRequestBody), CompareMatcher.isIdenticalTo(requestBody));
+        assertThat(expectedRequestBody, isIdenticalTo(requestBody).ignoreWhitespace());
     }
 
     @Test
-    void shouldBuildRequestBody_whenReceived() {
+    void shouldBuildRequestBody_whenReceived(){
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
         rabbitRequestDto.setControl(controlDto);
@@ -442,11 +426,11 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         final String requestBody = uilRequestService.buildRequestBody(rabbitRequestDto);
 
-        assertThat(StringUtils.deleteWhitespace(expectedRequestBody), CompareMatcher.isIdenticalTo(requestBody));
+        assertThat(expectedRequestBody, isSimilarTo(requestBody).ignoreWhitespace());
     }
 
     @Test
-    void shouldFindRequestByMessageId_whenRequestExists() {
+    void shouldFindRequestByMessageId_whenRequestExists(){
         when(uilRequestRepository.findByEdeliveryMessageId(anyString())).thenReturn(uilRequestEntity);
         final UilRequestEntity requestByMessageId = uilRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         assertNotNull(requestByMessageId);

@@ -32,3 +32,6 @@ efti:
   control:
     pending:
       timeout: 300
+
+server:
+  port: 8882

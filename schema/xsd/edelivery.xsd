@@ -93,6 +93,29 @@
       <xsd:element name="description" type="xsd:string" minOccurs="0"/>
     </xsd:sequence>
     <xsd:attribute name="status" type="efti-ed:ResponseStatus" use="required"/>
+    <xsd:attribute name="requestId" type="xsd:token">
+      <xsd:annotation>
+        <xsd:documentation>
+          This is a response to a request, which is referred by this request id
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="Request">
+    <xsd:annotation>
+      <xsd:documentation>
+        Any edelivery payload request
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="requestId" type="xsd:token">
+      <xsd:annotation>
+        <xsd:documentation>
+          Client can define request id which is returned in the response.
+          Basically same as the conversation id in edelivery communication.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
   </xsd:complexType>
 
   <xsd:complexType name="UILQuery">
@@ -102,12 +125,16 @@
         Returns the identified consignment in the requested subset.
       </xsd:documentation>
     </xsd:annotation>
-    <xsd:sequence>
-      <!-- uil of the consignment -->
-      <xsd:element name="uil" type="efti-ed:UIL"/>
-      <!-- subset id of the consignment e.g. identifier, EU1, FI or FI01 -->
-      <xsd:element name="subsetId" type="xsd:string"/>
-    </xsd:sequence>
+    <xsd:complexContent>
+      <xsd:extension base="efti-ed:Request">
+        <xsd:sequence>
+          <!-- uil of the consignment -->
+          <xsd:element name="uil" type="efti-ed:UIL"/>
+          <!-- subset id of the consignment e.g. identifier, EU1, FI or FI01 -->
+          <xsd:element name="subsetId" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:complexType name="UILResponse">
@@ -128,5 +155,24 @@
 
   <xsd:element name="uilQuery" type="efti-ed:UILQuery"/>
   <xsd:element name="uilResponse" type="efti-ed:UILResponse"/>
+
+  <xsd:complexType name="PostFollowUpRequest">
+    <xsd:annotation>
+      <xsd:documentation>
+        Save follow-up message to some specific data set identified by UIL.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="efti-ed:Request">
+        <xsd:sequence>
+          <xsd:element name="uil" type="efti-ed:UIL"/>
+          <xsd:element name="message" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:element name="postFollowUpRequest" type="efti-ed:PostFollowUpRequest"/>
+  <xsd:element name="postFollowUpResponse" type="efti-ed:Response"/>
 </xsd:schema>
 

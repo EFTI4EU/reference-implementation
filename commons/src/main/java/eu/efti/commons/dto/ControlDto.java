@@ -3,6 +3,7 @@ package eu.efti.commons.dto;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static eu.efti.commons.enums.ErrorCodesEnum.UUID_NOT_FOUND;
 
@@ -41,7 +43,7 @@ public class ControlDto {
     private String fromGateUrl;
     private AuthorityDto authority;
     private ErrorDto error;
-    private IdentifiersResultsDto identifiersResults;
+    private List<ConsignmentDto> identifiersResults;
     private String notes;
 
     public boolean isError() {

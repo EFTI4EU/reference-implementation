@@ -1,7 +1,7 @@
 package eu.efti.identifiersregistry.service;
 
-import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.identifiersregistry.IdentifiersMapper;
@@ -42,7 +42,7 @@ public class IdentifiersService {
         final Optional<Consignment> entityOptional = repository.findByUil(gateOwner,
                 identifiers.getDatasetId(), identifiersDto.getPlatformId());
 
-        Consignment consignment = mapper.dtoToEntity(identifiers);
+        Consignment consignment = mapper.eDeliveryToEntity(identifiers);
         consignment.setGateId(gateOwner);
         consignment.setPlatformId(identifiersDto.getPlatformId());
         consignment.setDatasetId(identifiers.getDatasetId());
@@ -53,7 +53,7 @@ public class IdentifiersService {
         } else {
             log.info("creating new entry for dataset id {}", identifiers.getDatasetId());
         }
-        this.save(consignment);
+        repository.save(consignment);
         logService.log(identifiersDto, gateOwner, gateCountry, bodyBase64, FTI_004);
     }
 
@@ -62,11 +62,7 @@ public class IdentifiersService {
     }
 
     @Transactional("identifiersTransactionManager")
-    public List<IdentifiersDto> search(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
-        return mapper.entityListToDtoList(this.repository.searchByCriteria(identifiersRequestDto));
-    }
-
-    private IdentifiersDto save(final Consignment consignment) {
-        return mapper.entityToDto(repository.save(consignment));
+    public List<ConsignmentDto> search(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
+        return mapper.entityToDto(this.repository.searchByCriteria(identifiersRequestDto));
     }
 }

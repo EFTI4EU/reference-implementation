@@ -27,12 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import org.xml.sax.InputSource;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Objects;
@@ -117,17 +112,6 @@ public abstract class RequestService<T extends RequestEntity> {
             manageMessageReceive(notificationDto);
         } else {
             log.warn("unknown notification {} ", notificationDto.getNotificationType());
-        }
-    }
-
-    protected String getRequestUuid(final String bodyXmlString) {
-        final XPathFactory xpathFactory = XPathFactory.newInstance();
-        final XPath xpath = xpathFactory.newXPath();
-        final InputSource xml = new InputSource(new StringReader(bodyXmlString));
-        try {
-            return xpath.evaluate("/body/requestUuid", xml);
-        } catch (final XPathExpressionException e) {
-            return null;
         }
     }
 

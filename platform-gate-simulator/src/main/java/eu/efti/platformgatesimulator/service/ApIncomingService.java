@@ -2,10 +2,14 @@ package eu.efti.platformgatesimulator.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import eu.efti.platformgatesimulator.mapper.MapperUtils;
+import eu.efti.v1.consignment.common.SupplyChainConsignment;
+import eu.efti.v1.edelivery.UILQuery;
+import eu.efti.v1.edelivery.UILResponse;
+import eu.efti.v1.json.SaveIdentifiersRequest;
 import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
 import eu.efti.edeliveryapconnector.dto.ApRequestDto;
-import eu.efti.edeliveryapconnector.dto.MessageBodyDto;
 import eu.efti.edeliveryapconnector.dto.NotesMessageBodyDto;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
@@ -76,19 +80,20 @@ public class ApIncomingService {
             final NotesMessageBodyDto messageBody = xmlMapper.readValue(notificationContentDto.getBody(), NotesMessageBodyDto.class);
             log.info("note \"{}\" received for request with id {}", messageBody.getNote(), messageBody.getRequestUuid());
         } else {
-            final MessageBodyDto messageBody = xmlMapper.readValue(notificationContentDto.getBody(), MessageBodyDto.class);
-            final String eftidataUuid = messageBody.getEFTIDataUuid();
-            if (eftidataUuid.endsWith("1")) {
+            final UILQuery uilQuery = xmlMapper.readValue(notificationContentDto.getBody(), UILQuery.class);
+            final String datasetId = uilQuery.getUil().getDatasetId();
+            if (datasetId.endsWith("1")) {
+                log.info("id {} end with 1, not responding", datasetId);
                 return;
             }
-            sendResponse(buildApConf(), eftidataUuid, messageBody.getRequestUuid(), readerService.readFromFile(gateProperties.getCdaPath() + eftidataUuid));
+            sendResponse(buildApConf(), uilQuery.getRequestId(), readerService.readFromFile(gateProperties.getCdaPath() + datasetId));
         }
     }
 
-    private void sendResponse(final ApConfigDto apConfigDto, final String eftidataUuid, final String requestUuid, final String data) throws JsonProcessingException {
+    private void sendResponse(final ApConfigDto apConfigDto, final String requestUuid, final SupplyChainConsignment data) throws JsonProcessingException {
         final boolean isError = data == null;
         final ApRequestDto apRequestDto = ApRequestDto.builder()
-                .requestId(1L).body(buildBody(data, requestUuid, eftidataUuid, isError ? "ERROR" : "COMPLETE", isError ? "file not found with uuid" : null))
+                .requestId(1L).body(buildBody(data, requestUuid, isError ? "ERROR" : "COMPLETE", isError ? "file not found with uuid" : null))
                 .apConfig(apConfigDto)
                 .receiver(gateProperties.getGate())
                 .sender(gateProperties.getOwner())
@@ -100,14 +105,14 @@ public class ApIncomingService {
         }
     }
 
-    private String buildBody(final String eftiData, final String requestUuid, final String eftidataUuid, final String status, final String errorDescription) throws JsonProcessingException {
-        return xmlMapper.writeValueAsString(MessageBodyDto.builder()
-                .requestUuid(requestUuid)
-                .eFTIData(eftiData)
-                .status(status)
-                .errorDescription(errorDescription)
-                .eFTIDataUuid(eftidataUuid)
-                .build());
+    private String buildBody(final SupplyChainConsignment eftiData, final String requestUuid, final String status, final String errorDescription) throws JsonProcessingException {
+        final UILResponse uilResponse = new UILResponse();
+        uilResponse.setRequestId(requestUuid);
+        uilResponse.setDescription(errorDescription);
+        uilResponse.setStatus(status);
+        uilResponse.setConsignment(eftiData);
+
+        return xmlMapper.writeValueAsString(uilResponse);
     }
 
     private ApConfigDto buildApConf() {

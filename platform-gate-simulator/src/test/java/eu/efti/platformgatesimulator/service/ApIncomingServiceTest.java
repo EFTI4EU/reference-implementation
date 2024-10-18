@@ -7,6 +7,7 @@ import eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto;
 import eu.efti.edeliveryapconnector.service.NotificationService;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.platformgatesimulator.config.GateProperties;
+import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,14 +65,15 @@ class ApIncomingServiceTest extends AbstractTest {
     @Test
     void manageIncomingNotificationBadFilesTest() throws IOException, InterruptedException {
         final String body = """
-                <body>
-                    <requestUuid>reques</requestUuid>
-                    <eFTIDataUuid>oki</eFTIDataUuid>
-                    <status>oki</status>
-                    <errorDescription>oki</errorDescription>
-                    <eftiData>oki</eftiData>
-                </body>
-                """;
+            <UILQuery requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c">
+                <uil>
+                    <gateId/>
+                    <platformId>plateform</platformId>
+                    <datasetId>uuid</datasetId>
+                </uil>
+                <subsetId/>
+            </UILQuery>
+        """;
 
         final NotificationDto notificationDto = new NotificationDto();
         notificationDto.setContent(NotificationContentDto.builder()
@@ -88,14 +90,15 @@ class ApIncomingServiceTest extends AbstractTest {
     @Test
     void manageIncomingNotificationTest() throws IOException, InterruptedException {
         final String body = """
-                <body>
-                    <requestUuid>12345678-ab12-4ab6-8999-123456789abc</requestUuid>
-                    <eFTIDataUuid>12345678-ab12-4ab6-8999-123456789abc</eFTIDataUuid>
-                    <status>oki</status>
-                    <errorDescription>oki</errorDescription>
-                    <eftiData>oki</eftiData>
-                </body>
-                """;
+            <UILQuery requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c">
+                <uil>
+                    <gateId/>
+                    <platformId>plateform</platformId>
+                    <datasetId>uuid</datasetId>
+                </uil>
+                <subsetId/>
+            </UILQuery>
+        """;
 
         final NotificationDto notificationDto = new NotificationDto();
         notificationDto.setContent(NotificationContentDto.builder()
@@ -105,7 +108,7 @@ class ApIncomingServiceTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .build());
         Mockito.when(notificationService.consume(any())).thenReturn(Optional.of(notificationDto));
-        Mockito.when(readerService.readFromFile(any())).thenReturn("eftidata");
+        Mockito.when(readerService.readFromFile(any())).thenReturn(new SupplyChainConsignment());
         apIncomingService.manageIncomingNotification(new ReceivedNotificationDto());
         verify(readerService).readFromFile(any());
     }
