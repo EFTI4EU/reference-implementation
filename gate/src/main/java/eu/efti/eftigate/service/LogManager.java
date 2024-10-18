@@ -1,10 +1,10 @@
 package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.IdentifiersDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.ValidableDto;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -19,7 +19,6 @@ import eu.efti.eftilogger.service.AuditRequestLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static eu.efti.eftilogger.model.ComponentType.CA_APP;
@@ -72,9 +71,7 @@ public class LogManager {
     }
 
     public void logFromIdentifier(IdentifiersResponseDto identifiersResponseDto, ControlDto controlDto, final String name) {
-        List<IdentifiersDto> identifiersDtoList = new ArrayList<>();
-        identifiersResponseDto.getIdentifiers().forEach(mapperUtils::identifiersResultDtoToIdentifiersDto);
-        this.logLocalRegistryMessage(controlDto, identifiersDtoList, name);
+        this.logLocalRegistryMessage(controlDto, identifiersResponseDto.getIdentifiers(), name);
     }
 
     public void logFromIdentifiersRequestDto(ControlDto controlDto, SearchWithIdentifiersRequestDto identifiersRequestDto, final boolean isCurrentGate, final String receiver, final boolean isSucess, final boolean isAck, final String name) {
@@ -126,17 +123,17 @@ public class LogManager {
     }
 
     public void logRegistryIdentifiers(final ControlDto control,
-                                       final List<IdentifiersDto> metadataDtoList,
+                                       final List<ConsignmentDto> consignementList,
                                        final String name) {
-        final String body = metadataDtoList != null ? serializeUtils.mapObjectToBase64String(metadataDtoList) : null;
+        final String body = consignementList != null ? serializeUtils.mapObjectToBase64String(consignementList) : null;
         this.auditRegistryLogService.logByControlDto(control, gateProperties.getOwner(), gateProperties.getCountry(), body, null, name);
     }
 
     public void logLocalRegistryMessage(final ControlDto control,
-                                        final List<IdentifiersDto> identifiersDtoList,
+                                        final List<ConsignmentDto> consignmentDtos,
                                         final String name) {
         final MessagePartiesDto messagePartiesDto = getMessagePartiesDto();
-        final String body = serializeUtils.mapObjectToBase64String(identifiersDtoList);
+        final String body = serializeUtils.mapObjectToBase64String(consignmentDtos);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, StatusEnum.COMPLETE, false, name);
     }
 

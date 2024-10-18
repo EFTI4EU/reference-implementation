@@ -1,7 +1,6 @@
-<body>
-    <requestUuid>67fe38bd-6bf7-4b06-b20e-206264bd639c</requestUuid>
-    <transportMode>ROAD</transportMode>
-    <vehicleID>AA123VV</vehicleID>
-    <vehicleCountry>BE</vehicleCountry>
-    <isDangerousGoods/>
-</body>
+<IdentifierQuery requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c">
+    <identifier>AA123VV</identifier>
+    <registrationCountryCode>BE</registrationCountryCode>
+    <modeCode>ROAD</modeCode>
+    <dangerousGoodsIndicator/>
+</IdentifierQuery>

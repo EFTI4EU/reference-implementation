@@ -1,11 +1,37 @@
-<body>
-    <requestUuid>67fe38bd-6bf7-4b06-b20e-206264bd639c</requestUuid>
-    <status>PENDING</status>
-    <identifiers>
-        <identifiers>
-            <countryStart>FR</countryStart>
-            <countryEnd>FR</countryEnd>
-            <isDangerousGoods>true</isDangerousGoods>
-        </identifiers>
-    </identifiers>
-</body>
+<IdentifierResponse requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c" status="PENDING">
+    <consignment>
+        <consignment>
+            <uil>
+                <gateId/>
+                <platformId>http://efti.platform.truc.eu</platformId>
+                <datasetId>12345678-ab12-4ab6-8999-123456789abc</datasetId>
+            </uil>
+            <carrierAcceptanceDateTime/>
+            <deliveryEvent>
+                <actualOccurrenceDateTime/>
+            </deliveryEvent>
+            <mainCarriageTransportMovement/>
+            <usedTransportEquipment>
+                <usedTransportEquipment>
+                    <carriedTransportEquipment/>
+                    <categoryCode/>
+                    <id>abc123</id>
+                    <registrationCountry>
+                        <code>FR</code>
+                    </registrationCountry>
+                    <sequenceNumber>0</sequenceNumber>
+                </usedTransportEquipment>
+                <usedTransportEquipment>
+                    <carriedTransportEquipment/>
+                    <categoryCode/>
+                    <id>abc124</id>
+                    <registrationCountry>
+                        <code>BE</code>
+                    </registrationCountry>
+                    <sequenceNumber>0</sequenceNumber>
+                </usedTransportEquipment>
+            </usedTransportEquipment>
+        </consignment>
+    </consignment>
+    <description/>
+</IdentifierResponse>

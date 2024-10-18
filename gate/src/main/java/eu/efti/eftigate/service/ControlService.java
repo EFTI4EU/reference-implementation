@@ -6,17 +6,16 @@ import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
-import eu.efti.commons.dto.IdentifiersResultDto;
 import eu.efti.commons.dto.IdentifiersResultsDto;
 import eu.efti.commons.dto.NotesDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.dto.ValidableDto;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
-import eu.efti.edeliveryapconnector.dto.IdentifiersMessageBodyDto;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.NoteResponseDto;
 import eu.efti.eftigate.dto.RequestUuidDto;
@@ -31,6 +30,7 @@ import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.utils.ControlUtils;
 import eu.efti.identifiersregistry.service.IdentifiersService;
+import eu.efti.v1.edelivery.IdentifierQuery;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -244,8 +244,8 @@ public class ControlService {
                 .errorDescription(ERROR_REQUEST_UUID_NOT_FOUND).build();
     }
 
-    public ControlDto createControlFrom(final IdentifiersMessageBodyDto messageBody, final String fromGateUrl, final IdentifiersResultsDto identifiersResultsDto) {
-        final ControlDto controlDto = ControlUtils.fromExternalIdentifiersControl(messageBody, EXTERNAL_ASK_IDENTIFIERS_SEARCH, fromGateUrl, gateProperties.getOwner(), identifiersResultsDto);
+    public ControlDto createControlFrom(final IdentifierQuery identifierQuery, final String fromGateUrl, final IdentifiersResultsDto identifiersResultsDto) {
+        final ControlDto controlDto = ControlUtils.fromExternalIdentifiersControl(identifierQuery, EXTERNAL_ASK_IDENTIFIERS_SEARCH, fromGateUrl, gateProperties.getOwner(), identifiersResultsDto);
         return this.save(controlDto);
     }
 
@@ -367,17 +367,10 @@ public class ControlService {
         return result;
     }
 
-    public IdentifiersResponseDto buildIdentifiersResponse(final ControlDto controlDto, final List<IdentifiersResultDto> identifers) {
-        final IdentifiersResponseDto identifiersResponseDto = this.buildIdentifiersResponse(controlDto);
-        if (identifers != null && identifiersResponseDto.getIdentifiers().isEmpty()) {
-            identifiersResponseDto.setIdentifiers(identifers);
-        }
-        return identifiersResponseDto;
-    }
 
-    private List<IdentifiersResultDto> getIdentifiersResultDtos(final ControlDto controlDto) {
+    private List<ConsignmentDto> getIdentifiersResultDtos(final ControlDto controlDto) {
         if(controlDto.getIdentifiersResults() != null) {
-            return controlDto.getIdentifiersResults().getIdentifiersResult();
+            return controlDto.getIdentifiersResults();
         }
         return emptyList();
     }

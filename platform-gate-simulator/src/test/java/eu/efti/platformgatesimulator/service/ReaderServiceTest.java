@@ -1,7 +1,13 @@
 package eu.efti.platformgatesimulator.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule;
 import eu.efti.platformgatesimulator.config.GateProperties;
 import eu.efti.platformgatesimulator.exception.UploadException;
+import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -40,7 +46,7 @@ class ReaderServiceTest {
                         .url("url")
                         .password("password")
                         .username("username").build()).build();
-        readerService = new ReaderService(gateProperties, resourceLoader);
+        readerService = new ReaderService(gateProperties, resourceLoader, xmlMapper());
     }
 
     @AfterEach
@@ -71,25 +77,19 @@ class ReaderServiceTest {
     }
 
     @Test
-    void readFromFileJsonTest() throws IOException {
-        final Resource resource = Mockito.mock(Resource.class);
-        Mockito.when(resourceLoader.getResource(any())).thenReturn(resource);
-        Mockito.when(resource.exists()).thenReturn(false);
-        Mockito.when(resource.exists()).thenReturn(true);
-        Mockito.when(resource.getInputStream()).thenReturn(IOUtils.toInputStream("some data", "UTF-8"));
-        final String result = readerService.readFromFile("classpath:cda/test");
-
-        Assertions.assertNotNull(result);
-    }
-
-    @Test
     void readFromFileXmlTest() throws IOException {
+        final String data = """
+                <consignment xmlns="http://efti.eu/v1/consignment/common"
+                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                             xsi:schemaLocation="http://efti.eu/v1/consignment/common ../consignment-common.xsd">
+                </consignment>
+                """;
         final Resource resource = Mockito.mock(Resource.class);
         Mockito.when(resourceLoader.getResource(any())).thenReturn(resource);
         Mockito.when(resource.exists()).thenReturn(false);
         Mockito.when(resource.exists()).thenReturn(true);
-        Mockito.when(resource.getInputStream()).thenReturn(IOUtils.toInputStream("some data", "UTF-8"));
-        final String result = readerService.readFromFile("classpath:cda/teest");
+        Mockito.when(resource.getInputStream()).thenReturn(IOUtils.toInputStream(data, "UTF-8"));
+        final SupplyChainConsignment result = readerService.readFromFile("classpath:cda/teest");
 
         Assertions.assertNotNull(result);
     }
@@ -100,8 +100,17 @@ class ReaderServiceTest {
         Mockito.when(resourceLoader.getResource(any())).thenReturn(resource);
         Mockito.when(resource.exists()).thenReturn(false);
         Mockito.when(resource.exists()).thenReturn(false);
-        final String result = readerService.readFromFile("classpath:cda/bouuuuuuuuuuuuh");
+        final SupplyChainConsignment result = readerService.readFromFile("classpath:cda/bouuuuuuuuuuuuh");
 
         Assertions.assertNull(result);
+    }
+
+    private XmlMapper xmlMapper() {
+        final XmlMapper xmlMapper = new XmlMapper();
+        xmlMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        xmlMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        xmlMapper.registerModule(new JavaTimeModule());
+        xmlMapper.registerModule(new JakartaXmlBindAnnotationModule());
+        return xmlMapper;
     }
 }

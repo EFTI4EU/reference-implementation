@@ -3,15 +3,15 @@ package eu.efti.eftigate.mapper;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.RequestDto;
-import eu.efti.commons.dto.*;
-import eu.efti.commons.dto.IdentifiersDto;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.ErrorEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
-import eu.efti.eftigate.entity.IdentifiersResult;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
+import eu.efti.identifiersregistry.IdentifiersMapper;
+import eu.efti.v1.edelivery.Consignment;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -27,6 +27,7 @@ import java.util.List;
 public class MapperUtils {
 
     private final ModelMapper modelMapper;
+    private final IdentifiersMapper identifiersMapper;
 
     public ControlEntity controlDtoToControlEntity(final ControlDto controlDto) {
         final ControlEntity controlEntity = modelMapper.map(controlDto, ControlEntity.class);
@@ -48,15 +49,15 @@ public class MapperUtils {
 
     public ControlDto controlEntityToControlDto(final ControlEntity controlEntity) {
         final ControlDto controlDto = modelMapper.map(controlEntity, ControlDto.class);
-        final List<IdentifiersResult> metadataResultList = CollectionUtils.emptyIfNull(controlEntity.getRequests()).stream()
+        final List<ConsignmentDto> consignmentDtoList = CollectionUtils.emptyIfNull(controlEntity.getRequests()).stream()
                 .filter(IdentifiersRequestEntity.class::isInstance)
                 .map(IdentifiersRequestEntity.class::cast)
                 .filter(identifiersRequestEntity -> identifiersRequestEntity.getIdentifiersResults() != null
-                        && CollectionUtils.isNotEmpty(identifiersRequestEntity.getIdentifiersResults().getIdentifiersResult()))
-                .flatMap(request -> request.getIdentifiersResults().getIdentifiersResult().stream())
-                .sorted(Comparator.comparing(IdentifiersResult::getEFTIGateUrl))
+                        && CollectionUtils.isNotEmpty(identifiersRequestEntity.getIdentifiersResults().getConsignments()))
+                .flatMap(request -> request.getIdentifiersResults().getConsignments().stream())
+                .sorted(Comparator.comparing(ConsignmentDto::getGateId))
                 .toList();
-        controlDto.setIdentifiersResults(new IdentifiersResultsDto(identifierResultEntitiesToIdentifiersResultDtos(metadataResultList)));
+        controlDto.setIdentifiersResults(consignmentDtoList);
         final byte[] byteArray = CollectionUtils.emptyIfNull(controlEntity.getRequests()).stream()
                 .filter(UilRequestEntity.class::isInstance)
                 .map(UilRequestEntity.class::cast)
@@ -81,31 +82,48 @@ public class MapperUtils {
         return modelMapper.map(requestEntity, destinationClass);
     }
 
-    public List<IdentifiersResult> identifierDtosToIdentifierEntities(final List<IdentifiersDto> identifiersDtoList) {
-        return CollectionUtils.emptyIfNull(identifiersDtoList).stream()
-                .map(identifiersDto -> modelMapper.map(identifiersDto, IdentifiersResult.class))
-                .toList();
+    public ConsignmentDto eDeliveryToDto(final Consignment consignment) {
+        //todo fix this double mapping
+        return this.modelMapper.map(this.identifiersMapper.eDeliveryToEntity(consignment), ConsignmentDto.class);
     }
 
-    public IdentifiersDto identifiersResultDtoToIdentifiersDto(final IdentifiersResultDto identifiersResultDto) {
-        return modelMapper.map(identifiersResultDto, IdentifiersDto.class);
+    public List<ConsignmentDto> eDeliveryToDto(final List<Consignment> consignments) {
+        return CollectionUtils.emptyIfNull(consignments).stream().map(this::eDeliveryToDto).toList();
+
     }
 
-    public List<IdentifiersResultDto> identifierDtosToIdentifiersResultDto(final List<IdentifiersDto> identifiersDtoList) {
-        return CollectionUtils.emptyIfNull(identifiersDtoList).stream()
-                .map(identifiersDto -> modelMapper.map(identifiersDto, IdentifiersResultDto.class))
-                .toList();
+    public Consignment entityToEdelivery(final eu.efti.identifiersregistry.entity.Consignment consignment) {
+        return this.identifiersMapper.entityToEdelivery(consignment);
     }
 
-    public List<IdentifiersResultDto> identifierResultEntitiesToIdentifiersResultDtos(final List<IdentifiersResult> identifiersResultList) {
-        return CollectionUtils.emptyIfNull(identifiersResultList).stream()
-                .map(identifiersResult -> modelMapper.map(identifiersResult, IdentifiersResultDto.class))
-                .toList();
+    public List<Consignment> entityToEdelivery(final List<eu.efti.identifiersregistry.entity.Consignment> consignments) {
+        return CollectionUtils.emptyIfNull(consignments).stream().map(this::entityToEdelivery).toList();
+
     }
 
-    public List<IdentifiersResult> identifierResultDtosToIdentifierEntities(final List<IdentifiersResultDto> identifiersResultDtos) {
-        return CollectionUtils.emptyIfNull(identifiersResultDtos).stream()
-                .map(identifiersResultDto -> modelMapper.map(identifiersResultDto, IdentifiersResult.class))
-                .toList();
+    public Consignment dtoToEdelivery(final ConsignmentDto consignment) {
+        //todo fix double mapping
+        return this.identifiersMapper.entityToEdelivery(this.dtoToEntity(consignment));
+    }
+
+    public List<Consignment> dtoToEdelivery(final List<ConsignmentDto> consignments) {
+        return CollectionUtils.emptyIfNull(consignments).stream().map(this::dtoToEdelivery).toList();
+
+    }
+
+    public ConsignmentDto entityToDto(final eu.efti.identifiersregistry.entity.Consignment consignment) {
+        return modelMapper.map(consignment, ConsignmentDto.class);
+    }
+
+    public List<ConsignmentDto> entityToDto(final List<eu.efti.identifiersregistry.entity.Consignment> consignmentList) {
+        return CollectionUtils.emptyIfNull(consignmentList).stream().map(this::entityToDto).toList();
+    }
+
+    public eu.efti.identifiersregistry.entity.Consignment dtoToEntity(final ConsignmentDto consignmentDto) {
+        return modelMapper.map(consignmentDto, eu.efti.identifiersregistry.entity.Consignment.class);
+    }
+
+    public List<eu.efti.identifiersregistry.entity.Consignment> dtoToEntity(final List<ConsignmentDto> consignmentDtoList) {
+        return CollectionUtils.emptyIfNull(consignmentDtoList).stream().map(this::dtoToEntity).toList();
     }
 }

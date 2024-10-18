@@ -1,17 +1,31 @@
 package eu.efti.identifiersregistry;
 
-import eu.efti.commons.dto.IdentifiersDto;
-import eu.efti.commons.dto.TransportVehicleDto;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.identifiersregistry.entity.CarriedTransportEquipment;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
+import eu.efti.v1.codes.CountryCode;
+import eu.efti.v1.consignment.identifier.AssociatedTransportEquipment;
+import eu.efti.v1.consignment.identifier.LogisticsTransportEquipment;
+import eu.efti.v1.consignment.identifier.LogisticsTransportMeans;
+import eu.efti.v1.consignment.identifier.LogisticsTransportMovement;
 import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
+import eu.efti.v1.consignment.identifier.TradeCountry;
+import eu.efti.v1.consignment.identifier.TransportEvent;
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
+import eu.efti.v1.edelivery.UIL;
 import eu.efti.v1.types.DateTime;
+import eu.efti.v1.types.Identifier17;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -22,31 +36,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IdentifiersMapper {
 
-    public IdentifiersDto entityToDto(final Consignment consignmentEntity) {
-        IdentifiersDto dto = new IdentifiersDto();
-        dto.setEFTIGateUrl(consignmentEntity.getGateId());
-        dto.setEFTIPlatformUrl(consignmentEntity.getPlatformId());
-        dto.setEFTIDataUuid(consignmentEntity.getDatasetId());
-        if (consignmentEntity.getMainCarriageTransportMovements() != null) {
-            consignmentEntity.getMainCarriageTransportMovements().forEach(mainCarriageTransportMovement ->
-                    dto.setIsDangerousGoods(mainCarriageTransportMovement.isDangerousGoodsIndicator()));
-        }
-        if (consignmentEntity.getUsedTransportEquipments() != null) {
-            consignmentEntity.getUsedTransportEquipments().forEach(usedTransportEquipment -> {
-                TransportVehicleDto transportVehicleDto = new TransportVehicleDto();
-                transportVehicleDto.setVehicleID(usedTransportEquipment.getEquipmentId());
-                transportVehicleDto.setVehicleCountry(usedTransportEquipment.getRegistrationCountry());
-                dto.getTransportVehicles().add(transportVehicleDto);
-            });
-        }
-        return dto;
+    private static final Logger log = LoggerFactory.getLogger(IdentifiersMapper.class);
+    private final ModelMapper mapper;
+
+    public ConsignmentDto entityToDto(final Consignment consignmentEntity) {
+        return mapper.map(consignmentEntity, ConsignmentDto.class);
     }
 
-    public List<IdentifiersDto> entityListToDtoList(final List<Consignment> consignmentEntity) {
-        return consignmentEntity.stream().map(this::entityToDto).toList();
+    public List<ConsignmentDto> entityToDto(final List<Consignment> consignmentEntityList) {
+        return consignmentEntityList.stream().map(this::entityToDto).toList();
+    }
+
+    public Consignment dtoToEntity(final ConsignmentDto dto) {
+        return mapper.map(dto, Consignment.class);
+    }
+
+    public List<Consignment> dtoToEntity(final List<ConsignmentDto> consignmentDtoList) {
+        return consignmentDtoList.stream().map(this::dtoToEntity).toList();
     }
 
     private OffsetDateTime fromDateTime(DateTime dateTime) {
+        if(StringUtils.isEmpty(dateTime.getValue())) return null;
         return switch (dateTime.getFormatId()) {
             case "102" -> {
                 LocalDate localDate = LocalDate.parse(dateTime.getValue(), DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -57,13 +67,40 @@ public class IdentifiersMapper {
         };
     }
 
-    public Consignment dtoToEntity(SaveIdentifiersRequest request) {
-        Consignment consignment = new Consignment();
+    private DateTime fromOffsetDate(OffsetDateTime offsetDateTime) {
+        if(offsetDateTime == null) {
+            return null;
+        }
+        final DateTime dateTime = new DateTime();
+        dateTime.setFormatId("205");
+        dateTime.setValue(offsetDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmZ")));
+        return dateTime;
+    }
+
+    public Consignment eDeliveryToEntity(final SaveIdentifiersRequest request) {
+        final Consignment consignment = this.eDeliverySupplyToEntity(request.getConsignment());
         consignment.setDatasetId(request.getDatasetId());
-        SupplyChainConsignment sourceConsignment = request.getConsignment();
+        return consignment;
+    }
+
+    public Consignment eDeliveryToEntity(eu.efti.v1.edelivery.Consignment sourceConsignment) {
+
+        Consignment consignment = eDeliverySupplyToEntity(sourceConsignment);
+
+        consignment.setGateId(sourceConsignment.getUil().getGateId());
+        consignment.setPlatformId(sourceConsignment.getUil().getPlatformId());
+        consignment.setDatasetId(sourceConsignment.getUil().getDatasetId());
+
+        return consignment;
+    }
+
+    public Consignment eDeliverySupplyToEntity(SupplyChainConsignment sourceConsignment) {
+        Consignment consignment = new Consignment();
 
         consignment.setCarrierAcceptanceDatetime(fromDateTime(sourceConsignment.getCarrierAcceptanceDateTime()));
-        consignment.setDeliveryEventActualOccurrenceDatetime(fromDateTime(sourceConsignment.getDeliveryEvent().getActualOccurrenceDateTime()));
+        if(sourceConsignment.getDeliveryEvent() != null) {
+            consignment.setDeliveryEventActualOccurrenceDatetime(fromDateTime(sourceConsignment.getDeliveryEvent().getActualOccurrenceDateTime()));
+        }
 
         consignment.getMainCarriageTransportMovements().addAll(sourceConsignment.getMainCarriageTransportMovement().stream().map(movement -> {
             MainCarriageTransportMovement mainCarriageTransportMovement = new MainCarriageTransportMovement();
@@ -94,5 +131,64 @@ public class IdentifiersMapper {
             return usedTransportEquipment;
         }).toList());
         return consignment;
+    }
+
+    public eu.efti.v1.edelivery.Consignment entityToEdelivery(final Consignment sourceConsignment) {
+        final eu.efti.v1.edelivery.Consignment consignment = new eu.efti.v1.edelivery.Consignment();
+
+        consignment.setUil(buildUil(sourceConsignment));
+
+        consignment.setCarrierAcceptanceDateTime(fromOffsetDate(sourceConsignment.getCarrierAcceptanceDatetime()));
+        final TransportEvent transportEvent = new TransportEvent();
+        transportEvent.setActualOccurrenceDateTime(fromOffsetDate(sourceConsignment.getDeliveryEventActualOccurrenceDatetime()));
+        consignment.setDeliveryEvent(transportEvent);
+
+        consignment.getMainCarriageTransportMovement().addAll(CollectionUtils.emptyIfNull(sourceConsignment.getMainCarriageTransportMovements()).stream().map(movement -> {
+            LogisticsTransportMovement logisticsTransportMovement = new LogisticsTransportMovement();
+            logisticsTransportMovement.setDangerousGoodsIndicator(movement.isDangerousGoodsIndicator());
+            logisticsTransportMovement.setModeCode(String.valueOf(movement.getModeCode()));
+            final LogisticsTransportMeans logisticsTransportMeans = new LogisticsTransportMeans();
+            logisticsTransportMeans.setId(fromId(movement.getUsedTransportMeansId()));
+            logisticsTransportMeans.setRegistrationCountry(fromRegistrationCode(movement.getUsedTransportMeansRegistrationCountry()));
+            logisticsTransportMovement.setUsedTransportMeans(logisticsTransportMeans);
+            return logisticsTransportMovement;
+        }).toList());
+
+        consignment.getUsedTransportEquipment().addAll(CollectionUtils.emptyIfNull(sourceConsignment.getUsedTransportEquipments()).stream().map(equipment -> {
+            LogisticsTransportEquipment logisticsTransportEquipment = new LogisticsTransportEquipment();
+            logisticsTransportEquipment.setSequenceNumber(BigInteger.valueOf(equipment.getSequenceNumber()));
+            logisticsTransportEquipment.setRegistrationCountry(fromRegistrationCode(equipment.getRegistrationCountry()));
+            logisticsTransportEquipment.setId(fromId(equipment.getEquipmentId()));
+
+            logisticsTransportEquipment.getCarriedTransportEquipment().addAll(CollectionUtils.emptyIfNull(equipment.getCarriedTransportEquipments()).stream().map(carriedEquipment -> {
+                AssociatedTransportEquipment associatedTransportEquipment = new AssociatedTransportEquipment();
+                associatedTransportEquipment.setId(fromId(String.valueOf(carriedEquipment.getId())));
+                associatedTransportEquipment.setSequenceNumber(BigInteger.valueOf(carriedEquipment.getSequenceNumber()));
+                return associatedTransportEquipment;
+            }).toList());
+
+            return logisticsTransportEquipment;
+        }).toList());
+        return consignment;
+    }
+
+    private TradeCountry fromRegistrationCode(final String code) {
+        final TradeCountry tradeCountry = new TradeCountry();
+        tradeCountry.setCode(CountryCode.fromValue(code));
+        return tradeCountry;
+    }
+
+    private Identifier17 fromId(final String id) {
+        final Identifier17 identifier17 = new Identifier17();
+        identifier17.setValue(id);
+        return identifier17;
+    }
+
+    private UIL buildUil(final Consignment consignment) {
+        final UIL uil = new UIL();
+        uil.setDatasetId(consignment.getDatasetId());
+        uil.setGateId(consignment.getGateId());
+        uil.setPlatformId(consignment.getPlatformId());
+        return uil;
     }
 }

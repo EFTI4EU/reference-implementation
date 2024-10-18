@@ -12,8 +12,105 @@
           <xsd:appinfo>
             <unCefact unId="UN01004884" id="Associated_ Transport Equipment. Identification. Identifier"/>
             <efti id="eFTI448" format="an..17" definition="The identifier of the carried transport equipment."
-                  subsets="fr, el, hr, es, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, sk, ie, de, cy, at, identifier, eu5a, se, eu5b, eu2, ee, bg, eu5c, lv, mt, si"
-                  parentId="ASBIE1092"/>
+                  parentId="ASBIE1092">
+              <subset id="AT02" status="M"/>
+              <subset id="AT05" status="C"/>
+              <subset id="AT06" status="C"/>
+              <subset id="AT07" status="C"/>
+              <subset id="AT08" status="M"/>
+              <subset id="AT12" status="C"/>
+              <subset id="AT13" status="C"/>
+              <subset id="AT14" status="C"/>
+              <subset id="AT16" status="C"/>
+              <subset id="BE01" status="C"/>
+              <subset id="BE02" status="C"/>
+              <subset id="BE03a" status="M"/>
+              <subset id="BE05" status="C"/>
+              <subset id="BE06" status="C"/>
+              <subset id="BE07" status="C"/>
+              <subset id="BE08" status="C"/>
+              <subset id="BE09" status="C"/>
+              <subset id="BE10" status="C"/>
+              <subset id="BG02" status="C"/>
+              <subset id="CY01" status="C"/>
+              <subset id="CY03" status="M"/>
+              <subset id="CZ01" status="C"/>
+              <subset id="CZ02" status="C"/>
+              <subset id="CZ05" status="C"/>
+              <subset id="DE03a" status="C"/>
+              <subset id="DE03b" status="C"/>
+              <subset id="DE03c" status="C"/>
+              <subset id="DK01" status="M"/>
+              <subset id="DK03" status="C"/>
+              <subset id="DK04" status="C"/>
+              <subset id="DK05" status="C"/>
+              <subset id="EE01" status="C"/>
+              <subset id="EE02" status="C"/>
+              <subset id="EE05d" status="C"/>
+              <subset id="EL03" status="C"/>
+              <subset id="EL04" status="C"/>
+              <subset id="EL05" status="C"/>
+              <subset id="ES02" status="M"/>
+              <subset id="ES04" status="C"/>
+              <subset id="ES05" status="C"/>
+              <subset id="EU2" status="M"/>
+              <subset id="EU5a" status="M"/>
+              <subset id="EU5b" status="M"/>
+              <subset id="EU5c" status="M"/>
+              <subset id="FI02" status="M"/>
+              <subset id="FI03" status="C"/>
+              <subset id="FI04" status="C"/>
+              <subset id="FR03" status="M"/>
+              <subset id="HR01" status="M"/>
+              <subset id="HR05a" status="C"/>
+              <subset id="HR05b" status="C"/>
+              <subset id="HR05c" status="C"/>
+              <subset id="HU02" status="C"/>
+              <subset id="HU03" status="C"/>
+              <subset id="HU04" status="C"/>
+              <subset id="HU05" status="C"/>
+              <subset id="HU06" status="M"/>
+              <subset id="HU07" status="O"/>
+              <subset id="IE02" status="M"/>
+              <subset id="IE05" status="C"/>
+              <subset id="IE06" status="C"/>
+              <subset id="IT01" status="M"/>
+              <subset id="IT03a" status="C"/>
+              <subset id="IT03b" status="C"/>
+              <subset id="IT03c" status="C"/>
+              <subset id="LU04" status="C"/>
+              <subset id="LU05" status="C"/>
+              <subset id="LU06" status="C"/>
+              <subset id="LV04" status="C"/>
+              <subset id="LV05" status="C"/>
+              <subset id="MT01b" status="M"/>
+              <subset id="MT02" status="C"/>
+              <subset id="NL01" status="C"/>
+              <subset id="NL02" status="C"/>
+              <subset id="NL04" status="C"/>
+              <subset id="NL05" status="C"/>
+              <subset id="NL06" status="C"/>
+              <subset id="PL02" status="O"/>
+              <subset id="PL04a" status="C"/>
+              <subset id="PL04b" status="C"/>
+              <subset id="PL04c" status="C"/>
+              <subset id="PT02" status="C"/>
+              <subset id="RO02a" status="M"/>
+              <subset id="RO05a" status="C"/>
+              <subset id="RO05b" status="C"/>
+              <subset id="RO05c" status="C"/>
+              <subset id="SE01" status="C"/>
+              <subset id="SE02" status="C"/>
+              <subset id="SE05" status="C"/>
+              <subset id="SE06" status="M"/>
+              <subset id="SI02" status="M"/>
+              <subset id="SI05" status="C"/>
+              <subset id="SI06" status="C"/>
+              <subset id="SK03" status="C"/>
+              <subset id="SK04" status="C"/>
+              <subset id="SK05" status="C"/>
+              <subset id="identifier" status="O"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>A unique number, mark or name which identifies this associated piece of transport
             equipment.
@@ -26,7 +123,11 @@
             <unCefact unId="UN01015562" id="Associated_ Transport Equipment. Sequence. Numeric"/>
             <efti id="eFTI1000" format="n..16"
                   definition="The sequence number differentiating this piece of logistics transport equipment from others in a set of carried transport equipment."
-                  subsets="el, hu, identifier" parentId="ASBIE1092"/>
+                  parentId="ASBIE1092">
+              <subset id="EL05" status="O"/>
+              <subset id="HU07" status="O"/>
+              <subset id="identifier" status="O"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>The sequence number differentiating this piece of transport equipment from others in a set
             of associated transport equipment.
@@ -44,8 +145,111 @@
             <unCefact unId="UN01003798" id="Logistics_ Transport Equipment. Carried. Associated_ Transport Equipment"/>
             <efti id="ASBIE1092" format=""
                   definition="Transport equipment that is carried on other transport equipment, such as a container placed on a rail wagon or on a trailer."
-                  subsets="fr, el, hr, es, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, sk, ie, de, cy, at, identifier, eu5a, se, eu5b, eu2, ee, bg, lt, eu5c, lv, mt, si"
-                  parentId="ASBIE1086"/>
+                  parentId="ASBIE1086">
+              <subset id="AT02" status="SI"/>
+              <subset id="AT05" status="SI"/>
+              <subset id="AT06" status="SI"/>
+              <subset id="AT07" status="SI"/>
+              <subset id="AT08" status="SI"/>
+              <subset id="AT09" status="SI"/>
+              <subset id="AT12" status="SI"/>
+              <subset id="AT13" status="SI"/>
+              <subset id="AT14" status="SI"/>
+              <subset id="AT16" status="SI"/>
+              <subset id="BE01" status="SI"/>
+              <subset id="BE02" status="SI"/>
+              <subset id="BE03a" status="SI"/>
+              <subset id="BE05" status="SI"/>
+              <subset id="BE06" status="SI"/>
+              <subset id="BE07" status="SI"/>
+              <subset id="BE08" status="SI"/>
+              <subset id="BE09" status="SI"/>
+              <subset id="BE10" status="SI"/>
+              <subset id="BG02" status="SI"/>
+              <subset id="CY01" status="SI"/>
+              <subset id="CY03" status="SI"/>
+              <subset id="CZ01" status="SI"/>
+              <subset id="CZ02" status="SI"/>
+              <subset id="CZ05" status="SI"/>
+              <subset id="DE03a" status="SI"/>
+              <subset id="DE03b" status="SI"/>
+              <subset id="DE03c" status="SI"/>
+              <subset id="DK01" status="SI"/>
+              <subset id="DK03" status="SI"/>
+              <subset id="DK04" status="SI"/>
+              <subset id="DK05" status="SI"/>
+              <subset id="EE01" status="SI"/>
+              <subset id="EE02" status="SI"/>
+              <subset id="EE05d" status="SI"/>
+              <subset id="EL03" status="SI"/>
+              <subset id="EL04" status="SI"/>
+              <subset id="EL05" status="SI"/>
+              <subset id="ES02" status="SI"/>
+              <subset id="ES04" status="SI"/>
+              <subset id="ES05" status="SI"/>
+              <subset id="EU2" status="SI"/>
+              <subset id="EU5a" status="SI"/>
+              <subset id="EU5b" status="SI"/>
+              <subset id="EU5c" status="SI"/>
+              <subset id="FI02" status="SI"/>
+              <subset id="FI03" status="SI"/>
+              <subset id="FI04" status="SI"/>
+              <subset id="FR03" status="SI"/>
+              <subset id="HR01" status="SI"/>
+              <subset id="HR05a" status="SI"/>
+              <subset id="HR05b" status="SI"/>
+              <subset id="HR05c" status="SI"/>
+              <subset id="HU02" status="SI"/>
+              <subset id="HU03" status="SI"/>
+              <subset id="HU04" status="SI"/>
+              <subset id="HU05" status="SI"/>
+              <subset id="HU06" status="SI"/>
+              <subset id="HU07" status="SI"/>
+              <subset id="IE02" status="SI"/>
+              <subset id="IE05" status="SI"/>
+              <subset id="IE06" status="SI"/>
+              <subset id="IT01" status="SI"/>
+              <subset id="IT03a" status="SI"/>
+              <subset id="IT03b" status="SI"/>
+              <subset id="IT03c" status="SI"/>
+              <subset id="LT01" status="SI"/>
+              <subset id="LT02" status="SI"/>
+              <subset id="LU04" status="SI"/>
+              <subset id="LU05" status="SI"/>
+              <subset id="LU06" status="SI"/>
+              <subset id="LV01" status="SI"/>
+              <subset id="LV02" status="SI"/>
+              <subset id="LV04" status="SI"/>
+              <subset id="LV05" status="SI"/>
+              <subset id="MT01b" status="SI"/>
+              <subset id="MT02" status="SI"/>
+              <subset id="NL01" status="SI"/>
+              <subset id="NL02" status="SI"/>
+              <subset id="NL04" status="SI"/>
+              <subset id="NL05" status="SI"/>
+              <subset id="NL06" status="SI"/>
+              <subset id="PL01c" status="SI"/>
+              <subset id="PL02" status="SI"/>
+              <subset id="PL04a" status="SI"/>
+              <subset id="PL04b" status="SI"/>
+              <subset id="PL04c" status="SI"/>
+              <subset id="PT02" status="SI"/>
+              <subset id="RO02a" status="SI"/>
+              <subset id="RO05a" status="SI"/>
+              <subset id="RO05b" status="SI"/>
+              <subset id="RO05c" status="SI"/>
+              <subset id="SE01" status="SI"/>
+              <subset id="SE02" status="SI"/>
+              <subset id="SE05" status="SI"/>
+              <subset id="SE06" status="SI"/>
+              <subset id="SI02" status="SI"/>
+              <subset id="SI05" status="SI"/>
+              <subset id="SI06" status="SI"/>
+              <subset id="SK03" status="SI"/>
+              <subset id="SK04" status="SI"/>
+              <subset id="SK05" status="SI"/>
+              <subset id="identifier" status="SI"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>A piece of transport equipment carried on this piece of logistics transport equipment, such
             as a container placed on a rail wagon.
@@ -58,8 +262,150 @@
             <unCefact unId="UN01003767" id="Logistics_ Transport Equipment. Category. Code"/>
             <efti id="eFTI378" format="an..3"
                   definition="The code specifying the category for the used transport equipment, such as container or trailer."
-                  subsets="fr, el, hr, es, eu1, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, sk, ie, de, cy, at, identifier, eu5a, se, eu5b, eu2, ee, bg, lt, eu5c, lv, mt, eu3, si"
-                  parentId="ASBIE1086"/>
+                  parentId="ASBIE1086">
+              <subset id="AT02" status="M"/>
+              <subset id="AT03" status="M"/>
+              <subset id="AT05" status="C"/>
+              <subset id="AT06" status="C"/>
+              <subset id="AT07" status="C"/>
+              <subset id="AT08" status="M"/>
+              <subset id="AT12" status="C"/>
+              <subset id="AT13" status="C"/>
+              <subset id="AT14" status="C"/>
+              <subset id="AT15" status="M"/>
+              <subset id="AT16" status="C"/>
+              <subset id="BE01" status="C"/>
+              <subset id="BE02" status="C"/>
+              <subset id="BE03a" status="M"/>
+              <subset id="BE03b" status="M"/>
+              <subset id="BE04" status="M"/>
+              <subset id="BE05" status="C"/>
+              <subset id="BE06" status="C"/>
+              <subset id="BE07" status="C"/>
+              <subset id="BE08" status="C"/>
+              <subset id="BE09" status="C"/>
+              <subset id="BE10" status="C"/>
+              <subset id="BG01" status="M"/>
+              <subset id="BG02" status="C"/>
+              <subset id="CY01" status="C"/>
+              <subset id="CY03" status="M"/>
+              <subset id="CZ01" status="C"/>
+              <subset id="CZ02" status="C"/>
+              <subset id="CZ04" status="M"/>
+              <subset id="CZ05" status="C"/>
+              <subset id="DE02" status="M"/>
+              <subset id="DE03a" status="C"/>
+              <subset id="DE03b" status="C"/>
+              <subset id="DE03c" status="C"/>
+              <subset id="DK01" status="M"/>
+              <subset id="DK02" status="C"/>
+              <subset id="DK03" status="C"/>
+              <subset id="DK04" status="C"/>
+              <subset id="DK05" status="C"/>
+              <subset id="DK06" status="M"/>
+              <subset id="EE01" status="C"/>
+              <subset id="EE02" status="C"/>
+              <subset id="EE05b" status="M"/>
+              <subset id="EE05c" status="M"/>
+              <subset id="EE05d" status="C"/>
+              <subset id="EL03" status="C"/>
+              <subset id="EL04" status="C"/>
+              <subset id="EL05" status="M"/>
+              <subset id="ES01" status="M"/>
+              <subset id="ES02" status="M"/>
+              <subset id="ES04" status="C"/>
+              <subset id="ES05" status="C"/>
+              <subset id="EU1" status="C"/>
+              <subset id="EU2" status="M"/>
+              <subset id="EU3" status="M"/>
+              <subset id="EU5a" status="C"/>
+              <subset id="EU5b" status="C"/>
+              <subset id="EU5c" status="C"/>
+              <subset id="FI01" status="M"/>
+              <subset id="FI02" status="M"/>
+              <subset id="FI03" status="C"/>
+              <subset id="FI04" status="C"/>
+              <subset id="FR01a" status="M"/>
+              <subset id="FR02a" status="M"/>
+              <subset id="FR02b" status="M"/>
+              <subset id="FR02c" status="M"/>
+              <subset id="FR03" status="M"/>
+              <subset id="FR04" status="O"/>
+              <subset id="HR01" status="M"/>
+              <subset id="HR03" status="M"/>
+              <subset id="HR04" status="M"/>
+              <subset id="HR05a" status="C"/>
+              <subset id="HR05b" status="C"/>
+              <subset id="HR05c" status="C"/>
+              <subset id="HU01" status="M"/>
+              <subset id="HU02" status="C"/>
+              <subset id="HU03" status="C"/>
+              <subset id="HU04" status="C"/>
+              <subset id="HU05" status="C"/>
+              <subset id="HU06" status="M"/>
+              <subset id="HU07" status="O"/>
+              <subset id="IE01" status="C"/>
+              <subset id="IE02" status="M"/>
+              <subset id="IE03" status="M"/>
+              <subset id="IE05" status="C"/>
+              <subset id="IE06" status="C"/>
+              <subset id="IT01" status="M"/>
+              <subset id="IT02" status="M"/>
+              <subset id="IT03a" status="C"/>
+              <subset id="IT03b" status="C"/>
+              <subset id="IT03c" status="C"/>
+              <subset id="LT01" status="O"/>
+              <subset id="LT02" status="O"/>
+              <subset id="LT03a" status="M"/>
+              <subset id="LT03b" status="M"/>
+              <subset id="LU03" status="M"/>
+              <subset id="LU04" status="C"/>
+              <subset id="LU05" status="C"/>
+              <subset id="LU06" status="C"/>
+              <subset id="LV01" status="M"/>
+              <subset id="LV02" status="M"/>
+              <subset id="LV03" status="O"/>
+              <subset id="LV04" status="C"/>
+              <subset id="LV05" status="C"/>
+              <subset id="MT01a" status="O"/>
+              <subset id="MT01b" status="M"/>
+              <subset id="MT02" status="C"/>
+              <subset id="NL01" status="C"/>
+              <subset id="NL02" status="C"/>
+              <subset id="NL03a" status="M"/>
+              <subset id="NL03b" status="M"/>
+              <subset id="NL04" status="C"/>
+              <subset id="NL05" status="C"/>
+              <subset id="NL06" status="C"/>
+              <subset id="PL01a" status="M"/>
+              <subset id="PL01b" status="M"/>
+              <subset id="PL02" status="M"/>
+              <subset id="PL04a" status="C"/>
+              <subset id="PL04b" status="C"/>
+              <subset id="PL04c" status="C"/>
+              <subset id="PT01" status="M"/>
+              <subset id="PT02" status="C"/>
+              <subset id="RO01" status="M"/>
+              <subset id="RO02a" status="M"/>
+              <subset id="RO03" status="M"/>
+              <subset id="RO04" status="M"/>
+              <subset id="RO05a" status="C"/>
+              <subset id="RO05b" status="C"/>
+              <subset id="RO05c" status="C"/>
+              <subset id="SE01" status="C"/>
+              <subset id="SE02" status="C"/>
+              <subset id="SE05" status="C"/>
+              <subset id="SE06" status="M"/>
+              <subset id="SI01" status="M"/>
+              <subset id="SI02" status="M"/>
+              <subset id="SI03" status="M"/>
+              <subset id="SI05" status="C"/>
+              <subset id="SI06" status="C"/>
+              <subset id="SK03" status="C"/>
+              <subset id="SK04" status="C"/>
+              <subset id="SK05" status="C"/>
+              <subset id="identifier" status="O"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>The code specifying the category for this piece of logistics transport equipment, such as
             container or trailer.
@@ -72,8 +418,148 @@
             <unCefact unId="UN01003758" id="Logistics_ Transport Equipment. Identification. Identifier"/>
             <efti id="eFTI374" format="an..17"
                   definition="The identifier of the transport equipment used for transporting this consignment."
-                  subsets="fr, el, hr, es, eu1, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, sk, ie, de, cy, at, identifier, eu5a, se, eu5b, eu2, ee, bg, lt, eu5c, lv, mt, eu3, si"
-                  parentId="ASBIE1086"/>
+                  parentId="ASBIE1086">
+              <subset id="AT02" status="M"/>
+              <subset id="AT03" status="M"/>
+              <subset id="AT05" status="O"/>
+              <subset id="AT06" status="O"/>
+              <subset id="AT07" status="O"/>
+              <subset id="AT08" status="M"/>
+              <subset id="AT12" status="O"/>
+              <subset id="AT13" status="O"/>
+              <subset id="AT14" status="O"/>
+              <subset id="AT15" status="M"/>
+              <subset id="AT16" status="O"/>
+              <subset id="BE01" status="O"/>
+              <subset id="BE02" status="O"/>
+              <subset id="BE03a" status="M"/>
+              <subset id="BE03b" status="M"/>
+              <subset id="BE04" status="M"/>
+              <subset id="BE05" status="O"/>
+              <subset id="BE06" status="O"/>
+              <subset id="BE07" status="O"/>
+              <subset id="BE08" status="O"/>
+              <subset id="BE09" status="O"/>
+              <subset id="BE10" status="O"/>
+              <subset id="BG01" status="M"/>
+              <subset id="BG02" status="O"/>
+              <subset id="CY01" status="O"/>
+              <subset id="CY03" status="M"/>
+              <subset id="CZ01" status="O"/>
+              <subset id="CZ02" status="O"/>
+              <subset id="CZ04" status="M"/>
+              <subset id="CZ05" status="O"/>
+              <subset id="DE02" status="M"/>
+              <subset id="DE03a" status="O"/>
+              <subset id="DE03b" status="O"/>
+              <subset id="DE03c" status="O"/>
+              <subset id="DK01" status="M"/>
+              <subset id="DK02" status="C"/>
+              <subset id="DK03" status="O"/>
+              <subset id="DK04" status="O"/>
+              <subset id="DK05" status="O"/>
+              <subset id="DK06" status="M"/>
+              <subset id="EE01" status="O"/>
+              <subset id="EE02" status="O"/>
+              <subset id="EE05a" status="M"/>
+              <subset id="EE05b" status="M"/>
+              <subset id="EE05c" status="M"/>
+              <subset id="EE05d" status="O"/>
+              <subset id="EL03" status="O"/>
+              <subset id="EL04" status="O"/>
+              <subset id="EL05" status="M"/>
+              <subset id="ES01" status="M"/>
+              <subset id="ES02" status="M"/>
+              <subset id="ES04" status="O"/>
+              <subset id="ES05" status="O"/>
+              <subset id="EU1" status="C"/>
+              <subset id="EU2" status="M"/>
+              <subset id="EU3" status="M"/>
+              <subset id="EU5a" status="C"/>
+              <subset id="EU5b" status="C"/>
+              <subset id="EU5c" status="C"/>
+              <subset id="FI01" status="M"/>
+              <subset id="FI02" status="M"/>
+              <subset id="FI03" status="O"/>
+              <subset id="FI04" status="O"/>
+              <subset id="FR02b" status="M"/>
+              <subset id="FR03" status="M"/>
+              <subset id="FR04" status="O"/>
+              <subset id="HR01" status="M"/>
+              <subset id="HR03" status="M"/>
+              <subset id="HR04" status="M"/>
+              <subset id="HR05a" status="O"/>
+              <subset id="HR05b" status="O"/>
+              <subset id="HR05c" status="O"/>
+              <subset id="HU01" status="M"/>
+              <subset id="HU02" status="O"/>
+              <subset id="HU03" status="O"/>
+              <subset id="HU04" status="O"/>
+              <subset id="HU05" status="O"/>
+              <subset id="HU06" status="M"/>
+              <subset id="HU07" status="O"/>
+              <subset id="IE01" status="C"/>
+              <subset id="IE02" status="M"/>
+              <subset id="IE03" status="M"/>
+              <subset id="IE05" status="O"/>
+              <subset id="IE06" status="O"/>
+              <subset id="IT01" status="M"/>
+              <subset id="IT02" status="M"/>
+              <subset id="IT03a" status="O"/>
+              <subset id="IT03b" status="O"/>
+              <subset id="IT03c" status="O"/>
+              <subset id="LT01" status="O"/>
+              <subset id="LT02" status="O"/>
+              <subset id="LT03a" status="M"/>
+              <subset id="LT03b" status="M"/>
+              <subset id="LU03" status="M"/>
+              <subset id="LU04" status="O"/>
+              <subset id="LU05" status="O"/>
+              <subset id="LU06" status="O"/>
+              <subset id="LV01" status="M"/>
+              <subset id="LV02" status="M"/>
+              <subset id="LV03" status="O"/>
+              <subset id="LV04" status="O"/>
+              <subset id="LV05" status="O"/>
+              <subset id="MT01a" status="O"/>
+              <subset id="MT01b" status="M"/>
+              <subset id="MT02" status="O"/>
+              <subset id="NL01" status="O"/>
+              <subset id="NL02" status="O"/>
+              <subset id="NL03a" status="M"/>
+              <subset id="NL03b" status="M"/>
+              <subset id="NL04" status="O"/>
+              <subset id="NL05" status="O"/>
+              <subset id="NL06" status="O"/>
+              <subset id="PL01a" status="M"/>
+              <subset id="PL01b" status="M"/>
+              <subset id="PL02" status="M"/>
+              <subset id="PL04a" status="O"/>
+              <subset id="PL04b" status="O"/>
+              <subset id="PL04c" status="O"/>
+              <subset id="PT01" status="M"/>
+              <subset id="PT02" status="O"/>
+              <subset id="RO01" status="M"/>
+              <subset id="RO02a" status="M"/>
+              <subset id="RO03" status="M"/>
+              <subset id="RO04" status="M"/>
+              <subset id="RO05a" status="O"/>
+              <subset id="RO05b" status="O"/>
+              <subset id="RO05c" status="O"/>
+              <subset id="SE01" status="O"/>
+              <subset id="SE02" status="O"/>
+              <subset id="SE05" status="O"/>
+              <subset id="SE06" status="M"/>
+              <subset id="SI01" status="M"/>
+              <subset id="SI02" status="M"/>
+              <subset id="SI03" status="M"/>
+              <subset id="SI05" status="O"/>
+              <subset id="SI06" status="O"/>
+              <subset id="SK03" status="O"/>
+              <subset id="SK04" status="O"/>
+              <subset id="SK05" status="O"/>
+              <subset id="identifier" status="O"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>The unique identifier of this piece of logistics transport equipment.</xsd:documentation>
         </xsd:annotation>
@@ -83,8 +569,73 @@
           <xsd:appinfo>
             <unCefact unId="UN01015630" id="Logistics_ Transport Equipment. Registration. Trade_ Country"/>
             <efti id="ASBIE1097" format="" definition="The country of registration of the used transport equipment."
-                  subsets="fr, el, hr, es, eu1, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, ie, de, cy, at, identifier, se, eu2, ee, bg, lt, lv, mt, eu3, si"
-                  parentId="ASBIE1086"/>
+                  parentId="ASBIE1086">
+              <subset id="AT02" status="SI"/>
+              <subset id="AT03" status="SI"/>
+              <subset id="AT08" status="SI"/>
+              <subset id="AT15" status="SI"/>
+              <subset id="BE03a" status="SI"/>
+              <subset id="BE03b" status="SI"/>
+              <subset id="BE04" status="SI"/>
+              <subset id="BG01" status="SI"/>
+              <subset id="CY03" status="SI"/>
+              <subset id="CZ04" status="SI"/>
+              <subset id="DE02" status="SI"/>
+              <subset id="DK01" status="SI"/>
+              <subset id="DK02" status="SI"/>
+              <subset id="DK06" status="SI"/>
+              <subset id="EE05b" status="SI"/>
+              <subset id="EE05c" status="SI"/>
+              <subset id="EL05" status="SI"/>
+              <subset id="ES01" status="SI"/>
+              <subset id="ES02" status="SI"/>
+              <subset id="EU1" status="SI"/>
+              <subset id="EU2" status="SI"/>
+              <subset id="EU3" status="SI"/>
+              <subset id="FI01" status="SI"/>
+              <subset id="FI02" status="SI"/>
+              <subset id="FR01a" status="SI"/>
+              <subset id="FR02a" status="SI"/>
+              <subset id="FR02b" status="SI"/>
+              <subset id="FR02c" status="SI"/>
+              <subset id="FR03" status="SI"/>
+              <subset id="FR04" status="SI"/>
+              <subset id="HR01" status="SI"/>
+              <subset id="HR03" status="SI"/>
+              <subset id="HR04" status="SI"/>
+              <subset id="HU01" status="SI"/>
+              <subset id="HU06" status="SI"/>
+              <subset id="IE01" status="SI"/>
+              <subset id="IE02" status="SI"/>
+              <subset id="IE03" status="SI"/>
+              <subset id="IT01" status="SI"/>
+              <subset id="IT02" status="SI"/>
+              <subset id="LT01" status="SI"/>
+              <subset id="LT02" status="SI"/>
+              <subset id="LT03a" status="SI"/>
+              <subset id="LT03b" status="SI"/>
+              <subset id="LU03" status="SI"/>
+              <subset id="LV01" status="SI"/>
+              <subset id="LV02" status="SI"/>
+              <subset id="LV03" status="SI"/>
+              <subset id="MT01a" status="SI"/>
+              <subset id="MT01b" status="SI"/>
+              <subset id="NL03a" status="SI"/>
+              <subset id="NL03b" status="SI"/>
+              <subset id="PL01a" status="SI"/>
+              <subset id="PL01b" status="SI"/>
+              <subset id="PL02" status="SI"/>
+              <subset id="PT01" status="SI"/>
+              <subset id="RO01" status="SI"/>
+              <subset id="RO02a" status="SI"/>
+              <subset id="RO03" status="SI"/>
+              <subset id="RO04" status="SI"/>
+              <subset id="SE06" status="SI"/>
+              <subset id="SI01" status="SI"/>
+              <subset id="SI02" status="SI"/>
+              <subset id="SI03" status="SI"/>
+              <subset id="identifier" status="SI"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>The registration country for this logistics transport equipment.</xsd:documentation>
         </xsd:annotation>
@@ -95,8 +646,84 @@
             <unCefact unId="UN01003779" id="Logistics_ Transport Equipment. Sequence. Numeric"/>
             <efti id="eFTI987" format="n..16"
                   definition="The sequence number differentiating this piece of logistics transport equipment from others in a set of used transport equipment."
-                  subsets="hr, es, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, sk, ie, de, cy, at, identifier, eu5a, se, eu5b, ee, bg, eu5c, lv, mt, si"
-                  parentId="ASBIE1086"/>
+                  parentId="ASBIE1086">
+              <subset id="AT05" status="O"/>
+              <subset id="AT06" status="O"/>
+              <subset id="AT07" status="O"/>
+              <subset id="AT12" status="O"/>
+              <subset id="AT13" status="O"/>
+              <subset id="AT14" status="O"/>
+              <subset id="AT16" status="O"/>
+              <subset id="BE01" status="O"/>
+              <subset id="BE02" status="O"/>
+              <subset id="BE05" status="O"/>
+              <subset id="BE06" status="O"/>
+              <subset id="BE07" status="O"/>
+              <subset id="BE08" status="O"/>
+              <subset id="BE09" status="O"/>
+              <subset id="BE10" status="O"/>
+              <subset id="BG02" status="O"/>
+              <subset id="CY01" status="O"/>
+              <subset id="CZ01" status="O"/>
+              <subset id="CZ02" status="O"/>
+              <subset id="CZ05" status="O"/>
+              <subset id="DE03a" status="O"/>
+              <subset id="DE03b" status="O"/>
+              <subset id="DE03c" status="O"/>
+              <subset id="DK03" status="O"/>
+              <subset id="DK04" status="O"/>
+              <subset id="DK05" status="O"/>
+              <subset id="EE01" status="O"/>
+              <subset id="EE02" status="O"/>
+              <subset id="EE05d" status="O"/>
+              <subset id="ES04" status="O"/>
+              <subset id="ES05" status="O"/>
+              <subset id="EU5a" status="O"/>
+              <subset id="EU5b" status="O"/>
+              <subset id="EU5c" status="O"/>
+              <subset id="FI03" status="O"/>
+              <subset id="FI04" status="O"/>
+              <subset id="HR05a" status="O"/>
+              <subset id="HR05b" status="O"/>
+              <subset id="HR05c" status="O"/>
+              <subset id="HU02" status="O"/>
+              <subset id="HU03" status="O"/>
+              <subset id="HU04" status="O"/>
+              <subset id="HU05" status="O"/>
+              <subset id="HU07" status="O"/>
+              <subset id="IE05" status="O"/>
+              <subset id="IE06" status="O"/>
+              <subset id="IT03a" status="O"/>
+              <subset id="IT03b" status="O"/>
+              <subset id="IT03c" status="O"/>
+              <subset id="LU04" status="O"/>
+              <subset id="LU05" status="O"/>
+              <subset id="LU06" status="O"/>
+              <subset id="LV04" status="O"/>
+              <subset id="LV05" status="O"/>
+              <subset id="MT02" status="O"/>
+              <subset id="NL01" status="O"/>
+              <subset id="NL02" status="O"/>
+              <subset id="NL04" status="O"/>
+              <subset id="NL05" status="O"/>
+              <subset id="NL06" status="O"/>
+              <subset id="PL04a" status="O"/>
+              <subset id="PL04b" status="O"/>
+              <subset id="PL04c" status="O"/>
+              <subset id="PT02" status="O"/>
+              <subset id="RO05a" status="O"/>
+              <subset id="RO05b" status="O"/>
+              <subset id="RO05c" status="O"/>
+              <subset id="SE01" status="O"/>
+              <subset id="SE02" status="O"/>
+              <subset id="SE05" status="O"/>
+              <subset id="SI05" status="O"/>
+              <subset id="SI06" status="O"/>
+              <subset id="SK03" status="O"/>
+              <subset id="SK04" status="O"/>
+              <subset id="SK05" status="O"/>
+              <subset id="identifier" status="O"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>The sequence number differentiating this piece of logistics transport equipment from others
             in a set of transport equipment.
@@ -113,8 +740,152 @@
             <unCefact unId="UN01003822" id="Logistics_ Transport Means. Identification. Identifier"/>
             <efti id="eFTI618" format="an..17"
                   definition="The identifier of the means of transport used in the main leg of transportation of the consignment of goods from one place to another."
-                  subsets="fr, el, hr, es, eu1, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, sk, ie, de, cy, at, identifier, eu5a, se, eu5b, eu2, ee, bg, lt, eu5c, lv, mt, eu3, si"
-                  parentId="ASBIE1107"/>
+                  parentId="ASBIE1107">
+              <subset id="AT02" status="O"/>
+              <subset id="AT03" status="M"/>
+              <subset id="AT05" status="C"/>
+              <subset id="AT06" status="C"/>
+              <subset id="AT07" status="C"/>
+              <subset id="AT08" status="O"/>
+              <subset id="AT12" status="C"/>
+              <subset id="AT13" status="C"/>
+              <subset id="AT14" status="C"/>
+              <subset id="AT15" status="M"/>
+              <subset id="AT16" status="C"/>
+              <subset id="BE01" status="C"/>
+              <subset id="BE02" status="C"/>
+              <subset id="BE03a" status="O"/>
+              <subset id="BE03b" status="M"/>
+              <subset id="BE04" status="M"/>
+              <subset id="BE05" status="C"/>
+              <subset id="BE06" status="C"/>
+              <subset id="BE07" status="C"/>
+              <subset id="BE08" status="C"/>
+              <subset id="BE09" status="C"/>
+              <subset id="BE10" status="C"/>
+              <subset id="BG01" status="M"/>
+              <subset id="BG02" status="C"/>
+              <subset id="CY01" status="C"/>
+              <subset id="CY03" status="O"/>
+              <subset id="CZ01" status="C"/>
+              <subset id="CZ02" status="C"/>
+              <subset id="CZ04" status="M"/>
+              <subset id="CZ05" status="C"/>
+              <subset id="DE02" status="M"/>
+              <subset id="DE03a" status="C"/>
+              <subset id="DE03b" status="C"/>
+              <subset id="DE03c" status="C"/>
+              <subset id="DK01" status="O"/>
+              <subset id="DK02" status="O"/>
+              <subset id="DK03" status="C"/>
+              <subset id="DK04" status="C"/>
+              <subset id="DK05" status="C"/>
+              <subset id="DK06" status="M"/>
+              <subset id="EE01" status="C"/>
+              <subset id="EE02" status="C"/>
+              <subset id="EE05a" status="M"/>
+              <subset id="EE05b" status="M"/>
+              <subset id="EE05c" status="O"/>
+              <subset id="EE05d" status="C"/>
+              <subset id="EL01" status="O"/>
+              <subset id="EL03" status="C"/>
+              <subset id="EL04" status="C"/>
+              <subset id="EL05" status="M"/>
+              <subset id="ES01" status="M"/>
+              <subset id="ES02" status="O"/>
+              <subset id="ES04" status="C"/>
+              <subset id="ES05" status="C"/>
+              <subset id="EU1" status="O"/>
+              <subset id="EU2" status="O"/>
+              <subset id="EU3" status="M"/>
+              <subset id="EU5a" status="C"/>
+              <subset id="EU5b" status="C"/>
+              <subset id="EU5c" status="C"/>
+              <subset id="FI01" status="M"/>
+              <subset id="FI02" status="O"/>
+              <subset id="FI03" status="C"/>
+              <subset id="FI04" status="C"/>
+              <subset id="FR02b" status="M"/>
+              <subset id="FR03" status="O"/>
+              <subset id="FR04" status="M"/>
+              <subset id="HR01" status="O"/>
+              <subset id="HR02" status="C"/>
+              <subset id="HR03" status="M"/>
+              <subset id="HR04" status="M"/>
+              <subset id="HR05a" status="C"/>
+              <subset id="HR05b" status="C"/>
+              <subset id="HR05c" status="C"/>
+              <subset id="HU01" status="M"/>
+              <subset id="HU02" status="C"/>
+              <subset id="HU03" status="C"/>
+              <subset id="HU04" status="C"/>
+              <subset id="HU05" status="C"/>
+              <subset id="HU06" status="O"/>
+              <subset id="HU07" status="C"/>
+              <subset id="IE01" status="O"/>
+              <subset id="IE02" status="O"/>
+              <subset id="IE03" status="M"/>
+              <subset id="IE05" status="C"/>
+              <subset id="IE06" status="C"/>
+              <subset id="IT01" status="O"/>
+              <subset id="IT02" status="M"/>
+              <subset id="IT03a" status="C"/>
+              <subset id="IT03b" status="C"/>
+              <subset id="IT03c" status="C"/>
+              <subset id="LT01" status="C"/>
+              <subset id="LT02" status="C"/>
+              <subset id="LT03a" status="M"/>
+              <subset id="LT03b" status="M"/>
+              <subset id="LT06" status="M"/>
+              <subset id="LU03" status="M"/>
+              <subset id="LU04" status="C"/>
+              <subset id="LU05" status="C"/>
+              <subset id="LU06" status="C"/>
+              <subset id="LV01" status="M"/>
+              <subset id="LV02" status="M"/>
+              <subset id="LV03" status="C"/>
+              <subset id="LV04" status="C"/>
+              <subset id="LV05" status="C"/>
+              <subset id="MT01a" status="C"/>
+              <subset id="MT01b" status="O"/>
+              <subset id="MT02" status="C"/>
+              <subset id="NL01" status="C"/>
+              <subset id="NL02" status="C"/>
+              <subset id="NL03a" status="M"/>
+              <subset id="NL03b" status="M"/>
+              <subset id="NL04" status="C"/>
+              <subset id="NL05" status="C"/>
+              <subset id="NL06" status="C"/>
+              <subset id="PL01a" status="M"/>
+              <subset id="PL01b" status="M"/>
+              <subset id="PL02" status="M"/>
+              <subset id="PL04a" status="C"/>
+              <subset id="PL04b" status="C"/>
+              <subset id="PL04c" status="C"/>
+              <subset id="PT01" status="M"/>
+              <subset id="PT02" status="C"/>
+              <subset id="PT03" status="C"/>
+              <subset id="RO01" status="M"/>
+              <subset id="RO02a" status="O"/>
+              <subset id="RO03" status="M"/>
+              <subset id="RO04" status="M"/>
+              <subset id="RO05a" status="C"/>
+              <subset id="RO05b" status="C"/>
+              <subset id="RO05c" status="C"/>
+              <subset id="SE01" status="C"/>
+              <subset id="SE02" status="C"/>
+              <subset id="SE05" status="C"/>
+              <subset id="SE06" status="O"/>
+              <subset id="SI01" status="M"/>
+              <subset id="SI02" status="O"/>
+              <subset id="SI03" status="M"/>
+              <subset id="SI05" status="C"/>
+              <subset id="SI06" status="C"/>
+              <subset id="SK03" status="C"/>
+              <subset id="SK04" status="C"/>
+              <subset id="SK05" status="C"/>
+              <subset id="identifier" status="O"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>An identifier of this logistics means of transport, such as the International Maritime
             Organization number of a vessel.
@@ -127,8 +898,113 @@
             <unCefact unId="UN01003834" id="Logistics_ Transport Means. Registration. Trade_ Country"/>
             <efti id="ASBIE1108" format=""
                   definition="The country of registration of the means of transport used in the main leg of transportation of the consignment of goods from one place to another."
-                  subsets="fr, el, hr, es, eu1, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, sk, ie, de, cy, at, identifier, eu5a, se, eu2, ee, bg, lt, lv, mt, eu3, si"
-                  parentId="ASBIE1107"/>
+                  parentId="ASBIE1107">
+              <subset id="AT02" status="SI"/>
+              <subset id="AT03" status="SI"/>
+              <subset id="AT05" status="SI"/>
+              <subset id="AT06" status="SI"/>
+              <subset id="AT07" status="SI"/>
+              <subset id="AT08" status="SI"/>
+              <subset id="AT12" status="SI"/>
+              <subset id="AT15" status="SI"/>
+              <subset id="AT16" status="SI"/>
+              <subset id="BE02" status="SI"/>
+              <subset id="BE03a" status="SI"/>
+              <subset id="BE03b" status="SI"/>
+              <subset id="BE04" status="SI"/>
+              <subset id="BE05" status="SI"/>
+              <subset id="BE06" status="SI"/>
+              <subset id="BG01" status="SI"/>
+              <subset id="CY01" status="SI"/>
+              <subset id="CY03" status="SI"/>
+              <subset id="CZ01" status="SI"/>
+              <subset id="CZ04" status="SI"/>
+              <subset id="DE02" status="SI"/>
+              <subset id="DE03a" status="SI"/>
+              <subset id="DK01" status="SI"/>
+              <subset id="DK02" status="SI"/>
+              <subset id="DK03" status="SI"/>
+              <subset id="DK06" status="SI"/>
+              <subset id="EE01" status="SI"/>
+              <subset id="EE05b" status="SI"/>
+              <subset id="EE05c" status="SI"/>
+              <subset id="EE05d" status="SI"/>
+              <subset id="EL01" status="SI"/>
+              <subset id="EL03" status="SI"/>
+              <subset id="EL05" status="SI"/>
+              <subset id="EL08" status="SI"/>
+              <subset id="ES01" status="SI"/>
+              <subset id="ES02" status="SI"/>
+              <subset id="ES04" status="SI"/>
+              <subset id="EU1" status="SI"/>
+              <subset id="EU2" status="SI"/>
+              <subset id="EU3" status="SI"/>
+              <subset id="EU5a" status="SI"/>
+              <subset id="FI01" status="SI"/>
+              <subset id="FI02" status="SI"/>
+              <subset id="FI03" status="SI"/>
+              <subset id="FR01a" status="SI"/>
+              <subset id="FR02a" status="SI"/>
+              <subset id="FR02b" status="SI"/>
+              <subset id="FR02c" status="SI"/>
+              <subset id="FR03" status="SI"/>
+              <subset id="FR04" status="SI"/>
+              <subset id="HR01" status="SI"/>
+              <subset id="HR02" status="SI"/>
+              <subset id="HR03" status="SI"/>
+              <subset id="HR04" status="SI"/>
+              <subset id="HR05a" status="SI"/>
+              <subset id="HU01" status="SI"/>
+              <subset id="HU03" status="SI"/>
+              <subset id="HU05" status="SI"/>
+              <subset id="HU06" status="SI"/>
+              <subset id="HU07" status="SI"/>
+              <subset id="IE01" status="SI"/>
+              <subset id="IE02" status="SI"/>
+              <subset id="IE03" status="SI"/>
+              <subset id="IE05" status="SI"/>
+              <subset id="IT01" status="SI"/>
+              <subset id="IT02" status="SI"/>
+              <subset id="IT03a" status="SI"/>
+              <subset id="LT01" status="SI"/>
+              <subset id="LT02" status="SI"/>
+              <subset id="LT03a" status="SI"/>
+              <subset id="LT03b" status="SI"/>
+              <subset id="LT06" status="SI"/>
+              <subset id="LU03" status="SI"/>
+              <subset id="LU04" status="SI"/>
+              <subset id="LV01" status="SI"/>
+              <subset id="LV02" status="SI"/>
+              <subset id="LV03" status="SI"/>
+              <subset id="MT01a" status="SI"/>
+              <subset id="MT01b" status="SI"/>
+              <subset id="MT02" status="SI"/>
+              <subset id="NL03a" status="SI"/>
+              <subset id="NL03b" status="SI"/>
+              <subset id="NL04" status="SI"/>
+              <subset id="PL01a" status="SI"/>
+              <subset id="PL01b" status="SI"/>
+              <subset id="PL02" status="SI"/>
+              <subset id="PL04a" status="SI"/>
+              <subset id="PT01" status="SI"/>
+              <subset id="PT02" status="SI"/>
+              <subset id="PT03" status="SI"/>
+              <subset id="RO01" status="SI"/>
+              <subset id="RO02a" status="SI"/>
+              <subset id="RO03" status="SI"/>
+              <subset id="RO04" status="SI"/>
+              <subset id="RO05a" status="SI"/>
+              <subset id="SE01" status="SI"/>
+              <subset id="SE05" status="SI"/>
+              <subset id="SE06" status="SI"/>
+              <subset id="SI01" status="SI"/>
+              <subset id="SI02" status="SI"/>
+              <subset id="SI03" status="SI"/>
+              <subset id="SI05" status="SI"/>
+              <subset id="SI06" status="SI"/>
+              <subset id="SK04" status="SI"/>
+              <subset id="identifier" status="SI"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>The country of registration of this logistics means of transport.</xsd:documentation>
         </xsd:annotation>
@@ -141,7 +1017,9 @@
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01010121" id="Logistics_ Transport Movement. Dangerous Goods. Indicator"/>
-            <efti id="eFTI1451" format="" definition="" subsets="identifier" parentId="ASBIE1098"/>
+            <efti id="eFTI1451" format="" definition="" parentId="ASBIE1098">
+              <subset id="identifier" status="O"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>The indication of whether or not dangerous goods are carried for this logistics transport
             movement.
@@ -154,14 +1032,88 @@
             <unCefact unId="UN01003839" id="Logistics_ Transport Movement. Mode. Code"/>
             <efti id="eFTI581" format="n1"
                   definition="The code specifying the mode of transport, such as by air, sea, rail, road or inland waterway, for the main leg of transport of the movement of a consignment of goods."
-                  subsets="fr, el, hr, es, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, sk, ie, de, cy, at, identifier, eu5a, se, eu2, ee, bg, eu5c, mt, si"
-                  parentId="ASBIE1098"/>
+                  parentId="ASBIE1098">
+              <subset id="AT02" status="M"/>
+              <subset id="AT05" status="M"/>
+              <subset id="AT06" status="M"/>
+              <subset id="AT07" status="M"/>
+              <subset id="AT08" status="M"/>
+              <subset id="AT12" status="M"/>
+              <subset id="AT14" status="M"/>
+              <subset id="AT16" status="M"/>
+              <subset id="BE02" status="M"/>
+              <subset id="BE03a" status="M"/>
+              <subset id="BE05" status="M"/>
+              <subset id="BE06" status="M"/>
+              <subset id="BE07" status="M"/>
+              <subset id="BE08" status="M"/>
+              <subset id="BE09" status="M"/>
+              <subset id="BE10" status="M"/>
+              <subset id="CY01" status="M"/>
+              <subset id="CY03" status="M"/>
+              <subset id="CZ01" status="M"/>
+              <subset id="CZ05" status="M"/>
+              <subset id="DE03a" status="M"/>
+              <subset id="DE03c" status="M"/>
+              <subset id="DK01" status="M"/>
+              <subset id="DK03" status="M"/>
+              <subset id="EE01" status="M"/>
+              <subset id="EE05d" status="M"/>
+              <subset id="EL03" status="M"/>
+              <subset id="ES02" status="M"/>
+              <subset id="ES04" status="M"/>
+              <subset id="EU2" status="M"/>
+              <subset id="EU5a" status="M"/>
+              <subset id="EU5c" status="M"/>
+              <subset id="FI02" status="M"/>
+              <subset id="FI03" status="M"/>
+              <subset id="FR03" status="M"/>
+              <subset id="HR01" status="M"/>
+              <subset id="HR02" status="O"/>
+              <subset id="HR05a" status="M"/>
+              <subset id="HR05c" status="M"/>
+              <subset id="HU02" status="M"/>
+              <subset id="HU03" status="M"/>
+              <subset id="HU05" status="M"/>
+              <subset id="HU06" status="M"/>
+              <subset id="HU07" status="O"/>
+              <subset id="IE02" status="M"/>
+              <subset id="IE05" status="M"/>
+              <subset id="IT01" status="M"/>
+              <subset id="IT03a" status="M"/>
+              <subset id="IT03c" status="M"/>
+              <subset id="LU04" status="M"/>
+              <subset id="LU05" status="M"/>
+              <subset id="MT01b" status="M"/>
+              <subset id="MT02" status="M"/>
+              <subset id="NL01" status="M"/>
+              <subset id="NL02" status="M"/>
+              <subset id="NL04" status="M"/>
+              <subset id="NL06" status="M"/>
+              <subset id="PL04a" status="M"/>
+              <subset id="PL04c" status="M"/>
+              <subset id="PT03" status="O"/>
+              <subset id="RO02a" status="M"/>
+              <subset id="RO05a" status="M"/>
+              <subset id="RO05c" status="M"/>
+              <subset id="SE01" status="M"/>
+              <subset id="SE05" status="M"/>
+              <subset id="SE06" status="M"/>
+              <subset id="SI02" status="M"/>
+              <subset id="SI05" status="M"/>
+              <subset id="SI06" status="M"/>
+              <subset id="SK03" status="M"/>
+              <subset id="SK04" status="M"/>
+              <subset id="identifier" status="O"/>
+            </efti>
             <efti id="eFTI631" format="n1"
                   definition="The code specifying the mode, such as by air, sea, rail, road or inland waterway, for this pre-carriage transport movement."
-                  subsets="hu, bg" parentId="ASBIE1114"/>
+                  parentId="ASBIE1114">
+              <subset id="HU07" status="M"/>
+            </efti>
             <efti id="eFTI658" format="n1"
                   definition="The code specifying the mode, such as by air, sea, rail, road or inland waterway, for this on-carriage transport movement."
-                  subsets="bg" parentId="ASBIE1117"/>
+                  parentId="ASBIE1117"/>
           </xsd:appinfo>
           <xsd:documentation>The code specifying the mode, such as by air, sea, rail, road or inland waterway, for this
             logistics transport movement.
@@ -174,8 +1126,157 @@
             <unCefact unId="UN01003861" id="Logistics_ Transport Movement. Used. Logistics_ Transport Means"/>
             <efti id="ASBIE1107" format=""
                   definition="The means of transport used in this main leg of transportation of the consignment of goods from one place to another."
-                  subsets="fr, el, hr, es, eu1, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, sk, ie, de, cy, at, identifier, eu5a, se, eu5b, eu2, ee, bg, lt, eu5c, lv, mt, eu3, si"
-                  parentId="ASBIE1098"/>
+                  parentId="ASBIE1098">
+              <subset id="AT02" status="SI"/>
+              <subset id="AT03" status="SI"/>
+              <subset id="AT05" status="SI"/>
+              <subset id="AT06" status="SI"/>
+              <subset id="AT07" status="SI"/>
+              <subset id="AT08" status="SI"/>
+              <subset id="AT12" status="SI"/>
+              <subset id="AT13" status="SI"/>
+              <subset id="AT14" status="SI"/>
+              <subset id="AT15" status="SI"/>
+              <subset id="AT16" status="SI"/>
+              <subset id="BE01" status="SI"/>
+              <subset id="BE02" status="SI"/>
+              <subset id="BE03a" status="SI"/>
+              <subset id="BE03b" status="SI"/>
+              <subset id="BE04" status="SI"/>
+              <subset id="BE05" status="SI"/>
+              <subset id="BE06" status="SI"/>
+              <subset id="BE07" status="SI"/>
+              <subset id="BE08" status="SI"/>
+              <subset id="BE09" status="SI"/>
+              <subset id="BE10" status="SI"/>
+              <subset id="BG01" status="SI"/>
+              <subset id="BG02" status="SI"/>
+              <subset id="CY01" status="SI"/>
+              <subset id="CY03" status="SI"/>
+              <subset id="CZ01" status="SI"/>
+              <subset id="CZ02" status="SI"/>
+              <subset id="CZ04" status="SI"/>
+              <subset id="CZ05" status="SI"/>
+              <subset id="DE02" status="SI"/>
+              <subset id="DE03a" status="SI"/>
+              <subset id="DE03b" status="SI"/>
+              <subset id="DE03c" status="SI"/>
+              <subset id="DK01" status="SI"/>
+              <subset id="DK02" status="SI"/>
+              <subset id="DK03" status="SI"/>
+              <subset id="DK04" status="SI"/>
+              <subset id="DK05" status="SI"/>
+              <subset id="DK06" status="SI"/>
+              <subset id="EE01" status="SI"/>
+              <subset id="EE02" status="SI"/>
+              <subset id="EE05a" status="SI"/>
+              <subset id="EE05b" status="SI"/>
+              <subset id="EE05c" status="SI"/>
+              <subset id="EE05d" status="SI"/>
+              <subset id="EL01" status="SI"/>
+              <subset id="EL03" status="SI"/>
+              <subset id="EL04" status="SI"/>
+              <subset id="EL05" status="SI"/>
+              <subset id="EL08" status="SI"/>
+              <subset id="ES01" status="SI"/>
+              <subset id="ES02" status="SI"/>
+              <subset id="ES04" status="SI"/>
+              <subset id="ES05" status="SI"/>
+              <subset id="EU1" status="SI"/>
+              <subset id="EU2" status="SI"/>
+              <subset id="EU3" status="SI"/>
+              <subset id="EU5a" status="SI"/>
+              <subset id="EU5b" status="SI"/>
+              <subset id="EU5c" status="SI"/>
+              <subset id="FI01" status="SI"/>
+              <subset id="FI02" status="SI"/>
+              <subset id="FI03" status="SI"/>
+              <subset id="FI04" status="SI"/>
+              <subset id="FR01a" status="SI"/>
+              <subset id="FR01b" status="SI"/>
+              <subset id="FR02a" status="SI"/>
+              <subset id="FR02b" status="SI"/>
+              <subset id="FR02c" status="SI"/>
+              <subset id="FR03" status="SI"/>
+              <subset id="FR04" status="SI"/>
+              <subset id="HR01" status="SI"/>
+              <subset id="HR02" status="SI"/>
+              <subset id="HR03" status="SI"/>
+              <subset id="HR04" status="SI"/>
+              <subset id="HR05a" status="SI"/>
+              <subset id="HR05b" status="SI"/>
+              <subset id="HR05c" status="SI"/>
+              <subset id="HU01" status="SI"/>
+              <subset id="HU02" status="SI"/>
+              <subset id="HU03" status="SI"/>
+              <subset id="HU04" status="SI"/>
+              <subset id="HU05" status="SI"/>
+              <subset id="HU06" status="SI"/>
+              <subset id="HU07" status="SI"/>
+              <subset id="IE01" status="SI"/>
+              <subset id="IE02" status="SI"/>
+              <subset id="IE03" status="SI"/>
+              <subset id="IE05" status="SI"/>
+              <subset id="IE06" status="SI"/>
+              <subset id="IT01" status="SI"/>
+              <subset id="IT02" status="SI"/>
+              <subset id="IT03a" status="SI"/>
+              <subset id="IT03b" status="SI"/>
+              <subset id="IT03c" status="SI"/>
+              <subset id="LT01" status="SI"/>
+              <subset id="LT02" status="SI"/>
+              <subset id="LT03a" status="SI"/>
+              <subset id="LT03b" status="SI"/>
+              <subset id="LT06" status="SI"/>
+              <subset id="LU03" status="SI"/>
+              <subset id="LU04" status="SI"/>
+              <subset id="LU05" status="SI"/>
+              <subset id="LU06" status="SI"/>
+              <subset id="LV01" status="SI"/>
+              <subset id="LV02" status="SI"/>
+              <subset id="LV03" status="SI"/>
+              <subset id="LV04" status="SI"/>
+              <subset id="LV05" status="SI"/>
+              <subset id="MT01a" status="SI"/>
+              <subset id="MT01b" status="SI"/>
+              <subset id="MT02" status="SI"/>
+              <subset id="NL01" status="SI"/>
+              <subset id="NL02" status="SI"/>
+              <subset id="NL03a" status="SI"/>
+              <subset id="NL03b" status="SI"/>
+              <subset id="NL04" status="SI"/>
+              <subset id="NL05" status="SI"/>
+              <subset id="NL06" status="SI"/>
+              <subset id="PL01a" status="SI"/>
+              <subset id="PL01b" status="SI"/>
+              <subset id="PL02" status="SI"/>
+              <subset id="PL04a" status="SI"/>
+              <subset id="PL04b" status="SI"/>
+              <subset id="PL04c" status="SI"/>
+              <subset id="PT01" status="SI"/>
+              <subset id="PT02" status="SI"/>
+              <subset id="PT03" status="SI"/>
+              <subset id="RO01" status="SI"/>
+              <subset id="RO02a" status="SI"/>
+              <subset id="RO03" status="SI"/>
+              <subset id="RO04" status="SI"/>
+              <subset id="RO05a" status="SI"/>
+              <subset id="RO05b" status="SI"/>
+              <subset id="RO05c" status="SI"/>
+              <subset id="SE01" status="SI"/>
+              <subset id="SE02" status="SI"/>
+              <subset id="SE05" status="SI"/>
+              <subset id="SE06" status="SI"/>
+              <subset id="SI01" status="SI"/>
+              <subset id="SI02" status="SI"/>
+              <subset id="SI03" status="SI"/>
+              <subset id="SI05" status="SI"/>
+              <subset id="SI06" status="SI"/>
+              <subset id="SK03" status="SI"/>
+              <subset id="SK04" status="SI"/>
+              <subset id="SK05" status="SI"/>
+              <subset id="identifier" status="SI"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>The means of transport used for this logistics transport movement.</xsd:documentation>
         </xsd:annotation>
@@ -188,9 +1289,70 @@
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004170" id="Supply Chain_ Consignment. Carrier Acceptance. Date Time"/>
-            <efti id="eFTI39" format="an..20" definition="The consignment carrier acceptance date"
-                  subsets="fr, el, hr, es, eu1, pt, lu, fi, be, dk, ro, hu, pl, it, nl, ie, de, at, identifier, se, eu2, ee, bg, lt, lv, mt, eu3, si"
-                  parentId="ASBIE1027"/>
+            <efti id="eFTI39" format="an..20" definition="The consignment carrier acceptance date" parentId="ASBIE1027">
+              <subset id="AT02" status="M"/>
+              <subset id="AT03" status="M"/>
+              <subset id="AT08" status="M"/>
+              <subset id="BE03a" status="M"/>
+              <subset id="BE03b" status="M"/>
+              <subset id="BE04" status="M"/>
+              <subset id="BG01" status="M"/>
+              <subset id="DE02" status="M"/>
+              <subset id="DK01" status="M"/>
+              <subset id="DK02" status="M"/>
+              <subset id="DK06" status="M"/>
+              <subset id="EE05b" status="M"/>
+              <subset id="EE05c" status="M"/>
+              <subset id="EL01" status="M"/>
+              <subset id="EL05" status="M"/>
+              <subset id="EL08" status="M"/>
+              <subset id="ES01" status="M"/>
+              <subset id="ES02" status="M"/>
+              <subset id="EU1" status="M"/>
+              <subset id="EU2" status="M"/>
+              <subset id="EU3" status="M"/>
+              <subset id="FI01" status="M"/>
+              <subset id="FI02" status="M"/>
+              <subset id="FR03" status="M"/>
+              <subset id="FR04" status="O"/>
+              <subset id="HR01" status="M"/>
+              <subset id="HR02" status="O"/>
+              <subset id="HU01" status="M"/>
+              <subset id="HU06" status="M"/>
+              <subset id="IE01" status="M"/>
+              <subset id="IE02" status="M"/>
+              <subset id="IE03" status="M"/>
+              <subset id="IT01" status="M"/>
+              <subset id="IT02" status="M"/>
+              <subset id="LT01" status="M"/>
+              <subset id="LT02" status="O"/>
+              <subset id="LT03a" status="M"/>
+              <subset id="LT03b" status="M"/>
+              <subset id="LT06" status="M"/>
+              <subset id="LU03" status="M"/>
+              <subset id="LV01" status="M"/>
+              <subset id="LV02" status="M"/>
+              <subset id="LV03" status="O"/>
+              <subset id="MT01a" status="O"/>
+              <subset id="MT01b" status="M"/>
+              <subset id="NL03a" status="M"/>
+              <subset id="NL03b" status="M"/>
+              <subset id="PL01a" status="M"/>
+              <subset id="PL01b" status="M"/>
+              <subset id="PL02" status="M"/>
+              <subset id="PT01" status="M"/>
+              <subset id="PT03" status="O"/>
+              <subset id="RO01" status="M"/>
+              <subset id="RO02a" status="M"/>
+              <subset id="RO03" status="M"/>
+              <subset id="RO04" status="M"/>
+              <subset id="SE03" status="O"/>
+              <subset id="SE06" status="M"/>
+              <subset id="SI01" status="M"/>
+              <subset id="SI02" status="M"/>
+              <subset id="SI03" status="M"/>
+              <subset id="identifier" status="O"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>The date, time, date time or other date time value when this supply chain consignment will
             be, or has been, accepted by the carrier.
@@ -201,9 +1363,53 @@
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01004251" id="Supply Chain_ Consignment. Delivery. Transport_ Event"/>
-            <efti id="ASBIE1058" format="" definition="The delivery event for this consignment."
-                  subsets="fr, el, hr, es, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, ie, de, at, identifier, se, bg, lt, lv, mt, eu3, si"
-                  parentId="ASBIE1027"/>
+            <efti id="ASBIE1058" format="" definition="The delivery event for this consignment." parentId="ASBIE1027">
+              <subset id="AT03" status="SI"/>
+              <subset id="AT11" status="SI"/>
+              <subset id="BE03a" status="SI"/>
+              <subset id="BE03b" status="SI"/>
+              <subset id="BE04" status="SI"/>
+              <subset id="BG01" status="SI"/>
+              <subset id="CZ04" status="SI"/>
+              <subset id="DE02" status="SI"/>
+              <subset id="DK06" status="SI"/>
+              <subset id="EL02" status="SI"/>
+              <subset id="EL05" status="SI"/>
+              <subset id="EL08" status="SI"/>
+              <subset id="ES01" status="SI"/>
+              <subset id="EU3" status="SI"/>
+              <subset id="FI01" status="SI"/>
+              <subset id="FR04" status="SI"/>
+              <subset id="HR03" status="SI"/>
+              <subset id="HR04" status="SI"/>
+              <subset id="HU01" status="SI"/>
+              <subset id="HU07" status="SI"/>
+              <subset id="IE03" status="SI"/>
+              <subset id="IT02" status="SI"/>
+              <subset id="LT01" status="SI"/>
+              <subset id="LT02" status="SI"/>
+              <subset id="LT03a" status="SI"/>
+              <subset id="LT03b" status="SI"/>
+              <subset id="LU01" status="SI"/>
+              <subset id="LU02" status="SI"/>
+              <subset id="LU03" status="SI"/>
+              <subset id="LV01" status="SI"/>
+              <subset id="LV02" status="SI"/>
+              <subset id="LV03" status="SI"/>
+              <subset id="MT01a" status="SI"/>
+              <subset id="NL03a" status="SI"/>
+              <subset id="NL03b" status="SI"/>
+              <subset id="PL01a" status="SI"/>
+              <subset id="PL01b" status="SI"/>
+              <subset id="PT01" status="SI"/>
+              <subset id="RO01" status="SI"/>
+              <subset id="RO03" status="SI"/>
+              <subset id="RO04" status="SI"/>
+              <subset id="SE03" status="SI"/>
+              <subset id="SI01" status="SI"/>
+              <subset id="SI03" status="SI"/>
+              <subset id="identifier" status="SI"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>The delivery event for this supply chain consignment.</xsd:documentation>
         </xsd:annotation>
@@ -215,8 +1421,175 @@
             <unCefact unId="UN01004261" id="Supply Chain_ Consignment. Main Carriage. Logistics_ Transport Movement"/>
             <efti id="ASBIE1098" format=""
                   definition="The main carriage is the primary (main) leg of transportation used for the carriage of the consignment of goods from one place to another."
-                  subsets="fr, el, hr, es, eu1, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, sk, ie, de, cy, at, identifier, eu5a, se, eu5b, eu2, ee, bg, lt, eu5c, lv, mt, eu3, si, eu6"
-                  parentId="ASBIE1027"/>
+                  parentId="ASBIE1027">
+              <subset id="AT01" status="SI"/>
+              <subset id="AT02" status="SI"/>
+              <subset id="AT03" status="SI"/>
+              <subset id="AT05" status="SI"/>
+              <subset id="AT06" status="SI"/>
+              <subset id="AT07" status="SI"/>
+              <subset id="AT08" status="SI"/>
+              <subset id="AT12" status="SI"/>
+              <subset id="AT13" status="SI"/>
+              <subset id="AT14" status="SI"/>
+              <subset id="AT15" status="SI"/>
+              <subset id="AT16" status="SI"/>
+              <subset id="BE01" status="SI"/>
+              <subset id="BE02" status="SI"/>
+              <subset id="BE03a" status="SI"/>
+              <subset id="BE03b" status="SI"/>
+              <subset id="BE04" status="SI"/>
+              <subset id="BE05" status="SI"/>
+              <subset id="BE06" status="SI"/>
+              <subset id="BE07" status="SI"/>
+              <subset id="BE08" status="SI"/>
+              <subset id="BE09" status="SI"/>
+              <subset id="BE10" status="SI"/>
+              <subset id="BG01" status="SI"/>
+              <subset id="BG02" status="SI"/>
+              <subset id="CY01" status="SI"/>
+              <subset id="CY02" status="SI"/>
+              <subset id="CY03" status="SI"/>
+              <subset id="CZ01" status="SI"/>
+              <subset id="CZ02" status="SI"/>
+              <subset id="CZ03" status="SI"/>
+              <subset id="CZ04" status="SI"/>
+              <subset id="CZ05" status="SI"/>
+              <subset id="DE02" status="SI"/>
+              <subset id="DE03a" status="SI"/>
+              <subset id="DE03b" status="SI"/>
+              <subset id="DE03c" status="SI"/>
+              <subset id="DK01" status="SI"/>
+              <subset id="DK02" status="SI"/>
+              <subset id="DK03" status="SI"/>
+              <subset id="DK04" status="SI"/>
+              <subset id="DK05" status="SI"/>
+              <subset id="DK06" status="SI"/>
+              <subset id="EE01" status="SI"/>
+              <subset id="EE02" status="SI"/>
+              <subset id="EE04" status="SI"/>
+              <subset id="EE05a" status="SI"/>
+              <subset id="EE05b" status="SI"/>
+              <subset id="EE05c" status="SI"/>
+              <subset id="EE05d" status="SI"/>
+              <subset id="EL01" status="SI"/>
+              <subset id="EL03" status="SI"/>
+              <subset id="EL04" status="SI"/>
+              <subset id="EL05" status="SI"/>
+              <subset id="EL07" status="SI"/>
+              <subset id="EL08" status="SI"/>
+              <subset id="ES01" status="SI"/>
+              <subset id="ES02" status="SI"/>
+              <subset id="ES03" status="SI"/>
+              <subset id="ES04" status="SI"/>
+              <subset id="ES05" status="SI"/>
+              <subset id="EU1" status="SI"/>
+              <subset id="EU2" status="SI"/>
+              <subset id="EU3" status="SI"/>
+              <subset id="EU5a" status="SI"/>
+              <subset id="EU5b" status="SI"/>
+              <subset id="EU5c" status="SI"/>
+              <subset id="EU6" status="SI"/>
+              <subset id="FI01" status="SI"/>
+              <subset id="FI02" status="SI"/>
+              <subset id="FI03" status="SI"/>
+              <subset id="FI04" status="SI"/>
+              <subset id="FR01a" status="SI"/>
+              <subset id="FR01b" status="SI"/>
+              <subset id="FR02a" status="SI"/>
+              <subset id="FR02b" status="SI"/>
+              <subset id="FR02c" status="SI"/>
+              <subset id="FR03" status="SI"/>
+              <subset id="FR04" status="SI"/>
+              <subset id="HR01" status="SI"/>
+              <subset id="HR02" status="SI"/>
+              <subset id="HR03" status="SI"/>
+              <subset id="HR04" status="SI"/>
+              <subset id="HR05a" status="SI"/>
+              <subset id="HR05b" status="SI"/>
+              <subset id="HR05c" status="SI"/>
+              <subset id="HU01" status="SI"/>
+              <subset id="HU02" status="SI"/>
+              <subset id="HU03" status="SI"/>
+              <subset id="HU04" status="SI"/>
+              <subset id="HU05" status="SI"/>
+              <subset id="HU06" status="SI"/>
+              <subset id="HU07" status="SI"/>
+              <subset id="IE01" status="SI"/>
+              <subset id="IE02" status="SI"/>
+              <subset id="IE03" status="SI"/>
+              <subset id="IE05" status="SI"/>
+              <subset id="IE06" status="SI"/>
+              <subset id="IE07" status="SI"/>
+              <subset id="IT01" status="SI"/>
+              <subset id="IT02" status="SI"/>
+              <subset id="IT03a" status="SI"/>
+              <subset id="IT03b" status="SI"/>
+              <subset id="IT03c" status="SI"/>
+              <subset id="LT01" status="SI"/>
+              <subset id="LT02" status="SI"/>
+              <subset id="LT03a" status="SI"/>
+              <subset id="LT03b" status="SI"/>
+              <subset id="LT04" status="SI"/>
+              <subset id="LT06" status="SI"/>
+              <subset id="LU01" status="SI"/>
+              <subset id="LU02" status="SI"/>
+              <subset id="LU03" status="SI"/>
+              <subset id="LU04" status="SI"/>
+              <subset id="LU05" status="SI"/>
+              <subset id="LU06" status="SI"/>
+              <subset id="LU07" status="SI"/>
+              <subset id="LV01" status="SI"/>
+              <subset id="LV02" status="SI"/>
+              <subset id="LV03" status="SI"/>
+              <subset id="LV04" status="SI"/>
+              <subset id="LV05" status="SI"/>
+              <subset id="MT01a" status="SI"/>
+              <subset id="MT01b" status="SI"/>
+              <subset id="MT02" status="SI"/>
+              <subset id="NL01" status="SI"/>
+              <subset id="NL02" status="SI"/>
+              <subset id="NL03a" status="SI"/>
+              <subset id="NL03b" status="SI"/>
+              <subset id="NL04" status="SI"/>
+              <subset id="NL05" status="SI"/>
+              <subset id="NL06" status="SI"/>
+              <subset id="PL01a" status="SI"/>
+              <subset id="PL01b" status="SI"/>
+              <subset id="PL02" status="SI"/>
+              <subset id="PL03" status="SI"/>
+              <subset id="PL04a" status="SI"/>
+              <subset id="PL04b" status="SI"/>
+              <subset id="PL04c" status="SI"/>
+              <subset id="PL06" status="SI"/>
+              <subset id="PT01" status="SI"/>
+              <subset id="PT02" status="SI"/>
+              <subset id="PT03" status="SI"/>
+              <subset id="RO01" status="SI"/>
+              <subset id="RO02a" status="SI"/>
+              <subset id="RO03" status="SI"/>
+              <subset id="RO04" status="SI"/>
+              <subset id="RO05a" status="SI"/>
+              <subset id="RO05b" status="SI"/>
+              <subset id="RO05c" status="SI"/>
+              <subset id="RO06" status="SI"/>
+              <subset id="SE01" status="SI"/>
+              <subset id="SE02" status="SI"/>
+              <subset id="SE04" status="SI"/>
+              <subset id="SE05" status="SI"/>
+              <subset id="SE06" status="SI"/>
+              <subset id="SI01" status="SI"/>
+              <subset id="SI02" status="SI"/>
+              <subset id="SI03" status="SI"/>
+              <subset id="SI05" status="SI"/>
+              <subset id="SI06" status="SI"/>
+              <subset id="SK01" status="SI"/>
+              <subset id="SK02" status="SI"/>
+              <subset id="SK03" status="SI"/>
+              <subset id="SK04" status="SI"/>
+              <subset id="SK05" status="SI"/>
+              <subset id="identifier" status="SI"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>A main carriage logistics transport movement for this supply chain consignment.
           </xsd:documentation>
@@ -228,8 +1601,154 @@
           <xsd:appinfo>
             <unCefact unId="UN01004260" id="Supply Chain_ Consignment. Utilized. Logistics_ Transport Equipment"/>
             <efti id="ASBIE1086" format="" definition="The transport equipment used for transporting this consignment."
-                  subsets="fr, el, hr, es, eu1, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, sk, ie, de, cy, at, identifier, eu5a, se, eu5b, eu2, ee, bg, lt, eu5c, lv, mt, eu3, si"
-                  parentId="ASBIE1027"/>
+                  parentId="ASBIE1027">
+              <subset id="AT02" status="SI"/>
+              <subset id="AT03" status="SI"/>
+              <subset id="AT05" status="SI"/>
+              <subset id="AT06" status="SI"/>
+              <subset id="AT07" status="SI"/>
+              <subset id="AT08" status="SI"/>
+              <subset id="AT09" status="SI"/>
+              <subset id="AT12" status="SI"/>
+              <subset id="AT13" status="SI"/>
+              <subset id="AT14" status="SI"/>
+              <subset id="AT15" status="SI"/>
+              <subset id="AT16" status="SI"/>
+              <subset id="BE01" status="SI"/>
+              <subset id="BE02" status="SI"/>
+              <subset id="BE03a" status="SI"/>
+              <subset id="BE03b" status="SI"/>
+              <subset id="BE04" status="SI"/>
+              <subset id="BE05" status="SI"/>
+              <subset id="BE06" status="SI"/>
+              <subset id="BE07" status="SI"/>
+              <subset id="BE08" status="SI"/>
+              <subset id="BE09" status="SI"/>
+              <subset id="BE10" status="SI"/>
+              <subset id="BG01" status="SI"/>
+              <subset id="BG02" status="SI"/>
+              <subset id="CY01" status="SI"/>
+              <subset id="CY03" status="SI"/>
+              <subset id="CZ01" status="SI"/>
+              <subset id="CZ02" status="SI"/>
+              <subset id="CZ04" status="SI"/>
+              <subset id="CZ05" status="SI"/>
+              <subset id="DE02" status="SI"/>
+              <subset id="DE03a" status="SI"/>
+              <subset id="DE03b" status="SI"/>
+              <subset id="DE03c" status="SI"/>
+              <subset id="DK01" status="SI"/>
+              <subset id="DK02" status="SI"/>
+              <subset id="DK03" status="SI"/>
+              <subset id="DK04" status="SI"/>
+              <subset id="DK05" status="SI"/>
+              <subset id="DK06" status="SI"/>
+              <subset id="EE01" status="SI"/>
+              <subset id="EE02" status="SI"/>
+              <subset id="EE05a" status="SI"/>
+              <subset id="EE05b" status="SI"/>
+              <subset id="EE05c" status="SI"/>
+              <subset id="EE05d" status="SI"/>
+              <subset id="EL03" status="SI"/>
+              <subset id="EL04" status="SI"/>
+              <subset id="EL05" status="SI"/>
+              <subset id="EL08" status="SI"/>
+              <subset id="ES01" status="SI"/>
+              <subset id="ES02" status="SI"/>
+              <subset id="ES04" status="SI"/>
+              <subset id="ES05" status="SI"/>
+              <subset id="EU1" status="SI"/>
+              <subset id="EU2" status="SI"/>
+              <subset id="EU3" status="SI"/>
+              <subset id="EU5a" status="SI"/>
+              <subset id="EU5b" status="SI"/>
+              <subset id="EU5c" status="SI"/>
+              <subset id="FI01" status="SI"/>
+              <subset id="FI02" status="SI"/>
+              <subset id="FI03" status="SI"/>
+              <subset id="FI04" status="SI"/>
+              <subset id="FR01a" status="SI"/>
+              <subset id="FR02a" status="SI"/>
+              <subset id="FR02b" status="SI"/>
+              <subset id="FR02c" status="SI"/>
+              <subset id="FR03" status="SI"/>
+              <subset id="FR04" status="SI"/>
+              <subset id="HR01" status="SI"/>
+              <subset id="HR03" status="SI"/>
+              <subset id="HR04" status="SI"/>
+              <subset id="HR05a" status="SI"/>
+              <subset id="HR05b" status="SI"/>
+              <subset id="HR05c" status="SI"/>
+              <subset id="HU01" status="SI"/>
+              <subset id="HU02" status="SI"/>
+              <subset id="HU03" status="SI"/>
+              <subset id="HU04" status="SI"/>
+              <subset id="HU05" status="SI"/>
+              <subset id="HU06" status="SI"/>
+              <subset id="HU07" status="SI"/>
+              <subset id="IE01" status="SI"/>
+              <subset id="IE02" status="SI"/>
+              <subset id="IE03" status="SI"/>
+              <subset id="IE05" status="SI"/>
+              <subset id="IE06" status="SI"/>
+              <subset id="IT01" status="SI"/>
+              <subset id="IT02" status="SI"/>
+              <subset id="IT03a" status="SI"/>
+              <subset id="IT03b" status="SI"/>
+              <subset id="IT03c" status="SI"/>
+              <subset id="LT01" status="SI"/>
+              <subset id="LT02" status="SI"/>
+              <subset id="LT03a" status="SI"/>
+              <subset id="LT03b" status="SI"/>
+              <subset id="LU03" status="SI"/>
+              <subset id="LU04" status="SI"/>
+              <subset id="LU05" status="SI"/>
+              <subset id="LU06" status="SI"/>
+              <subset id="LV01" status="SI"/>
+              <subset id="LV02" status="SI"/>
+              <subset id="LV03" status="SI"/>
+              <subset id="LV04" status="SI"/>
+              <subset id="LV05" status="SI"/>
+              <subset id="MT01a" status="SI"/>
+              <subset id="MT01b" status="SI"/>
+              <subset id="MT02" status="SI"/>
+              <subset id="NL01" status="SI"/>
+              <subset id="NL02" status="SI"/>
+              <subset id="NL03a" status="SI"/>
+              <subset id="NL03b" status="SI"/>
+              <subset id="NL04" status="SI"/>
+              <subset id="NL05" status="SI"/>
+              <subset id="NL06" status="SI"/>
+              <subset id="PL01a" status="SI"/>
+              <subset id="PL01b" status="SI"/>
+              <subset id="PL01c" status="SI"/>
+              <subset id="PL02" status="SI"/>
+              <subset id="PL04a" status="SI"/>
+              <subset id="PL04b" status="SI"/>
+              <subset id="PL04c" status="SI"/>
+              <subset id="PT01" status="SI"/>
+              <subset id="PT02" status="SI"/>
+              <subset id="RO01" status="SI"/>
+              <subset id="RO02a" status="SI"/>
+              <subset id="RO03" status="SI"/>
+              <subset id="RO04" status="SI"/>
+              <subset id="RO05a" status="SI"/>
+              <subset id="RO05b" status="SI"/>
+              <subset id="RO05c" status="SI"/>
+              <subset id="SE01" status="SI"/>
+              <subset id="SE02" status="SI"/>
+              <subset id="SE05" status="SI"/>
+              <subset id="SE06" status="SI"/>
+              <subset id="SI01" status="SI"/>
+              <subset id="SI02" status="SI"/>
+              <subset id="SI03" status="SI"/>
+              <subset id="SI05" status="SI"/>
+              <subset id="SI06" status="SI"/>
+              <subset id="SK03" status="SI"/>
+              <subset id="SK04" status="SI"/>
+              <subset id="SK05" status="SI"/>
+              <subset id="identifier" status="SI"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>Logistics transport equipment utilized for this supply chain consignment.
           </xsd:documentation>
@@ -245,12 +1764,181 @@
             <unCefact unId="UN01002553" id="Trade_ Country. Identification. Identifier"/>
             <efti id="eFTI578" format="a2"
                   definition="The code for the registration country of the used transport equipment."
-                  subsets="fr, el, hr, es, eu1, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, ie, de, cy, at, identifier, se, eu2, ee, bg, lt, lv, mt, eu3, si"
-                  parentId="ASBIE1097"/>
+                  parentId="ASBIE1097">
+              <subset id="AT02" status="M"/>
+              <subset id="AT03" status="M"/>
+              <subset id="AT08" status="M"/>
+              <subset id="AT15" status="M"/>
+              <subset id="BE03a" status="M"/>
+              <subset id="BE03b" status="M"/>
+              <subset id="BE04" status="M"/>
+              <subset id="BG01" status="M"/>
+              <subset id="CY03" status="M"/>
+              <subset id="CZ04" status="M"/>
+              <subset id="DE02" status="M"/>
+              <subset id="DK01" status="M"/>
+              <subset id="DK02" status="C"/>
+              <subset id="DK06" status="M"/>
+              <subset id="EE05b" status="M"/>
+              <subset id="EE05c" status="M"/>
+              <subset id="EL05" status="M"/>
+              <subset id="ES01" status="M"/>
+              <subset id="ES02" status="M"/>
+              <subset id="EU1" status="C"/>
+              <subset id="EU2" status="M"/>
+              <subset id="EU3" status="M"/>
+              <subset id="FI01" status="M"/>
+              <subset id="FI02" status="M"/>
+              <subset id="FR01a" status="M"/>
+              <subset id="FR02a" status="M"/>
+              <subset id="FR02b" status="M"/>
+              <subset id="FR02c" status="M"/>
+              <subset id="FR03" status="M"/>
+              <subset id="FR04" status="O"/>
+              <subset id="HR01" status="M"/>
+              <subset id="HR03" status="M"/>
+              <subset id="HR04" status="M"/>
+              <subset id="HU01" status="M"/>
+              <subset id="HU06" status="M"/>
+              <subset id="IE01" status="C"/>
+              <subset id="IE02" status="M"/>
+              <subset id="IE03" status="M"/>
+              <subset id="IT01" status="M"/>
+              <subset id="IT02" status="M"/>
+              <subset id="LT01" status="O"/>
+              <subset id="LT02" status="O"/>
+              <subset id="LT03a" status="M"/>
+              <subset id="LT03b" status="M"/>
+              <subset id="LU03" status="M"/>
+              <subset id="LV01" status="M"/>
+              <subset id="LV02" status="M"/>
+              <subset id="LV03" status="O"/>
+              <subset id="MT01a" status="O"/>
+              <subset id="MT01b" status="M"/>
+              <subset id="NL03a" status="M"/>
+              <subset id="NL03b" status="M"/>
+              <subset id="PL01a" status="M"/>
+              <subset id="PL01b" status="M"/>
+              <subset id="PL02" status="M"/>
+              <subset id="PT01" status="M"/>
+              <subset id="RO01" status="M"/>
+              <subset id="RO02a" status="M"/>
+              <subset id="RO03" status="M"/>
+              <subset id="RO04" status="M"/>
+              <subset id="SE06" status="M"/>
+              <subset id="SI01" status="M"/>
+              <subset id="SI02" status="M"/>
+              <subset id="SI03" status="M"/>
+              <subset id="identifier" status="O"/>
+            </efti>
             <efti id="eFTI620" format="a2"
                   definition="The country code of the registration country of the transport means used in the main leg of transportation of the consignment of goods from one place to another."
-                  subsets="fr, el, hr, es, eu1, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, sk, ie, de, cy, at, identifier, eu5a, se, eu2, ee, bg, lt, lv, mt, eu3, si"
-                  parentId="ASBIE1108"/>
+                  parentId="ASBIE1108">
+              <subset id="AT02" status="O"/>
+              <subset id="AT03" status="M"/>
+              <subset id="AT05" status="C"/>
+              <subset id="AT06" status="C"/>
+              <subset id="AT07" status="C"/>
+              <subset id="AT08" status="O"/>
+              <subset id="AT12" status="C"/>
+              <subset id="AT15" status="M"/>
+              <subset id="AT16" status="C"/>
+              <subset id="BE02" status="C"/>
+              <subset id="BE03a" status="O"/>
+              <subset id="BE03b" status="M"/>
+              <subset id="BE04" status="M"/>
+              <subset id="BE05" status="C"/>
+              <subset id="BE06" status="C"/>
+              <subset id="BG01" status="M"/>
+              <subset id="CY01" status="C"/>
+              <subset id="CY03" status="O"/>
+              <subset id="CZ01" status="C"/>
+              <subset id="CZ04" status="M"/>
+              <subset id="DE02" status="M"/>
+              <subset id="DE03a" status="C"/>
+              <subset id="DK01" status="O"/>
+              <subset id="DK02" status="O"/>
+              <subset id="DK03" status="C"/>
+              <subset id="DK06" status="M"/>
+              <subset id="EE01" status="C"/>
+              <subset id="EE05b" status="M"/>
+              <subset id="EE05c" status="O"/>
+              <subset id="EE05d" status="C"/>
+              <subset id="EL01" status="O"/>
+              <subset id="EL03" status="C"/>
+              <subset id="EL05" status="M"/>
+              <subset id="ES01" status="M"/>
+              <subset id="ES02" status="O"/>
+              <subset id="ES04" status="C"/>
+              <subset id="EU1" status="O"/>
+              <subset id="EU2" status="O"/>
+              <subset id="EU3" status="M"/>
+              <subset id="EU5a" status="C"/>
+              <subset id="FI01" status="M"/>
+              <subset id="FI02" status="O"/>
+              <subset id="FI03" status="C"/>
+              <subset id="FR01a" status="M"/>
+              <subset id="FR02a" status="M"/>
+              <subset id="FR02b" status="M"/>
+              <subset id="FR02c" status="M"/>
+              <subset id="FR03" status="O"/>
+              <subset id="FR04" status="C"/>
+              <subset id="HR01" status="O"/>
+              <subset id="HR02" status="C"/>
+              <subset id="HR03" status="M"/>
+              <subset id="HR04" status="M"/>
+              <subset id="HR05a" status="C"/>
+              <subset id="HU01" status="M"/>
+              <subset id="HU03" status="C"/>
+              <subset id="HU05" status="C"/>
+              <subset id="HU06" status="O"/>
+              <subset id="HU07" status="C"/>
+              <subset id="IE01" status="O"/>
+              <subset id="IE02" status="O"/>
+              <subset id="IE03" status="M"/>
+              <subset id="IE05" status="C"/>
+              <subset id="IT01" status="O"/>
+              <subset id="IT02" status="M"/>
+              <subset id="IT03a" status="C"/>
+              <subset id="LT01" status="C"/>
+              <subset id="LT02" status="C"/>
+              <subset id="LT03a" status="M"/>
+              <subset id="LT03b" status="M"/>
+              <subset id="LT06" status="M"/>
+              <subset id="LU03" status="M"/>
+              <subset id="LU04" status="C"/>
+              <subset id="LV01" status="M"/>
+              <subset id="LV02" status="M"/>
+              <subset id="LV03" status="C"/>
+              <subset id="MT01a" status="C"/>
+              <subset id="MT01b" status="O"/>
+              <subset id="MT02" status="C"/>
+              <subset id="NL03a" status="M"/>
+              <subset id="NL03b" status="M"/>
+              <subset id="NL04" status="C"/>
+              <subset id="PL01a" status="M"/>
+              <subset id="PL01b" status="M"/>
+              <subset id="PL02" status="M"/>
+              <subset id="PL04a" status="C"/>
+              <subset id="PT01" status="M"/>
+              <subset id="PT02" status="C"/>
+              <subset id="PT03" status="C"/>
+              <subset id="RO01" status="M"/>
+              <subset id="RO02a" status="O"/>
+              <subset id="RO03" status="M"/>
+              <subset id="RO04" status="M"/>
+              <subset id="RO05a" status="C"/>
+              <subset id="SE01" status="C"/>
+              <subset id="SE05" status="C"/>
+              <subset id="SE06" status="O"/>
+              <subset id="SI01" status="M"/>
+              <subset id="SI02" status="O"/>
+              <subset id="SI03" status="M"/>
+              <subset id="SI05" status="C"/>
+              <subset id="SI06" status="C"/>
+              <subset id="SK04" status="C"/>
+              <subset id="identifier" status="O"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>A unique identifier for this trade country.</xsd:documentation>
         </xsd:annotation>
@@ -264,16 +1952,92 @@
           <xsd:appinfo>
             <unCefact unId="UN01004796" id="Transport_ Event. Actual_ Occurrence. Date Time"/>
             <efti id="eFTI188" format="an..20" definition="The actual delivery date for this consignment."
-                  subsets="fr, el, hr, es, pt, cz, lu, fi, be, dk, ro, hu, pl, it, nl, ie, de, at, identifier, se, bg, lt, lv, mt, eu3, si"
-                  parentId="ASBIE1058"/>
+                  parentId="ASBIE1058">
+              <subset id="AT03" status="C"/>
+              <subset id="BE03a" status="O"/>
+              <subset id="BE03b" status="C"/>
+              <subset id="BE04" status="C"/>
+              <subset id="BG01" status="C"/>
+              <subset id="CZ04" status="C"/>
+              <subset id="DE02" status="C"/>
+              <subset id="DK06" status="C"/>
+              <subset id="EL05" status="C"/>
+              <subset id="ES01" status="C"/>
+              <subset id="EU3" status="C"/>
+              <subset id="FI01" status="C"/>
+              <subset id="FR04" status="O"/>
+              <subset id="HR03" status="C"/>
+              <subset id="HR04" status="C"/>
+              <subset id="HU01" status="C"/>
+              <subset id="IE03" status="C"/>
+              <subset id="IT02" status="C"/>
+              <subset id="LT01" status="O"/>
+              <subset id="LT02" status="O"/>
+              <subset id="LT03a" status="C"/>
+              <subset id="LT03b" status="C"/>
+              <subset id="LU01" status="C"/>
+              <subset id="LU02" status="C"/>
+              <subset id="LU03" status="C"/>
+              <subset id="LV01" status="C"/>
+              <subset id="LV02" status="C"/>
+              <subset id="LV03" status="O"/>
+              <subset id="MT01a" status="O"/>
+              <subset id="NL03a" status="C"/>
+              <subset id="NL03b" status="C"/>
+              <subset id="PL01a" status="C"/>
+              <subset id="PL01b" status="C"/>
+              <subset id="PT01" status="C"/>
+              <subset id="RO01" status="C"/>
+              <subset id="RO03" status="C"/>
+              <subset id="RO04" status="C"/>
+              <subset id="SE03" status="O"/>
+              <subset id="SI01" status="C"/>
+              <subset id="SI03" status="C"/>
+              <subset id="identifier" status="O"/>
+            </efti>
             <efti id="eFTI583" format="an..20"
                   definition="The actual date of the loading of the consignment of goods for the main leg of transport event."
-                  subsets="fr, hr, pt, cz, lu, be, hu, cy, at, eu2, ee, bg, lt, lv, mt, si" parentId="ASBIE1099"/>
+                  parentId="ASBIE1099">
+              <subset id="AT02" status="C"/>
+              <subset id="AT08" status="C"/>
+              <subset id="AT15" status="O"/>
+              <subset id="BE03a" status="C"/>
+              <subset id="CY03" status="M"/>
+              <subset id="CZ04" status="O"/>
+              <subset id="EE05a" status="M"/>
+              <subset id="EU2" status="C"/>
+              <subset id="FR02b" status="O"/>
+              <subset id="FR04" status="O"/>
+              <subset id="HR03" status="M"/>
+              <subset id="HR04" status="O"/>
+              <subset id="HU01" status="C"/>
+              <subset id="LT03b" status="M"/>
+              <subset id="LU01" status="O"/>
+              <subset id="LV02" status="O"/>
+              <subset id="MT01b" status="C"/>
+              <subset id="PT01" status="O"/>
+              <subset id="SI01" status="M"/>
+            </efti>
             <efti id="eFTI596" format="an..20"
                   definition="The actual date of the unloading of the consignment of goods for the main leg of transport event."
-                  subsets="pt, cz, lu, be, hu, at, eu2, bg, lt, lv, mt" parentId="ASBIE1103"/>
+                  parentId="ASBIE1103">
+              <subset id="AT02" status="C"/>
+              <subset id="AT08" status="C"/>
+              <subset id="AT15" status="O"/>
+              <subset id="BE03a" status="C"/>
+              <subset id="CZ04" status="O"/>
+              <subset id="EU2" status="C"/>
+              <subset id="HU01" status="C"/>
+              <subset id="LT03b" status="O"/>
+              <subset id="LU01" status="O"/>
+              <subset id="LV02" status="O"/>
+              <subset id="MT01b" status="C"/>
+              <subset id="PT01" status="O"/>
+            </efti>
             <efti id="eFTI1268" format="an..20" definition="The actual date of the border crossing transport event."
-                  subsets="fr" parentId="ASBIE1301"/>
+                  parentId="ASBIE1301">
+              <subset id="FR04" status="O"/>
+            </efti>
           </xsd:appinfo>
           <xsd:documentation>The actual date, time, date time, or other date time value of the occurrence of this
             transport event.

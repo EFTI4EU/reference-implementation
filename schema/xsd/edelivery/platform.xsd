@@ -17,10 +17,14 @@
         Platform can create and update consignment identifiers in gate using this request.
       </xsd:documentation>
     </xsd:annotation>
-    <xsd:sequence>
-      <xsd:element ref="efti-id:consignment"/>
-    </xsd:sequence>
-    <xsd:attribute name="datasetId" type="xsd:token" use="required"/>
+    <xsd:complexContent>
+      <xsd:extension base="efti-ed:Request">
+        <xsd:sequence>
+          <xsd:element ref="efti-id:consignment"/>
+        </xsd:sequence>
+        <xsd:attribute name="datasetId" type="xsd:token" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
 </xsd:schema>
 

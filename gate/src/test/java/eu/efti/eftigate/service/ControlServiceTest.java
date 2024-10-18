@@ -1,30 +1,17 @@
 package eu.efti.eftigate.service;
 
-import eu.efti.commons.dto.AuthorityDto;
-import eu.efti.commons.dto.ContactInformationDto;
-import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.ErrorDto;
-import eu.efti.commons.dto.IdentifiersDto;
-import eu.efti.commons.dto.IdentifiersResponseDto;
-import eu.efti.commons.dto.IdentifiersResultDto;
-import eu.efti.commons.dto.IdentifiersResultsDto;
-import eu.efti.commons.dto.NotesDto;
-import eu.efti.commons.dto.SearchParameter;
-import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
-import eu.efti.commons.dto.TransportVehicleDto;
-import eu.efti.commons.dto.UilDto;
+import eu.efti.commons.dto.*;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
-import eu.efti.edeliveryapconnector.dto.IdentifiersMessageBodyDto;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.NoteResponseDto;
 import eu.efti.eftigate.dto.RequestUuidDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
-import eu.efti.eftigate.entity.IdentifiersResult;
 import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
@@ -36,6 +23,8 @@ import eu.efti.eftigate.service.request.NotesRequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
+import eu.efti.v1.edelivery.Identifier;
+import eu.efti.v1.edelivery.IdentifierQuery;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -103,25 +92,23 @@ class ControlServiceTest extends AbstractServiceTest {
     private final NotesDto notesDto = new NotesDto();
     private final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto = new SearchWithIdentifiersRequestDto();
     private final ControlDto controlDto = new ControlDto();
-    IdentifiersDto identifiersDto = new IdentifiersDto();
-    TransportVehicleDto transportVehicleDto = new TransportVehicleDto();
     private final ControlEntity controlEntity = ControlEntity.builder().requestType(RequestTypeEnum.LOCAL_UIL_SEARCH).build();
     private final UilRequestEntity uilRequestEntity = new UilRequestEntity();
     private final IdentifiersRequestEntity identifiersRequestEntity = new IdentifiersRequestEntity();
 
-    IdentifiersResult identifiersResult = new IdentifiersResult();
-    IdentifiersResults identifiersResults = new IdentifiersResults();
+    final ConsignmentDto identifiersResult = new ConsignmentDto();
+    final IdentifiersResults identifiersResults = new IdentifiersResults();
 
-    private final IdentifiersResultDto identifiersResultDto = new IdentifiersResultDto();
+    private final ConsignmentDto identifiersResultDto = new ConsignmentDto();
     private final IdentifiersResultsDto identifiersResultsDto = new IdentifiersResultsDto();
 
     private final RequestUuidDto requestUuidDto = new RequestUuidDto();
     private final String requestUuid = UUID.randomUUID().toString();
     private final String identifiersUuid = UUID.randomUUID().toString();
 
-    private static final String URL = "http://france.lol";
-    private static final String PASSWORD = "password";
-    private static final String USERNAME = "username";
+    private final static String url = "http://france.lol";
+    private final static String password = "password";
+    private final static String username = "username";
 
     @BeforeEach
     public void before() {
@@ -129,9 +116,9 @@ class ControlServiceTest extends AbstractServiceTest {
                 .owner("http://france.lol")
                 .country("FR")
                 .ap(GateProperties.ApConfig.builder()
-                        .url(URL)
-                        .password(PASSWORD)
-                        .username(USERNAME).build()).build();
+                        .url(url)
+                        .password(password)
+                        .username(username).build()).build();
         controlService = new ControlService(controlRepository, eftiGateUrlResolver, identifiersService, mapperUtils,
                 requestServiceFactory, logManager, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
                 gateProperties);
@@ -198,42 +185,21 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlEntity.setFromGateUrl(controlDto.getFromGateUrl());
 
 
-        identifiersResult.setCountryStart("FR");
-        identifiersResult.setCountryEnd("FR");
-        identifiersResult.setDisabled(false);
-        identifiersResult.setIsDangerousGoods(true);
+        identifiersResult.setDatasetId("datasetId");
+        identifiersResult.setPlatformId("platformId");
+        identifiersResult.setGateId("gateId");
 
-        identifiersResults.setIdentifiersResult(Collections.singletonList(identifiersResult));
+        identifiersResults.setConsignments(Collections.singletonList(identifiersResult));
 
         uilRequestEntity.setControl(controlEntity);
 
+        identifiersResults.setConsignments(Collections.singletonList(identifiersResult));
 
-        transportVehicleDto.setCountryStart("FR");
-        transportVehicleDto.setCountryEnd("FR");
-        transportVehicleDto.setTransportMode("ROAD");
-        transportVehicleDto.setJourneyStart(LocalDateTime.now().toString());
-        transportVehicleDto.setJourneyStart(LocalDateTime.now().plusHours(5L).toString());
+        identifiersResultDto.setDatasetId("datasetId");
+        identifiersResultDto.setPlatformId("platformId");
+        identifiersResultDto.setGateId("gateId");
 
-        identifiersDto.setIsDangerousGoods(true);
-        identifiersDto.setIdentifiersUUID(identifiersUuid);
-        identifiersDto.setDisabled(false);
-        identifiersDto.setCountryStart("FR");
-        identifiersDto.setCountryEnd("FR");
-        identifiersDto.setTransportVehicles(Collections.singletonList(transportVehicleDto));
-
-        identifiersResult.setCountryStart("FR");
-        identifiersResult.setCountryEnd("FR");
-        identifiersResult.setDisabled(false);
-        identifiersResult.setIsDangerousGoods(true);
-
-        identifiersResults.setIdentifiersResult(Collections.singletonList(identifiersResult));
-
-        identifiersResultDto.setCountryStart("FR");
-        identifiersResultDto.setCountryEnd("FR");
-        identifiersResultDto.setDisabled(false);
-        identifiersResultDto.setIsDangerousGoods(true);
-
-        identifiersResultsDto.setIdentifiersResult(Collections.singletonList(identifiersResultDto));
+        identifiersResultsDto.setConsignments(Collections.singletonList(identifiersResultDto));
 
         setField(controlService, "timeoutValue", 60);
     }
@@ -644,13 +610,13 @@ class ControlServiceTest extends AbstractServiceTest {
                         .build())
 
                 .build();
-        final IdentifiersMessageBodyDto messageBodyDto = IdentifiersMessageBodyDto.builder()
-                .transportMode("ROAD")
-                .requestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")
-                .vehicleCountry("FR")
-                .vehicleID("AA123VV")
-                .isDangerousGoods(true)
-                .build();
+        final IdentifierQuery identifierQuery = new IdentifierQuery();
+        Identifier identifier = new Identifier();
+        identifier.setValue("AA123VV");
+        identifierQuery.setIdentifier(identifier);
+        identifierQuery.setRequestId("67fe38bd-6bf7-4b06-b20e-206264bd639c");
+        identifierQuery.setRegistrationCountryCode("FR");
+
         final ControlDto expectedControl = ControlDto.builder()
                 .requestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")
                 .status(StatusEnum.PENDING)
@@ -666,11 +632,11 @@ class ControlServiceTest extends AbstractServiceTest {
                         .isDangerousGoods(true)
                         .build())
                 .eftiData(ArrayUtils.EMPTY_BYTE_ARRAY)
-                .identifiersResults(IdentifiersResultsDto.builder().identifiersResult(new LinkedList<>()).build())
+                .identifiersResults(new LinkedList<>())
                 .build();
         when(controlRepository.save(any())).thenReturn(identifiersControl);
         //Act
-        final ControlDto createdControlDto = controlService.createControlFrom(messageBodyDto, "https://efti.gate.france.eu", identifiersResultsDto);
+        final ControlDto createdControlDto = controlService.createControlFrom(identifierQuery, "https://efti.gate.france.eu", identifiersResultsDto);
         //Assert
         assertThat(createdControlDto)
                 .usingRecursiveComparison()
@@ -686,7 +652,7 @@ class ControlServiceTest extends AbstractServiceTest {
         //Arrange
         final ControlDto expectedControl = ControlDto.builder()
                 .status(StatusEnum.COMPLETE)
-                .identifiersResults(identifiersResultsDto)
+                .identifiersResults(identifiersResultsDto.getConsignments())
                 .build();
         when(controlService.getControlByRequestUuid(requestUuid)).thenReturn(expectedControl);
 

@@ -1,5 +1,6 @@
 package eu.efti.eftigate.entity;
 
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,5 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class IdentifiersResults implements Serializable {
-    private List<IdentifiersResult> identifiersResult;
+    private List<ConsignmentDto> consignments;
 }

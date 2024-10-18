@@ -1,19 +1,20 @@
 package eu.efti.platformgatesimulator.service;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import eu.efti.platformgatesimulator.exception.UploadException;
 import eu.efti.platformgatesimulator.config.GateProperties;
+import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
@@ -24,8 +25,8 @@ public class ReaderService {
     public static final String XML_FILE_TYPE = "xml";
     public static final String JSON_FILE_TYPE = "json";
     private final GateProperties gateProperties;
-
     private final ResourceLoader resourceLoader;
+    private final XmlMapper mapper;
 
     public void uploadFile(final MultipartFile file) throws UploadException {
         try {
@@ -41,14 +42,14 @@ public class ReaderService {
         }
     }
 
-    public String readFromFile(final String file) throws IOException {
+    public SupplyChainConsignment readFromFile(final String file) throws IOException {
         Resource resource = tryOpenFile(file, XML_FILE_TYPE);
         if (!resource.exists()) {
             resource = tryOpenFile(file, JSON_FILE_TYPE);
         }
-
         if (resource.exists()) {
-            return readFromInputStream(resource.getInputStream());
+            final String result = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+            return mapper.readValue(result, SupplyChainConsignment.class);
         }
 
         return null;
@@ -58,20 +59,5 @@ public class ReaderService {
         final String filePath = String.join(".", path, ext);
         log.info("try to open file : {}", filePath);
         return resourceLoader.getResource(filePath);
-    }
-
-    private String readFromInputStream(final InputStream inputStream)
-            throws IOException {
-        final StringBuilder resultStringBuilder = new StringBuilder();
-        try (final BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                resultStringBuilder.append(line).append("\n");
-            }
-        } catch (final NullPointerException e) {
-            log.error("File doesn't exist");
-            return null;
-        }
-        return resultStringBuilder.toString();
     }
 }
