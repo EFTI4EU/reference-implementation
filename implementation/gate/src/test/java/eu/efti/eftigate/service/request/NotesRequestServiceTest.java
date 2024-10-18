@@ -124,13 +124,6 @@ class NotesRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void receiveGateRequestTest() {
-        final NotificationDto notificationDto = NotificationDto.builder().build();
-        //Act and Assert
-        assertThrows(UnsupportedOperationException.class, () -> notesRequestService.receiveGateRequest(notificationDto));
-    }
-
-    @Test
     void shouldManageMessageReceiveAndMarkMessageAsDownloaded_whenControlExists() throws IOException {
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)

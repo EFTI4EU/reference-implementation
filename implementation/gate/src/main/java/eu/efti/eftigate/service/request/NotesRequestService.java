@@ -74,7 +74,6 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
         throw new UnsupportedOperationException("Operation not allowed for Note Request");
     }
 
-    @Override
     public void manageMessageReceive(final NotificationDto notificationDto) {
         final NotesMessageBodyDto messageBody = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), NotesMessageBodyDto.class);
 
@@ -107,11 +106,6 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     @Override
     public boolean supports(final String requestType) {
         return NOTE.equalsIgnoreCase(requestType);
-    }
-
-    @Override
-    public void receiveGateRequest(final NotificationDto notificationDto) {
-        throw new UnsupportedOperationException("Forward Operations not supported for Consignment");
     }
 
     @Override

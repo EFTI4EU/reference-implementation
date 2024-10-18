@@ -25,53 +25,19 @@ public class ApIncomingService {
 
 
     private final NotificationService notificationService;
-    private final RequestServiceFactory requestServiceFactory;
-    private final IdentifiersService identifiersService;
-    private final SerializeUtils serializeUtils;
     private final EftiRequestUpdater eftiRequestUpdater;
+    private final EDeliveryMessageRouter messageRouter;
 
     public void manageIncomingNotification(final ReceivedNotificationDto receivedNotificationDto) {
         notificationService.consume(receivedNotificationDto).ifPresent(this::rootResponse);
     }
 
     private void rootResponse(final NotificationDto notificationDto) {
-
-        if (NotificationType.SEND_SUCCESS.equals(notificationDto.getNotificationType())) {
-            eftiRequestUpdater.manageSendSuccess(notificationDto, LogManager.FTI_ROOT_RESPONSE_SUCESS);
-            return;
-        } else if (NotificationType.SEND_FAILURE.equals(notificationDto.getNotificationType())) {
-            eftiRequestUpdater.manageSendFailure(notificationDto, LogManager.FTI_SEND_FAIL);
-            return;
+        switch (notificationDto.getNotificationType()) {
+            case SEND_SUCCESS -> eftiRequestUpdater.manageSendSuccess(notificationDto, LogManager.FTI_ROOT_RESPONSE_SUCESS);
+            case SEND_FAILURE -> eftiRequestUpdater.manageSendFailure(notificationDto, LogManager.FTI_SEND_FAIL);
+            case RECEIVED -> messageRouter.process(notificationDto);
+            default -> log.error("Unhandled notification type: {}", notificationDto.getNotificationType());
         }
-
-        final EDeliveryAction action = getAction(notificationDto.getContent());
-        final RequestService<?> requestService = getRequestService(action);
-        switch (action) {
-            case GET_UIL, GET_IDENTIFIERS -> requestService.updateWithResponse(notificationDto);
-            case FORWARD_UIL -> requestService.receiveGateRequest(notificationDto);
-            case SEND_NOTES -> requestService.manageMessageReceive(notificationDto);
-            case UPLOAD_IDENTIFIERS ->
-                    identifiersService.createOrUpdate(parseBodyToIdentifiers(notificationDto.getContent()));
-            default -> log.warn("unmanaged notification type {}", notificationDto.getContent().getAction());
-        }
-    }
-
-    private EDeliveryAction getAction(final NotificationContentDto notificationContentDto) {
-        final EDeliveryAction action = EDeliveryAction.getFromValue(notificationContentDto.getAction());
-        if (action == null) {
-            log.error("unknown edelivery action {}", notificationContentDto.getAction());
-            throw new TechnicalException("unknown edelivery action " + notificationContentDto.getAction());
-        }
-        return action;
-    }
-
-    private SaveIdentifiersRequestWrapper parseBodyToIdentifiers(final NotificationContentDto notificationContent) {
-        return new SaveIdentifiersRequestWrapper(
-                notificationContent.getFromPartyId(),
-                serializeUtils.mapXmlStringToClass(notificationContent.getBody(), SaveIdentifiersRequest.class));
-    }
-
-    private RequestService<?> getRequestService(final EDeliveryAction eDeliveryAction) {
-        return requestServiceFactory.getRequestServiceByEdeliveryActionType(eDeliveryAction);
     }
 }
