@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.NotesRequestDto;
-import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
@@ -128,13 +127,6 @@ class NotesRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void receiveGateRequestTest() {
-        final NotificationDto notificationDto = NotificationDto.builder().build();
-        //Act and Assert
-        assertThrows(UnsupportedOperationException.class, () -> notesRequestService.receiveGateRequest(notificationDto));
-    }
-
-    @Test
     void shouldManageMessageReceiveAndMarkMessageAsDownloaded_whenControlExists() throws IOException {
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -211,22 +203,6 @@ class NotesRequestServiceTest extends BaseServiceTest {
             notesRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         });
         assertEquals("couldn't find Notes request for messageId: messageId", exception.getMessage());
-    }
-
-    @ParameterizedTest
-    @MethodSource("getArgumentsForEdeliveryActionSupport")
-    void supports_ShouldReturnTrueForUil(final EDeliveryAction eDeliveryAction, final boolean expectedResult) {
-        assertEquals(expectedResult, notesRequestService.supports(eDeliveryAction));
-    }
-
-    private static Stream<Arguments> getArgumentsForEdeliveryActionSupport() {
-        return Stream.of(
-                Arguments.of(EDeliveryAction.GET_IDENTIFIERS, false),
-                Arguments.of(EDeliveryAction.SEND_NOTES, true),
-                Arguments.of(EDeliveryAction.GET_UIL, false),
-                Arguments.of(EDeliveryAction.UPLOAD_IDENTIFIERS, false),
-                Arguments.of(EDeliveryAction.FORWARD_UIL, false)
-        );
     }
 
     @ParameterizedTest

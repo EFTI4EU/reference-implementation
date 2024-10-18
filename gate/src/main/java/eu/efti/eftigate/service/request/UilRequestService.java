@@ -4,7 +4,6 @@ import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.UilRequestDto;
-import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
@@ -16,8 +15,6 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
-import eu.efti.eftigate.entity.ControlEntity;
-import eu.efti.eftigate.entity.ErrorEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
@@ -42,7 +39,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static eu.efti.commons.constant.EftiGateConstants.UIL_ACTIONS;
 import static eu.efti.commons.constant.EftiGateConstants.UIL_TYPES;
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
 import static eu.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
@@ -80,22 +76,26 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 .allMatch(requestEntity -> Objects.nonNull(requestEntity.getReponseData()));
     }
 
-    @Override
-    public void manageMessageReceive(final NotificationDto notificationDto) {
-        final UILResponse uilResponse =
-                getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), UILResponse.class);
+    public void manageQueryReceived(final NotificationDto notificationDto) {
+        final UILQuery uilQuery = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), UILQuery.class);
+        final ControlDto controlDto = this.getControlService().createUilControl(ControlUtils
+                .fromGateToGateQuery(uilQuery, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH,
+                        notificationDto, getGateProperties().getOwner()));
 
-        final UilRequestEntity uilRequestEntity = this.findByRequestUuidOrThrow(uilResponse.getRequestId());
-        if (uilResponse.getStatus().equals(COMPLETE.name())) {
-            uilRequestEntity.setReponseData(serializeUtils.mapObjectToXmlString(uilResponse.getConsignment()).getBytes(Charset.defaultCharset()));
-            this.updateStatus(uilRequestEntity, RequestStatusEnum.SUCCESS, notificationDto.getMessageId());
-        } else {
-            this.updateStatus(uilRequestEntity, ERROR, notificationDto.getMessageId());
-            errorReceived(uilRequestEntity, uilResponse.getDescription());
+        getLogManager().logReceivedMessage(controlDto, notificationDto.getContent().getBody(), notificationDto.getContent().getFromPartyId(), LogManager.FTI_022_FTI_010);
+    }
+
+    public void manageResponseReceived(final NotificationDto notificationDto) {
+        final UILResponse uilResponse = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), UILResponse.class);
+        final UilRequestDto uilRequestDto = this.findByRequestUuidOrThrow(uilResponse.getRequestId());
+        ControlDto controlDto;
+        if(List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.getControl().getRequestType())) { //platform response
+            controlDto = manageResponseFromPlatform(uilRequestDto, uilResponse, notificationDto.getMessageId());
+        } else { // gate response
+            controlDto = manageResponseFromOtherGate(uilRequestDto, uilResponse);
         }
-        final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(uilRequestEntity.getControl());
-        getLogManager().logReceivedMessage(controlDto, notificationDto.getContent().getBody(), notificationDto.getContent().getFromPartyId(), LogManager.FTI_010_FTI_022_ET_AUTRES);
-        responseToOtherGateIfNecessary(uilRequestEntity);
+        //log efti022
+        getLogManager().logReceivedMessage(controlDto, notificationDto.getContent().getBody(), notificationDto.getContent().getFromPartyId(), LogManager.FTI_022_FTI_010);
     }
 
     @Override
@@ -116,33 +116,8 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     @Override
-    public boolean supports(final EDeliveryAction eDeliveryAction) {
-        return UIL_ACTIONS.contains(eDeliveryAction);
-    }
-
-    @Override
     public boolean supports(final String requestType) {
         return UIL.equalsIgnoreCase(requestType);
-    }
-
-    @Override
-    public void receiveGateRequest(final NotificationDto notificationDto) {
-        ControlDto controlDto;
-        //temporary , should be updated after the edelivery action rework
-        if(notificationDto.getContent().getBody().trim().startsWith("<UILQuery")) {
-            final UILQuery uilQuery = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), UILQuery.class);
-            controlDto = this.getControlService().createUilControl(ControlUtils
-                    .fromGateToGateQuery(uilQuery, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH,
-                            notificationDto, getGateProperties().getOwner()));
-        } else {
-            final UILResponse uilResponse = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), UILResponse.class);
-            final UilRequestEntity requestEntity = uilRequestRepository
-                    .findByControlRequestUuidAndStatus(uilResponse.getRequestId(), RequestStatusEnum.IN_PROGRESS);
-            controlDto = manageResponseFromOtherGate(requestEntity, uilResponse);
-        }
-
-        //log efti022
-        getLogManager().logReceivedMessage(controlDto, notificationDto.getContent().getBody(), notificationDto.getContent().getFromPartyId(), LogManager.FTI_022_FTI_010);
     }
 
     @Override
@@ -206,78 +181,90 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 .orElseThrow(() -> new RequestNotFoundException("couldn't find Uil request for messageId: " + eDeliveryMessageId));
     }
 
+    private ControlDto manageResponseFromPlatform(final UilRequestDto uilRequestDto, final UILResponse uilResponse, final String messageId) {
+        if (uilResponse.getStatus().equals(COMPLETE.name())) {
+            uilRequestDto.setReponseData(serializeUtils.mapObjectToXmlString(uilResponse.getConsignment()).getBytes(Charset.defaultCharset()));
+            this.updateStatus(uilRequestDto, RequestStatusEnum.SUCCESS, messageId);
+        } else {
+            this.updateStatus(uilRequestDto, ERROR, messageId);
+            errorReceived(uilRequestDto, uilResponse.getDescription());
+        }
+        return responseToOtherGateIfNecessary(uilRequestDto);
+    }
 
-    private ControlDto manageResponseFromOtherGate(final UilRequestEntity requestEntity, final UILResponse uilResponse) {
-        final ControlEntity requestEntityControl = requestEntity.getControl();
+    private ControlDto manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse) {
+        final ControlDto controlDto = requestDto.getControl();
         final Optional<StatusEnum> responseStatus =  StatusEnum.fromString(uilResponse.getStatus());
         if(responseStatus.isEmpty()) {
             throw new TechnicalException("status " + uilResponse.getStatus() + " not found");
         }
         switch (responseStatus.get()) {
             case TIMEOUT -> {
-                requestEntity.setStatus(TIMEOUT);
-                final StatusEnum controlStatus = getControlService().getControlNextStatus(requestEntityControl);
-                requestEntityControl.setStatus(controlStatus);
+                requestDto.setStatus(TIMEOUT);
+                //todo avoid mapping
+                final StatusEnum controlStatus = getControlService().getControlNextStatus(getMapperUtils().controlDtoToControlEntity(controlDto));
+                controlDto.setStatus(controlStatus);
             }
             case COMPLETE -> {
-                requestEntity.setReponseData(serializeUtils.mapObjectToXmlString(uilResponse.getConsignment()).getBytes(StandardCharsets.UTF_8));
-                requestEntity.setStatus(RequestStatusEnum.SUCCESS);
+                requestDto.setReponseData(serializeUtils.mapObjectToXmlString(uilResponse.getConsignment()).getBytes(StandardCharsets.UTF_8));
+                requestDto.setStatus(RequestStatusEnum.SUCCESS);
             }
             case ERROR -> {
-                requestEntity.setStatus(ERROR);
-                requestEntity.setError(setErrorFromMessageBodyDto(uilResponse));
-                requestEntityControl.setError(setErrorFromMessageBodyDto(uilResponse));
-                requestEntityControl.setStatus(StatusEnum.ERROR);
+                requestDto.setStatus(ERROR);
+                requestDto.setError(setErrorFromResponse(uilResponse));
+                controlDto.setError(setErrorFromResponse(uilResponse));
+                controlDto.setStatus(StatusEnum.ERROR);
             }
             default -> throw new TechnicalException("status " + uilResponse.getStatus() + " not found");
 
 
         }
-        uilRequestRepository.save(requestEntity);
-        return getControlService().save(requestEntityControl);
+        this.save(requestDto);
+        return getControlService().save(controlDto);
     }
 
-    private ErrorEntity setErrorFromMessageBodyDto(final UILResponse uilResponse) {
+    private ErrorDto setErrorFromResponse(final UILResponse uilResponse) {
         return StringUtils.isBlank(uilResponse.getDescription()) ?
-                getMapperUtils().errorDtoToErrorEntity(ErrorDto.fromErrorCode(ErrorCodesEnum.DATA_NOT_FOUND))
-                :
-                getMapperUtils().errorDtoToErrorEntity(ErrorDto.fromAnyError(uilResponse.getDescription()));
+                ErrorDto.fromErrorCode(ErrorCodesEnum.DATA_NOT_FOUND) : ErrorDto.fromAnyError(uilResponse.getDescription());
     }
 
-    public void updateStatus(final UilRequestEntity requestEntity, final RequestStatusEnum status, final String eDeliveryMessageId) {
-        this.updateStatus(requestEntity, status);
+    public void updateStatus(final UilRequestDto uilRequestDto, final RequestStatusEnum status, final String eDeliveryMessageId) {
+        this.updateStatus(uilRequestDto, status);
         markMessageAsDownloaded(eDeliveryMessageId);
     }
 
-    protected void errorReceived(final UilRequestEntity requestEntity, final String errorDescription) {
-        log.error("Error received, change status of requestId : {}", requestEntity.getControl().getRequestUuid());
-        final ErrorEntity errorEntity = ErrorEntity.builder()
+    protected void errorReceived(final UilRequestDto requestDto, final String errorDescription) {
+        log.error("Error received, change status of requestId : {}", requestDto.getControl().getRequestUuid());
+        final ErrorDto errorDto = ErrorDto.builder()
                 .errorDescription(errorDescription)
                 .errorCode(ErrorCodesEnum.PLATFORM_ERROR.toString())
                 .build();
 
-        final ControlEntity controlEntity = requestEntity.getControl();
-        controlEntity.setError(errorEntity);
-        controlEntity.setStatus(StatusEnum.ERROR);
+        final ControlDto controlDto = requestDto.getControl();
+        controlDto.setError(errorDto);
+        controlDto.setStatus(StatusEnum.ERROR);
 
-        requestEntity.setControl(controlEntity);
-        uilRequestRepository.save(requestEntity);
-        getControlService().save(controlEntity);
+        requestDto.setControl(controlDto);
+        save(requestDto);
+        getControlService().save(controlDto);
     }
 
-    private void responseToOtherGateIfNecessary(final UilRequestEntity uilRequestEntity) {
-        if (!uilRequestEntity.getControl().isExternalAsk()) return;
-        this.updateStatus(uilRequestEntity, RESPONSE_IN_PROGRESS);
-        uilRequestEntity.setGateUrlDest(uilRequestEntity.getControl().getFromGateUrl());
-        final UilRequestEntity savedUilRequestEntity = uilRequestRepository.save(uilRequestEntity);
-        final UilRequestDto requestDto = getMapperUtils().requestToRequestDto(savedUilRequestEntity, UilRequestDto.class);
-        requestDto.setRequestType(RequestType.UIL);
-        this.sendRequest(requestDto);
+    private ControlDto responseToOtherGateIfNecessary(final UilRequestDto uilRequestDto) {
+        if (!uilRequestDto.getControl().isExternalAsk()) {
+            return uilRequestDto.getControl();
+        }
+        this.updateStatus(uilRequestDto, RESPONSE_IN_PROGRESS);
+        uilRequestDto.setGateUrlDest(uilRequestDto.getControl().getFromGateUrl());
+        final RequestDto savedUilRequestDto = this.save(uilRequestDto);
+        savedUilRequestDto.setRequestType(RequestType.UIL);
+        this.sendRequest(savedUilRequestDto);
+        return uilRequestDto.getControl();
     }
 
-    private UilRequestEntity findByRequestUuidOrThrow(final String requestId) {
-        return Optional.ofNullable(
+    private UilRequestDto findByRequestUuidOrThrow(final String requestId) {
+        final UilRequestEntity entity = Optional.ofNullable(
                         this.uilRequestRepository.findByControlRequestUuidAndStatus(requestId, RequestStatusEnum.IN_PROGRESS))
                 .orElseThrow(() -> new RequestNotFoundException("couldn't find request for requestUuid: " + requestId));
+        return getMapperUtils().requestToRequestDto(entity, UilRequestDto.class);
     }
 }

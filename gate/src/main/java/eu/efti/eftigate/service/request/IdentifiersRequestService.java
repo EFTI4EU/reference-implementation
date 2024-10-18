@@ -4,10 +4,10 @@ import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.IdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResultsDto;
 import eu.efti.commons.dto.RequestDto;
+import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.SearchParameter;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
-import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
@@ -25,10 +25,13 @@ import eu.efti.eftigate.repository.IdentifiersRequestRepository;
 import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
+import eu.efti.eftigate.utils.ControlUtils;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.edelivery.Identifier;
 import eu.efti.v1.edelivery.IdentifierQuery;
 import eu.efti.v1.edelivery.IdentifierResponse;
+import eu.efti.v1.edelivery.SaveIdentifiersRequest;
+import eu.efti.v1.edelivery.UILQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.annotation.Lazy;
@@ -38,7 +41,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static eu.efti.commons.constant.EftiGateConstants.IDENTIFIERS_ACTIONS;
 import static eu.efti.commons.constant.EftiGateConstants.IDENTIFIERS_TYPES;
 import static eu.efti.commons.enums.RequestStatusEnum.RECEIVED;
 import static eu.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
@@ -81,18 +83,21 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 .allMatch(requestEntity -> Objects.nonNull(requestEntity.getIdentifiersResults()) && isNotEmpty(requestEntity.getIdentifiersResults().getConsignments()));
     }
 
-    @Override
-    public void manageMessageReceive(final NotificationDto notificationDto) {
-        final String bodyFromNotification = notificationDto.getContent().getBody();
-        //temporary , should be updated after the edelivery action rework
-        if (bodyFromNotification.trim().startsWith("<IdentifierQuery")) {
-            handleNewControlRequest(notificationDto, bodyFromNotification);
-        } else {
-            final IdentifierResponse response = getSerializeUtils().mapXmlStringToClass(bodyFromNotification, IdentifierResponse.class);
-            if (getControlService().existsByCriteria(response.getRequestId())) {
-                identifiersControlUpdateDelegateService.updateExistingControl(response, notificationDto.getContent().getFromPartyId());
-                identifiersControlUpdateDelegateService.setControlNextStatus(response.getRequestId());
-            }
+    public void manageQueryReceived(final NotificationDto notificationDto) {
+        final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), IdentifierQuery.class);
+        final List<ConsignmentDto> identifiersDtoList = identifiersService.search(buildIdentifiersRequestDtoFrom(identifierQuery));
+        final IdentifiersResultsDto identifiersResults = IdentifiersResultsDto.builder().consignments(identifiersDtoList).build();
+        final ControlDto controlDto = getControlService().createControlFrom(identifierQuery, notificationDto.getContent().getFromPartyId(), identifiersResults);
+        final RequestDto request = createReceivedRequest(controlDto, identifiersDtoList);
+        final RequestDto updatedRequest = this.updateStatus(request, RESPONSE_IN_PROGRESS);
+        super.sendRequest(updatedRequest);
+    }
+
+    public void manageResponseReceived(final NotificationDto notificationDto) {
+        final IdentifierResponse response = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), IdentifierResponse.class);
+        if (getControlService().existsByCriteria(response.getRequestId())) {
+            identifiersControlUpdateDelegateService.updateExistingControl(response, notificationDto.getContent().getFromPartyId());
+            identifiersControlUpdateDelegateService.setControlNextStatus(response.getRequestId());
         }
     }
 
@@ -114,18 +119,8 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     @Override
-    public boolean supports(final EDeliveryAction eDeliveryAction) {
-        return IDENTIFIERS_ACTIONS.contains(eDeliveryAction);
-    }
-
-    @Override
     public boolean supports(final String requestType) {
         return IDENTIFIER.equalsIgnoreCase(requestType);
-    }
-
-    @Override
-    public void receiveGateRequest(final NotificationDto notificationDto) {
-        throw new UnsupportedOperationException("Forward Operations not supported for Consignment");
     }
 
     @Override
@@ -170,14 +165,9 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         this.updateStatus(requestDto, isExternalRequest(requestDto) ? RESPONSE_IN_PROGRESS : RequestStatusEnum.IN_PROGRESS);
     }
 
-    private void handleNewControlRequest(final NotificationDto notificationDto, final String bodyFromNotification) {
-        final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToClass(bodyFromNotification, IdentifierQuery.class);
-        final List<ConsignmentDto> identifiersDtoList = identifiersService.search(buildIdentifiersRequestDtoFrom(identifierQuery));
-        final IdentifiersResultsDto identifiersResults = IdentifiersResultsDto.builder().consignments(identifiersDtoList).build();
-        final ControlDto controlDto = getControlService().createControlFrom(identifierQuery, notificationDto.getContent().getFromPartyId(), identifiersResults);
-        final RequestDto request = createReceivedRequest(controlDto, identifiersDtoList);
-        final RequestDto updatedRequest = this.updateStatus(request, RESPONSE_IN_PROGRESS);
-        super.sendRequest(updatedRequest);
+    public void createOrUpdate(final NotificationDto notificationDto) {
+        this.identifiersService.createOrUpdate(new SaveIdentifiersRequestWrapper(notificationDto.getContent().getFromPartyId(),
+                getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), SaveIdentifiersRequest.class)));
     }
 
     private RequestDto createReceivedRequest(final ControlDto controlDto, final List<ConsignmentDto> identifiersDtos) {

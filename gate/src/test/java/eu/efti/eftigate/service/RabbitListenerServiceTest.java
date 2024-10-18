@@ -2,14 +2,12 @@ package eu.efti.eftigate.service;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.exception.TechnicalException;
 import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.eftigate.config.GateProperties;
-import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
-
-import java.util.function.Function;
 
 import static eu.efti.eftigate.EftiTestUtils.testFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,10 +55,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
     private Logger memoryAppenderTestLogger;
 
-    @Mock
-    private Function<RabbitRequestDto, EDeliveryAction> requestToEDeliveryActionFunction;
     private static final String LOGGER_NAME = RabbitListenerService.class.getName();
-
 
     @Override
     @BeforeEach
@@ -76,10 +69,9 @@ class RabbitListenerServiceTest extends BaseServiceTest {
                         .username(USERNAME).build()).build();
 
         rabbitListenerService = new RabbitListenerService(gateProperties, serializeUtils, requestSendingService,
-                requestServiceFactory, apIncomingService, requestToEDeliveryActionFunction, mapperUtils, logManager);
+                requestServiceFactory, apIncomingService, mapperUtils, logManager);
         memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
-        memoryAppender =
-                MemoryAppender.createInitializedMemoryAppender(
+        memoryAppender = MemoryAppender.createInitializedMemoryAppender(
                         Level.TRACE, memoryAppenderTestLogger);
     }
 
@@ -122,8 +114,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
     @Test
     void listenSendMessageTest() {
-        when(requestToEDeliveryActionFunction.apply(any())).thenReturn(EDeliveryAction.GET_UIL);
-        when(requestServiceFactory.getRequestServiceByEdeliveryActionType(any())).thenReturn(uilRequestService);
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
 
         final String requestJson = testFile("/json/localuilrequest.json");
 
@@ -146,12 +137,9 @@ class RabbitListenerServiceTest extends BaseServiceTest {
     @Test
     void listenSendMessageFailedSendDomibusTest() {
         final String message = "{\"id\":151,\"status\":\"RECEIVED\",\"edeliveryMessageId\":null,\"retry\":0,\"requestType\":\"UIL\",\"reponseData\":null,\"nextRetryDate\":null,\"createdDate\":[2024,3,5,15,6,52,135892300],\"lastModifiedDate\":null,\"gateUrlDest\":\"http://efti.gate.borduria.eu\",\"control\":{\"id\":102,\"eftiDataUuid\":\"12345678-ab12-4ab6-8999-123456789abe\",\"requestUuid\":\"c5ed0840-bf60-4052-8172-35530d423672\",\"requestType\":\"LOCAL_UIL_SEARCH\",\"status\":\"PENDING\",\"eftiPlatformUrl\":\"http://efti.platform.acme.com\",\"eftiGateUrl\":\"http://efti.gate.borduria.eu\",\"subsetEuRequested\":\"SubsetEuRequested\",\"subsetMsRequested\":\"SubsetMsRequested\",\"createdDate\":[2024,3,5,15,6,51,987861600],\"lastModifiedDate\":[2024,3,5,15,6,51,987861600],\"eftiData\":null,\"transportMetaData\":null,\"fromGateUrl\":null,\"requests\":null,\"authority\":{\"id\":99,\"country\":\"SY\",\"legalContact\":{\"id\":197,\"email\":\"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.A@63ccccccccccccccccccccccccccccccccccccccccccccccccccccccccgmail.63ccccccccccccccccccccccccccccccccccccccccccccccccccccccccgmail.commmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\",\"streetName\":\"rue des rossignols\",\"buildingNumber\":\"12\",\"city\":\"Acheville\",\"additionalLine\":null,\"postalCode\":\"62320\"},\"workingContact\":{\"id\":198,\"email\":\"toto@gmail.com\",\"streetName\":\"rue des cafés\",\"buildingNumber\":\"14\",\"city\":\"Lille\",\"additionalLine\":\"osef\",\"postalCode\":\"59000\"},\"isEmergencyService\":null,\"name\":\"aaaa\",\"nationalUniqueIdentifier\":\"aaa\"},\"error\":null,\"metadataResults\":null},\"error\":null}";
-        when(requestSendingService.sendRequest(any(), any())).thenThrow(SendRequestException.class);
-        when(requestToEDeliveryActionFunction.apply(any())).thenReturn(EDeliveryAction.GET_UIL);
-        when(requestServiceFactory.getRequestServiceByEdeliveryActionType(any())).thenReturn(uilRequestService);
-        final Exception exception = assertThrows(TechnicalException.class, () -> {
-            rabbitListenerService.listenSendMessage(message);
-        });
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
+        when(requestSendingService.sendRequest(any())).thenThrow(SendRequestException.class);
+        final Exception exception = assertThrows(TechnicalException.class, () -> rabbitListenerService.listenSendMessage(message));
         verify(logManager).logSentMessage(any(), any(), anyString(), anyBoolean(), anyBoolean(), any());
         assertEquals("Error when try to send message to domibus", exception.getMessage());
     }
