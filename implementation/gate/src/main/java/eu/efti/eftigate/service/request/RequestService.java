@@ -59,8 +59,6 @@ public abstract class RequestService<T extends RequestEntity> {
 
     public abstract boolean allRequestsContainsData(List<RequestEntity> controlEntityRequests);
 
-    public abstract void manageMessageReceive(final NotificationDto notificationDto);
-
     public abstract void manageSendSuccess(final String eDeliveryMessageId);
 
     public abstract boolean supports(final RequestTypeEnum requestTypeEnum);
@@ -68,8 +66,6 @@ public abstract class RequestService<T extends RequestEntity> {
     public abstract boolean supports(final EDeliveryAction eDeliveryAction);
 
     public abstract boolean supports(final String requestType);
-
-    public abstract void receiveGateRequest(final NotificationDto notificationDto);
 
     public abstract RequestDto createRequest(final ControlDto controlDto);
 
@@ -104,14 +100,6 @@ public abstract class RequestService<T extends RequestEntity> {
             rabbitSenderService.sendMessageToRabbit(eftiSendMessageExchange, eftiKeySendMessage, requestDto);
         } catch (final JsonProcessingException e) {
             log.error("Error when try to parse object to json/string", e);
-        }
-    }
-
-    public void updateWithResponse(final NotificationDto notificationDto) {
-        if (Objects.requireNonNull(notificationDto.getNotificationType()) == NotificationType.RECEIVED) {
-            manageMessageReceive(notificationDto);
-        } else {
-            log.warn("unknown notification {} ", notificationDto.getNotificationType());
         }
     }
 
