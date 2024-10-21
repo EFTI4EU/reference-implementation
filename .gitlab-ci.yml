@@ -87,9 +87,9 @@ prepare_env:
   stage: prebuild
   script:
     - echo $CI_PROJECT_PATH
-    - export TOTO=$(echo "$CI_PROJECT_PATH" | cut -d'/' -f3)
-    - echo $TOTO
-    - echo "TOTO=$TOTO" >> build.env
+    - export ROOT_PROJECT=$(echo "$CI_PROJECT_PATH" | cut -d'/' -f3)
+    - echo $ROOT_PROJECT
+    - echo "ROOT_PROJECT=$ROOT_PROJECT" >> build.env
   artifacts:
     reports:
       dotenv: build.env
