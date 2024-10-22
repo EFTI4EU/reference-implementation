@@ -25,8 +25,8 @@ Data model is based on
 Efti common dataset and identifier subset are both based on this same model.
 
 Data model is visualized here:
-- common dataset: https://model.fintraffic-efti-poc.aws.fintraffic.cloud/#efti
-- identifier subset: https://model.fintraffic-efti-poc.aws.fintraffic.cloud/#identifier
+- common dataset: https://model.fintraffic-efti-dev.aws.fintraffic.cloud/#efti
+- identifier subset: https://model.fintraffic-efti-dev.aws.fintraffic.cloud/#identifier
 
 Element names are derived from un/ccl as:
 - use 82th column (Short Name) from un/ccl 
