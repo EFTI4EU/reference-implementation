@@ -19,7 +19,7 @@ spring:
     properties:
       hibernate:
         control_schema: "eftibo"
-        metadata_schema: "metadatabo"
+        identifiers_schema: "metadatabo"
 
 gate:
   owner: https://mock.efti.int.k8s.groupein.local/bo

@@ -40,15 +40,15 @@ spring:
       liquibase:
         default-schema: {{ spring.jpa.properties.hibernate.control_schema }}
         change-log: classpath:db.changelog/db.gate.changelog-master.xml
-    metadata:
+    identifiers:
       jdbc-url: {{ spring.datasource.url }}
       url: {{ spring.datasource.url }}
       username: {{ spring.datasource.username }}
       password: {{ spring.datasource.password }}
       driverClassName: org.postgresql.Driver
       liquibase:
-        default-schema: {{ spring.jpa.properties.hibernate.metadata_schema }}
-        change-log: classpath:db.changelog/db.metadata.changelog-master.xml
+        default-schema: {{ spring.jpa.properties.hibernate.identifiers_schema }}
+        change-log: classpath:db.changelog/db.identifiers.changelog-master.xml
   jackson:
     default-property-inclusion: NON_NULL
   security:
@@ -61,7 +61,7 @@ spring:
     properties:
       hibernate:
         control_schema: "{{ spring.jpa.properties.hibernate.control_schema }}"
-        metadata_schema: "{{ spring.jpa.properties.hibernate.metadata_schema }}"
+        identifiers_schema: "{{ spring.jpa.properties.hibernate.identifiers_schema }}"
 
 management:
   endpoint:
