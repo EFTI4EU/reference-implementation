@@ -8,8 +8,8 @@ spec:
 ---
 variables:
   # MAVEN_GROUPEID: eu.efti
-  MAVEN_GROUPEID: com.ingroupe.efti
-  MAVEN_ARTIFACTID: efti-gate
+  MAVEN_GROUPEID: eu.efti
+  MAVEN_ARTIFACTID: gate
   MAVEN_EXTENSION: jar
   VERSION_ARTEFACT_SNAPSHOT: 0.4.3-SNAPSHOT
   VERSION_ARTEFACT_RELEASE: 0.4.2
