@@ -48,7 +48,7 @@ spring:
       driverClassName: org.postgresql.Driver
       liquibase:
         default-schema: {{ spring.jpa.properties.hibernate.identifiers_schema }}
-        change-log: classpath:db.changelog/db.identifier.changelog-master.xml
+        change-log: classpath:db.changelog/db.identifiers.changelog-master.xml
   jackson:
     default-property-inclusion: NON_NULL
   security:
