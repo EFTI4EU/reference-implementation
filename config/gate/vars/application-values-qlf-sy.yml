@@ -19,7 +19,7 @@ spring:
     properties:
       hibernate:
         control_schema: "eftisy"
-        metadata_schema: "metadatasy"
+        identifiers_schema: "metadatasy"
 
 gate:
   owner: https://mock.efti.qlf.k8s.groupein.local/sy

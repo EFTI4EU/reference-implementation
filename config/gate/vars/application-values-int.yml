@@ -19,7 +19,7 @@ spring:
     properties:
       hibernate:
         control_schema: "eftifr"
-        metadata_schema: "metadatafr"
+        identifiers_schema: "metadatafr"
 
 gate:
   owner: https://gate-fr.efti.int.k8s.groupein.local
