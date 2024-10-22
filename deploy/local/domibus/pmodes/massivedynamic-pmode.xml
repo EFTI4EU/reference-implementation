@@ -34,8 +34,8 @@
 			</party>
 		</parties>
 		<meps>
-			<mep name="twoWay" value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/twoWay"/>
-			<binding name="pushAndPull" value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pushAndPush"/>
+			<mep name="oneway" value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/oneWay" legs="0"/>
+			<binding name="push" value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/push"/>
 		</meps>
 		<properties>
 			<property name="originalSenderProperty"
@@ -81,12 +81,10 @@
 			<agreement name="agreement1" value="A1" type="T1"/>
 		</agreements>
 		<services>
-			<service name="eftiService" value="bdx:noprocess" type="tc1"/>
+			<service name="eftiGateService" value="bdx:noprocess" type="tc1"/>
 		</services>
 		<actions>
-			<action name="getUIL" value="getUIL"/>
-			<action name="uploadIdentifiers" value="uploadIdentifiers"/>
-			<action name="sendNotes" value="sendNotes"/>
+			<action name="eftiGateAction" value="eftiGateAction"/>
 		</actions>
 		<as4>
 			<receptionAwareness name="receptionAwareness" retry="1;4;CONSTANT" duplicateDetection="true"/>
@@ -104,31 +102,9 @@
 			Please add the attribute "splitting"(pointing to a splitting configuration)
 			to a specific leg in case you want to activate splitAndJoin feature
 			-->
-			<legConfiguration name="eftiServiceGetUIL"
-							  service="eftiService"
-							  action="getUIL"
-							  defaultMpc="defaultMpc"
-							  reliability="AS4Reliability"
-							  security="eDeliveryAS4Policy"
-							  receptionAwareness="receptionAwareness"
-							  propertySet="eDeliveryPropertySet"
-							  payloadProfile="MessageProfile"
-							  errorHandling="eftiErrorHandling"
-							  compressPayloads="true"/>
-			<legConfiguration name="eftiServiceUploadIdentifiers"
-							  service="eftiService"
-							  action="uploadIdentifiers"
-							  defaultMpc="defaultMpc"
-							  reliability="AS4Reliability"
-							  security="eDeliveryAS4Policy"
-							  receptionAwareness="receptionAwareness"
-							  propertySet="eDeliveryPropertySet"
-							  payloadProfile="MessageProfile"
-							  errorHandling="eftiErrorHandling"
-							  compressPayloads="true"/>
-			<legConfiguration name="eftiServiceSendNotes"
-							  service="eftiService"
-							  action="sendNotes"
+			<legConfiguration name="eftiGateLeg"
+							  service="eftiGateService"
+							  action="eftiGateAction"
 							  defaultMpc="defaultMpc"
 							  reliability="AS4Reliability"
 							  security="eDeliveryAS4Policy"
@@ -140,10 +116,10 @@
 		</legConfigurations>
 
 		<process name="eftiProcess"
-				 mep="twoWay"
-				 binding="pushAndPull"
 				 initiatorRole="defaultInitiatorRole"
-				 responderRole="defaultResponderRole">
+				 responderRole="defaultResponderRole"
+				 mep="oneway"
+				 binding="push">
 			<initiatorParties>
 				<initiatorParty name="syldavia"/>
 				<initiatorParty name="massivedynamic"/>
@@ -153,9 +129,7 @@
 				<responderParty name="massivedynamic"/>
 			</responderParties>
 			<legs>
-				<leg name="eftiServiceGetUIL"/>
-				<leg name="eftiServiceUploadIdentifiers"/>
-				<leg name="eftiServiceSendNotes"/>
+				<leg name="eftiGateLeg"/>
 			</legs>
 		</process>
 	</businessProcesses>
