@@ -28,18 +28,17 @@ class SearchWithIdentifiersRequestDtoValidatorTest {
 
         final Set<ConstraintViolation<SearchWithIdentifiersRequestDto>> violations = validator.validate(identifiersRequestDto);
         assertFalse(violations.isEmpty());
-        assertEquals(2, violations.size());
-        assertTrue(containsError(violations, ErrorCodesEnum.VEHICLE_ID_MISSING));
-        assertTrue(containsError(violations, ErrorCodesEnum.AUTHORITY_MISSING));
+        assertEquals(1, violations.size());
+        assertTrue(containsError(violations, ErrorCodesEnum.IDENTIFIER_MISSING));
     }
 
     @Test
     void shouldValidateAllFieldsInvalid() {
         final SearchWithIdentifiersRequestDto identifiersRequestDto = SearchWithIdentifiersRequestDto.builder()
-                .vehicleID("aaa-123")
-                .transportMode("toto")
-                .vehicleCountry("truc")
-                .eFTIGateIndicator(List.of("tutu", "FR", "BE", "PP")).build();
+                .identifier("@aaa-123")
+                .modeCode("#toto")
+                .registrationCountryCode("truc")
+                .eftiGateIndicator(List.of("tutu", "FR", "BE", "PP")).build();
 
         final Validator validator;
         try (final ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
@@ -48,11 +47,10 @@ class SearchWithIdentifiersRequestDtoValidatorTest {
 
         final Set<ConstraintViolation<SearchWithIdentifiersRequestDto>> violations = validator.validate(identifiersRequestDto);
         assertFalse(violations.isEmpty());
-        assertEquals(8, violations.size());
-        assertTrue(containsError(violations, ErrorCodesEnum.VEHICLE_ID_INCORRECT_FORMAT));
-        assertTrue(containsError(violations, ErrorCodesEnum.TRANSPORT_MODE_INCORRECT));
-        assertTrue(containsError(violations, ErrorCodesEnum.VEHICLE_COUNTRY_INCORRECT));
-        assertTrue(containsError(violations, ErrorCodesEnum.AUTHORITY_MISSING));
+        assertEquals(5, violations.size());
+        assertTrue(containsError(violations, ErrorCodesEnum.IDENTIFIER_INCORRECT_FORMAT));
+        assertTrue(containsError(violations, ErrorCodesEnum.MODE_CODE_INCORRECT_FORMAT));
+        assertTrue(containsError(violations, ErrorCodesEnum.REGISTRATION_COUNTRY_INCORRECT));
         assertTrue(containsError(violations, ErrorCodesEnum.GATE_INDICATOR_INCORRECT));
     }
 

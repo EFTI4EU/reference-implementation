@@ -53,10 +53,10 @@ class EftiAsyncCallsProcessorTest {
         consignmentDto.setPlatformId("platformId");
 
 
-        this.identifiersRequestDto.setVehicleID("abc123");
-        this.identifiersRequestDto.setVehicleCountry("FR");
+        this.identifiersRequestDto.setIdentifier("abc123");
+        this.identifiersRequestDto.setRegistrationCountryCode("FR");
         this.identifiersRequestDto.setAuthority(authorityDto);
-        this.identifiersRequestDto.setTransportMode("ROAD");
+        this.identifiersRequestDto.setModeCode("ROAD");
     }
 
     @Test

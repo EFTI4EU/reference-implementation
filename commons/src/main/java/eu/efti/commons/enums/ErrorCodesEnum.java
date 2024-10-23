@@ -43,12 +43,13 @@ public enum ErrorCodesEnum {
     CONTACT_POSTAL_MISSING("Missing parameter postalCode."),
     CONTACT_POSTAL_CODE_TOO_LONG("Contact postal code too long."),
 
-    VEHICLE_ID_MISSING("VehicleId missing."),
-    VEHICLE_ID_TOO_LONG("VehicleId too long"),
-    VEHICLE_ID_INCORRECT_FORMAT("VehicleId incorrect format"),
+    IDENTIFIER_MISSING("Identifier missing."),
+    IDENTIFIER_TOO_LONG("Identifier too long"),
+    IDENTIFIER_INCORRECT_FORMAT("Identifier incorrect format"),
+    IDENTIFIER_TYPE_INCORRECT("Identifier type is incorrect"),
 
-    VEHICLE_COUNTRY_INCORRECT("VehicleCountry incorrect"),
-    TRANSPORT_MODE_INCORRECT("TransportMode Incorrect"),
+    REGISTRATION_COUNTRY_INCORRECT("VehicleCountry incorrect"),
+    MODE_CODE_INCORRECT_FORMAT("Mode Code Incorrect : must be one digit"),
     GATE_INDICATOR_INCORRECT("GateIndicator incorrect"),
 
     AP_SUBMISSION_ERROR("Error during ap submission."),
