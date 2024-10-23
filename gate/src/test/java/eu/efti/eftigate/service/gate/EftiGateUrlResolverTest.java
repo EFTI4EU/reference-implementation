@@ -36,10 +36,10 @@ class EftiGateUrlResolverTest {
 
         final AuthorityDto authorityDto = new AuthorityDto();
 
-        this.searchWithIdentifiersRequestDto.setVehicleID("abc123");
-        this.searchWithIdentifiersRequestDto.setVehicleCountry("FR");
+        this.searchWithIdentifiersRequestDto.setIdentifier("abc123");
+        this.searchWithIdentifiersRequestDto.setRegistrationCountryCode("FR");
         this.searchWithIdentifiersRequestDto.setAuthority(authorityDto);
-        this.searchWithIdentifiersRequestDto.setTransportMode("ROAD");
+        this.searchWithIdentifiersRequestDto.setModeCode("ROAD");
 
         frGateEntity = GateEntity.builder().id(1L).url("https://efti.gate.fr.eu").country(CountryIndicator.FR).build();
         beGateEntity = GateEntity.builder().id(2L).url("https://efti.gate.be.eu").country(CountryIndicator.BE).build();
@@ -47,9 +47,9 @@ class EftiGateUrlResolverTest {
     }
 
     @Test
-    void shouldResolveGates_WhenCountryIndicatorsAreGiven(){
+    void shouldResolveGates_WhenCountryIndicatorsAreGiven() {
         //Arrange
-        this.searchWithIdentifiersRequestDto.setEFTIGateIndicator(List.of("BE", "FR"));
+        this.searchWithIdentifiersRequestDto.setEftiGateIndicator(List.of("BE", "FR"));
         when(gateRepository.findByCountryIn(anyList())).thenReturn(List.of(frGateEntity, beGateEntity));
 
         //Act
@@ -61,7 +61,7 @@ class EftiGateUrlResolverTest {
     }
 
     @Test
-    void shouldGetAllGates_WhenCountryIndicatorsAreNotGiven(){
+    void shouldGetAllGates_WhenCountryIndicatorsAreNotGiven() {
         //Arrange
         when(gateRepository.findAll()).thenReturn(List.of(frGateEntity, beGateEntity, deGateEntity));
 

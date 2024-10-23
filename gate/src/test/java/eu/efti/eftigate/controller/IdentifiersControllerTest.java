@@ -51,7 +51,7 @@ class IdentifiersControllerTest {
     @Test
     @WithMockUser
     void requestIdentifiersTest() throws Exception {
-        final SearchWithIdentifiersRequestDto identifiersRequestDto = SearchWithIdentifiersRequestDto.builder().vehicleID("abc123").build();
+        final SearchWithIdentifiersRequestDto identifiersRequestDto = SearchWithIdentifiersRequestDto.builder().identifier("abc123").build();
 
         Mockito.when(controlService.createIdentifiersControl(identifiersRequestDto)).thenReturn(
                 RequestUuidDto.builder()

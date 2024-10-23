@@ -1,12 +1,15 @@
 package eu.efti.identifiersregistry.repository;
 
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
-import eu.efti.commons.enums.TransportMode;
 import eu.efti.identifiersregistry.entity.CarriedTransportEquipment;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,17 +35,17 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
     default List<Consignment> searchByCriteria(final SearchWithIdentifiersRequestDto request) {
         return this.findAll((root, query, cb) -> {
             final List<Predicate> predicates = new ArrayList<>();
-            if (request.getIsDangerousGoods() != null) {
+            if (request.getDangerousGoodsIndicator() != null) {
                 Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin = root.join(MOVEMENTS, JoinType.LEFT);
-                predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(IS_DANGEROUS_GOODS), request.getIsDangerousGoods())));
+                predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(IS_DANGEROUS_GOODS), request.getDangerousGoodsIndicator())));
             }
-            if (StringUtils.isNotEmpty(request.getTransportMode())) {
+            if (StringUtils.isNotEmpty(request.getModeCode())) {
                 Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin = root.join(MOVEMENTS, JoinType.LEFT);
-                predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(TRANSPORT_MODE), TransportMode.valueOf(request.getTransportMode()))));
+                predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(TRANSPORT_MODE), Short.valueOf(request.getModeCode()))));
             }
 
-            if (StringUtils.isNotEmpty(request.getVehicleCountry())) {
-                predicates.add(buildRegistrationCountrySubquery(request.getVehicleCountry(), cb, root));
+            if (StringUtils.isNotEmpty(request.getRegistrationCountryCode())) {
+                predicates.add(buildRegistrationCountrySubquery(request.getRegistrationCountryCode(), cb, root));
             }
             predicates.add(buildIdentifierSubquery(request, cb, root));
 
@@ -62,7 +65,7 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
         final List<Predicate> subQueryPredicate = new ArrayList<>();
         if (CollectionUtils.emptyIfNull(request.getIdentifierType()).isEmpty() || request.getIdentifierType().contains("means")) {
             final Join<Consignment, MainCarriageTransportMovement> movements = root.join(MOVEMENTS, JoinType.LEFT);
-            subQueryPredicate.add(cb.equal(cb.upper(movements.get("usedTransportMeansId")), request.getVehicleID().toUpperCase()));
+            subQueryPredicate.add(cb.equal(cb.upper(movements.get("usedTransportMeansId")), request.getIdentifier().toUpperCase()));
         }
         if (CollectionUtils.emptyIfNull(request.getIdentifierType()).isEmpty()
                 || request.getIdentifierType().contains("equipment")
@@ -70,12 +73,12 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
             final Join<Consignment, UsedTransportEquipment> vehicles = root.join(TRANSPORT_VEHICLES, JoinType.LEFT);
             if (CollectionUtils.emptyIfNull(request.getIdentifierType()).isEmpty()
                     || request.getIdentifierType().contains("equipment")) {
-                subQueryPredicate.add(cb.equal(cb.upper(vehicles.get(VEHICLE_ID)), request.getVehicleID().toUpperCase()));
+                subQueryPredicate.add(cb.equal(cb.upper(vehicles.get(VEHICLE_ID)), request.getIdentifier().toUpperCase()));
             }
             if (CollectionUtils.emptyIfNull(request.getIdentifierType()).isEmpty()
                     || request.getIdentifierType().contains("carried")) {
                 final Join<UsedTransportEquipment, CarriedTransportEquipment> carried = vehicles.join("carriedTransportEquipments", JoinType.LEFT);
-                subQueryPredicate.add(cb.equal(cb.upper(carried.get(VEHICLE_ID)), request.getVehicleID().toUpperCase()));
+                subQueryPredicate.add(cb.equal(cb.upper(carried.get(VEHICLE_ID)), request.getIdentifier().toUpperCase()));
             }
         }
 

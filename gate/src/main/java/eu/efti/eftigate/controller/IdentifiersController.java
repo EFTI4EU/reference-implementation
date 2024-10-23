@@ -1,7 +1,7 @@
 package eu.efti.eftigate.controller;
 
-import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.eftigate.controller.api.IdentifiersControllerApi;
 import eu.efti.eftigate.dto.RequestUuidDto;
 import eu.efti.eftigate.service.ControlService;
@@ -24,7 +24,7 @@ public class IdentifiersController implements IdentifiersControllerApi {
 
     @Override
     public ResponseEntity<RequestUuidDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto) {
-        log.info("POST on /getIdenifiers with param vehicleID {}", identifiersRequestDto.getVehicleID());
+        log.info("POST on /getIdenifiers with param vehicleID {}", identifiersRequestDto.getIdentifier());
         return new ResponseEntity<>(controlService.createIdentifiersControl(identifiersRequestDto), HttpStatus.ACCEPTED);
     }
 

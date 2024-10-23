@@ -10,7 +10,6 @@ import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
-import eu.efti.commons.enums.TransportMode;
 import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
@@ -69,9 +68,9 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.uilDto.setEFTIDataUuid("uuid");
         this.uilDto.setEFTIPlatformUrl("plateform");
 
-        searchParameter.setVehicleID("AA123VV");
-        searchParameter.setVehicleCountry(CountryIndicator.BE.toString());
-        searchParameter.setTransportMode(TransportMode.ROAD.toString());
+        searchParameter.setIdentifier("AA123VV");
+        searchParameter.setRegistrationCountryCode(CountryIndicator.BE.toString());
+        searchParameter.setModeCode("1");
 
         this.controlDto.setEftiDataUuid(uilDto.getEFTIDataUuid());
         this.controlDto.setEftiGateUrl(uilDto.getEFTIGateUrl());
