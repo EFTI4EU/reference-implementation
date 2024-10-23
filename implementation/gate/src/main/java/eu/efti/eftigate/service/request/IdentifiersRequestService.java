@@ -86,7 +86,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     public void manageMessageReceive(final NotificationDto notificationDto) {
         final String bodyFromNotification = notificationDto.getContent().getBody();
         //temporary , should be updated after the edelivery action rework
-        if(bodyFromNotification.trim().startsWith("<IdentifierQuery")) {
+        if (bodyFromNotification.trim().startsWith("<IdentifierQuery")) {
             handleNewControlRequest(notificationDto, bodyFromNotification);
         } else {
             final IdentifierResponse response = getSerializeUtils().mapXmlStringToClass(bodyFromNotification, IdentifierResponse.class);
@@ -210,10 +210,10 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
 
     private SearchWithIdentifiersRequestDto buildIdentifiersRequestDtoFrom(final IdentifierQuery identifierQuery) {
         return SearchWithIdentifiersRequestDto.builder()
-                .vehicleID(identifierQuery.getIdentifier().getValue())
-                .isDangerousGoods(identifierQuery.isDangerousGoodsIndicator())
-                .transportMode(identifierQuery.getModeCode())
-                .vehicleCountry(identifierQuery.getRegistrationCountryCode())
+                .identifier(identifierQuery.getIdentifier().getValue())
+                .dangerousGoodsIndicator(identifierQuery.isDangerousGoodsIndicator())
+                .modeCode(identifierQuery.getModeCode())
+                .registrationCountryCode(identifierQuery.getRegistrationCountryCode())
                 .build();
     }
 
@@ -221,13 +221,13 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         final SearchParameter searchParameter = controlDto.getTransportIdentifiers();
         final IdentifierQuery identifierQuery = new IdentifierQuery();
         identifierQuery.setRequestId(controlDto.getRequestUuid());
-        if (searchParameter != null){
+        if (searchParameter != null) {
             final Identifier identifier = new Identifier();
-            identifier.setValue(searchParameter.getVehicleID());
+            identifier.setValue(searchParameter.getIdentifier());
             identifierQuery.setIdentifier(identifier);
-            identifierQuery.setModeCode(searchParameter.getTransportMode());
-            identifierQuery.setDangerousGoodsIndicator(searchParameter.getIsDangerousGoods());
-            identifierQuery.setRegistrationCountryCode(searchParameter.getVehicleCountry());
+            identifierQuery.setModeCode(searchParameter.getModeCode());
+            identifierQuery.setDangerousGoodsIndicator(searchParameter.getDangerousGoodsIndicator());
+            identifierQuery.setRegistrationCountryCode(searchParameter.getRegistrationCountryCode());
         }
         return identifierQuery;
     }
@@ -237,7 +237,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         final IdentifierResponse identifierResponse = new IdentifierResponse();
         identifierResponse.setRequestId(controlDto.getRequestUuid());
         identifierResponse.setStatus(controlDto.getStatus().name());
-        if(controlDto.getError() != null) {
+        if (controlDto.getError() != null) {
             identifierResponse.setDescription(controlDto.getError().getErrorDescription());
         }
         identifierResponse.getConsignment().addAll(getMapperUtils().dtoToEdelivery(requestDto.getIdentifiersResults().getConsignments()));

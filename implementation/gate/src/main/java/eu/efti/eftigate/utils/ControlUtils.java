@@ -2,10 +2,10 @@ package eu.efti.eftigate.utils;
 
 import eu.efti.commons.dto.AuthorityDto;
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResultsDto;
 import eu.efti.commons.dto.NotesDto;
 import eu.efti.commons.dto.SearchParameter;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
@@ -82,11 +82,11 @@ public class ControlUtils {
 
         final ControlDto controlDto = getControlFrom(requestTypeEnum, authorityDto, UUID.randomUUID().toString());
         controlDto.setTransportIdentifiers(SearchParameter.builder()
-                .vehicleID(identifiersRequestDto.getVehicleID())
+                .identifier(identifiersRequestDto.getIdentifier())
                 .identifierType(identifiersRequestDto.getIdentifierType())
-                .transportMode(identifiersRequestDto.getTransportMode())
-                .vehicleCountry(identifiersRequestDto.getVehicleCountry())
-                .isDangerousGoods(identifiersRequestDto.getIsDangerousGoods())
+                .modeCode(identifiersRequestDto.getModeCode())
+                .registrationCountryCode(identifiersRequestDto.getRegistrationCountryCode())
+                .dangerousGoodsIndicator(identifiersRequestDto.getDangerousGoodsIndicator())
                 .build());
         return controlDto;
     }
@@ -97,10 +97,10 @@ public class ControlUtils {
         controlDto.setEftiGateUrl(eftiGateUrl);
         controlDto.setFromGateUrl(fromGateUrl);
         controlDto.setTransportIdentifiers(SearchParameter.builder()
-                .vehicleID(identifierQuery.getIdentifier().getValue())
-                .transportMode(identifierQuery.getModeCode())
-                .vehicleCountry(identifierQuery.getRegistrationCountryCode())
-                .isDangerousGoods(identifierQuery.isDangerousGoodsIndicator())
+                .identifier(identifierQuery.getIdentifier().getValue())
+                .modeCode(identifierQuery.getModeCode())
+                .registrationCountryCode(identifierQuery.getRegistrationCountryCode())
+                .dangerousGoodsIndicator(identifierQuery.isDangerousGoodsIndicator())
                 .build());
         controlDto.setIdentifiersResults(identifiersResultsDto.getConsignments());
         return controlDto;

@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -22,6 +23,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -52,7 +54,7 @@ public class Consignment extends AbstractModel implements Serializable {
     public void setMainCarriageTransportMovements(List<MainCarriageTransportMovement> mainCarriageTransportMovements) {
         this.mainCarriageTransportMovements.forEach(mctm -> mctm.setConsignment(null));
         this.mainCarriageTransportMovements.clear();
-        if(mainCarriageTransportMovements != null) {
+        if (mainCarriageTransportMovements != null) {
             this.mainCarriageTransportMovements.addAll(mainCarriageTransportMovements);
             this.mainCarriageTransportMovements.forEach(mctm -> mctm.setConsignment(this));
         }
@@ -64,7 +66,7 @@ public class Consignment extends AbstractModel implements Serializable {
     public void setUsedTransportEquipments(List<UsedTransportEquipment> usedTransportEquipments) {
         this.usedTransportEquipments.forEach(ute -> ute.setConsignment(null));
         this.usedTransportEquipments.clear();
-        if(usedTransportEquipments != null) {
+        if (usedTransportEquipments != null) {
             this.usedTransportEquipments.addAll(usedTransportEquipments);
             this.usedTransportEquipments.forEach(ute -> ute.setConsignment(this));
         }
