@@ -6,8 +6,6 @@ import eu.efti.platformgatesimulator.mapper.MapperUtils;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import eu.efti.v1.edelivery.UILQuery;
 import eu.efti.v1.edelivery.UILResponse;
-import eu.efti.v1.json.SaveIdentifiersRequest;
-import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
 import eu.efti.edeliveryapconnector.dto.ApRequestDto;
 import eu.efti.edeliveryapconnector.dto.NotesMessageBodyDto;
@@ -19,16 +17,16 @@ import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.NotificationService;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.platformgatesimulator.config.GateProperties;
-import eu.efti.platformgatesimulator.mapper.MapperUtils;
 import eu.efti.v1.json.SaveIdentifiersRequest;
+import jakarta.xml.bind.annotation.XmlType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 import static java.lang.Thread.sleep;
 
@@ -42,7 +40,6 @@ public class ApIncomingService {
 
     private final NotificationService notificationService;
 
-    @Autowired
     private final GateProperties gateProperties;
     private final ReaderService readerService;
     private final XmlMapper xmlMapper;
@@ -51,14 +48,14 @@ public class ApIncomingService {
     public void uploadIdentifiers(final SaveIdentifiersRequest identifiersDto) throws JsonProcessingException {
         eu.efti.v1.edelivery.SaveIdentifiersRequest edeliveryRequest = mapperUtils.mapToEdeliveryRequest(identifiersDto);
         final ApRequestDto apRequestDto = ApRequestDto.builder()
-                .requestId(1L).body(xmlMapper.writeValueAsString(edeliveryRequest))
+                .requestId(UUID.randomUUID().toString()).body(xmlMapper.writeValueAsString(edeliveryRequest))
                 .apConfig(buildApConf())
                 .receiver(gateProperties.getGate())
                 .sender(gateProperties.getOwner())
                 .build();
 
         try {
-            requestSendingService.sendRequest(apRequestDto, EDeliveryAction.UPLOAD_IDENTIFIERS);
+            requestSendingService.sendRequest(apRequestDto);
         } catch (final SendRequestException e) {
             log.error("SendRequestException received : ", e);
         }
@@ -74,12 +71,9 @@ public class ApIncomingService {
             return;
         }
         final NotificationContentDto notificationContentDto = notificationDto.get().getContent();
-        final EDeliveryAction action = EDeliveryAction.getFromValue(notificationContentDto.getAction());
 
-        if (action == EDeliveryAction.SEND_NOTES) {
-            final NotesMessageBodyDto messageBody = xmlMapper.readValue(notificationContentDto.getBody(), NotesMessageBodyDto.class);
-            log.info("note \"{}\" received for request with id {}", messageBody.getNote(), messageBody.getRequestUuid());
-        } else {
+        final XmlType queryAnnotation = UILQuery.class.getAnnotation((XmlType.class));
+        if (notificationContentDto.getBody().trim().startsWith("<" + queryAnnotation.name())) {
             final UILQuery uilQuery = xmlMapper.readValue(notificationContentDto.getBody(), UILQuery.class);
             final String datasetId = uilQuery.getUil().getDatasetId();
             if (datasetId.endsWith("1")) {
@@ -87,19 +81,22 @@ public class ApIncomingService {
                 return;
             }
             sendResponse(buildApConf(), uilQuery.getRequestId(), readerService.readFromFile(gateProperties.getCdaPath() + datasetId));
+        } else {
+            final NotesMessageBodyDto messageBody = xmlMapper.readValue(notificationContentDto.getBody(), NotesMessageBodyDto.class);
+            log.info("note \"{}\" received for request with id {}", messageBody.getNote(), messageBody.getRequestUuid());
         }
     }
 
     private void sendResponse(final ApConfigDto apConfigDto, final String requestUuid, final SupplyChainConsignment data) throws JsonProcessingException {
         final boolean isError = data == null;
         final ApRequestDto apRequestDto = ApRequestDto.builder()
-                .requestId(1L).body(buildBody(data, requestUuid, isError ? "ERROR" : "COMPLETE", isError ? "file not found with uuid" : null))
+                .requestId(requestUuid).body(buildBody(data, requestUuid, isError ? "ERROR" : "COMPLETE", isError ? "file not found with uuid" : null))
                 .apConfig(apConfigDto)
                 .receiver(gateProperties.getGate())
                 .sender(gateProperties.getOwner())
                 .build();
         try {
-            requestSendingService.sendRequest(apRequestDto, EDeliveryAction.GET_UIL);
+            requestSendingService.sendRequest(apRequestDto);
         } catch (final SendRequestException e) {
             log.error("SendRequestException received : ", e);
         }

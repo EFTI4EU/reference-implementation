@@ -51,12 +51,8 @@ public class IdentifiersMapper {
         return mapper.map(dto, Consignment.class);
     }
 
-    public List<Consignment> dtoToEntity(final List<ConsignmentDto> consignmentDtoList) {
-        return consignmentDtoList.stream().map(this::dtoToEntity).toList();
-    }
-
     private OffsetDateTime fromDateTime(DateTime dateTime) {
-        if(StringUtils.isEmpty(dateTime.getValue())) return null;
+        if(StringUtils.isBlank(dateTime.getValue())) return null;
         return switch (dateTime.getFormatId()) {
             case "102" -> {
                 LocalDate localDate = LocalDate.parse(dateTime.getValue(), DateTimeFormatter.ofPattern("yyyyMMdd"));

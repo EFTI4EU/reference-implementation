@@ -1,6 +1,5 @@
 package eu.efti.edeliveryapconnector.service;
 
-import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.edeliveryapconnector.dto.ApRequestDto;
 import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import com.sun.xml.ws.client.ClientTransportException;
@@ -41,8 +40,10 @@ import static org.springframework.util.MimeTypeUtils.TEXT_XML_VALUE;
 @RequiredArgsConstructor
 public class RequestSendingService extends AbstractApService {
 
-    public String sendRequest(final ApRequestDto requestDto, final EDeliveryAction eDeliveryAction) throws SendRequestException {
-        final Messaging messaging = createMessaging(requestDto, eDeliveryAction);
+    private final String action = "eftiGateAction";
+
+    public String sendRequest(final ApRequestDto requestDto) throws SendRequestException {
+        final Messaging messaging = createMessaging(requestDto);
         final SubmitRequest submitRequest = createSubmitRequest(requestDto);
 
         final SubmitResponse submitResponse = sendRequestToAPOrThrow(requestDto, submitRequest, messaging);
@@ -80,13 +81,13 @@ public class RequestSendingService extends AbstractApService {
         return submitRequest;
     }
 
-    private Messaging createMessaging(final ApRequestDto requestDto, final EDeliveryAction eDeliveryAction) {
+    private Messaging createMessaging(final ApRequestDto requestDto) {
         final Messaging messaging = new Messaging();
 
         final UserMessage userMessage = new UserMessage();
         userMessage.setProcessingType(ProcessingType.PUSH);
         userMessage.setPartyInfo(createPartyInfo(requestDto));
-        userMessage.setCollaborationInfo(createCollaborationInfo(eDeliveryAction));
+        userMessage.setCollaborationInfo(createCollaborationInfo(requestDto.getRequestId()));
         userMessage.setPayloadInfo(createPayloadInfo());
         userMessage.setMessageProperties(createMessageProperties());
 
@@ -121,13 +122,14 @@ public class RequestSendingService extends AbstractApService {
         return payloadInfo;
     }
 
-    private CollaborationInfo createCollaborationInfo(final EDeliveryAction eDeliveryAction) {
+    private CollaborationInfo createCollaborationInfo(final String conversationId) {
         final CollaborationInfo collaborationInfo = new CollaborationInfo();
         final Service service = new Service();
         service.setType(ApConstant.SERVICE_TYPE);
         service.setValue(ApConstant.SERVICE_VALUE);
-        collaborationInfo.setAction(eDeliveryAction.getValue());
+        collaborationInfo.setAction(action);
         collaborationInfo.setService(service);
+        collaborationInfo.setConversationId(conversationId);
 
         return collaborationInfo;
     }

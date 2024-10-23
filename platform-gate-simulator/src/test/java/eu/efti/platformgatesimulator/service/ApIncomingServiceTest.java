@@ -1,6 +1,5 @@
 package eu.efti.platformgatesimulator.service;
 
-import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto;
@@ -79,7 +78,6 @@ class ApIncomingServiceTest extends AbstractTest {
         notificationDto.setContent(NotificationContentDto.builder()
                 .messageId("messageId")
                 .body(body)
-                .action(EDeliveryAction.GET_UIL.getValue())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .build());
         Mockito.when(notificationService.consume(any())).thenReturn(Optional.of(notificationDto));
@@ -104,7 +102,6 @@ class ApIncomingServiceTest extends AbstractTest {
         notificationDto.setContent(NotificationContentDto.builder()
                 .messageId("messageId")
                 .body(body)
-                .action(EDeliveryAction.GET_UIL.getValue())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .build());
         Mockito.when(notificationService.consume(any())).thenReturn(Optional.of(notificationDto));

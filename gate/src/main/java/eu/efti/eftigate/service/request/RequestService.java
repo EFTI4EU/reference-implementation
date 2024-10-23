@@ -4,14 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.RequestDto;
-import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
-import eu.efti.edeliveryapconnector.dto.NotificationDto;
-import eu.efti.edeliveryapconnector.dto.NotificationType;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
@@ -30,7 +27,6 @@ import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 import java.util.List;
-import java.util.Objects;
 
 import static eu.efti.commons.constant.EftiGateConstants.EXTERNAL_REQUESTS_TYPES;
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
@@ -59,17 +55,11 @@ public abstract class RequestService<T extends RequestEntity> {
 
     public abstract boolean allRequestsContainsData(List<RequestEntity> controlEntityRequests);
 
-    public abstract void manageMessageReceive(final NotificationDto notificationDto);
-
     public abstract void manageSendSuccess(final String eDeliveryMessageId);
 
     public abstract boolean supports(final RequestTypeEnum requestTypeEnum);
 
-    public abstract boolean supports(final EDeliveryAction eDeliveryAction);
-
     public abstract boolean supports(final String requestType);
-
-    public abstract void receiveGateRequest(final NotificationDto notificationDto);
 
     public abstract RequestDto createRequest(final ControlDto controlDto);
 
@@ -104,14 +94,6 @@ public abstract class RequestService<T extends RequestEntity> {
             rabbitSenderService.sendMessageToRabbit(eftiSendMessageExchange, eftiKeySendMessage, requestDto);
         } catch (final JsonProcessingException e) {
             log.error("Error when try to parse object to json/string", e);
-        }
-    }
-
-    public void updateWithResponse(final NotificationDto notificationDto) {
-        if (Objects.requireNonNull(notificationDto.getNotificationType()) == NotificationType.RECEIVED) {
-            manageMessageReceive(notificationDto);
-        } else {
-            log.warn("unknown notification {} ", notificationDto.getNotificationType());
         }
     }
 
