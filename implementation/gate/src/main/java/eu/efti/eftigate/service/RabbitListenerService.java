@@ -2,7 +2,6 @@ package eu.efti.eftigate.service;
 
 import eu.efti.commons.constant.EftiGateConstants;
 import eu.efti.commons.dto.RequestDto;
-import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.exception.TechnicalException;
@@ -23,8 +22,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.function.Function;
-
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
 @Slf4j
@@ -35,7 +32,6 @@ public class RabbitListenerService {
     private final RequestSendingService requestSendingService;
     private final RequestServiceFactory requestServiceFactory;
     private final ApIncomingService apIncomingService;
-    private final Function<RabbitRequestDto, EDeliveryAction> requestToEDeliveryActionFunction;
     private final MapperUtils mapperUtils;
     private final LogManager logManager;
 
@@ -61,21 +57,21 @@ public class RabbitListenerService {
 
     private void trySendDomibus(final RabbitRequestDto rabbitRequestDto) {
 
-        final EDeliveryAction eDeliveryAction = requestToEDeliveryActionFunction.apply(rabbitRequestDto);
+        final RequestTypeEnum requestTypeEnum = rabbitRequestDto.getControl().getRequestType();
         final boolean isCurrentGate = gateProperties.isCurrentGate(rabbitRequestDto.getGateUrlDest());
         final String receiver = isCurrentGate ? rabbitRequestDto.getControl().getEftiPlatformUrl() : rabbitRequestDto.getGateUrlDest();
         final RequestDto requestDto = mapperUtils.rabbitRequestDtoToRequestDto(rabbitRequestDto, EftiGateConstants.REQUEST_TYPE_CLASS_MAP.get(rabbitRequestDto.getRequestType()));
         boolean hasBeenSent = false;
 
         try {
-            final String edeliveryMessageId = this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto, eDeliveryAction), eDeliveryAction);
-            getRequestService(eDeliveryAction).updateSentRequestStatus(requestDto, edeliveryMessageId);
+            final String edeliveryMessageId = this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto, requestTypeEnum));
+            getRequestService(requestTypeEnum).updateSentRequestStatus(requestDto, edeliveryMessageId);
             hasBeenSent = true;
         } catch (final SendRequestException e) {
             log.error("error while sending request" + e);
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
-            final String body = getRequestService(eDeliveryAction).buildRequestBody(rabbitRequestDto);
+            final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
             if (RequestType.UIL.equals(requestDto.getRequestType())) {
                 //log fti020 and fti009
                 logManager.logSentMessage(requestDto.getControl(), body, receiver, isCurrentGate, hasBeenSent, LogManager.UIL_FTI_020_FTI_009);
@@ -86,21 +82,18 @@ public class RabbitListenerService {
         }
     }
 
-    private ApRequestDto buildApRequestDto(final RabbitRequestDto requestDto, final EDeliveryAction eDeliveryAction) {
+    private ApRequestDto buildApRequestDto(final RabbitRequestDto requestDto, final RequestTypeEnum requestTypeEnum) {
         final String receiver = gateProperties.isCurrentGate(requestDto.getGateUrlDest()) ? requestDto.getControl().getEftiPlatformUrl() : requestDto.getGateUrlDest();
         return ApRequestDto.builder()
+                .requestId(requestDto.getControl().getRequestUuid())
                 .sender(gateProperties.getOwner()).receiver(receiver)
-                .body(getRequestService(eDeliveryAction).buildRequestBody(requestDto))
+                .body(getRequestService(requestTypeEnum).buildRequestBody(requestDto))
                 .apConfig(ApConfigDto.builder()
                         .username(gateProperties.getAp().getUsername())
                         .password(gateProperties.getAp().getPassword())
                         .url(gateProperties.getAp().getUrl())
                         .build())
                 .build();
-    }
-
-    private RequestService<?> getRequestService(final EDeliveryAction eDeliveryAction) {
-        return  requestServiceFactory.getRequestServiceByEdeliveryActionType(eDeliveryAction);
     }
 
     @RabbitListener(queues = "${spring.rabbitmq.queues.messageSendDeadLetterQueue:message-send-dead-letter-queue}")

@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ApRequestDto {
-    private Long requestId;
+    private String requestId;
     private String sender;
     private String receiver;
     private String body;

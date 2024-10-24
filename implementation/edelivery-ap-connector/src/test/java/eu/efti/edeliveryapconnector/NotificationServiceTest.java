@@ -74,7 +74,6 @@ class NotificationServiceTest {
         assertTrue(notificationDto.isPresent());
         assertEquals(NotificationType.RECEIVED, notificationDto.get().getNotificationType());
         assertEquals("f58599a1-0889-11ef-a5ee-0242ac120019@domibus.eu", notificationDto.get().getMessageId());
-        assertEquals("getUIL", notificationDto.get().getContent().getAction());
         assertEquals("application/json", notificationDto.get().getContent().getContentType());
         assertEquals("f58599a1-0889-11ef-a5ee-0242ac120019@domibus.eu", notificationDto.get().getContent().getMessageId());
         assertEquals("http://efti.platform.acme.com", notificationDto.get().getContent().getFromPartyId());

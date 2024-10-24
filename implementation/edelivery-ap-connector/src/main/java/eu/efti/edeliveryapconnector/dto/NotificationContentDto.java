@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NotificationContentDto {
     private String messageId;
-    private String action;
     private String contentType;
     private String fromPartyId;
     private String body;

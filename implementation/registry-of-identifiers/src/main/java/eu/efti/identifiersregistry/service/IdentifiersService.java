@@ -25,7 +25,7 @@ public class IdentifiersService {
 
     public static final String FTI_004 = "fti004";
 
-    private final IdentifiersRepository repository;
+    private final IdentifiersRepository identifiersRepository;
     private final IdentifiersMapper mapper;
     private final AuditRegistryLogService logService;
     private final SerializeUtils serializeUtils;
@@ -39,7 +39,7 @@ public class IdentifiersService {
         final String bodyBase64 = serializeUtils.mapObjectToBase64String(identifiersDto);
         final SaveIdentifiersRequest identifiers = identifiersDto.getSaveIdentifiersRequest();
 
-        final Optional<Consignment> entityOptional = repository.findByUil(gateOwner,
+        final Optional<Consignment> entityOptional = identifiersRepository.findByUil(gateOwner,
                 identifiers.getDatasetId(), identifiersDto.getPlatformId());
 
         Consignment consignment = mapper.eDeliveryToEntity(identifiers);
@@ -53,16 +53,16 @@ public class IdentifiersService {
         } else {
             log.info("creating new entry for dataset id {}", identifiers.getDatasetId());
         }
-        repository.save(consignment);
+        identifiersRepository.save(consignment);
         logService.log(identifiersDto, gateOwner, gateCountry, bodyBase64, FTI_004);
     }
 
     public boolean existByUIL(final String dataUuid, final String gate, final String platform) {
-        return this.repository.findByUil(gate, dataUuid, platform).isPresent();
+        return this.identifiersRepository.findByUil(gate, dataUuid, platform).isPresent();
     }
 
     @Transactional("identifiersTransactionManager")
     public List<ConsignmentDto> search(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
-        return mapper.entityToDto(this.repository.searchByCriteria(identifiersRequestDto));
+        return mapper.entityToDto(this.identifiersRepository.searchByCriteria(identifiersRequestDto));
     }
 }

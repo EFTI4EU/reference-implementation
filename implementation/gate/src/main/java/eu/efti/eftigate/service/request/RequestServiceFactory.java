@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service.request;
 
-import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.RequestTypeEnum;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,13 +16,6 @@ public class RequestServiceFactory {
     {
         return requestServices.stream()
                 .filter(requestService -> requestService.supports(requestType)).findFirst()
-                .orElse(null);
-    }
-
-    public RequestService getRequestServiceByEdeliveryActionType(final EDeliveryAction eDeliveryAction)
-    {
-        return requestServices.stream()
-                .filter(requestService -> requestService.supports(eDeliveryAction)).findFirst()
                 .orElse(null);
     }
 

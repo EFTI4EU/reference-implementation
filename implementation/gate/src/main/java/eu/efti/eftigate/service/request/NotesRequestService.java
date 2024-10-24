@@ -3,7 +3,6 @@ package eu.efti.eftigate.service.request;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.NotesRequestDto;
 import eu.efti.commons.dto.RequestDto;
-import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -74,7 +73,6 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
         throw new UnsupportedOperationException("Operation not allowed for Note Request");
     }
 
-    @Override
     public void manageMessageReceive(final NotificationDto notificationDto) {
         final NotesMessageBodyDto messageBody = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), NotesMessageBodyDto.class);
 
@@ -100,18 +98,8 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     }
 
     @Override
-    public boolean supports(final EDeliveryAction eDeliveryAction) {
-        return EDeliveryAction.SEND_NOTES.equals(eDeliveryAction);
-    }
-
-    @Override
     public boolean supports(final String requestType) {
         return NOTE.equalsIgnoreCase(requestType);
-    }
-
-    @Override
-    public void receiveGateRequest(final NotificationDto notificationDto) {
-        throw new UnsupportedOperationException("Forward Operations not supported for Consignment");
     }
 
     @Override
