@@ -26,18 +26,22 @@ import eu.efti.eftigate.repository.IdentifiersRequestRepository;
 import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
-import eu.efti.eftigate.utils.ControlUtils;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.edelivery.Identifier;
 import eu.efti.v1.edelivery.IdentifierQuery;
 import eu.efti.v1.edelivery.IdentifierResponse;
+import eu.efti.v1.edelivery.ObjectFactory;
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
-import eu.efti.v1.edelivery.UILQuery;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.io.StringReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -68,7 +72,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                                      final RequestUpdaterService requestUpdaterService,
                                      final SerializeUtils serializeUtils,
                                      final LogManager logManager,
-                                     final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService) {
+                                     final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService ) {
         super(mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
         this.identifiersService = identifiersService;
         this.identifiersRequestRepository = identifiersRequestRepository;
@@ -85,7 +89,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     public void manageQueryReceived(final NotificationDto notificationDto) {
-        final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), IdentifierQuery.class);
+        final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
         final List<ConsignmentDto> identifiersDtoList = identifiersService.search(buildIdentifiersRequestDtoFrom(identifierQuery));
         final IdentifiersResultsDto identifiersResults = IdentifiersResultsDto.builder().consignments(identifiersDtoList).build();
         final ControlDto controlDto = getControlService().createControlFrom(identifierQuery, notificationDto.getContent().getFromPartyId(), identifiersResults);
@@ -95,7 +99,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     public void manageResponseReceived(final NotificationDto notificationDto) {
-        final IdentifierResponse response = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), IdentifierResponse.class);
+        final IdentifierResponse response = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
         if (getControlService().existsByCriteria(response.getRequestId())) {
             identifiersControlUpdateDelegateService.updateExistingControl(response, notificationDto.getContent().getFromPartyId());
             identifiersControlUpdateDelegateService.setControlNextStatus(response.getRequestId());
@@ -133,10 +137,9 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     public String buildRequestBody(final RabbitRequestDto requestDto) {
         final ControlDto controlDto = requestDto.getControl();
         if (EXTERNAL_ASK_IDENTIFIERS_SEARCH == controlDto.getRequestType()) { //remote sending response
-            final IdentifierResponse identifierResponse = buildEdeliveryIdentifiersResponse(requestDto);
-            return getSerializeUtils().mapObjectToXmlString(identifierResponse);
+            return getSerializeUtils().mapJaxbObjectToXmlString(this.buildEdeliveryIdentifiersResponse(requestDto), IdentifierResponse.class);
         } else { //local sending request
-            return getSerializeUtils().mapObjectToXmlString(this.buildQueryFromControl(controlDto));
+            return getSerializeUtils().mapJaxbObjectToXmlString(this.buildQueryFromControl(controlDto), IdentifierQuery.class);
         }
     }
 
@@ -168,7 +171,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
 
     public void createOrUpdate(final NotificationDto notificationDto) {
         this.identifiersService.createOrUpdate(new SaveIdentifiersRequestWrapper(notificationDto.getContent().getFromPartyId(),
-                getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), SaveIdentifiersRequest.class)));
+                getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody())));
     }
 
     private RequestDto createReceivedRequest(final ControlDto controlDto, final List<ConsignmentDto> identifiersDtos) {
@@ -207,7 +210,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 .build();
     }
 
-    private IdentifierQuery buildQueryFromControl(final ControlDto controlDto) {
+    private JAXBElement<IdentifierQuery> buildQueryFromControl(final ControlDto controlDto) {
         final SearchParameter searchParameter = controlDto.getTransportIdentifiers();
         final IdentifierQuery identifierQuery = new IdentifierQuery();
         identifierQuery.setRequestId(controlDto.getRequestUuid());
@@ -219,18 +222,21 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
             identifierQuery.setDangerousGoodsIndicator(searchParameter.getIsDangerousGoods());
             identifierQuery.setRegistrationCountryCode(searchParameter.getVehicleCountry());
         }
-        return identifierQuery;
+
+        return getObjectFactory().createIdentifierQuery(identifierQuery);
     }
 
-    private IdentifierResponse buildEdeliveryIdentifiersResponse(RabbitRequestDto requestDto) {
+    private JAXBElement<IdentifierResponse> buildEdeliveryIdentifiersResponse(final RabbitRequestDto requestDto) {
         final ControlDto controlDto = requestDto.getControl();
         final IdentifierResponse identifierResponse = new IdentifierResponse();
         identifierResponse.setRequestId(controlDto.getRequestUuid());
         identifierResponse.setStatus(controlDto.getStatus().name());
-        if(controlDto.getError() != null) {
+        if (controlDto.getError() != null) {
             identifierResponse.setDescription(controlDto.getError().getErrorDescription());
         }
-        identifierResponse.getConsignment().addAll(getMapperUtils().dtoToEdelivery(requestDto.getIdentifiersResults().getConsignments()));
-        return identifierResponse;
+        if (requestDto.getIdentifiersResults() != null) {
+            identifierResponse.getConsignment().addAll(getMapperUtils().dtoToEdelivery(requestDto.getIdentifiersResults().getConsignments()));
+        }
+        return getObjectFactory().createIdentifierResponse(identifierResponse);
     }
 }

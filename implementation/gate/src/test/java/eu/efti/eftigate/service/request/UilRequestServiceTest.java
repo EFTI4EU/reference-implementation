@@ -109,12 +109,12 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-              <uilResponse>
-                  <consignment>
-                  </consignment>
-                  <status>COMPLETE</status>
-                  <requestId>24414689-1abf-4a9f-b4df-de3a491a44c9</requestId>
-              </uilResponse>
+                <uilResponse
+                        xmlns="http://efti.eu/v1/edelivery"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                        status="COMPLETE">
+                </uilResponse>
         """;
 
         final NotificationDto notificationDto = NotificationDto.builder()
@@ -143,12 +143,12 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-          <uilResponse>
-              <consignment>
-              </consignment>
-              <status>ERROR</status>
-              <requestId>24414689-1abf-4a9f-b4df-de3a491a44c9</requestId>
-          </uilResponse>
+                <uilResponse
+                        xmlns="http://efti.eu/v1/edelivery"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                        status="ERROR">
+                </uilResponse>
         """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -176,12 +176,12 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-          <uilResponse>
-              <consignment>
-              </consignment>
-              <status>ERROR</status>
-              <requestId>24414689-1abf-4a9f-b4df-de3a491a44c9</requestId>
-          </uilResponse>
+                <uilResponse
+                        xmlns="http://efti.eu/v1/edelivery"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                        status="ERROR">
+                </uilResponse>
         """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -207,14 +207,14 @@ class UilRequestServiceTest extends BaseServiceTest {
     void receiveGateRequestSuccessTest() {
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-          <UILQuery>
-              <requestId>24414689-1abf-4a9f-b4df-de3a491a44c9</requestId>
-                <uil>
-                  <gateId></gateId>
-                  <platformId></platformId>
-                  <datasetId></datasetId>
-                </uil>
-          </UILQuery>
+                <uilQuery
+                        xmlns="http://efti.eu/v1/edelivery"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                        status="COMPLETE">
+                   <uil>
+                   </uil>
+                </uilQuery>
         """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -255,12 +255,13 @@ class UilRequestServiceTest extends BaseServiceTest {
     void shouldUpdateResponseSucessFromPlatformAndShoulSendToGate() {
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String eftiData = """
-                  <UILResponse>
-                    <requestUuid>test</requestUuid>
-                    <status>COMPLETE</status>
-                    <eFTIData><data>vive les datas</data></eFTIData>"
-                  </UILResponse>
-                  """;
+                <uilResponse
+                        xmlns="http://efti.eu/v1/edelivery"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                        status="COMPLETE">
+                </uilResponse>
+                """;
         this.uilRequestEntity.getControl().setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -284,12 +285,13 @@ class UilRequestServiceTest extends BaseServiceTest {
     void shouldUpdateResponse() {
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String eftiData = """
-                  <body>
-                    <requestUuid>test</requestUuid>
-                    <status>COMPLETE</status>
-                    <eFTIData><data>vive les datas</data></eFTIData>"
-                  </body>
-                  """;
+                <uilResponse
+                        xmlns="http://efti.eu/v1/edelivery"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                        status="COMPLETE">
+                </uilResponse>
+                """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -310,12 +312,13 @@ class UilRequestServiceTest extends BaseServiceTest {
     void shouldUpdateErrorResponse() {
         final String messageId = "messageId";
         final String eftiData = """
-                  <body>
-                    <requestUuid>test</requestUuid>
-                    <status>ERROR</status>
-                    <eFTIData><data>vive les datas</data></eFTIData>"
-                  </body>
-                  """;
+                <uilResponse
+                        xmlns="http://efti.eu/v1/edelivery"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                        status="ERROR">
+                </uilResponse>
+                """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -345,11 +348,13 @@ class UilRequestServiceTest extends BaseServiceTest {
     void shouldReThrowException() {
         final String messageId = "messageId";
         final String eftiData = """
-                  <body>
-                    <requestUuid>test</requestUuid>
-                    <status>toto</status>
-                  </body>
-                  """;
+                <uilResponse
+                        xmlns="http://efti.eu/v1/edelivery"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                        status="COMPLETE">
+                </uilResponse>
+                """;
 
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)

@@ -1,4 +1,1 @@
-<UILResponse status="COMPLETE" requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c">
-    <wstxns1:consignment xmlns:wstxns1="http://efti.eu/v1/consignment/common"/>
-    <description/>
-</UILResponse>
+<uilResponse xmlns="http://efti.eu/v1/edelivery" xmlns:ns2="http://efti.eu/v1/consignment/common" xmlns:ns3="http://efti.eu/v1/consignment/identifier" requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c" status="COMPLETE"/>

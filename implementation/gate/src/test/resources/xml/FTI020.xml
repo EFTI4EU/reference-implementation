@@ -1,8 +1,6 @@
-<UILQuery requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c">
+<uilQuery xmlns="http://efti.eu/v1/edelivery" xmlns:ns2="http://efti.eu/v1/consignment/identifier" requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c">
     <uil>
-        <gateId/>
         <platformId>plateform</platformId>
         <datasetId>uuid</datasetId>
     </uil>
-    <subsetId/>
-</UILQuery>
+</uilQuery>
