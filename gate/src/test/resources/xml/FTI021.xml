@@ -1,37 +1,23 @@
-<IdentifierResponse requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c" status="PENDING">
+<identifierResponse xmlns="http://efti.eu/v1/edelivery" xmlns:ns2="http://efti.eu/v1/consignment/identifier" xmlns:ns3="http://efti.eu/v1/consignment/common" requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c" status="PENDING">
     <consignment>
-        <consignment>
-            <uil>
-                <gateId/>
-                <platformId>http://efti.platform.truc.eu</platformId>
-                <datasetId>12345678-ab12-4ab6-8999-123456789abc</datasetId>
-            </uil>
-            <carrierAcceptanceDateTime/>
-            <deliveryEvent>
-                <actualOccurrenceDateTime/>
-            </deliveryEvent>
-            <mainCarriageTransportMovement/>
-            <usedTransportEquipment>
-                <usedTransportEquipment>
-                    <carriedTransportEquipment/>
-                    <categoryCode/>
-                    <id>abc123</id>
-                    <registrationCountry>
-                        <code>FR</code>
-                    </registrationCountry>
-                    <sequenceNumber>0</sequenceNumber>
-                </usedTransportEquipment>
-                <usedTransportEquipment>
-                    <carriedTransportEquipment/>
-                    <categoryCode/>
-                    <id>abc124</id>
-                    <registrationCountry>
-                        <code>BE</code>
-                    </registrationCountry>
-                    <sequenceNumber>0</sequenceNumber>
-                </usedTransportEquipment>
-            </usedTransportEquipment>
-        </consignment>
+        <ns2:deliveryEvent/>
+        <ns2:usedTransportEquipment>
+            <ns2:id>abc123</ns2:id>
+            <ns2:registrationCountry>
+                <ns2:code>FR</ns2:code>
+            </ns2:registrationCountry>
+            <ns2:sequenceNumber>0</ns2:sequenceNumber>
+        </ns2:usedTransportEquipment>
+        <ns2:usedTransportEquipment>
+            <ns2:id>abc124</ns2:id>
+            <ns2:registrationCountry>
+                <ns2:code>BE</ns2:code>
+            </ns2:registrationCountry>
+            <ns2:sequenceNumber>0</ns2:sequenceNumber>
+        </ns2:usedTransportEquipment>
+        <uil>
+            <platformId>http://efti.platform.truc.eu</platformId>
+            <datasetId>12345678-ab12-4ab6-8999-123456789abc</datasetId>
+        </uil>
     </consignment>
-    <description/>
-</IdentifierResponse>
+</identifierResponse>

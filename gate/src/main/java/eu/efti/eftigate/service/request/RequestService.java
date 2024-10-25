@@ -17,6 +17,7 @@ import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
+import eu.efti.v1.edelivery.ObjectFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,7 @@ public abstract class RequestService<T extends RequestEntity> {
     private final RequestUpdaterService requestUpdaterService;
     private final SerializeUtils serializeUtils;
     private final LogManager logManager;
+    private final ObjectFactory objectFactory = new ObjectFactory();
 
     @Value("${spring.rabbitmq.queues.eftiSendMessageExchange:efti.send-message.exchange}")
     private String eftiSendMessageExchange;

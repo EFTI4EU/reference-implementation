@@ -52,7 +52,7 @@ public class IdentifiersMapper {
     }
 
     private OffsetDateTime fromDateTime(DateTime dateTime) {
-        if(StringUtils.isBlank(dateTime.getValue())) return null;
+        if(dateTime == null || StringUtils.isBlank(dateTime.getValue())) return null;
         return switch (dateTime.getFormatId()) {
             case "102" -> {
                 LocalDate localDate = LocalDate.parse(dateTime.getValue(), DateTimeFormatter.ofPattern("yyyyMMdd"));
