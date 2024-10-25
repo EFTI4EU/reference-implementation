@@ -39,8 +39,8 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
     protected RequestUpdaterService requestUpdaterService;
     @Mock
     protected GateProperties gateProperties;
-    //@Mock
-    //protected LogManager logManager;
+    @Mock
+    protected LogManager logManager;
     @Mock
     protected EftiGateUrlResolver eftiGateUrlResolver;
 
