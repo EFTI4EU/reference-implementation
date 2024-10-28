@@ -63,11 +63,11 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
     private Predicate buildIdentifierSubquery(final SearchWithIdentifiersRequestDto request, final CriteriaBuilder cb, final Root<Consignment> root) {
         // means, equipment, carried
         final List<Predicate> subQueryPredicate = new ArrayList<>();
-        if (CollectionUtils.emptyIfNull(request.getIdentifierType()).isEmpty() || request.getIdentifierType().contains("means")) {
+        if (CollectionUtils.isEmpty(request.getIdentifierType()) || request.getIdentifierType().contains("means")) {
             final Join<Consignment, MainCarriageTransportMovement> movements = root.join(MOVEMENTS, JoinType.LEFT);
             subQueryPredicate.add(cb.equal(cb.upper(movements.get("usedTransportMeansId")), request.getIdentifier().toUpperCase()));
         }
-        if (CollectionUtils.emptyIfNull(request.getIdentifierType()).isEmpty()
+        if (CollectionUtils.isEmpty(request.getIdentifierType())
                 || request.getIdentifierType().contains("equipment")
                 || request.getIdentifierType().contains("carried")) {
             final Join<Consignment, UsedTransportEquipment> vehicles = root.join(TRANSPORT_VEHICLES, JoinType.LEFT);
@@ -75,7 +75,7 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
                     || request.getIdentifierType().contains("equipment")) {
                 subQueryPredicate.add(cb.equal(cb.upper(vehicles.get(VEHICLE_ID)), request.getIdentifier().toUpperCase()));
             }
-            if (CollectionUtils.emptyIfNull(request.getIdentifierType()).isEmpty()
+            if (CollectionUtils.isEmpty(request.getIdentifierType())
                     || request.getIdentifierType().contains("carried")) {
                 final Join<UsedTransportEquipment, CarriedTransportEquipment> carried = vehicles.join("carriedTransportEquipments", JoinType.LEFT);
                 subQueryPredicate.add(cb.equal(cb.upper(carried.get(VEHICLE_ID)), request.getIdentifier().toUpperCase()));

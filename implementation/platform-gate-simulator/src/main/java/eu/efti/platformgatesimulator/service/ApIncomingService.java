@@ -2,12 +2,13 @@ package eu.efti.platformgatesimulator.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.platformgatesimulator.mapper.MapperUtils;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
+import eu.efti.v1.edelivery.ObjectFactory;
 import eu.efti.v1.edelivery.UILQuery;
 import eu.efti.v1.edelivery.UILResponse;
 import eu.efti.v1.json.SaveIdentifiersRequest;
-import eu.efti.commons.enums.EDeliveryAction;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
 import eu.efti.edeliveryapconnector.dto.ApRequestDto;
 import eu.efti.edeliveryapconnector.dto.NotesMessageBodyDto;
@@ -19,14 +20,17 @@ import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.NotificationService;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.platformgatesimulator.config.GateProperties;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 import static java.lang.Thread.sleep;
 
@@ -41,23 +45,24 @@ public class ApIncomingService {
 
     private final Random random = new Random();
 
-    @Autowired
     private final GateProperties gateProperties;
     private final ReaderService readerService;
-    private final XmlMapper xmlMapper;
     private final MapperUtils mapperUtils = new MapperUtils();
+    private final SerializeUtils serializeUtils;
+    private final ObjectFactory objectFactory = new ObjectFactory();
 
     public void uploadIdentifiers(final SaveIdentifiersRequest identifiersDto) throws JsonProcessingException {
-        eu.efti.v1.edelivery.SaveIdentifiersRequest edeliveryRequest = mapperUtils.mapToEdeliveryRequest(identifiersDto);
+        final eu.efti.v1.edelivery.SaveIdentifiersRequest edeliveryRequest = mapperUtils.mapToEdeliveryRequest(identifiersDto);
+        final JAXBElement<eu.efti.v1.edelivery.SaveIdentifiersRequest> jaxbElement = objectFactory.createSaveIdentifiersRequest(edeliveryRequest);
         final ApRequestDto apRequestDto = ApRequestDto.builder()
-                .requestId(1L).body(xmlMapper.writeValueAsString(edeliveryRequest))
+                .requestId(UUID.randomUUID().toString()).body(serializeUtils.mapJaxbObjectToXmlString(jaxbElement, eu.efti.v1.edelivery.SaveIdentifiersRequest.class))
                 .apConfig(buildApConf())
                 .receiver(gateProperties.getGate())
                 .sender(gateProperties.getOwner())
                 .build();
 
         try {
-            requestSendingService.sendRequest(apRequestDto, EDeliveryAction.UPLOAD_IDENTIFIERS);
+            requestSendingService.sendRequest(apRequestDto);
         } catch (final SendRequestException e) {
             log.error("SendRequestException received : ", e);
         }
@@ -73,32 +78,32 @@ public class ApIncomingService {
             return;
         }
         final NotificationContentDto notificationContentDto = notificationDto.get().getContent();
-        final EDeliveryAction action = EDeliveryAction.getFromValue(notificationContentDto.getAction());
 
-        if (action == EDeliveryAction.SEND_NOTES) {
-            final NotesMessageBodyDto messageBody = xmlMapper.readValue(notificationContentDto.getBody(), NotesMessageBodyDto.class);
-            log.info("note \"{}\" received for request with id {}", messageBody.getNote(), messageBody.getRequestUuid());
-        } else {
-            final UILQuery uilQuery = xmlMapper.readValue(notificationContentDto.getBody(), UILQuery.class);
+        final XmlType queryAnnotation = UILQuery.class.getAnnotation((XmlType.class));
+        if (StringUtils.containsIgnoreCase(notificationContentDto.getBody(), "<" + queryAnnotation.name())) {
+            final UILQuery uilQuery = serializeUtils.mapXmlStringToJaxbObject(notificationContentDto.getBody());
             final String datasetId = uilQuery.getUil().getDatasetId();
             if (datasetId.endsWith("1")) {
                 log.info("id {} end with 1, not responding", datasetId);
                 return;
             }
             sendResponse(buildApConf(), uilQuery.getRequestId(), readerService.readFromFile(gateProperties.getCdaPath() + datasetId));
+        } else {
+            final NotesMessageBodyDto messageBody = serializeUtils.mapXmlStringToClass(notificationContentDto.getBody(), NotesMessageBodyDto.class);
+            log.info("note \"{}\" received for request with id {}", messageBody.getNote(), messageBody.getRequestUuid());
         }
     }
 
     private void sendResponse(final ApConfigDto apConfigDto, final String requestUuid, final SupplyChainConsignment data) throws JsonProcessingException {
         final boolean isError = data == null;
         final ApRequestDto apRequestDto = ApRequestDto.builder()
-                .requestId(1L).body(buildBody(data, requestUuid, isError ? "ERROR" : "COMPLETE", isError ? "file not found with uuid" : null))
+                .requestId(requestUuid).body(buildBody(data, requestUuid, isError ? "ERROR" : "COMPLETE", isError ? "file not found with uuid" : null))
                 .apConfig(apConfigDto)
                 .receiver(gateProperties.getGate())
                 .sender(gateProperties.getOwner())
                 .build();
         try {
-            requestSendingService.sendRequest(apRequestDto, EDeliveryAction.GET_UIL);
+            requestSendingService.sendRequest(apRequestDto);
         } catch (final SendRequestException e) {
             log.error("SendRequestException received : ", e);
         }
@@ -110,8 +115,8 @@ public class ApIncomingService {
         uilResponse.setDescription(errorDescription);
         uilResponse.setStatus(status);
         uilResponse.setConsignment(eftiData);
-
-        return xmlMapper.writeValueAsString(uilResponse);
+        final JAXBElement<UILResponse> jaxbElement = objectFactory.createUilResponse(uilResponse);
+        return serializeUtils.mapJaxbObjectToXmlString(jaxbElement, UILResponse.class);
     }
 
     private ApConfigDto buildApConf() {

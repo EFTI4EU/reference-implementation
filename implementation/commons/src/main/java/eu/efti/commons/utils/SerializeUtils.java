@@ -5,10 +5,18 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import eu.efti.commons.exception.TechnicalException;
+import eu.efti.v1.edelivery.ObjectFactory;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -44,6 +52,29 @@ public class SerializeUtils {
         try {
             return xmlMapper.writeValueAsString(content);
         } catch (final JsonProcessingException e) {
+            throw new TechnicalException("error while writing content", e);
+        }
+    }
+
+    public <T, U> String mapJaxbObjectToXmlString(final T content, final Class<U> className) {
+        try {
+            final Marshaller marshaller = JAXBContext.newInstance(className).createMarshaller();
+            final StringWriter sw = new StringWriter();
+            marshaller.marshal(content, sw);
+            return sw.toString();
+        } catch (final JAXBException e) {
+            throw new TechnicalException("error while writing content", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <U> U mapXmlStringToJaxbObject(final String content) {
+        try {
+            final Unmarshaller unmarshaller = JAXBContext.newInstance(ObjectFactory.class).createUnmarshaller();
+            final StringReader reader = new StringReader(content);
+            final JAXBElement<U> jaxbElement = (JAXBElement<U>) unmarshaller.unmarshal(reader);
+            return jaxbElement.getValue();
+        } catch (final JAXBException e) {
             throw new TechnicalException("error while writing content", e);
         }
     }

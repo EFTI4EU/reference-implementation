@@ -113,7 +113,6 @@ class ControlServiceTest extends AbstractServiceTest {
 
     private final RequestUuidDto requestUuidDto = new RequestUuidDto();
     private final String requestUuid = UUID.randomUUID().toString();
-    private final String identifiersUuid = UUID.randomUUID().toString();
 
     private final static String url = "http://france.lol";
     private final static String password = "password";
