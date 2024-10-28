@@ -28,6 +28,7 @@ import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import eu.efti.v1.edelivery.UIL;
 import eu.efti.v1.edelivery.UILQuery;
 import eu.efti.v1.edelivery.UILResponse;
+import jakarta.xml.bind.JAXBElement;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -77,7 +78,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     public void manageQueryReceived(final NotificationDto notificationDto) {
-        final UILQuery uilQuery = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), UILQuery.class);
+        final UILQuery uilQuery = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
         final ControlDto controlDto = this.getControlService().createUilControl(ControlUtils
                 .fromGateToGateQuery(uilQuery, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH,
                         notificationDto, getGateProperties().getOwner()));
@@ -86,7 +87,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     public void manageResponseReceived(final NotificationDto notificationDto) {
-        final UILResponse uilResponse = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), UILResponse.class);
+        final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
         final UilRequestDto uilRequestDto = this.findByRequestUuidOrThrow(uilResponse.getRequestId());
         ControlDto controlDto;
         if(List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.getControl().getRequestType())) { //platform response
@@ -138,8 +139,8 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             uilResponse.setStatus(getStatus(requestDto, hasError));
             uilResponse.setConsignment(hasData ? serializeUtils.mapXmlStringToClass(new String(requestDto.getReponseData()), SupplyChainConsignment.class) : null);
             uilResponse.setDescription(hasError ? requestDto.getError().getErrorDescription() : null);
-
-            return getSerializeUtils().mapObjectToXmlString(uilResponse);
+            final JAXBElement<UILResponse> jaxBResponse = getObjectFactory().createUilResponse(uilResponse);
+            return getSerializeUtils().mapJaxbObjectToXmlString(jaxBResponse, UILResponse.class);
         }
 
         final UILQuery uilQuery = new UILQuery();
@@ -149,7 +150,9 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         uil.setGateId(requestDto.getGateUrlDest());
         uilQuery.setUil(uil);
         uilQuery.setRequestId(requestDto.getControl().getRequestUuid());
-        return getSerializeUtils().mapObjectToXmlString(uilQuery);
+
+        final JAXBElement<UILQuery> jaxBResponse = getObjectFactory().createUilQuery(uilQuery);
+        return getSerializeUtils().mapJaxbObjectToXmlString(jaxBResponse, UILQuery.class);
     }
 
     private String getStatus(final RabbitRequestDto requestDto, final boolean hasError) {

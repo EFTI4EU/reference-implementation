@@ -53,7 +53,7 @@ class ApIncomingServiceTest extends AbstractTest {
                         .password("password")
                         .username("username").build()).build();
         openMocks = MockitoAnnotations.openMocks(this);
-        apIncomingService = new ApIncomingService(requestSendingService, notificationService, gateProperties, readerService, xmlMapper);
+        apIncomingService = new ApIncomingService(requestSendingService, notificationService, gateProperties, readerService, serializeUtils);
     }
 
     @AfterEach
@@ -64,14 +64,15 @@ class ApIncomingServiceTest extends AbstractTest {
     @Test
     void manageIncomingNotificationBadFilesTest() throws IOException, InterruptedException {
         final String body = """
-            <UILQuery requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c">
-                <uil>
-                    <gateId/>
-                    <platformId>plateform</platformId>
-                    <datasetId>uuid</datasetId>
-                </uil>
-                <subsetId/>
-            </UILQuery>
+            <uilQuery
+                    xmlns="http://efti.eu/v1/edelivery"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                    status="COMPLETE" requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c">
+               <uil>
+                    <datasetId>67fe38bd-6bf7-4b06-b20e-206264bd639c</datasetId>
+               </uil>
+            </uilQuery>
         """;
 
         final NotificationDto notificationDto = new NotificationDto();
@@ -88,14 +89,15 @@ class ApIncomingServiceTest extends AbstractTest {
     @Test
     void manageIncomingNotificationTest() throws IOException, InterruptedException {
         final String body = """
-            <UILQuery requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c">
-                <uil>
-                    <gateId/>
-                    <platformId>plateform</platformId>
-                    <datasetId>uuid</datasetId>
-                </uil>
-                <subsetId/>
-            </UILQuery>
+            <uilQuery
+                    xmlns="http://efti.eu/v1/edelivery"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                    status="COMPLETE" requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c">
+               <uil>
+                    <datasetId>67fe38bd-6bf7-4b06-b20e-206264bd639c</datasetId>
+               </uil>
+            </uilQuery>
         """;
 
         final NotificationDto notificationDto = new NotificationDto();

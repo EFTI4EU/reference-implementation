@@ -45,7 +45,7 @@ public class EDeliveryMessageRouter {
         return routingMap.entrySet().stream().filter(entry -> {
             final XmlType rootAnnotation = entry.getKey().getAnnotation(XmlType.class);
             if(rootAnnotation != null) {
-                return StringUtils.contains(StringUtils.trim(notificationDto.getContent().getBody()), "<" + rootAnnotation.name());
+                return StringUtils.containsIgnoreCase(StringUtils.trim(notificationDto.getContent().getBody()), rootAnnotation.name());
             }
             return false;
         }).findFirst();
