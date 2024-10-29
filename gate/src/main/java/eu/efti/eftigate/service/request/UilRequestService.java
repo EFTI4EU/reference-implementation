@@ -11,6 +11,7 @@ import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.exception.TechnicalException;
 import eu.efti.commons.utils.SerializeUtils;
+import eu.efti.edeliveryapconnector.constant.EDeliveryStatus;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
@@ -132,7 +133,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
         if (requestDto.getStatus() == RESPONSE_IN_PROGRESS || requestDto.getStatus() == ERROR || requestDto.getStatus() == TIMEOUT) {
             final boolean hasData = requestDto.getReponseData() != null;
-            final boolean hasError = requestDto.getError() != null;
+            final boolean hasError = controlDto.getError() != null;
 
             final UILResponse uilResponse = new UILResponse();
             uilResponse.setRequestId(controlDto.getRequestUuid());
@@ -157,11 +158,14 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
     private String getStatus(final RabbitRequestDto requestDto, final boolean hasError) {
         if (hasError) {
-            return StatusEnum.ERROR.name();
+            if (EDeliveryStatus.isNotFound(requestDto.getError().getErrorCode())) {
+                return EDeliveryStatus.NOT_FOUND.getCode();
+            }
+            return EDeliveryStatus.BAD_REQUEST.getCode();
         } else if (TIMEOUT.equals(requestDto.getStatus())) {
-            return StatusEnum.TIMEOUT.name();
+            return EDeliveryStatus.GATEWAY_TIMEOUT.getCode();
         }
-        return COMPLETE.name();
+        return EDeliveryStatus.OK.getCode();
     }
 
     @Override
@@ -185,34 +189,34 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     private ControlDto manageResponseFromPlatform(final UilRequestDto uilRequestDto, final UILResponse uilResponse, final String messageId) {
-        if (uilResponse.getStatus().equals(COMPLETE.name())) {
+        if (uilResponse.getStatus().equals(EDeliveryStatus.OK.getCode())) {
             uilRequestDto.setReponseData(serializeUtils.mapObjectToXmlString(uilResponse.getConsignment()).getBytes(Charset.defaultCharset()));
             this.updateStatus(uilRequestDto, RequestStatusEnum.SUCCESS, messageId);
         } else {
             this.updateStatus(uilRequestDto, ERROR, messageId);
-            errorReceived(uilRequestDto, uilResponse.getDescription());
+            manageErrorReceived(uilRequestDto, uilResponse.getStatus(), uilResponse.getDescription());
         }
         return responseToOtherGateIfNecessary(uilRequestDto);
     }
 
     private ControlDto manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse) {
         final ControlDto controlDto = requestDto.getControl();
-        final Optional<StatusEnum> responseStatus =  StatusEnum.fromString(uilResponse.getStatus());
+        final Optional<EDeliveryStatus> responseStatus = EDeliveryStatus.fromCode(uilResponse.getStatus());
         if(responseStatus.isEmpty()) {
             throw new TechnicalException("status " + uilResponse.getStatus() + " not found");
         }
         switch (responseStatus.get()) {
-            case TIMEOUT -> {
+            case GATEWAY_TIMEOUT -> {
                 requestDto.setStatus(TIMEOUT);
                 //todo avoid mapping
                 final StatusEnum controlStatus = getControlService().getControlNextStatus(getMapperUtils().controlDtoToControlEntity(controlDto));
                 controlDto.setStatus(controlStatus);
             }
-            case COMPLETE -> {
+            case OK -> {
                 requestDto.setReponseData(serializeUtils.mapObjectToXmlString(uilResponse.getConsignment()).getBytes(StandardCharsets.UTF_8));
                 requestDto.setStatus(RequestStatusEnum.SUCCESS);
             }
-            case ERROR -> {
+            case BAD_REQUEST, NOT_FOUND -> {
                 requestDto.setStatus(ERROR);
                 requestDto.setError(setErrorFromResponse(uilResponse));
                 controlDto.setError(setErrorFromResponse(uilResponse));
@@ -236,17 +240,18 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         markMessageAsDownloaded(eDeliveryMessageId);
     }
 
-    protected void errorReceived(final UilRequestDto requestDto, final String errorDescription) {
+    protected void manageErrorReceived(final UilRequestDto requestDto, final String errorCode, final String errorDescription) {
         log.error("Error received, change status of requestId : {}", requestDto.getControl().getRequestUuid());
+        final String codeString = EDeliveryStatus.fromCode(errorCode).orElse(EDeliveryStatus.BAD_REQUEST).name();
         final ErrorDto errorDto = ErrorDto.builder()
+                .errorCode(codeString)
                 .errorDescription(errorDescription)
-                .errorCode(ErrorCodesEnum.PLATFORM_ERROR.toString())
                 .build();
 
         final ControlDto controlDto = requestDto.getControl();
         controlDto.setError(errorDto);
         controlDto.setStatus(StatusEnum.ERROR);
-
+        requestDto.setError(errorDto);
         requestDto.setControl(controlDto);
         save(requestDto);
         getControlService().save(controlDto);

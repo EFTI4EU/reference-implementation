@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
-import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.UilRequestDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
@@ -16,7 +15,6 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
 import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.eftigate.dto.RabbitRequestDto;
-import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.UilRequestRepository;
@@ -113,7 +111,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns="http://efti.eu/v1/edelivery"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="COMPLETE">
+                        status="200">
                 </uilResponse>
         """;
 
@@ -259,7 +257,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns="http://efti.eu/v1/edelivery"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="COMPLETE">
+                        status="200">
                 </uilResponse>
                 """;
         this.uilRequestEntity.getControl().setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
@@ -289,7 +287,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns="http://efti.eu/v1/edelivery"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="COMPLETE">
+                        status="200">
                 </uilResponse>
                 """;
         final NotificationDto notificationDto = NotificationDto.builder()

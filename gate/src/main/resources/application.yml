@@ -2,7 +2,6 @@ spring:
   rabbitmq:
     host: localhost
     listener:
-      default-requeue-rejected: false
       simple:
         default-requeue-rejected: false
         retry:

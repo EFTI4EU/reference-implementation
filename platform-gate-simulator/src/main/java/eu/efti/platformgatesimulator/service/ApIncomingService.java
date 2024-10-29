@@ -1,8 +1,8 @@
 package eu.efti.platformgatesimulator.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import eu.efti.commons.utils.SerializeUtils;
+import eu.efti.edeliveryapconnector.constant.EDeliveryStatus;
 import eu.efti.platformgatesimulator.mapper.MapperUtils;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import eu.efti.v1.edelivery.ObjectFactory;
@@ -38,6 +38,7 @@ import static java.lang.Thread.sleep;
 @AllArgsConstructor
 @Slf4j
 public class ApIncomingService {
+    private static final String NOT_FOUND_MESSAGE = "file not found with uuid";
     private static final Random RANDOM = new Random();
 
     private final RequestSendingService requestSendingService;
@@ -93,10 +94,10 @@ public class ApIncomingService {
         }
     }
 
-    private void sendResponse(final ApConfigDto apConfigDto, final String requestUuid, final SupplyChainConsignment data) throws JsonProcessingException {
-        final boolean isError = data == null;
+    private void sendResponse(final ApConfigDto apConfigDto, final String requestId, final SupplyChainConsignment data) throws JsonProcessingException {
+        final boolean notFound = data == null;
         final ApRequestDto apRequestDto = ApRequestDto.builder()
-                .requestId(requestUuid).body(buildBody(data, requestUuid, isError ? "ERROR" : "COMPLETE", isError ? "file not found with uuid" : null))
+                .requestId(requestId).body(buildBody(data, requestId, notFound))
                 .apConfig(apConfigDto)
                 .receiver(gateProperties.getGate())
                 .sender(gateProperties.getOwner())
@@ -108,12 +109,13 @@ public class ApIncomingService {
         }
     }
 
-    private String buildBody(final SupplyChainConsignment eftiData, final String requestUuid, final String status, final String errorDescription) throws JsonProcessingException {
+    private String buildBody(final SupplyChainConsignment data, final String requestUuid, final boolean notFound) {
         final UILResponse uilResponse = new UILResponse();
         uilResponse.setRequestId(requestUuid);
-        uilResponse.setDescription(errorDescription);
-        uilResponse.setStatus(status);
-        uilResponse.setConsignment(eftiData);
+        uilResponse.setDescription(notFound ? NOT_FOUND_MESSAGE :  null);
+        uilResponse.setStatus(notFound ? EDeliveryStatus.NOT_FOUND.getCode() : EDeliveryStatus.OK.getCode());
+        uilResponse.setConsignment(data);
+
         final JAXBElement<UILResponse> jaxbElement = objectFactory.createUilResponse(uilResponse);
         return serializeUtils.mapJaxbObjectToXmlString(jaxbElement, UILResponse.class);
     }
