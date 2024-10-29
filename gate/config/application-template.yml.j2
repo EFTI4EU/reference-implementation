@@ -1,6 +1,10 @@
 server:
   port: 8080
 spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
   rabbitmq:
     password: {{ spring.rabbitmq.password }}
     username: {{ spring.rabbitmq.username }}
