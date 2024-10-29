@@ -1,12 +1,16 @@
 package eu.efti.platformgatesimulator.service;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import eu.efti.commons.exception.TechnicalException;
 import eu.efti.platformgatesimulator.exception.UploadException;
 import eu.efti.platformgatesimulator.config.GateProperties;
+import eu.efti.v1.consignment.common.ObjectFactory;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
@@ -14,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +29,6 @@ public class ReaderService {
     public static final String JSON_FILE_TYPE = "json";
     private final GateProperties gateProperties;
     private final ResourceLoader resourceLoader;
-    private final XmlMapper mapper;
 
     public void uploadFile(final MultipartFile file) throws UploadException {
         try {
@@ -42,14 +44,20 @@ public class ReaderService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public SupplyChainConsignment readFromFile(final String file) throws IOException {
         Resource resource = tryOpenFile(file, XML_FILE_TYPE);
         if (!resource.exists()) {
             resource = tryOpenFile(file, JSON_FILE_TYPE);
         }
         if (resource.exists()) {
-            final String result = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-            return mapper.readValue(result, SupplyChainConsignment.class);
+            try {
+                final Unmarshaller unmarshaller = JAXBContext.newInstance(ObjectFactory.class).createUnmarshaller();
+                final JAXBElement<SupplyChainConsignment> jaxbElement = (JAXBElement<SupplyChainConsignment>) unmarshaller.unmarshal(resource.getInputStream());
+                return jaxbElement.getValue();
+            } catch (JAXBException e) {
+                throw new TechnicalException("error while writing content", e);
+            }
         }
 
         return null;

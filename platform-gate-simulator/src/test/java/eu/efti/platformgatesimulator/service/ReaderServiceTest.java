@@ -46,7 +46,7 @@ class ReaderServiceTest {
                         .url("url")
                         .password("password")
                         .username("username").build()).build();
-        readerService = new ReaderService(gateProperties, resourceLoader, xmlMapper());
+        readerService = new ReaderService(gateProperties, resourceLoader);
     }
 
     @AfterEach

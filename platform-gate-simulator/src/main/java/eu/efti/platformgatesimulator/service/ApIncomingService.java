@@ -94,7 +94,7 @@ public class ApIncomingService {
         }
     }
 
-    private void sendResponse(final ApConfigDto apConfigDto, final String requestId, final SupplyChainConsignment data) throws JsonProcessingException {
+    private void sendResponse(final ApConfigDto apConfigDto, final String requestId, final SupplyChainConsignment data) {
         final boolean notFound = data == null;
         final ApRequestDto apRequestDto = ApRequestDto.builder()
                 .requestId(requestId).body(buildBody(data, requestId, notFound))
