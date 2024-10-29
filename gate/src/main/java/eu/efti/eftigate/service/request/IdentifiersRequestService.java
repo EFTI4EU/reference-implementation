@@ -71,7 +71,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                                      final RequestUpdaterService requestUpdaterService,
                                      final SerializeUtils serializeUtils,
                                      final LogManager logManager,
-                                     final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService ) {
+                                     final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService) {
         super(mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
         this.identifiersService = identifiersService;
         this.identifiersRequestRepository = identifiersRequestRepository;
