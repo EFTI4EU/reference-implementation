@@ -28,6 +28,9 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
     String MOVEMENTS = "mainCarriageTransportMovements";
     String TRANSPORT_VEHICLES = "usedTransportEquipments";
     String VEHICLE_ID = "equipmentId";
+    String EQUIPMENT = "equipment";
+    String CARRIED = "carried";
+    String MEANS = "means";
 
     @Query(value = "SELECT c FROM Consignment c where c.gateId = :gate and c.datasetId = :uuid and c.platformId = :platform")
     Optional<Consignment> findByUil(final String gate, final String uuid, final String platform);
@@ -63,25 +66,30 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
     private Predicate buildIdentifierSubquery(final SearchWithIdentifiersRequestDto request, final CriteriaBuilder cb, final Root<Consignment> root) {
         // means, equipment, carried
         final List<Predicate> subQueryPredicate = new ArrayList<>();
-        if (CollectionUtils.isEmpty(request.getIdentifierType()) || request.getIdentifierType().contains("means")) {
+        List<String> identifierType = request.getIdentifierType();
+        if (CollectionUtils.isEmpty(identifierType) || identifiersContain(identifierType, MEANS)) {
             final Join<Consignment, MainCarriageTransportMovement> movements = root.join(MOVEMENTS, JoinType.LEFT);
             subQueryPredicate.add(cb.equal(cb.upper(movements.get("usedTransportMeansId")), request.getIdentifier().toUpperCase()));
         }
-        if (CollectionUtils.isEmpty(request.getIdentifierType())
-                || request.getIdentifierType().contains("equipment")
-                || request.getIdentifierType().contains("carried")) {
+        if (CollectionUtils.isEmpty(identifierType)
+                || identifiersContain(identifierType, EQUIPMENT)
+                || identifiersContain(identifierType, CARRIED)) {
             final Join<Consignment, UsedTransportEquipment> vehicles = root.join(TRANSPORT_VEHICLES, JoinType.LEFT);
-            if (CollectionUtils.emptyIfNull(request.getIdentifierType()).isEmpty()
-                    || request.getIdentifierType().contains("equipment")) {
+            if (CollectionUtils.isEmpty(identifierType)
+                    || identifierType.stream().anyMatch(EQUIPMENT::equalsIgnoreCase)) {
                 subQueryPredicate.add(cb.equal(cb.upper(vehicles.get(VEHICLE_ID)), request.getIdentifier().toUpperCase()));
             }
-            if (CollectionUtils.isEmpty(request.getIdentifierType())
-                    || request.getIdentifierType().contains("carried")) {
+            if (CollectionUtils.isEmpty(identifierType)
+                    || identifiersContain(identifierType, CARRIED)) {
                 final Join<UsedTransportEquipment, CarriedTransportEquipment> carried = vehicles.join("carriedTransportEquipments", JoinType.LEFT);
                 subQueryPredicate.add(cb.equal(cb.upper(carried.get(VEHICLE_ID)), request.getIdentifier().toUpperCase()));
             }
         }
 
         return cb.or(subQueryPredicate.toArray(new Predicate[]{}));
+    }
+
+    private boolean identifiersContain(List<String> identifierTypes, String identifierKeyword) {
+        return identifierTypes.stream().anyMatch(identifierKeyword::equalsIgnoreCase);
     }
 }
