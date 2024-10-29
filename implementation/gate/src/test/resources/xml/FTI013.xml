@@ -2,5 +2,5 @@
     <identifier>AA123VV</identifier>
     <registrationCountryCode>BE</registrationCountryCode>
     <modeCode>1</modeCode>
-    <dangerousGoodsIndicator/>
+    <dangerousGoodsIndicator>false</dangerousGoodsIndicator>
 </identifierQuery>

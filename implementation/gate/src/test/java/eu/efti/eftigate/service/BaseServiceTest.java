@@ -69,6 +69,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         searchParameter.setIdentifier("AA123VV");
         searchParameter.setRegistrationCountryCode(CountryIndicator.BE.toString());
         searchParameter.setModeCode("1");
+        searchParameter.setDangerousGoodsIndicator(false);
 
         this.controlDto.setEftiDataUuid(uilDto.getEFTIDataUuid());
         this.controlDto.setEftiGateUrl(uilDto.getEFTIGateUrl());
