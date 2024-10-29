@@ -14,6 +14,7 @@ import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
+import eu.efti.edeliveryapconnector.constant.EDeliveryStatus;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
@@ -30,6 +31,7 @@ import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.edelivery.Identifier;
 import eu.efti.v1.edelivery.IdentifierQuery;
 import eu.efti.v1.edelivery.IdentifierResponse;
+import eu.efti.v1.edelivery.IdentifierType;
 import eu.efti.v1.edelivery.ObjectFactory;
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import jakarta.xml.bind.JAXBContext;
@@ -217,6 +219,11 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         if (searchParameter != null){
             final Identifier identifier = new Identifier();
             identifier.setValue(searchParameter.getVehicleID());
+            try {
+                CollectionUtils.emptyIfNull(searchParameter.getIdentifierType()).forEach(type -> identifier.getType().add(IdentifierType.fromValue(type)));
+            } catch (final IllegalArgumentException e) {
+                log.error("unknown identifier type {}", e.getMessage());
+            }
             identifierQuery.setIdentifier(identifier);
             identifierQuery.setModeCode(searchParameter.getTransportMode());
             identifierQuery.setDangerousGoodsIndicator(searchParameter.getIsDangerousGoods());
@@ -230,7 +237,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         final ControlDto controlDto = requestDto.getControl();
         final IdentifierResponse identifierResponse = new IdentifierResponse();
         identifierResponse.setRequestId(controlDto.getRequestUuid());
-        identifierResponse.setStatus(controlDto.getStatus().name());
+        identifierResponse.setStatus(EDeliveryStatus.OK.getCode());
         if (controlDto.getError() != null) {
             identifierResponse.setDescription(controlDto.getError().getErrorDescription());
         }

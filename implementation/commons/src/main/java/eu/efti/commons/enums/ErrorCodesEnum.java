@@ -3,6 +3,8 @@ package eu.efti.commons.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCodesEnum {
@@ -65,4 +67,13 @@ public enum ErrorCodesEnum {
     NOTE_TOO_LONG("Note max length is 255 characters.");
 
     private final String message;
+
+    public static Optional<ErrorCodesEnum> fromEdeliveryStatus(final String eDeliveryStatus) {
+        for (ErrorCodesEnum e : ErrorCodesEnum.values()) {
+            if (e.name().equalsIgnoreCase(eDeliveryStatus)) {
+                return Optional.of(e);
+            }
+        }
+        return Optional.empty();
+    }
 }
