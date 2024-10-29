@@ -1,4 +1,4 @@
-<identifierResponse xmlns="http://efti.eu/v1/edelivery" xmlns:ns2="http://efti.eu/v1/consignment/identifier" xmlns:ns3="http://efti.eu/v1/consignment/common" requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c" status="PENDING">
+<identifierResponse xmlns="http://efti.eu/v1/edelivery" xmlns:ns2="http://efti.eu/v1/consignment/identifier" xmlns:ns3="http://efti.eu/v1/consignment/common" requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c" status="200">
     <consignment>
         <ns2:deliveryEvent/>
         <ns2:usedTransportEquipment>
