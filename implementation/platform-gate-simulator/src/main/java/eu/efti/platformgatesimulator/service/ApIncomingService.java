@@ -1,7 +1,6 @@
 package eu.efti.platformgatesimulator.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.edeliveryapconnector.constant.EDeliveryStatus;
 import eu.efti.platformgatesimulator.mapper.MapperUtils;
@@ -96,7 +95,7 @@ public class ApIncomingService {
         }
     }
 
-    private void sendResponse(final ApConfigDto apConfigDto, final String requestId, final SupplyChainConsignment data) throws JsonProcessingException {
+    private void sendResponse(final ApConfigDto apConfigDto, final String requestId, final SupplyChainConsignment data) {
         final boolean notFound = data == null;
         final ApRequestDto apRequestDto = ApRequestDto.builder()
                 .requestId(requestId).body(buildBody(data, requestId, notFound))
