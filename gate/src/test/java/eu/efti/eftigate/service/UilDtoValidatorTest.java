@@ -101,8 +101,8 @@ class UilDtoValidatorTest {
     }
 
     private boolean containsError(final Set<ConstraintViolation<UilDto>> violations, final ErrorCodesEnum error) {
-        for(final ConstraintViolation<UilDto> violation : violations ) {
-            if(violation.getMessage().equals(error.name())) {
+        for (final ConstraintViolation<UilDto> violation : violations) {
+            if (violation.getMessage().equals(error.name())) {
                 return true;
             }
         }

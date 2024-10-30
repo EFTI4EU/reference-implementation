@@ -112,22 +112,37 @@
         </createTable>
     </changeSet>
     <changeSet author="dfourmaux (generated)" id="1707315732219-7">
-        <addForeignKeyConstraint baseColumnNames="legalcontact" baseTableName="authority" constraintName="authority_legalcontact_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="contactinformation" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="legalcontact" baseTableName="authority"
+                                 constraintName="authority_legalcontact_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="contactinformation" validate="true"/>
     </changeSet>
     <changeSet author="dfourmaux (generated)" id="1707315732219-8">
-        <addForeignKeyConstraint baseColumnNames="workingcontact" baseTableName="authority" constraintName="authority_workingcontact_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="contactinformation" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="workingcontact" baseTableName="authority"
+                                 constraintName="authority_workingcontact_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="contactinformation" validate="true"/>
     </changeSet>
     <changeSet author="dfourmaux (generated)" id="1707315732219-9">
-        <addForeignKeyConstraint baseColumnNames="authority" baseTableName="control" constraintName="control_authority_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="authority" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="authority" baseTableName="control"
+                                 constraintName="control_authority_fkey" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="authority" validate="true"/>
     </changeSet>
     <changeSet author="dfourmaux (generated)" id="1707315732219-10">
-        <addForeignKeyConstraint baseColumnNames="error" baseTableName="control" constraintName="control_error_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="error" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="error" baseTableName="control" constraintName="control_error_fkey"
+                                 deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="error" validate="true"/>
     </changeSet>
     <changeSet author="dfourmaux (generated)" id="1707315732219-11">
-        <addForeignKeyConstraint baseColumnNames="control" baseTableName="request" constraintName="request_control_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="control" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="control" baseTableName="request" constraintName="request_control_fkey"
+                                 deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="control" validate="true"/>
     </changeSet>
     <changeSet author="dfourmaux (generated)" id="1707315732219-12">
-        <addForeignKeyConstraint baseColumnNames="error" baseTableName="request" constraintName="request_error_fkey" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="error" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="error" baseTableName="request" constraintName="request_error_fkey"
+                                 deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="error" validate="true"/>
     </changeSet>
     <changeSet author="osouley" id="1707315732219-14">
         <addColumn catalogName="efti" tableName="request">
@@ -149,31 +164,31 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet  author="osouley" id="1707315732219-16">
+    <changeSet author="osouley" id="1707315732219-16">
         <insert tableName="gate">
-            <column name="id" value="1" />
+            <column name="id" value="1"/>
             <column name="country" value="LI"/>
-            <column name="url" value="http://efti.gate.listenbourg.eu" />
-            <column name="createddate" valueDate="CURRENT_TIMESTAMP" />
-            <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP" />
+            <column name="url" value="http://efti.gate.listenbourg.eu"/>
+            <column name="createddate" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP"/>
         </insert>
     </changeSet>
-    <changeSet  author="osouley" id="1707315732219-17">
+    <changeSet author="osouley" id="1707315732219-17">
         <insert tableName="gate">
-            <column name="id" value="2" />
+            <column name="id" value="2"/>
             <column name="country" value="BO"/>
-            <column name="url" value="http://efti.gate.borduria.eu" />
-            <column name="createddate" valueDate="CURRENT_TIMESTAMP" />
-            <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP" />
+            <column name="url" value="http://efti.gate.borduria.eu"/>
+            <column name="createddate" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP"/>
         </insert>
     </changeSet>
-    <changeSet  author="osouley" id="1707315732219-18">
+    <changeSet author="osouley" id="1707315732219-18">
         <insert tableName="gate">
-            <column name="id" value="3" />
+            <column name="id" value="3"/>
             <column name="country" value="SY"/>
-            <column name="url" value="http://efti.gate.syldavia.eu" />
-            <column name="createddate" valueDate="CURRENT_TIMESTAMP" />
-            <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP" />
+            <column name="url" value="http://efti.gate.syldavia.eu"/>
+            <column name="createddate" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP"/>
         </insert>
     </changeSet>
     <changeSet author="osouley" id="1707315732219-19">
@@ -181,5 +196,12 @@
             <column name="note" type="VARCHAR(255)"/>
             <column name="request_type" type="VARCHAR(255)"/>
         </addColumn>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-20">
+        <renameColumn columnDataType="VARCHAR(36)"
+                      newColumnName="requestid"
+                      oldColumnName="requestuuid"
+                      remarks="Change of column requestuuid to requestid"
+                      tableName="control"/>
     </changeSet>
 </databaseChangeLog>

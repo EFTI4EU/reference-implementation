@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @XmlRootElement(name = "body")
 public class NotesMessageBodyDto {
-    private String requestUuid;
+    private String requestId;
     @XmlElement(name = "eFTIPlatformUrl")
     private String eFTIPlatformUrl;
     @XmlElement(name = "eFTIDataUuid")

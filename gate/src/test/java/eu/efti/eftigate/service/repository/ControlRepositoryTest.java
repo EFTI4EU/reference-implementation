@@ -21,7 +21,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes= {ControlRepository.class})
+@ContextConfiguration(classes = {ControlRepository.class})
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @EnableJpaRepositories(basePackages = {"eu.efti.eftigate.repository"})
@@ -32,16 +32,16 @@ class ControlRepositoryTest {
     private ControlRepository controlRepository;
 
     @Test
-    void shouldFindControlByCriteria(){
+    void shouldFindControlByCriteria() {
         //Arrange
         final RequestEntity firstRequest = new UilRequestEntity();
         firstRequest.setStatus(RequestStatusEnum.IN_PROGRESS);
         final RequestEntity secondRequest = new UilRequestEntity();
         secondRequest.setStatus(RequestStatusEnum.RECEIVED);
-        final ControlEntity firstControl = ControlEntity.builder().requestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c").status(StatusEnum.PENDING).requests(List.of(firstRequest)).build();
+        final ControlEntity firstControl = ControlEntity.builder().requestId("67fe38bd-6bf7-4b06-b20e-206264bd639c").status(StatusEnum.PENDING).requests(List.of(firstRequest)).build();
         firstRequest.setControl(firstControl);
         final ControlEntity firstSavedControl = controlRepository.save(firstControl);
-        final ControlEntity secondControl = ControlEntity.builder().requestUuid("23fe38bd-6bf7-4b06-b20e-206264bd66c").status(StatusEnum.ERROR).requests(List.of(secondRequest)).build();
+        final ControlEntity secondControl = ControlEntity.builder().requestId("23fe38bd-6bf7-4b06-b20e-206264bd66c").status(StatusEnum.ERROR).requests(List.of(secondRequest)).build();
         secondRequest.setControl(secondControl);
         controlRepository.save(secondControl);
 

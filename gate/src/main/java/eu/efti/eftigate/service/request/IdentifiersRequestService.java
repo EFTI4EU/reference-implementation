@@ -31,18 +31,12 @@ import eu.efti.v1.edelivery.Identifier;
 import eu.efti.v1.edelivery.IdentifierQuery;
 import eu.efti.v1.edelivery.IdentifierResponse;
 import eu.efti.v1.edelivery.IdentifierType;
-import eu.efti.v1.edelivery.ObjectFactory;
-import eu.efti.v1.edelivery.SaveIdentifiersRequest;
-import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.io.StringReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -177,7 +171,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
 
     private RequestDto createReceivedRequest(final ControlDto controlDto, final List<ConsignmentDto> identifiersDtos) {
         final RequestDto request = createRequest(controlDto, RECEIVED, identifiersDtos);
-        final ControlDto updatedControl = getControlService().getControlByRequestUuid(controlDto.getRequestUuid());
+        final ControlDto updatedControl = getControlService().getControlByRequestId(controlDto.getRequestId());
         if (StatusEnum.COMPLETE == updatedControl.getStatus()) {
             request.setStatus(RESPONSE_IN_PROGRESS);
         }
@@ -214,7 +208,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     private JAXBElement<IdentifierQuery> buildQueryFromControl(final ControlDto controlDto) {
         final SearchParameter searchParameter = controlDto.getTransportIdentifiers();
         final IdentifierQuery identifierQuery = new IdentifierQuery();
-        identifierQuery.setRequestId(controlDto.getRequestUuid());
+        identifierQuery.setRequestId(controlDto.getRequestId());
         if (searchParameter != null) {
             final Identifier identifier = new Identifier();
             identifier.setValue(searchParameter.getIdentifier());
@@ -235,7 +229,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     private JAXBElement<IdentifierResponse> buildEdeliveryIdentifiersResponse(final RabbitRequestDto requestDto) {
         final ControlDto controlDto = requestDto.getControl();
         final IdentifierResponse identifierResponse = new IdentifierResponse();
-        identifierResponse.setRequestId(controlDto.getRequestUuid());
+        identifierResponse.setRequestId(controlDto.getRequestId());
         identifierResponse.setStatus(EDeliveryStatus.OK.getCode());
         if (controlDto.getError() != null) {
             identifierResponse.setDescription(controlDto.getError().getErrorDescription());

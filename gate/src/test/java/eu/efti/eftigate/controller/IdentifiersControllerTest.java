@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.enums.StatusEnum;
-import eu.efti.eftigate.dto.RequestUuidDto;
+import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.service.ControlService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 class IdentifiersControllerTest {
 
-    public static final String REQUEST_UUID = "requestUuid";
+    public static final String REQUEST_ID = "requestId";
 
     private final IdentifiersResponseDto identifiersResponseDto = new IdentifiersResponseDto();
 
@@ -45,7 +45,7 @@ class IdentifiersControllerTest {
     @BeforeEach
     void before() {
         identifiersResponseDto.setStatus(StatusEnum.COMPLETE);
-        identifiersResponseDto.setRequestUuid(REQUEST_UUID);
+        identifiersResponseDto.setRequestId(REQUEST_ID);
     }
 
     @Test
@@ -54,9 +54,9 @@ class IdentifiersControllerTest {
         final SearchWithIdentifiersRequestDto identifiersRequestDto = SearchWithIdentifiersRequestDto.builder().identifier("abc123").build();
 
         Mockito.when(controlService.createIdentifiersControl(identifiersRequestDto)).thenReturn(
-                RequestUuidDto.builder()
+                RequestIdDto.builder()
                         .status(StatusEnum.PENDING)
-                        .requestUuid(REQUEST_UUID)
+                        .requestId(REQUEST_ID)
                         .build());
 
         String result = mockMvc.perform(post("/v1/getIdentifiers")
@@ -67,41 +67,41 @@ class IdentifiersControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         with(result)
-                .assertThat("$.requestUuid", is("requestUuid"))
+                .assertThat("$.requestId", is("requestId"))
                 .assertThat("$.status", is("PENDING"));
     }
 
     @Test
     @WithMockUser
     void requestIdentifiersGetTest() throws Exception {
-        Mockito.when(controlService.getIdentifiersResponse(REQUEST_UUID)).thenReturn(identifiersResponseDto);
+        Mockito.when(controlService.getIdentifiersResponse(REQUEST_ID)).thenReturn(identifiersResponseDto);
 
-        final String result = mockMvc.perform(get("/v1/getIdentifiers").param("requestUuid", REQUEST_UUID))
+        final String result = mockMvc.perform(get("/v1/getIdentifiers").param("requestId", REQUEST_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         with(result)
-                .assertThat("$.requestUuid", is("requestUuid"))
+                .assertThat("$.requestId", is("requestId"))
                 .assertThat("$.status", is("COMPLETE"));
     }
 
     @Test
     @WithMockUser
     void requestIdentifiersNotFoundGetTest() throws Exception {
-        identifiersResponseDto.setRequestUuid(null);
+        identifiersResponseDto.setRequestId(null);
         identifiersResponseDto.setErrorCode("Uuid not found.");
-        identifiersResponseDto.setErrorDescription("Error requestUuid not found.");
-        Mockito.when(controlService.getIdentifiersResponse(REQUEST_UUID)).thenReturn(identifiersResponseDto);
+        identifiersResponseDto.setErrorDescription("Error requestId not found.");
+        Mockito.when(controlService.getIdentifiersResponse(REQUEST_ID)).thenReturn(identifiersResponseDto);
 
-        final String result = mockMvc.perform(get("/v1/getIdentifiers").param("requestUuid", REQUEST_UUID))
+        final String result = mockMvc.perform(get("/v1/getIdentifiers").param("requestId", REQUEST_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         with(result)
                 .assertThat("$.errorCode", is("Uuid not found."))
-                .assertThat("$.errorDescription", is("Error requestUuid not found."))
+                .assertThat("$.errorDescription", is("Error requestId not found."))
                 .assertThat("$.status", is("COMPLETE"));
     }
 }

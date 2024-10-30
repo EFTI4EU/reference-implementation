@@ -1,10 +1,10 @@
 package eu.efti.eftigate.entity;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import eu.efti.commons.dto.SearchParameter;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.model.AbstractModel;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -52,8 +52,8 @@ public class ControlEntity extends AbstractModel implements Serializable {
     @Column(name = "eftidatauuid")
     private String eftiDataUuid;
 
-    @Column(name = "requestuuid")
-    private String requestUuid;
+    @Column(name = "requestid")
+    private String requestId;
 
     @Column(name = "requesttype")
     @Enumerated(EnumType.STRING)

@@ -21,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonPropertyOrder({
         "eFTIGate",
-        "requestUuid",
+        "requestId",
         "status",
         "errorCode",
         "errorDescription",
@@ -33,7 +33,7 @@ public class IdentifiersResponseDto {
     @JsonProperty("eFTIGate")
     @XmlElement(name = "eFTIGate")
     private CountryIndicator eFTIGate;
-    private String requestUuid;
+    private String requestId;
     private StatusEnum status;
     private String errorCode;
     private String errorDescription;

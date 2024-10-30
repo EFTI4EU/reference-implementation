@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(NoteController.class)
-@ContextConfiguration(classes= {NoteController.class})
+@ContextConfiguration(classes = {NoteController.class})
 @ExtendWith(SpringExtension.class)
 class NoteControllerTest {
 
@@ -42,10 +42,10 @@ class NoteControllerTest {
         notesDto.setEFTIPlatformUrl("platform");
         notesDto.setEFTIDataUuid("uuid");
         notesDto.setEFTIGateUrl("gate");
-        notesDto.setRequestUuid("requestUuid");
+        notesDto.setRequestId("requestId");
         notesDto.setNote("Conducteur suspect");
 
-        when(controlService.getControlByRequestUuid("requestUuid")).thenReturn(new ControlDto());
+        when(controlService.getControlByRequestId("requestId")).thenReturn(new ControlDto());
         when(controlService.createNoteRequestForControl(notesDto)).thenReturn(NoteResponseDto.builder().message("Note sent").build());
 
         final String response = mockMvc.perform(post("/v1/notes")
@@ -66,10 +66,10 @@ class NoteControllerTest {
         notesDto.setEFTIPlatformUrl("platform");
         notesDto.setEFTIDataUuid("uuid");
         notesDto.setEFTIGateUrl("gate");
-        notesDto.setRequestUuid("requestUuid");
+        notesDto.setRequestId("requestId");
         notesDto.setNote("Conducteur suspect");
 
-        when(controlService.createNoteRequestForControl(notesDto)).thenReturn(new NoteResponseDto("Note was not sent", "UUID_NOT_FOUND", "Uuid not found"));
+        when(controlService.createNoteRequestForControl(notesDto)).thenReturn(new NoteResponseDto("Note was not sent", "ID_NOT_FOUND", "Id not found"));
 
         final String response = mockMvc.perform(post("/v1/notes")
                         .with(csrf())
@@ -80,7 +80,7 @@ class NoteControllerTest {
 
         Mockito.verify(controlService).createNoteRequestForControl(notesDto);
         with(response).assertThat("$.message", is("Note was not sent"));
-        with(response).assertThat("$.errorCode", is("UUID_NOT_FOUND"));
-        with(response).assertThat("$.errorDescription", is("Uuid not found"));
+        with(response).assertThat("$.errorCode", is("ID_NOT_FOUND"));
+        with(response).assertThat("$.errorDescription", is("Id not found"));
     }
 }

@@ -31,13 +31,13 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
     private final SerializeUtils serializeUtils;
 
     public void log(final ControlDto control,
-                     final MessagePartiesDto messagePartiesDto,
-                     final String currentGateId,
-                     final String currentGateCountry,
-                     final String body,
-                     final StatusEnum status,
-                     final boolean isAck,
-                     final String name) {
+                    final MessagePartiesDto messagePartiesDto,
+                    final String currentGateId,
+                    final String currentGateCountry,
+                    final String body,
+                    final StatusEnum status,
+                    final boolean isAck,
+                    final String name) {
 
         final LogRequestDto logRequestDto = LogRequestDto.builder()
                 .authorityName(control.getAuthority() != null ? control.getAuthority().getName() : null)
@@ -49,7 +49,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                 .respondingComponentType(messagePartiesDto.getRespondingComponentType())
                 .respondingComponentId(messagePartiesDto.getRespondingComponentId())
                 .respondingComponentCountry(messagePartiesDto.getRespondingComponentCountry())
-                .requestId(control.getRequestUuid())
+                .requestId(control.getRequestId())
                 .officerId(OFFICER_ID)
                 .responseId(RESPONSE_ID)
                 .subsetEURequested(control.getSubsetEuRequested())
@@ -71,12 +71,12 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
     }
 
     private String getRequestTypeFromControl(final ControlDto control, final boolean isAck) {
-        if(control.getRequestType() == null) return "";
-        if(UIL_TYPES.contains(control.getRequestType())) {
+        if (control.getRequestType() == null) return "";
+        if (UIL_TYPES.contains(control.getRequestType())) {
             return isAck ? RequestTypeLog.UIL_ACK.name() : RequestTypeLog.UIL.name();
         } else if (IDENTIFIERS_TYPES.contains(control.getRequestType())) {
             return isAck ? RequestTypeLog.IDENTIFIERS_ACK.name() : RequestTypeLog.IDENTIFIERS.name();
-        } else if(NOTES_TYPES.contains(control.getRequestType())) {
+        } else if (NOTES_TYPES.contains(control.getRequestType())) {
             return isAck ? RequestTypeLog.NOTES_ACK.name() : RequestTypeLog.NOTES.name();
         }
         return "";

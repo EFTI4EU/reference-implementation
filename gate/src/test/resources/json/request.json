@@ -10,7 +10,7 @@
   "control": {
     "id": 1,
     "eftiDataUuid": null,
-    "requestUuid": null,
+    "requestId": null,
     "requestType": null,
     "status": null,
     "eftiPlatformUrl": null,

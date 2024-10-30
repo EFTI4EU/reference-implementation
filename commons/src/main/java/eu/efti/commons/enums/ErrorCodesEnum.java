@@ -56,7 +56,7 @@ public enum ErrorCodesEnum {
 
     AP_SUBMISSION_ERROR("Error during ap submission."),
     REQUEST_BUILDING("Error while building request."),
-    UUID_NOT_FOUND(" Uuid not found."),
+    ID_NOT_FOUND(" Id not found."),
 
     PLATFORM_ERROR("Platform error"),
 

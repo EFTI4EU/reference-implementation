@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class NotesDto extends AbstractUilDto implements ValidableDto {
-    private String requestUuid;
+    private String requestId;
     @Size(max = 255, message = "NOTE_TOO_LONG")
     private String note;
 }

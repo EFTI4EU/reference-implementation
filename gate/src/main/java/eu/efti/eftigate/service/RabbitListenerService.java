@@ -77,7 +77,7 @@ public class RabbitListenerService {
                 logManager.logSentMessage(requestDto.getControl(), body, receiver, isCurrentGate, hasBeenSent, LogManager.UIL_FTI_020_FTI_009);
             } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
                 //log fti019
-                logManager.logRequestForIdentifiers(requestDto.getControl(), body, gateProperties.getOwner(), gateProperties.getCountry(), requestDto.getError() != null  ? requestDto.getError().getErrorCode() : null, LogManager.IDENTIFIERS);
+                logManager.logRequestForIdentifiers(requestDto.getControl(), body, gateProperties.getOwner(), gateProperties.getCountry(), requestDto.getError() != null ? requestDto.getError().getErrorCode() : null, LogManager.IDENTIFIERS);
             }
         }
     }
@@ -85,7 +85,7 @@ public class RabbitListenerService {
     private ApRequestDto buildApRequestDto(final RabbitRequestDto requestDto, final RequestTypeEnum requestTypeEnum) {
         final String receiver = gateProperties.isCurrentGate(requestDto.getGateUrlDest()) ? requestDto.getControl().getEftiPlatformUrl() : requestDto.getGateUrlDest();
         return ApRequestDto.builder()
-                .requestId(requestDto.getControl().getRequestUuid())
+                .requestId(requestDto.getControl().getRequestId())
                 .sender(gateProperties.getOwner()).receiver(receiver)
                 .body(getRequestService(requestTypeEnum).buildRequestBody(requestDto))
                 .apConfig(ApConfigDto.builder()

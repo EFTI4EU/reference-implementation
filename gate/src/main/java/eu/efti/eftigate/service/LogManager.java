@@ -9,7 +9,7 @@ import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftigate.config.GateProperties;
-import eu.efti.eftigate.dto.RequestUuidDto;
+import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.service.gate.EftiGateUrlResolver;
 import eu.efti.eftilogger.dto.MessagePartiesDto;
@@ -167,7 +167,7 @@ public class LogManager {
     }
 
     public void logAppResponse(final ControlDto control,
-                               final RequestUuidDto requestUuidDto,
+                               final RequestIdDto requestIdDto,
                                final String name) {
         final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
                 .requestingComponentType(GATE)
@@ -177,7 +177,7 @@ public class LogManager {
                 .respondingComponentId("")
                 .respondingComponentCountry(gateProperties.getCountry()).build();
 
-        final String body = serializeUtils.mapObjectToBase64String(requestUuidDto);
+        final String body = serializeUtils.mapObjectToBase64String(requestIdDto);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, StatusEnum.COMPLETE, false, name);
     }
 
