@@ -66,7 +66,7 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
         identifierResponse.getConsignment().add(consignment);
         //Arrange
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
-        when(identifiersRequestRepository.findByControlRequestUuidAndStatusAndGateUrlDest("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS, "https://efti.platform.borduria.eu")).thenReturn(identifiersRequestEntity);
+        when(identifiersRequestRepository.findByControlRequestIdAndStatusAndGateUrlDest("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS, "https://efti.platform.borduria.eu")).thenReturn(identifiersRequestEntity);
         //Act
         identifiersControlUpdateDelegateService.updateExistingControl(identifierResponse, "https://efti.platform.borduria.eu");
 
@@ -82,8 +82,8 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
         identifiersRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
         controlEntity.setStatus(StatusEnum.PENDING);
         controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
-        when(identifiersRequestRepository.findByControlRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(List.of(identifiersRequestEntity));
-        when(controlService.findByRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
+        when(identifiersRequestRepository.findByControlRequestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(List.of(identifiersRequestEntity));
+        when(controlService.findByRequestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
         //Act
         identifiersControlUpdateDelegateService.setControlNextStatus("67fe38bd-6bf7-4b06-b20e-206264bd639c");
 
@@ -97,8 +97,8 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
         identifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
         controlEntity.setStatus(StatusEnum.PENDING);
         controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
-        when(identifiersRequestRepository.findByControlRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-        when(controlService.findByRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
+        when(identifiersRequestRepository.findByControlRequestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
+        when(controlService.findByRequestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
         //Act
         identifiersControlUpdateDelegateService.setControlNextStatus("67fe38bd-6bf7-4b06-b20e-206264bd639c");
 
@@ -114,8 +114,8 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
         controlEntity.setStatus(StatusEnum.PENDING);
         controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
         controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
-        when(identifiersRequestRepository.findByControlRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-        when(controlService.findByRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
+        when(identifiersRequestRepository.findByControlRequestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
+        when(controlService.findByRequestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
         //Act
         identifiersControlUpdateDelegateService.setControlNextStatus("67fe38bd-6bf7-4b06-b20e-206264bd639c");
 
@@ -131,8 +131,8 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
         controlEntity.setStatus(StatusEnum.PENDING);
         controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
         controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
-        when(identifiersRequestRepository.findByControlRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-        when(controlService.findByRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
+        when(identifiersRequestRepository.findByControlRequestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
+        when(controlService.findByRequestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
         //Act
         identifiersControlUpdateDelegateService.setControlNextStatus("67fe38bd-6bf7-4b06-b20e-206264bd639c");
 

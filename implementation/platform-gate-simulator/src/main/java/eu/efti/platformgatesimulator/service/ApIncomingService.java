@@ -91,7 +91,7 @@ public class ApIncomingService {
             sendResponse(buildApConf(), uilQuery.getRequestId(), readerService.readFromFile(gateProperties.getCdaPath() + datasetId));
         } else {
             final NotesMessageBodyDto messageBody = serializeUtils.mapXmlStringToClass(notificationContentDto.getBody(), NotesMessageBodyDto.class);
-            log.info("note \"{}\" received for request with id {}", messageBody.getNote(), messageBody.getRequestUuid());
+            log.info("note \"{}\" received for request with id {}", messageBody.getNote(), messageBody.getRequestId());
         }
     }
 
@@ -110,9 +110,9 @@ public class ApIncomingService {
         }
     }
 
-    private String buildBody(final SupplyChainConsignment data, final String requestUuid, final boolean notFound) {
+    private String buildBody(final SupplyChainConsignment data, final String requestId, final boolean notFound) {
         final UILResponse uilResponse = new UILResponse();
-        uilResponse.setRequestId(requestUuid);
+        uilResponse.setRequestId(requestId);
         uilResponse.setDescription(notFound ? NOT_FOUND_MESSAGE :  null);
         uilResponse.setStatus(notFound ? EDeliveryStatus.NOT_FOUND.getCode() : EDeliveryStatus.OK.getCode());
         uilResponse.setConsignment(data);

@@ -18,7 +18,7 @@ import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.NoteResponseDto;
-import eu.efti.eftigate.dto.RequestUuidDto;
+import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.ErrorEntity;
 import eu.efti.eftigate.entity.RequestEntity;
@@ -53,7 +53,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import static eu.efti.commons.enums.ErrorCodesEnum.UUID_NOT_FOUND;
+import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH;
 import static eu.efti.commons.enums.StatusEnum.PENDING;
 import static java.lang.String.format;
@@ -65,7 +65,7 @@ import static java.util.Collections.emptyList;
 @Slf4j
 public class ControlService {
 
-    public static final String ERROR_REQUEST_UUID_NOT_FOUND = "Error requestUuid not found.";
+    public static final String ERROR_REQUEST_ID_NOT_FOUND = "Error requestId not found.";
     public static final String NOTE_WAS_NOT_SENT = "note was not sent";
     private final ControlRepository controlRepository;
     private final EftiGateUrlResolver eftiGateUrlResolver;
@@ -83,7 +83,7 @@ public class ControlService {
         controlDto.setStatus(StatusEnum.ERROR);
         controlDto.setError(error);
         if (resetUuid) {
-            controlDto.setRequestUuid(null);
+            controlDto.setRequestId(null);
         }
         log.error("{}, {}", error.getErrorDescription(), error.getErrorCode());
     }
@@ -94,24 +94,24 @@ public class ControlService {
     }
 
     @Transactional("controlTransactionManager")
-    public RequestUuidDto createUilControl(final UilDto uilDto) {
+    public RequestIdDto createUilControl(final UilDto uilDto) {
         log.info("create Uil control for uuid : {}", uilDto.getEFTIDataUuid());
         return createControl(uilDto, ControlUtils
                 .fromUilControl(uilDto, gateProperties.isCurrentGate(uilDto.getEFTIGateUrl()) ? RequestTypeEnum.LOCAL_UIL_SEARCH : RequestTypeEnum.EXTERNAL_UIL_SEARCH));
     }
 
-    public RequestUuidDto createIdentifiersControl(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
+    public RequestIdDto createIdentifiersControl(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
         log.info("create Consignment control for identifier : {}", identifiersRequestDto.getIdentifier());
         return createControl(identifiersRequestDto, ControlUtils.fromLocalIdentifiersControl(identifiersRequestDto, RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH));
     }
 
     public NoteResponseDto createNoteRequestForControl(final NotesDto notesDto) {
         log.info("create Note Request for control with data uuid : {}", notesDto.getEFTIDataUuid());
-        final ControlDto savedControl = getControlByRequestUuid(notesDto.getRequestUuid());
+        final ControlDto savedControl = getControlByRequestId(notesDto.getRequestId());
         if (savedControl != null && savedControl.isFound()) {
             return createNoteRequestForControl(savedControl, notesDto);
         } else {
-            return new NoteResponseDto(NOTE_WAS_NOT_SENT, UUID_NOT_FOUND.name(), UUID_NOT_FOUND.getMessage());
+            return new NoteResponseDto(NOTE_WAS_NOT_SENT, ID_NOT_FOUND.name(), ID_NOT_FOUND.getMessage());
         }
     }
 
@@ -123,7 +123,7 @@ public class ControlService {
         } else {
             controlDto.setNotes(notesDto.getNote());
             getRequestService(RequestTypeEnum.NOTE_SEND).createAndSendRequest(controlDto, !gateProperties.isCurrentGate(controlDto.getEftiGateUrl()) ? controlDto.getEftiGateUrl() : null);
-            log.info("Note has been registered for control with request uuid '{}'", controlDto.getRequestUuid());
+            log.info("Note has been registered for control with request uuid '{}'", controlDto.getRequestId());
             return NoteResponseDto.builder().message("Note sent").build();
         }
     }
@@ -146,9 +146,9 @@ public class ControlService {
         return Optional.of(ErrorDto.fromErrorCode(ErrorCodesEnum.valueOf(constraintViolation.getMessage())));
     }
 
-    public ControlDto getControlByRequestUuid(final String requestUuid) {
-        log.info("get ControlEntity with uuid : {}", requestUuid);
-        final Optional<ControlEntity> optionalControlEntity = getByRequestUuid(requestUuid);
+    public ControlDto getControlByRequestId(final String requestId) {
+        log.info("get ControlEntity with request id : {}", requestId);
+        final Optional<ControlEntity> optionalControlEntity = getByRequestId(requestId);
         if (optionalControlEntity.isPresent()) {
             return updateExistingControl(optionalControlEntity.get());
         } else {
@@ -156,8 +156,8 @@ public class ControlService {
         }
     }
 
-    public Optional<ControlEntity> getByRequestUuid(final String requestUuid) {
-        return controlRepository.findByRequestUuid(requestUuid);
+    public Optional<ControlEntity> getByRequestId(final String requestId) {
+        return controlRepository.findByRequestId(requestId);
     }
 
     public ControlDto updateExistingControl(final ControlEntity controlEntity) {
@@ -235,13 +235,13 @@ public class ControlService {
     private ControlDto buildNotFoundControlEntity() {
         return mapperUtils.controlEntityToControlDto(ControlEntity.builder()
                 .status(StatusEnum.ERROR)
-                .error(buildErrorEntity(UUID_NOT_FOUND.name())).build());
+                .error(buildErrorEntity(ID_NOT_FOUND.name())).build());
     }
 
     private static ErrorEntity buildErrorEntity(final String errorCode) {
         return ErrorEntity.builder()
                 .errorCode(errorCode)
-                .errorDescription(ERROR_REQUEST_UUID_NOT_FOUND).build();
+                .errorDescription(ERROR_REQUEST_ID_NOT_FOUND).build();
     }
 
     public ControlDto createControlFrom(final IdentifierQuery identifierQuery, final String fromGateUrl, final IdentifiersResultsDto identifiersResultsDto) {
@@ -257,7 +257,7 @@ public class ControlService {
         return mapperUtils.controlEntityToControlDto(controlRepository.save(controlEntity));
     }
 
-    private <T extends ValidableDto> RequestUuidDto createControl(final T searchDto, final ControlDto controlDto) {
+    private <T extends ValidableDto> RequestIdDto createControl(final T searchDto, final ControlDto controlDto) {
         this.validateControl(searchDto).ifPresentOrElse(
                 error -> createErrorControl(controlDto, error, true),
                 () -> createControlFromType(searchDto, controlDto));
@@ -278,7 +278,7 @@ public class ControlService {
         } else {
             final ControlDto saveControl = this.save(controlDto);
             getRequestService(controlDto.getRequestType()).createAndSendRequest(saveControl, null);
-            log.info("Uil control with request uuid '{}' has been register", saveControl.getRequestUuid());
+            log.info("Uil control with request uuid '{}' has been register", saveControl.getRequestId());
             return saveControl;
         }
     }
@@ -309,7 +309,7 @@ public class ControlService {
                 logManager.logFromIdentifiersRequestDto(controlDto, searchWithIdentifiersRequestDto, isCurrentGate, isCurrentGate ? controlDto.getEftiPlatformUrl() : destinationUrl, true, false, LogManager.LOG_FROM_IDENTIFIERS_REQUEST_DTO);
             }
         });
-        log.info("Identifier control with request uuid '{}' has been register", saveControl.getRequestUuid());
+        log.info("Identifier control with request uuid '{}' has been register", saveControl.getRequestId());
     }
 
     private <T> void createControlFromType(final T searchDto, final ControlDto controlDto) {
@@ -320,14 +320,14 @@ public class ControlService {
         }
     }
 
-    public RequestUuidDto getControlEntity(final String requestUuid) {
-        final ControlDto controlDto = getControlByRequestUuid(requestUuid);
+    public RequestIdDto getControlEntity(final String requestId) {
+        final ControlDto controlDto = getControlByRequestId(requestId);
         return buildResponse(controlDto);
     }
 
-    private RequestUuidDto buildResponse(final ControlDto controlDto) {
-        final RequestUuidDto result = RequestUuidDto.builder()
-                .requestUuid(controlDto.getRequestUuid())
+    private RequestIdDto buildResponse(final ControlDto controlDto) {
+        final RequestIdDto result = RequestIdDto.builder()
+                .requestId(controlDto.getRequestId())
                 .status(controlDto.getStatus())
                 .eFTIData(controlDto.getEftiData()).build();
         if (controlDto.isError() && controlDto.getError() != null) {
@@ -346,19 +346,19 @@ public class ControlService {
         return CollectionUtils.isNotEmpty(pendingControls) ? pendingControls.size() : 0;
     }
 
-    public IdentifiersResponseDto getIdentifiersResponse(final String requestUuid) {
-        final ControlDto controlDto = getControlByRequestUuid(requestUuid);
+    public IdentifiersResponseDto getIdentifiersResponse(final String requestId) {
+        final ControlDto controlDto = getControlByRequestId(requestId);
         return buildIdentifiersResponse(controlDto);
     }
 
     public IdentifiersResponseDto buildIdentifiersResponse(final ControlDto controlDto) {
         final IdentifiersResponseDto result = IdentifiersResponseDto.builder()
-                .requestUuid(controlDto.getRequestUuid())
+                .requestId(controlDto.getRequestId())
                 .status(controlDto.getStatus())
                 .identifiers(getIdentifiersResultDtos(controlDto))
                 .build();
         if (controlDto.isError() && controlDto.getError() != null) {
-            result.setRequestUuid(null);
+            result.setRequestId(null);
             result.setErrorDescription(controlDto.getError().getErrorDescription());
             result.setErrorCode(controlDto.getError().getErrorCode());
         }
@@ -381,12 +381,12 @@ public class ControlService {
         this.save(controlDto);
     }
 
-    public ControlEntity getControlForCriteria(final String requestUuid, final RequestStatusEnum requestStatus) {
-        Preconditions.checkArgument(requestUuid != null, "Request Uuid must not be null");
-        final List<ControlEntity> controls = controlRepository.findByCriteria(requestUuid, requestStatus);
+    public ControlEntity getControlForCriteria(final String requestId, final RequestStatusEnum requestStatus) {
+        Preconditions.checkArgument(requestId != null, "Request Uuid must not be null");
+        final List<ControlEntity> controls = controlRepository.findByCriteria(requestId, requestStatus);
         if (CollectionUtils.isNotEmpty(controls)) {
             if (controls.size() > 1) {
-                throw new AmbiguousIdentifierException(format("Control with request uuid '%s', and request with status '%s' is not unique, %d controls found!", requestUuid, requestStatus, controls.size()));
+                throw new AmbiguousIdentifierException(format("Control with request uuid '%s', and request with status '%s' is not unique, %d controls found!", requestId, requestStatus, controls.size()));
             } else {
                 return controls.get(0);
             }
@@ -413,11 +413,11 @@ public class ControlService {
                 && requests.stream().noneMatch(requestEntity -> RequestStatusEnum.ERROR == requestEntity.getStatus());
     }
 
-    public boolean existsByCriteria(final String requestUuid) {
-        return controlRepository.existsByRequestUuid(requestUuid);
+    public boolean existsByCriteria(final String requestId) {
+        return controlRepository.existsByRequestId(requestId);
     }
 
-    public Optional<ControlEntity> findByRequestUuid(final String controlRequestUuid) {
-        return controlRepository.findByRequestUuid(controlRequestUuid);
+    public Optional<ControlEntity> findByRequestId(final String controlRequestId) {
+        return controlRepository.findByRequestId(controlRequestId);
     }
 }

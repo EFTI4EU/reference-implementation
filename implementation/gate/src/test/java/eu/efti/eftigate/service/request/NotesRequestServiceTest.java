@@ -138,7 +138,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
         noteRequestEntity.setGateUrlDest("gate");
 
         controlEntity.setRequests(List.of(uilRequestEntity));
-        when(controlService.getByRequestUuid("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
+        when(controlService.getByRequestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
         Mockito.when(notesRequestRepository.save(any())).thenReturn(noteRequestEntity);
         //Act
         notesRequestService.manageMessageReceive(notificationDto);

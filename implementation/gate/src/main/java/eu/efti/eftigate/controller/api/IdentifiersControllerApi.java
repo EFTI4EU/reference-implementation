@@ -1,9 +1,9 @@
 package eu.efti.eftigate.controller.api;
 
-import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.eftigate.config.security.Roles;
-import eu.efti.eftigate.dto.RequestUuidDto;
+import eu.efti.eftigate.dto.RequestIdDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Tag(name = "Consignment controller" , description = "Interface to search with Consignment")
+@Tag(name = "Consignment controller", description = "Interface to search with Consignment")
 @RequestMapping("/v1")
 public interface IdentifiersControllerApi {
 
@@ -31,7 +31,7 @@ public interface IdentifiersControllerApi {
     })
     @PostMapping("/getIdentifiers")
     @Secured(Roles.ROLE_ROAD_CONTROLER)
-    ResponseEntity<RequestUuidDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto);
+    ResponseEntity<RequestIdDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto);
 
     @Operation(summary = "Get an consignment request", description = "Get a consignment request for a given request uuid")
     @ApiResponses(value = {
@@ -42,6 +42,6 @@ public interface IdentifiersControllerApi {
     })
     @GetMapping("/getIdentifiers")
     @Secured(Roles.ROLE_ROAD_CONTROLER)
-    ResponseEntity<IdentifiersResponseDto> getIdentifiersResult(final @Parameter String requestUuid);
+    ResponseEntity<IdentifiersResponseDto> getIdentifiersResult(final @Parameter String requestId);
 
 }

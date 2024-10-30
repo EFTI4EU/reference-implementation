@@ -59,7 +59,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     public String buildRequestBody(final RabbitRequestDto requestDto) {
         final ControlDto controlDto = requestDto.getControl();
         final NotesRequestBodyDto requestBodyDto = NotesRequestBodyDto.builder()
-                .requestUuid(controlDto.getRequestUuid())
+                .requestId(controlDto.getRequestId())
                 .eFTIPlatformUrl(StringUtils.isNotBlank(controlDto.getEftiPlatformUrl()) ? controlDto.getEftiPlatformUrl() : requestDto.getEFTIPlatformUrl())
                 .eFTIDataUuid(controlDto.getEftiDataUuid())
                 .eFTIGateUrl(requestDto.getGateUrlDest())
@@ -76,7 +76,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     public void manageMessageReceive(final NotificationDto notificationDto) {
         final NotesMessageBodyDto messageBody = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), NotesMessageBodyDto.class);
 
-        getControlService().getByRequestUuid(messageBody.getRequestUuid()).ifPresent(controlEntity -> {
+        getControlService().getByRequestId(messageBody.getRequestId()).ifPresent(controlEntity -> {
             final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(controlEntity);
             controlDto.setNotes(messageBody.getNote());
             createAndSendRequest(controlDto, messageBody.getEFTIPlatformUrl());

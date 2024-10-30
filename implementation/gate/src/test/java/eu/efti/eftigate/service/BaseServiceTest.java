@@ -60,7 +60,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         gateProperties = GateProperties.builder().ap(GateProperties.ApConfig.builder().url("url").password("pwd").username("usr").build()).owner("owner").build();
 
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
-        final String requestUuid = "67fe38bd-6bf7-4b06-b20e-206264bd639c";
+        final String requestId = "67fe38bd-6bf7-4b06-b20e-206264bd639c";
 
         this.uilDto.setEFTIGateUrl("gate");
         this.uilDto.setEFTIDataUuid("uuid");
@@ -74,7 +74,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlDto.setEftiDataUuid(uilDto.getEFTIDataUuid());
         this.controlDto.setEftiGateUrl(uilDto.getEFTIGateUrl());
         this.controlDto.setEftiPlatformUrl(uilDto.getEFTIPlatformUrl());
-        this.controlDto.setRequestUuid(requestUuid);
+        this.controlDto.setRequestId(requestId);
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(StatusEnum.PENDING);
         this.controlDto.setSubsetEuRequested("oki");
@@ -83,7 +83,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlDto.setLastModifiedDate(localDateTime);
 
         this.controlEntity.setEftiDataUuid(controlDto.getEftiDataUuid());
-        this.controlEntity.setRequestUuid(controlDto.getRequestUuid());
+        this.controlEntity.setRequestId(controlDto.getRequestId());
         this.controlEntity.setRequestType(controlDto.getRequestType());
         this.controlEntity.setStatus(controlDto.getStatus());
         this.controlEntity.setEftiPlatformUrl(controlDto.getEftiPlatformUrl());

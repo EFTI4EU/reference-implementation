@@ -3,7 +3,7 @@ package eu.efti.eftigate.controller;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.eftigate.controller.api.IdentifiersControllerApi;
-import eu.efti.eftigate.dto.RequestUuidDto;
+import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.service.ControlService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ public class IdentifiersController implements IdentifiersControllerApi {
     private final ControlService controlService;
 
     @Override
-    public ResponseEntity<RequestUuidDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto) {
+    public ResponseEntity<RequestIdDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto) {
         log.info("POST on /getIdentifiers on gates {} with params, identifier: {}, identifierType:{}, modeCode: {}, registrationCountryCode: {}, dangerousGoodsIndicator: {} ",
                 StringUtils.join(identifiersRequestDto.getEftiGateIndicator(), ","), identifiersRequestDto.getIdentifier(),
                 StringUtils.join(identifiersRequestDto.getIdentifierType(),","), identifiersRequestDto.getModeCode(),
@@ -33,8 +33,8 @@ public class IdentifiersController implements IdentifiersControllerApi {
     }
 
     @Override
-    public ResponseEntity<IdentifiersResponseDto> getIdentifiersResult(final @Parameter String requestUuid) {
-        log.info("GET on /getIdentifiers with param requestUuid {}", requestUuid);
-        return new ResponseEntity<>(controlService.getIdentifiersResponse(requestUuid), HttpStatus.OK);
+    public ResponseEntity<IdentifiersResponseDto> getIdentifiersResult(final @Parameter String requestId) {
+        log.info("GET on /getIdentifiers with param requestId {}", requestId);
+        return new ResponseEntity<>(controlService.getIdentifiersResponse(requestId), HttpStatus.OK);
     }
 }

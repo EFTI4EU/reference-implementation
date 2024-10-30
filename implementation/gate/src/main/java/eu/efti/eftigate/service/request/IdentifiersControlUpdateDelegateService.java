@@ -35,18 +35,18 @@ public class IdentifiersControlUpdateDelegateService {
     @Transactional("controlTransactionManager")
     public void updateExistingControl(final IdentifierResponse response, final String gateUrlDest) {
         final IdentifiersResults identifiersResults = IdentifiersResults.builder().consignments(mapperUtils.eDeliveryToDto(response.getConsignment())).build();
-        final IdentifiersRequestEntity waitingRequest = identifiersRequestRepository.findByControlRequestUuidAndStatusAndGateUrlDest(response.getRequestId(), RequestStatusEnum.IN_PROGRESS, gateUrlDest);
-        if (waitingRequest != null){
+        final IdentifiersRequestEntity waitingRequest = identifiersRequestRepository.findByControlRequestIdAndStatusAndGateUrlDest(response.getRequestId(), RequestStatusEnum.IN_PROGRESS, gateUrlDest);
+        if (waitingRequest != null) {
             updateControlRequests(waitingRequest, identifiersResults);
         }
     }
 
     @Transactional("controlTransactionManager")
-    public void setControlNextStatus(final String controlRequestUuid) {
-        final List<RequestStatusEnum> requestStatuses = identifiersRequestRepository.findByControlRequestUuid(controlRequestUuid).stream()
+    public void setControlNextStatus(final String controlRequestId) {
+        final List<RequestStatusEnum> requestStatuses = identifiersRequestRepository.findByControlRequestId(controlRequestId).stream()
                 .map(RequestEntity::getStatus)
                 .toList();
-        controlService.findByRequestUuid(controlRequestUuid).ifPresent(controlEntity -> {
+        controlService.findByRequestId(controlRequestId).ifPresent(controlEntity -> {
             if (!StatusEnum.ERROR.equals(controlEntity.getStatus())) {
                 final StatusEnum controlStatus = getControlNextStatus(controlEntity.getStatus(), requestStatuses);
                 controlEntity.setStatus(controlStatus);
@@ -56,7 +56,7 @@ public class IdentifiersControlUpdateDelegateService {
     }
 
     private StatusEnum getControlNextStatus(final StatusEnum currentStatus, final List<RequestStatusEnum> requestStatuses) {
-        if (requestStatuses.stream().allMatch(requestStatusEnum  -> RequestStatusEnum.SUCCESS == requestStatusEnum)) {
+        if (requestStatuses.stream().allMatch(requestStatusEnum -> RequestStatusEnum.SUCCESS == requestStatusEnum)) {
             return StatusEnum.COMPLETE;
         } else if (requestStatuses.stream().anyMatch(requestStatusEnum -> RequestStatusEnum.TIMEOUT == requestStatusEnum)
                 && requestStatuses.stream().noneMatch(requestStatusEnum -> RequestStatusEnum.ERROR == requestStatusEnum)) {

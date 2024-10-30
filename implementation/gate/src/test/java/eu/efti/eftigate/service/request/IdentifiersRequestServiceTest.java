@@ -75,7 +75,6 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     private final IdentifiersRequestDto identifiersRequestDto = new IdentifiersRequestDto();
 
 
-
     @Override
     @BeforeEach
     public void before() {
@@ -141,7 +140,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                         .body(testFile("/xml/FTI019.xml"))
                         .build())
                 .build();
-        when(controlService.getControlByRequestUuid(anyString())).thenReturn(controlDto);
+        when(controlService.getControlByRequestId(anyString())).thenReturn(controlDto);
         when(controlService.createControlFrom(any(), any(), any())).thenReturn(controlDto);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
         //Act
@@ -208,11 +207,11 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         identifiersRequestService.manageSendSuccess(MESSAGE_ID);
 
         identifiersRequestService.manageSendSuccess(MESSAGE_ID);
-        verify(identifiersRequestRepository,never()).save(any());
+        verify(identifiersRequestRepository, never()).save(any());
     }
 
     @Test
-    void shouldUpdateSentRequestStatus_whenRequestIsExternal(){
+    void shouldUpdateSentRequestStatus_whenRequestIsExternal() {
         identifiersRequestDto.getControl().setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         when(mapperUtils.requestToRequestDto(identifiersRequestEntity, IdentifiersRequestDto.class)).thenReturn(identifiersRequestDto);
         when(mapperUtils.requestDtoToRequestEntity(identifiersRequestDto, IdentifiersRequestEntity.class)).thenReturn(identifiersRequestEntity);
@@ -225,7 +224,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldUpdateSentRequestStatus_whenRequestIsNotExternal(){
+    void shouldUpdateSentRequestStatus_whenRequestIsNotExternal() {
         identifiersRequestDto.getControl().setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         when(mapperUtils.requestToRequestDto(identifiersRequestEntity, IdentifiersRequestDto.class)).thenReturn(identifiersRequestDto);
         when(mapperUtils.requestDtoToRequestEntity(identifiersRequestDto, IdentifiersRequestEntity.class)).thenReturn(identifiersRequestEntity);
@@ -238,7 +237,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldBuildRequestBody_whenRemoteGateSentResponse(){
+    void shouldBuildRequestBody_whenRemoteGateSentResponse() {
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         controlDto.setIdentifiersResults(identifiersResultsDto.getConsignments());
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
@@ -252,7 +251,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldBuildRequestBody_whenLocalGateSendsRequest(){
+    void shouldBuildRequestBody_whenLocalGateSendsRequest() {
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         controlDto.setIdentifiersResults(identifiersResultsDto.getConsignments());
         controlDto.setTransportIdentifiers(searchParameter);
@@ -266,7 +265,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldFindRequestByMessageId_whenRequestExists(){
+    void shouldFindRequestByMessageId_whenRequestExists() {
         when(identifiersRequestRepository.findByEdeliveryMessageId(anyString())).thenReturn(identifiersRequestEntity);
         final IdentifiersRequestEntity requestByMessageId = identifiersRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         assertNotNull(requestByMessageId);

@@ -89,9 +89,9 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
     public void manageResponseReceived(final NotificationDto notificationDto) {
         final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
-        final UilRequestDto uilRequestDto = this.findByRequestUuidOrThrow(uilResponse.getRequestId());
+        final UilRequestDto uilRequestDto = this.findByRequestIdOrThrow(uilResponse.getRequestId());
         ControlDto controlDto;
-        if(List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.getControl().getRequestType())) { //platform response
+        if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.getControl().getRequestType())) { //platform response
             controlDto = manageResponseFromPlatform(uilRequestDto, uilResponse, notificationDto.getMessageId());
         } else { // gate response
             controlDto = manageResponseFromOtherGate(uilRequestDto, uilResponse);
@@ -136,7 +136,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             final boolean hasError = controlDto.getError() != null;
 
             final UILResponse uilResponse = new UILResponse();
-            uilResponse.setRequestId(controlDto.getRequestUuid());
+            uilResponse.setRequestId(controlDto.getRequestId());
             uilResponse.setStatus(getStatus(requestDto, hasError));
             uilResponse.setConsignment(hasData ? serializeUtils.mapXmlStringToClass(new String(requestDto.getReponseData()), SupplyChainConsignment.class) : null);
             uilResponse.setDescription(hasError ? controlDto.getError().getErrorDescription() : null);
@@ -150,7 +150,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         uil.setPlatformId(requestDto.getControl().getEftiPlatformUrl());
         uil.setGateId(requestDto.getGateUrlDest());
         uilQuery.setUil(uil);
-        uilQuery.setRequestId(requestDto.getControl().getRequestUuid());
+        uilQuery.setRequestId(requestDto.getControl().getRequestId());
 
         final JAXBElement<UILQuery> jaxBResponse = getObjectFactory().createUilQuery(uilQuery);
         return getSerializeUtils().mapJaxbObjectToXmlString(jaxBResponse, UILQuery.class);
@@ -241,7 +241,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     protected void manageErrorReceived(final UilRequestDto requestDto, final String errorCode, final String errorDescription) {
-        log.error("Error received, change status of requestId : {}", requestDto.getControl().getRequestUuid());
+        log.error("Error received, change status of requestId : {}", requestDto.getControl().getRequestId());
         final String codeString = EDeliveryStatus.fromCode(errorCode).orElse(EDeliveryStatus.BAD_REQUEST).name();
         final ErrorDto errorDto = ErrorDto.builder()
                 .errorCode(codeString)
@@ -269,10 +269,10 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         return uilRequestDto.getControl();
     }
 
-    private UilRequestDto findByRequestUuidOrThrow(final String requestId) {
+    private UilRequestDto findByRequestIdOrThrow(final String requestId) {
         final UilRequestEntity entity = Optional.ofNullable(
-                        this.uilRequestRepository.findByControlRequestUuidAndStatus(requestId, RequestStatusEnum.IN_PROGRESS))
-                .orElseThrow(() -> new RequestNotFoundException("couldn't find request for requestUuid: " + requestId));
+                        this.uilRequestRepository.findByControlRequestIdAndStatus(requestId, RequestStatusEnum.IN_PROGRESS))
+                .orElseThrow(() -> new RequestNotFoundException("couldn't find request for requestId: " + requestId));
         return getMapperUtils().requestToRequestDto(entity, UilRequestDto.class);
     }
 }

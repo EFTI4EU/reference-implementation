@@ -3,7 +3,7 @@ package eu.efti.eftigate.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.enums.StatusEnum;
-import eu.efti.eftigate.dto.RequestUuidDto;
+import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.service.ControlService;
 import org.junit.jupiter.api.Assertions;
@@ -29,23 +29,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ControlController.class)
-@ContextConfiguration(classes= {ControlController.class})
+@ContextConfiguration(classes = {ControlController.class})
 @ExtendWith(SpringExtension.class)
 class ControlControllerTest {
 
-    public static final String REQUEST_UUID = "requestUuid";
+    public static final String REQUEST_ID = "requestId";
     @Autowired
     protected MockMvc mockMvc;
 
     @MockBean
     ControlService controlService;
 
-    private final RequestUuidDto requestUuidDto = new RequestUuidDto();
+    private final RequestIdDto requestIdDto = new RequestIdDto();
 
     @BeforeEach
     void before() {
-        requestUuidDto.setStatus(StatusEnum.PENDING);
-        requestUuidDto.setRequestUuid(REQUEST_UUID);
+        requestIdDto.setStatus(StatusEnum.PENDING);
+        requestIdDto.setRequestId(REQUEST_ID);
     }
 
     @Test
@@ -76,7 +76,7 @@ class ControlControllerTest {
         uilDto.setEFTIDataUuid("uuid");
         uilDto.setEFTIGateUrl("gate");
 
-        Mockito.when(controlService.createUilControl(uilDto)).thenReturn(requestUuidDto);
+        Mockito.when(controlService.createUilControl(uilDto)).thenReturn(requestIdDto);
 
         mockMvc.perform(post("/v1/requestUil")
                         .with(csrf())
@@ -89,16 +89,16 @@ class ControlControllerTest {
     @Test
     @WithMockUser
     void getRequestUilTest() throws Exception {
-        Mockito.when(controlService.getControlEntity(REQUEST_UUID)).thenReturn(requestUuidDto);
+        Mockito.when(controlService.getControlEntity(REQUEST_ID)).thenReturn(requestIdDto);
 
-        final MvcResult result = mockMvc.perform(get("/v1/requestUil").param("requestUuid", REQUEST_UUID))
+        final MvcResult result = mockMvc.perform(get("/v1/requestUil").param("requestId", REQUEST_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
         final String contentAsString = result.getResponse().getContentAsString();
 
-        final RequestUuidDto response = new ObjectMapper().readValue(contentAsString, RequestUuidDto.class);
+        final RequestIdDto response = new ObjectMapper().readValue(contentAsString, RequestIdDto.class);
         Assertions.assertNotNull(response);
-        Assertions.assertEquals(REQUEST_UUID, response.getRequestUuid());
+        Assertions.assertEquals(REQUEST_ID, response.getRequestId());
     }
 }
