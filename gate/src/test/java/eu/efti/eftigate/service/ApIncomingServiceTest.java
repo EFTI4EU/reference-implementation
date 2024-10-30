@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service;
 
-import eu.efti.commons.exception.TechnicalException;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
@@ -22,7 +21,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto.SUBMIT_MESSAGE;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -158,7 +156,6 @@ class ApIncomingServiceTest extends BaseServiceTest {
                 .content(NotificationContentDto.builder()
                         .messageId(messageId)
                         .body(XML_BODY)
-                        .action(EDeliveryAction.UPLOAD_IDENTIFIERS.getValue())
                         .contentType(MediaType.TEXT_XML_VALUE)
                         .build())
                 .notificationType(NotificationType.SEND_SUCCESS)
@@ -169,7 +166,6 @@ class ApIncomingServiceTest extends BaseServiceTest {
 
         verify(notificationService).consume(receivedNotificationDto);
         verify(eftiRequestUpdater, times(1)).manageSendSuccess(notificationDto, "fti root response sucess");
-        verify(identifiersService, never()).createOrUpdate(any());
     }
 
     @Test
@@ -181,7 +177,6 @@ class ApIncomingServiceTest extends BaseServiceTest {
                 .content(NotificationContentDto.builder()
                         .messageId(messageId)
                         .body(XML_BODY)
-                        .action(EDeliveryAction.UPLOAD_IDENTIFIERS.getValue())
                         .contentType(MediaType.TEXT_XML_VALUE)
                         .build())
                 .notificationType(NotificationType.SEND_FAILURE)
@@ -192,7 +187,6 @@ class ApIncomingServiceTest extends BaseServiceTest {
 
         verify(notificationService).consume(receivedNotificationDto);
         verify(eftiRequestUpdater, times(1)).manageSendFailure(notificationDto, "fti send fail");
-        verify(identifiersService, never()).createOrUpdate(any());
     }
 
     @Test

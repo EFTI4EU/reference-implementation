@@ -923,7 +923,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void shouldNotCreateNoteRequestForExistingControl_whenNoteHasMoreThan255Characters() {
-        notesDto.setRequestUuid("requestUuid");
+        notesDto.setRequestId("requestId");
         notesDto.setEFTIGateUrl("http://www.gate.com");
         notesDto.setEFTIDataUuid("12345678-ab12-4ab6-8999-123456789abc");
         notesDto.setEFTIPlatformUrl("http://www.platform.com");
@@ -931,13 +931,12 @@ class ControlServiceTest extends AbstractServiceTest {
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(notesRequestService);
-        when(controlRepository.findByRequestUuid(any())).thenReturn(Optional.of(controlEntity));
+        when(controlRepository.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
 
 
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
 
         verify(notesRequestService, never()).createAndSendRequest(any(), any());
-        //verify(controlRepository, never()).save(any()); TODO fix the code to not update control at every get
         assertNotNull(noteResponseDto);
         assertEquals("note was not sent", noteResponseDto.getMessage());
         assertEquals("NOTE_TOO_LONG", noteResponseDto.getErrorCode());
@@ -1047,37 +1046,37 @@ class ControlServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void shouldGetTrue_whenControlExistsByRequestUuid() {
+    void shouldGetTrue_whenControlExistsByRequesId() {
         //Arrange
-        when(controlRepository.existsByRequestUuid(requestUuid)).thenReturn(true);
+        when(controlRepository.existsByRequestId(requestId)).thenReturn(true);
 
         //Act
-        boolean result = controlService.existsByCriteria(requestUuid);
+        boolean result = controlService.existsByCriteria(requestId);
 
         //Assert
         assertTrue(result);
-        verify(controlRepository, times(1)).existsByRequestUuid(requestUuid);
+        verify(controlRepository, times(1)).existsByRequestId(requestId);
     }
 
     @Test
-    void shouldFindControlByRequestUuid() {
+    void shouldFindControlByRequestId() {
         //Arrange
-        when(controlRepository.findByRequestUuid(requestUuid)).thenReturn(Optional.of(controlEntity));
+        when(controlRepository.findByRequestId(requestId)).thenReturn(Optional.of(controlEntity));
 
         //Act
-        Optional<ControlEntity> result = controlService.findByRequestUuid(requestUuid);
+        Optional<ControlEntity> result = controlService.findByRequestId(requestId);
 
         //Assert
         assertTrue(result.isPresent());
     }
 
     @Test
-    void shouldGetByRequestUuid() {
+    void shouldGetByRequestId() {
         //Act
-        controlService.getByRequestUuid(requestUuid);
+        controlService.getControlByRequestId(requestId);
 
         //Assert
-        verify(controlRepository, times(1)).findByRequestUuid(requestUuid);
+        verify(controlRepository, times(1)).findByRequestId(requestId);
     }
 
 
