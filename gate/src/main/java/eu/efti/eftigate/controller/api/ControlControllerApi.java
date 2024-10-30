@@ -2,7 +2,7 @@ package eu.efti.eftigate.controller.api;
 
 import eu.efti.commons.dto.UilDto;
 import eu.efti.eftigate.config.security.Roles;
-import eu.efti.eftigate.dto.RequestUuidDto;
+import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Tag(name = "Request controller" , description = "Interface to manage dataset request")
+@Tag(name = "Request controller", description = "Interface to manage dataset request")
 @RequestMapping("/v1")
 public interface ControlControllerApi {
 
@@ -38,7 +38,7 @@ public interface ControlControllerApi {
     })
     @PostMapping("/requestUil")
     @Secured(Roles.ROLE_ROAD_CONTROLER)
-    ResponseEntity<RequestUuidDto> requestUil(@RequestBody UilDto uilDto);
+    ResponseEntity<RequestIdDto> requestUil(@RequestBody UilDto uilDto);
 
     @Operation(summary = "Get an UIL request", description = "Get an UIL request for a given request uuid")
     @ApiResponses(value = {
@@ -49,6 +49,6 @@ public interface ControlControllerApi {
     })
     @GetMapping("/requestUil")
     @Secured(Roles.ROLE_ROAD_CONTROLER)
-    ResponseEntity<RequestUuidDto> getRequestUil(@Parameter String requestUuid);
+    ResponseEntity<RequestIdDto> getRequestUil(@Parameter String requestId);
 
 }

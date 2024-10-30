@@ -2,7 +2,7 @@ package eu.efti.eftigate.controller;
 
 import eu.efti.commons.dto.UilDto;
 import eu.efti.eftigate.controller.api.ControlControllerApi;
-import eu.efti.eftigate.dto.RequestUuidDto;
+import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.service.ControlService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,14 +29,14 @@ public class ControlController implements ControlControllerApi {
     }
 
     @Override
-    public ResponseEntity<RequestUuidDto> requestUil(@RequestBody final UilDto uilDto) {
+    public ResponseEntity<RequestIdDto> requestUil(@RequestBody final UilDto uilDto) {
         log.info("POST on /requestUil with param uuid {}", uilDto.getEFTIDataUuid());
         return new ResponseEntity<>(controlService.createUilControl(uilDto), HttpStatus.ACCEPTED);
     }
 
     @Override
-    public ResponseEntity<RequestUuidDto> getRequestUil(@Parameter final String requestUuid) {
-        log.info("GET on /requestUil with param requestUuid {}", requestUuid);
-        return new ResponseEntity<>(controlService.getControlEntity(requestUuid), HttpStatus.OK);
+    public ResponseEntity<RequestIdDto> getRequestUil(@Parameter final String requestId) {
+        log.info("GET on /requestUil with param requestId {}", requestId);
+        return new ResponseEntity<>(controlService.getControlEntity(requestId), HttpStatus.OK);
     }
 }

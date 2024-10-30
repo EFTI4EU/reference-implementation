@@ -15,7 +15,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static eu.efti.commons.enums.ErrorCodesEnum.UUID_NOT_FOUND;
+import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
 
 
 @Getter
@@ -29,7 +29,7 @@ import static eu.efti.commons.enums.ErrorCodesEnum.UUID_NOT_FOUND;
 public class ControlDto {
     private int id;
     private String eftiDataUuid;
-    private String requestUuid;
+    private String requestId;
     private RequestTypeEnum requestType;
     private StatusEnum status;
     private String eftiPlatformUrl;
@@ -57,6 +57,6 @@ public class ControlDto {
 
     @JsonIgnore
     public boolean isFound() {
-        return !(isError() && UUID_NOT_FOUND.name().equals(this.getError().getErrorCode()));
+        return !(isError() && ID_NOT_FOUND.name().equals(this.getError().getErrorCode()));
     }
 }

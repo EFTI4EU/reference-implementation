@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RequestUuidDto {
+public class RequestIdDto {
 
     @NotNull
-    private String requestUuid;
+    private String requestId;
 
     @NotNull
     private StatusEnum status;

@@ -14,12 +14,12 @@ import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
 import eu.efti.edeliveryapconnector.exception.SendRequestException;
+import eu.efti.eftigate.EftiTestUtils;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.UilRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
-import eu.efti.eftigate.EftiTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -125,7 +125,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        Mockito.when(uilRequestRepository.findByControlRequestUuidAndStatus(any(), any())).thenReturn(uilRequestEntity);
+        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
 
         uilRequestService.manageResponseReceived(notificationDto);
@@ -141,13 +141,13 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                <uilResponse
-                        xmlns="http://efti.eu/v1/edelivery"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="ERROR">
-                </uilResponse>
-        """;
+                        <uilResponse
+                                xmlns="http://efti.eu/v1/edelivery"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                                status="ERROR">
+                        </uilResponse>
+                """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -158,7 +158,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        when(uilRequestRepository.findByControlRequestUuidAndStatus(any(), any())).thenReturn(uilRequestEntity);
+        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
 
         uilRequestService.manageResponseReceived(notificationDto);
@@ -174,13 +174,13 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                <uilResponse
-                        xmlns="http://efti.eu/v1/edelivery"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="ERROR">
-                </uilResponse>
-        """;
+                        <uilResponse
+                                xmlns="http://efti.eu/v1/edelivery"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                                status="ERROR">
+                        </uilResponse>
+                """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -191,7 +191,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        Mockito.when(uilRequestRepository.findByControlRequestUuidAndStatus(any(), any())).thenReturn(uilRequestEntity);
+        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
 
         uilRequestService.manageResponseReceived(notificationDto);
@@ -205,15 +205,15 @@ class UilRequestServiceTest extends BaseServiceTest {
     void receiveGateRequestSuccessTest() {
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                <uilQuery
-                        xmlns="http://efti.eu/v1/edelivery"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="COMPLETE">
-                   <uil>
-                   </uil>
-                </uilQuery>
-        """;
+                        <uilQuery
+                                xmlns="http://efti.eu/v1/edelivery"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                                status="COMPLETE">
+                           <uil>
+                           </uil>
+                        </uilQuery>
+                """;
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -270,7 +270,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                 .build();
         final ArgumentCaptor<UilRequestEntity> requestEntityArgumentCaptor = ArgumentCaptor.forClass(UilRequestEntity.class);
         uilRequestEntity.getControl().setFromGateUrl("other");
-        when(uilRequestRepository.findByControlRequestUuidAndStatus(any(), any())).thenReturn(uilRequestEntity);
+        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
 
         uilRequestService.manageResponseReceived(notificationDto);
@@ -297,7 +297,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .body(eftiData)
                         .build())
                 .build();
-        when(uilRequestRepository.findByControlRequestUuidAndStatus(any(), any())).thenReturn(uilRequestEntity);
+        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
         uilRequestService.manageResponseReceived(notificationDto);
 
@@ -324,7 +324,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .body(eftiData)
                         .build())
                 .build();
-        when(uilRequestRepository.findByControlRequestUuidAndStatus(any(), any())).thenReturn(uilRequestEntity);
+        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
         uilRequestService.manageResponseReceived(notificationDto);
 
@@ -338,7 +338,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
         uilRequestService.updateStatus(new UilRequestDto(), ERROR, "12345");
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
-        verify(uilRequestRepository,  Mockito.times(1)).save(any(UilRequestEntity.class));
+        verify(uilRequestRepository, Mockito.times(1)).save(any(UilRequestEntity.class));
         assertEquals(ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
 
@@ -361,7 +361,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .body(eftiData)
                         .build())
                 .build();
-        when(uilRequestRepository.findByControlRequestUuidAndStatus(any(), any())).thenReturn(null);
+        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(null);
 
         assertThrows(RequestNotFoundException.class, () -> uilRequestService.manageResponseReceived(notificationDto));
 
@@ -402,7 +402,7 @@ class UilRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldBuildResponseBody_whenResponseInProgress(){
+    void shouldBuildResponseBody_whenResponseInProgress() {
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
         rabbitRequestDto.setControl(controlDto);
@@ -417,7 +417,7 @@ class UilRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldBuildRequestBody_whenReceived(){
+    void shouldBuildRequestBody_whenReceived() {
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
         rabbitRequestDto.setControl(controlDto);
@@ -431,7 +431,7 @@ class UilRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldFindRequestByMessageId_whenRequestExists(){
+    void shouldFindRequestByMessageId_whenRequestExists() {
         when(uilRequestRepository.findByEdeliveryMessageId(anyString())).thenReturn(uilRequestEntity);
         final UilRequestEntity requestByMessageId = uilRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         assertNotNull(requestByMessageId);

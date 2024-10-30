@@ -31,7 +31,7 @@ public class ControlUtils {
         controlDto.setEftiGateUrl(eftiGateUrl);
         controlDto.setFromGateUrl(notificationDto.getContent().getFromPartyId());
         controlDto.setEftiPlatformUrl(uilQuery.getUil().getPlatformId());
-        controlDto.setRequestUuid(uilQuery.getRequestId());
+        controlDto.setRequestId(uilQuery.getRequestId());
         controlDto.setRequestType(requestTypeEnum);
         controlDto.setStatus(StatusEnum.PENDING);
         controlDto.setSubsetEuRequested(SUBSET_EU_REQUESTED);
@@ -52,7 +52,7 @@ public class ControlUtils {
         controlDto.setEftiGateUrl(eftiGateUrl);
         controlDto.setFromGateUrl(notificationDto.getContent().getFromPartyId());
         controlDto.setEftiPlatformUrl(messageBodyDto.getEFTIPlatformUrl());
-        controlDto.setRequestUuid(messageBodyDto.getRequestUuid());
+        controlDto.setRequestId(messageBodyDto.getRequestId());
         controlDto.setRequestType(requestTypeEnum);
         controlDto.setStatus(StatusEnum.PENDING);
         controlDto.setSubsetEuRequested(SUBSET_EU_REQUESTED);
@@ -68,7 +68,7 @@ public class ControlUtils {
         controlDto.setEftiDataUuid(uilDto.getEFTIDataUuid());
         controlDto.setEftiGateUrl(uilDto.getEFTIGateUrl());
         controlDto.setEftiPlatformUrl(uilDto.getEFTIPlatformUrl());
-        controlDto.setRequestUuid(uuidGenerator);
+        controlDto.setRequestId(uuidGenerator);
         controlDto.setRequestType(requestTypeEnum);
         controlDto.setStatus(StatusEnum.PENDING);
         controlDto.setSubsetEuRequested(SUBSET_EU_REQUESTED);
@@ -106,9 +106,9 @@ public class ControlUtils {
         return controlDto;
     }
 
-    private static ControlDto getControlFrom(final RequestTypeEnum requestTypeEnum, final AuthorityDto authorityDto, final String requestUuid) {
+    private static ControlDto getControlFrom(final RequestTypeEnum requestTypeEnum, final AuthorityDto authorityDto, final String requestId) {
         final ControlDto controlDto = new ControlDto();
-        controlDto.setRequestUuid(requestUuid);
+        controlDto.setRequestId(requestId);
         controlDto.setRequestType(requestTypeEnum);
         controlDto.setStatus(PENDING);
         controlDto.setSubsetEuRequested(SUBSET_EU_REQUESTED);
@@ -124,7 +124,7 @@ public class ControlUtils {
         controlDto.setEftiDataUuid(notesDto.getEFTIDataUuid());
         controlDto.setEftiGateUrl(notesDto.getEFTIGateUrl());
         controlDto.setEftiPlatformUrl(notesDto.getEFTIPlatformUrl());
-        controlDto.setRequestUuid(uuidGenerator);
+        controlDto.setRequestId(uuidGenerator);
         controlDto.setRequestType(requestTypeEnum);
         controlDto.setStatus(PENDING);
         controlDto.setSubsetEuRequested(SUBSET_EU_REQUESTED);

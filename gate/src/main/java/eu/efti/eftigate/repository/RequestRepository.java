@@ -15,6 +15,6 @@ public interface RequestRepository<T extends RequestEntity> extends JpaRepositor
     T findByControlRequestTypeAndStatusAndEdeliveryMessageId(final RequestTypeEnum controlRequestType, final RequestStatusEnum requestStatusEnum, final String messageId);
 
     @Transactional("controlTransactionManager")
-    List<T> findByControlRequestUuid(final String controlRequestUuid);
+    List<T> findByControlRequestId(final String controlRequestId);
 
 }
