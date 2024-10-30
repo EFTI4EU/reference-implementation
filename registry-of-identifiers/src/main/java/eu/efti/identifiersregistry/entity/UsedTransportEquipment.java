@@ -53,6 +53,7 @@ public class UsedTransportEquipment implements Serializable {
     @JoinColumn(name = "consignment_id", referencedColumnName = "id", insertable = true, updatable = false)
     private Consignment consignment;
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "usedTransportEquipment", targetEntity = CarriedTransportEquipment.class)
     private List<CarriedTransportEquipment> carriedTransportEquipments = new ArrayList<>();
 

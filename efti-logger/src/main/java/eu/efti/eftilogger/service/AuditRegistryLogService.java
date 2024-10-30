@@ -114,7 +114,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .timeoutComponentType(TIMEOUT_COMPONENT_TYPE)
                 .identifiersId(requestWrapper.getSaveIdentifiersRequest().getDatasetId())
                 .eFTIDataId(requestWrapper.getSaveIdentifiersRequest().getDatasetId())
-                .interfaceType("EDELIVERY")
+                .interfaceType(EDELIVERY)
                 .build());
     }
 

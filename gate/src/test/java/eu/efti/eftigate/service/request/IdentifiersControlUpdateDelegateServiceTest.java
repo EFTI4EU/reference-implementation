@@ -53,7 +53,7 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
         super.setEntityRequestCommonAttributes(identifiersRequestEntity);
         super.setEntityRequestCommonAttributes(secondIdentifiersRequestEntity);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
-        identifiersControlUpdateDelegateService = new IdentifiersControlUpdateDelegateService(identifiersRequestRepository, serializeUtils, controlService, mapperUtils);
+        identifiersControlUpdateDelegateService = new IdentifiersControlUpdateDelegateService(identifiersRequestRepository, controlService, mapperUtils);
 
 
         final Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(IdentifiersRequestService.class);

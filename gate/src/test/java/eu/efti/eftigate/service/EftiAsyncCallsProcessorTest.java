@@ -14,8 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.UUID;
-
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.times;
@@ -31,27 +29,19 @@ class EftiAsyncCallsProcessorTest {
     private LogManager logManager;
     @Mock
     private GateProperties gateProperties;
-
     @InjectMocks
     private EftiAsyncCallsProcessor eftiAsyncCallsProcessor;
-
     private final SearchWithIdentifiersRequestDto identifiersRequestDto = new SearchWithIdentifiersRequestDto();
-
-    ConsignmentDto consignmentDto = ConsignmentDto.builder().build();
-
-    private final String identifiersUuid = UUID.randomUUID().toString();
     private final ControlDto controlDto = new ControlDto();
-
+    ConsignmentDto consignmentDto = ConsignmentDto.builder().build();
 
     @BeforeEach
     public void before() {
         final AuthorityDto authorityDto = new AuthorityDto();
 
-
         consignmentDto.setGateId("gateId");
         consignmentDto.setDatasetId("datasetId");
         consignmentDto.setPlatformId("platformId");
-
 
         this.identifiersRequestDto.setIdentifier("abc123");
         this.identifiersRequestDto.setRegistrationCountryCode("FR");
