@@ -2,7 +2,6 @@ package eu.efti.eftigate.service.request;
 
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.StatusEnum;
-import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
 import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.entity.RequestEntity;
@@ -21,13 +20,11 @@ import java.util.List;
 @Service
 public class IdentifiersControlUpdateDelegateService {
     private final IdentifiersRequestRepository identifiersRequestRepository;
-    private final SerializeUtils serializeUtils;
     private final ControlService controlService;
     private final MapperUtils mapperUtils;
 
-    public IdentifiersControlUpdateDelegateService(final IdentifiersRequestRepository identifiersRequestRepository, final SerializeUtils serializeUtils, final ControlService controlService, final MapperUtils mapperUtils) {
+    public IdentifiersControlUpdateDelegateService(final IdentifiersRequestRepository identifiersRequestRepository, final ControlService controlService, final MapperUtils mapperUtils) {
         this.identifiersRequestRepository = identifiersRequestRepository;
-        this.serializeUtils = serializeUtils;
         this.controlService = controlService;
         this.mapperUtils = mapperUtils;
     }

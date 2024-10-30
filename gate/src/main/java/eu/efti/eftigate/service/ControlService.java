@@ -160,7 +160,7 @@ public class ControlService {
         return controlRepository.findByRequestId(requestId);
     }
 
-    public ControlDto updateExistingControl(final ControlEntity controlEntity) {
+    private ControlDto updateExistingControl(final ControlEntity controlEntity) {
         if (PENDING == controlEntity.getStatus()) {
             return updatePendingControl(controlEntity);
         } else {
@@ -194,19 +194,23 @@ public class ControlService {
     private ControlDto handleExistingControlWithoutData(final ControlEntity controlEntity) {
         if (hasRequestInError(controlEntity)) {
             controlEntity.setStatus(StatusEnum.ERROR);
-        } else if (getSecondsSinceCreation(controlEntity) > timeoutValue &&
-                CollectionUtils.emptyIfNull(controlEntity.getRequests())
-                        .stream()
-                        .anyMatch(request -> EftiGateConstants.IN_PROGRESS_STATUS.contains(request.getStatus()))) {
+        } else if (shouldSetTimeoutTo(controlEntity)) {
             controlEntity.setStatus(StatusEnum.TIMEOUT);
-            updateControlRequests(controlEntity);
+            updateControlRequestsWithTimeoutStatus(controlEntity);
         } else if (PENDING.equals(controlEntity.getStatus())) {
             controlEntity.setStatus(StatusEnum.COMPLETE);
         }
         return mapperUtils.controlEntityToControlDto(controlRepository.save(controlEntity));
     }
 
-    private void updateControlRequests(final ControlEntity controlEntity) {
+    private boolean shouldSetTimeoutTo(ControlEntity controlEntity) {
+        return getSecondsSinceCreation(controlEntity) > timeoutValue &&
+                CollectionUtils.emptyIfNull(controlEntity.getRequests())
+                        .stream()
+                        .anyMatch(request -> EftiGateConstants.IN_PROGRESS_STATUS.contains(request.getStatus()));
+    }
+
+    private void updateControlRequestsWithTimeoutStatus(final ControlEntity controlEntity) {
         controlEntity.getRequests().stream()
                 .filter(request -> RequestStatusEnum.IN_PROGRESS.equals(request.getStatus()))
                 .toList()
@@ -351,7 +355,7 @@ public class ControlService {
         return buildIdentifiersResponse(controlDto);
     }
 
-    public IdentifiersResponseDto buildIdentifiersResponse(final ControlDto controlDto) {
+    private IdentifiersResponseDto buildIdentifiersResponse(final ControlDto controlDto) {
         final IdentifiersResponseDto result = IdentifiersResponseDto.builder()
                 .requestId(controlDto.getRequestId())
                 .status(controlDto.getStatus())
@@ -366,7 +370,6 @@ public class ControlService {
         logManager.logFromIdentifier(result, controlDto, LogManager.FTI_017);
         return result;
     }
-
 
     private List<ConsignmentDto> getIdentifiersResultDtos(final ControlDto controlDto) {
         if (controlDto.getIdentifiersResults() != null) {
