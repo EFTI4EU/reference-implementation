@@ -101,7 +101,7 @@ public class ControlService {
     }
 
     public RequestUuidDto createIdentifiersControl(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
-        log.info("create Consignment control for vehicleId : {}", identifiersRequestDto.getIdentifier());
+        log.info("create Consignment control for identifier : {}", identifiersRequestDto.getIdentifier());
         return createControl(identifiersRequestDto, ControlUtils.fromLocalIdentifiersControl(identifiersRequestDto, RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH));
     }
 
