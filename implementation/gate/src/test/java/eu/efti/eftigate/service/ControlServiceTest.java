@@ -1,6 +1,15 @@
 package eu.efti.eftigate.service;
 
-import eu.efti.commons.dto.*;
+import eu.efti.commons.dto.AuthorityDto;
+import eu.efti.commons.dto.ContactInformationDto;
+import eu.efti.commons.dto.ControlDto;
+import eu.efti.commons.dto.ErrorDto;
+import eu.efti.commons.dto.IdentifiersResponseDto;
+import eu.efti.commons.dto.IdentifiersResultsDto;
+import eu.efti.commons.dto.NotesDto;
+import eu.efti.commons.dto.SearchParameter;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
+import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
@@ -149,10 +158,10 @@ class ControlServiceTest extends AbstractServiceTest {
         this.uilDto.setEFTIPlatformUrl("http://www.platform.com");
         this.uilDto.setAuthority(authorityDto);
 
-        this.searchWithIdentifiersRequestDto.setVehicleID("abc123");
-        this.searchWithIdentifiersRequestDto.setVehicleCountry("FR");
+        this.searchWithIdentifiersRequestDto.setIdentifier("abc123");
+        this.searchWithIdentifiersRequestDto.setRegistrationCountryCode("FR");
         this.searchWithIdentifiersRequestDto.setAuthority(authorityDto);
-        this.searchWithIdentifiersRequestDto.setTransportMode("ROAD");
+        this.searchWithIdentifiersRequestDto.setModeCode("1");
 
         this.controlDto.setEftiDataUuid(uilDto.getEFTIDataUuid());
         this.controlDto.setEftiGateUrl(uilDto.getEFTIGateUrl());
@@ -495,7 +504,7 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void shouldCreateIdentifiersControlWithPendingStatus_whenSomeOfGivenDestinationGatesDoesNotExist() {
         controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
-        searchWithIdentifiersRequestDto.setEFTIGateIndicator(List.of("IT", "RO"));
+        searchWithIdentifiersRequestDto.setEftiGateIndicator(List.of("IT", "RO"));
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
@@ -513,7 +522,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void shouldCreateIdentifiersControlWithPendingStatus_whenAllGivenDestinationGatesDoesNotExist() {
-        searchWithIdentifiersRequestDto.setEFTIGateIndicator(List.of("IT", "RO"));
+        searchWithIdentifiersRequestDto.setEftiGateIndicator(List.of("IT", "RO"));
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
 
@@ -529,10 +538,10 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createIdentifiersControlWithMinimumRequiredTest() {
-        searchWithIdentifiersRequestDto.setTransportMode(null);
-        searchWithIdentifiersRequestDto.setVehicleCountry(null);
-        searchWithIdentifiersRequestDto.setEFTIGateIndicator(null);
-        searchWithIdentifiersRequestDto.setIsDangerousGoods(null);
+        searchWithIdentifiersRequestDto.setModeCode(null);
+        searchWithIdentifiersRequestDto.setRegistrationCountryCode(null);
+        searchWithIdentifiersRequestDto.setEftiGateIndicator(null);
+        searchWithIdentifiersRequestDto.setDangerousGoodsIndicator(null);
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
@@ -552,41 +561,41 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createIdentifiersControlVehicleIDIncorrect() {
-        searchWithIdentifiersRequestDto.setVehicleID("fausse plaque");
+        searchWithIdentifiersRequestDto.setIdentifier("fausse plaque");
 
         final RequestUuidDto requestUuidDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
 
         verify(uilRequestService, times(0)).createAndSendRequest(any(), any());
         verify(controlRepository, times(0)).save(any());
         assertNotNull(requestUuidDtoResult);
-        assertEquals(ErrorCodesEnum.VEHICLE_ID_INCORRECT_FORMAT.name(), requestUuidDtoResult.getErrorCode());
-        assertEquals(ErrorCodesEnum.VEHICLE_ID_INCORRECT_FORMAT.getMessage(), requestUuidDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.IDENTIFIER_INCORRECT_FORMAT.name(), requestUuidDtoResult.getErrorCode());
+        assertEquals(ErrorCodesEnum.IDENTIFIER_INCORRECT_FORMAT.getMessage(), requestUuidDtoResult.getErrorDescription());
     }
 
     @Test
     void createIdentifiersControlVehicleCountryIncorrect() {
-        searchWithIdentifiersRequestDto.setVehicleCountry("toto");
+        searchWithIdentifiersRequestDto.setRegistrationCountryCode("toto");
 
         final RequestUuidDto requestUuidDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
 
         verify(uilRequestService, times(0)).createAndSendRequest(any(), any());
         verify(controlRepository, times(0)).save(any());
         assertNotNull(requestUuidDtoResult);
-        assertEquals(ErrorCodesEnum.VEHICLE_COUNTRY_INCORRECT.name(), requestUuidDtoResult.getErrorCode());
-        assertEquals(ErrorCodesEnum.VEHICLE_COUNTRY_INCORRECT.getMessage(), requestUuidDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.REGISTRATION_COUNTRY_INCORRECT.name(), requestUuidDtoResult.getErrorCode());
+        assertEquals(ErrorCodesEnum.REGISTRATION_COUNTRY_INCORRECT.getMessage(), requestUuidDtoResult.getErrorDescription());
     }
 
     @Test
     void createIdentifiersControlTransportModeIncorrect() {
-        searchWithIdentifiersRequestDto.setTransportMode("toto");
+        searchWithIdentifiersRequestDto.setModeCode("#toto");
 
         final RequestUuidDto requestUuidDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
 
         verify(uilRequestService, times(0)).createAndSendRequest(any(), any());
         verify(controlRepository, times(0)).save(any());
         assertNotNull(requestUuidDtoResult);
-        assertEquals(ErrorCodesEnum.TRANSPORT_MODE_INCORRECT.name(), requestUuidDtoResult.getErrorCode());
-        assertEquals(ErrorCodesEnum.TRANSPORT_MODE_INCORRECT.getMessage(), requestUuidDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.MODE_CODE_INCORRECT_FORMAT.name(), requestUuidDtoResult.getErrorCode());
+        assertEquals(ErrorCodesEnum.MODE_CODE_INCORRECT_FORMAT.getMessage(), requestUuidDtoResult.getErrorDescription());
     }
 
     @Test
@@ -602,10 +611,10 @@ class ControlServiceTest extends AbstractServiceTest {
                 .eftiGateUrl("france")
                 .fromGateUrl("https://efti.gate.france.eu")
                 .transportIdentifiers(SearchParameter.builder()
-                        .vehicleID("AA123VV")
-                        .transportMode("ROAD")
-                        .vehicleCountry("FR")
-                        .isDangerousGoods(true)
+                        .identifier("AA123VV")
+                        .modeCode("1")
+                        .registrationCountryCode("FR")
+                        .dangerousGoodsIndicator(true)
                         .build())
 
                 .build();
@@ -625,10 +634,10 @@ class ControlServiceTest extends AbstractServiceTest {
                 .eftiGateUrl("france")
                 .fromGateUrl("https://efti.gate.france.eu")
                 .transportIdentifiers(SearchParameter.builder()
-                        .vehicleID("AA123VV")
-                        .transportMode("ROAD")
-                        .vehicleCountry("FR")
-                        .isDangerousGoods(true)
+                        .identifier("AA123VV")
+                        .modeCode("1")
+                        .registrationCountryCode("FR")
+                        .dangerousGoodsIndicator(true)
                         .build())
                 .eftiData(ArrayUtils.EMPTY_BYTE_ARRAY)
                 .identifiersResults(new LinkedList<>())

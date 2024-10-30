@@ -1,8 +1,8 @@
 package eu.efti.eftigate.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.dto.RequestUuidDto;
 import eu.efti.eftigate.service.ControlService;
@@ -51,7 +51,7 @@ class IdentifiersControllerTest {
     @Test
     @WithMockUser
     void requestIdentifiersTest() throws Exception {
-        final SearchWithIdentifiersRequestDto identifiersRequestDto = SearchWithIdentifiersRequestDto.builder().vehicleID("abc123").build();
+        final SearchWithIdentifiersRequestDto identifiersRequestDto = SearchWithIdentifiersRequestDto.builder().identifier("abc123").build();
 
         Mockito.when(controlService.createIdentifiersControl(identifiersRequestDto)).thenReturn(
                 RequestUuidDto.builder()

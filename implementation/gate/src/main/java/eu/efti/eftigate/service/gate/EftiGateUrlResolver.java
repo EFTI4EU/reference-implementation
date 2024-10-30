@@ -27,10 +27,10 @@ public class EftiGateUrlResolver {
     public List<String> resolve(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
         final Map<CountryIndicator, GateEntity> destinationGatesIndicatorMap;
 
-        if (CollectionUtils.isNotEmpty(identifiersRequestDto.getEFTIGateIndicator())){
-            final List<CountryIndicator> requestedCountryIndicators = identifiersRequestDto.getEFTIGateIndicator().stream().map(CountryIndicator::valueOf).toList();
+        if (CollectionUtils.isNotEmpty(identifiersRequestDto.getEftiGateIndicator())) {
+            final List<CountryIndicator> requestedCountryIndicators = identifiersRequestDto.getEftiGateIndicator().stream().map(CountryIndicator::valueOf).toList();
             final List<GateEntity> registeredDestinationGates = gateRepository.findByCountryIn(requestedCountryIndicators);
-            destinationGatesIndicatorMap =  mapRequestedCountriesToRegisteredGates(requestedCountryIndicators, registeredDestinationGates);
+            destinationGatesIndicatorMap = mapRequestedCountriesToRegisteredGates(requestedCountryIndicators, registeredDestinationGates);
         } else {
             destinationGatesIndicatorMap = CollectionUtils.emptyIfNull(gateRepository.findAll())
                     .stream()

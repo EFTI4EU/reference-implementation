@@ -13,9 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchParameter implements Serializable {
-    private String vehicleID;
+    private String identifier;
     private List<String> identifierType;
-    private Boolean isDangerousGoods;
-    private String vehicleCountry;
-    private String transportMode;
+    private Boolean dangerousGoodsIndicator;
+    private String registrationCountryCode;
+    private String modeCode;
 }

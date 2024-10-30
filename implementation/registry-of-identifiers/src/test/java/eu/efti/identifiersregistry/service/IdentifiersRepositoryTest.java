@@ -103,43 +103,43 @@ class IdentifiersRepositoryTest {
     @Test
     void shouldGetDataByCriteria() {
         assertEquals(2, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .vehicleID("vehicleId1")
-                .vehicleCountry(CountryIndicator.FR.name())
+                .identifier("vehicleId1")
+                .registrationCountryCode(CountryIndicator.FR.name())
                 .build()).size());
 
         assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .vehicleID("vehicleId1")
-                .vehicleCountry(CountryIndicator.FR.name())
-                .isDangerousGoods(false)
+                .identifier("vehicleId1")
+                .registrationCountryCode(CountryIndicator.FR.name())
+                .dangerousGoodsIndicator(false)
                 .build()).size());
 
         assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .vehicleID("vehicleId2")
-                .vehicleCountry(CountryIndicator.CY.name())
+                .identifier("vehicleId2")
+                .registrationCountryCode(CountryIndicator.CY.name())
                 .build()).size());
 
         assertEquals(2, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .vehicleID("vehicleId2")
+                .identifier("vehicleId2")
                 .build()).size());
 
         assertEquals(0, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .vehicleID("vehicleId2")
-                .vehicleCountry(CountryIndicator.BE.name())
+                .identifier("vehicleId2")
+                .registrationCountryCode(CountryIndicator.BE.name())
                 .build()).size());
 
         assertEquals(0, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .vehicleID("vehicleId2")
-                .vehicleCountry(CountryIndicator.CY.name())
+                .identifier("vehicleId2")
+                .registrationCountryCode(CountryIndicator.CY.name())
                 .identifierType(List.of("carried"))
                 .build()).size());
 
         assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .vehicleID("carriedId1")
+                .identifier("carriedId1")
                 .identifierType(List.of("carried"))
                 .build()).size());
 
         assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .vehicleID("carriedId1")
+                .identifier("carriedId1")
                 .build()).size());
     }
 

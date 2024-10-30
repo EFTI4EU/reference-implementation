@@ -92,15 +92,6 @@ public class MapperUtils {
 
     }
 
-    public Consignment entityToEdelivery(final eu.efti.identifiersregistry.entity.Consignment consignment) {
-        return this.identifiersMapper.entityToEdelivery(consignment);
-    }
-
-    public List<Consignment> entityToEdelivery(final List<eu.efti.identifiersregistry.entity.Consignment> consignments) {
-        return CollectionUtils.emptyIfNull(consignments).stream().map(this::entityToEdelivery).toList();
-
-    }
-
     public Consignment dtoToEdelivery(final ConsignmentDto consignment) {
         //todo fix double mapping
         return this.identifiersMapper.entityToEdelivery(this.dtoToEntity(consignment));
