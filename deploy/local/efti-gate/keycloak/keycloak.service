@@ -1,0 +1,14 @@
+[Unit]
+Description=Keycloak Identity Provider
+Requires=network.target
+After=syslog.target network.target
+
+[Service]
+Type=idle
+User=ubuntu
+Group=ubuntu
+#RemainAfterExit=yes
+LimitNOFILE=102642
+ExecStart=/opt/keycloak/bin/kc.sh start --log=console,file
+#WorkingDirectory=/opt/keycloak
+StandardOutput=null
