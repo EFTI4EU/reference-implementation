@@ -98,7 +98,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
         rabbitListenerService.listenReceiveMessage(message);
 
         assertTrue(memoryAppender.containsFormattedLogMessage(message));
-        assertEquals(1, memoryAppender.countEventsForLogger(LOGGER_NAME, Level.INFO));
+        assertEquals(1, memoryAppender.countEventsForLogger(LOGGER_NAME, Level.DEBUG));
     }
 
     @Test
