@@ -1,7 +1,6 @@
 package eu.efti.eftigate.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.efti.commons.enums.StatusEnum;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -23,6 +22,5 @@ public class RequestIdDto {
     private StatusEnum status;
     private String errorCode;
     private String errorDescription;
-    @JsonProperty("eFTIData")
-    private byte[] eFTIData;
+    private byte[] data;
 }

@@ -27,7 +27,7 @@ public class IdentifiersController implements IdentifiersControllerApi {
     public ResponseEntity<RequestIdDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto) {
         log.info("POST on /getIdentifiers on gates {} with params, identifier: {}, identifierType:{}, modeCode: {}, registrationCountryCode: {}, dangerousGoodsIndicator: {} ",
                 StringUtils.join(identifiersRequestDto.getEftiGateIndicator(), ","), identifiersRequestDto.getIdentifier(),
-                StringUtils.join(identifiersRequestDto.getIdentifierType(),","), identifiersRequestDto.getModeCode(),
+                StringUtils.join(identifiersRequestDto.getIdentifierType(), ","), identifiersRequestDto.getModeCode(),
                 identifiersRequestDto.getRegistrationCountryCode(), identifiersRequestDto.getDangerousGoodsIndicator());
         return new ResponseEntity<>(controlService.createIdentifiersControl(identifiersRequestDto), HttpStatus.ACCEPTED);
     }

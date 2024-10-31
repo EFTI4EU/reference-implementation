@@ -30,7 +30,7 @@ public class ControlController implements ControlControllerApi {
 
     @Override
     public ResponseEntity<RequestIdDto> requestUil(@RequestBody final UilDto uilDto) {
-        log.info("POST on /requestUil with param uuid {}", uilDto.getEFTIDataUuid());
+        log.info("POST on /requestUil with params gateId: {}, datasetId: {}, platformId: {}", uilDto.getGateId(), uilDto.getDatasetId(), uilDto.getPlatformId());
         return new ResponseEntity<>(controlService.createUilControl(uilDto), HttpStatus.ACCEPTED);
     }
 

@@ -16,6 +16,19 @@ public enum ErrorCodesEnum {
     UIL_PLATFORM_TOO_LONG("Platform max length is 255 characters."),
     UIL_PLATFORM_INCORRECT_FORMAT("Platform format incorrect."),
 
+    GATE_ID_MISSING("Missing parameter GateId"),
+    GATE_ID_TOO_LONG("Gate Id max length is 255 characters."),
+    GATE_ID_INCORRECT_FORMAT("Gate Id format incorrect."),
+
+    DATASET_ID_MISSING("Missing parameter DatasetId"),
+    DATASET_ID_TOO_LONG("Dataset Id max length is 36 characters."),
+    DATASET_ID_INCORRECT_FORMAT("Dataset Id format is incorrect."),
+
+    PLATFORM_ID_MISSING("Missing parameter platformId"),
+    PLATFORM_ID_TOO_LONG("Platform Id max length is 255 characters."),
+    PLATFORM_ID_INCORRECT_FORMAT("Platform Id format incorrect."),
+
+
     UIL_PLATFORM_MISSING("Missing parameter eFTIPlatformUrl"),
     UIL_UUID_TOO_LONG("Uuid max length is 36 characters."),
     UIL_UUID_INCORRECT_FORMAT("Uuid format incorrect."),
