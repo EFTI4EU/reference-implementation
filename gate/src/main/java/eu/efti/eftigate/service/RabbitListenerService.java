@@ -38,7 +38,7 @@ public class RabbitListenerService {
 
     @RabbitListener(queues = "${spring.rabbitmq.queues.eftiReceiveMessageQueue:efti.receive-messages.q}")
     public void listenReceiveMessage(final String message) {
-        log.info("Receive message from Domibus : {}", message);
+        log.debug("Receive message from Domibus : {}", message);
         apIncomingService.manageIncomingNotification(
                 serializeUtils.mapJsonStringToClass(message, ReceivedNotificationDto.class));
     }

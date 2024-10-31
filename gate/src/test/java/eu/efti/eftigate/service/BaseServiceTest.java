@@ -64,17 +64,17 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
         final String requestId = "67fe38bd-6bf7-4b06-b20e-206264bd639c";
 
-        this.uilDto.setEFTIGateUrl("gate");
-        this.uilDto.setEFTIDataUuid("uuid");
-        this.uilDto.setEFTIPlatformUrl("plateform");
+        this.uilDto.setGateId("gate");
+        this.uilDto.setDatasetId("uuid");
+        this.uilDto.setPlatformId("plateform");
 
         searchParameter.setIdentifier("AA123VV");
         searchParameter.setRegistrationCountryCode(CountryIndicator.BE.toString());
         searchParameter.setModeCode("1");
 
-        this.controlDto.setEftiDataUuid(uilDto.getEFTIDataUuid());
-        this.controlDto.setEftiGateUrl(uilDto.getEFTIGateUrl());
-        this.controlDto.setEftiPlatformUrl(uilDto.getEFTIPlatformUrl());
+        this.controlDto.setEftiDataUuid(uilDto.getDatasetId());
+        this.controlDto.setEftiGateUrl(uilDto.getGateId());
+        this.controlDto.setEftiPlatformUrl(uilDto.getPlatformId());
         this.controlDto.setRequestId(requestId);
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(StatusEnum.PENDING);
