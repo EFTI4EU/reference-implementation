@@ -50,6 +50,15 @@ spring:
 server:
   port: ${PORT}
 
+management:
+  endpoint:
+    health:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+
 batch:
   update:
     cron: "0 */1 * ? * *"
