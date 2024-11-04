@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<included>
+    <property name="domainName" value="france" scope="local" />
+    <appender name="${domainName}-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${catalina.home}/logs/${domainName}-domibus.log</file>
+        <filter class="eu.domibus.logging.DomibusLoggerDomainFilter">
+            <domain>${domainName}</domain>
+            <OnMismatch>DENY</OnMismatch>
+            <OnMatch>NEUTRAL</OnMatch>
+        </filter>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                <marker>SECURITY</marker>
+                <marker>BUSINESS</marker>
+            </evaluator>
+            <onMismatch>NEUTRAL</onMismatch>
+            <onMatch>DENY</onMatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${catalina.home}/logs/${domainName}-domibus-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- each file should be at most 30MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>30MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${encoderPattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="${domainName}-security-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${catalina.home}/logs/${domainName}-security.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <filter class="eu.domibus.logging.DomibusLoggerDomainFilter">
+            <domain>${domainName}</domain>
+            <OnMismatch>DENY</OnMismatch>
+            <OnMatch>NEUTRAL</OnMatch>
+        </filter>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                <marker>SECURITY</marker>
+            </evaluator>
+            <onMismatch>DENY</onMismatch>
+            <onMatch>NEUTRAL</onMatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${catalina.home}/logs/${domainName}-security-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- each file should be at most 30MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>30MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${encoderPattern}</pattern>
+        </encoder>
+    </appender>
+    <appender name="${domainName}-business-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${catalina.home}/logs/${domainName}-business.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <filter class="eu.domibus.logging.DomibusLoggerDomainFilter">
+            <domain>${domainName}</domain>
+            <OnMismatch>DENY</OnMismatch>
+            <OnMatch>NEUTRAL</OnMatch>
+        </filter>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                <marker>BUSINESS</marker>
+            </evaluator>
+            <onMismatch>DENY</onMismatch>
+            <onMatch>NEUTRAL</onMatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${catalina.home}/logs/${domainName}-business-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- each file should be at most 30MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>30MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${encoderPattern}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="${domainName}.eu.domibus" level="INFO">
+        <appender-ref ref="${domainName}-security-file"/>
+        <appender-ref ref="${domainName}-business-file"/>
+    </logger>
+
+    <root level="WARN">
+        <appender-ref ref="${domainName}-file"/>
+    </root>
+
+</included>
