@@ -5,10 +5,17 @@ After=syslog.target network.target
 
 [Service]
 Type=idle
-User=ubuntu
-Group=ubuntu
+User=root
+Group=root
 #RemainAfterExit=yes
 LimitNOFILE=102642
-ExecStart=/opt/keycloak/bin/kc.sh start --log=console,file
+ExecStart=/opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.profile.feature.upload_scripts=enabled
 #WorkingDirectory=/opt/keycloak
 StandardOutput=null
+Environment="KEYCLOAK_ADMIN=admin"
+Environment="KEYCLOAK_ADMIN_PASSWORD=secret"
+Environment="DEBUG=true"
+Environment="DEBUG_PORT=:8788"
+
+[Install]
+WantedBy=multi-user.targe
