@@ -9,7 +9,7 @@ User=root
 Group=root
 #RemainAfterExit=yes
 LimitNOFILE=102642
-ExecStart=/opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.profile.feature.upload_scripts=enabled
+ExecStart=/opt/keycloak/bin/kc.sh start-dev
 #WorkingDirectory=/opt/keycloak
 StandardOutput=null
 Environment="KEYCLOAK_ADMIN=admin"
@@ -18,4 +18,4 @@ Environment="DEBUG=true"
 Environment="DEBUG_PORT=:8788"
 
 [Install]
-WantedBy=multi-user.targe
+WantedBy=multi-user.target
