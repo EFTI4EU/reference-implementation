@@ -10,7 +10,7 @@
 --  Changeset src/main/resources/db/changelog.xml::EDELIVERY-7836::gautifr
 --  create DOMIBUS_SCALABLE_SEQUENCE sequence
 
-USE default_schema;
+USE default_domain_schema;
 
 CREATE TABLE DOMIBUS_SCALABLE_SEQUENCE (sequence_name VARCHAR(255) NOT NULL, next_val BIGINT NULL, CONSTRAINT PK_DOMIBUS_SCALABLE_SEQUENCE PRIMARY KEY (sequence_name));
 

@@ -6,7 +6,7 @@
 --  Against: null@offline:mysql?changeLogFile=/Users/dragusa/domibus_release_504/domibus/Core/Domibus-MSH-db/target/liquibase/changelog-5.1-data.mysql
 --  Liquibase version: 4.17.0
 --  *********************************************************************
-USE default_schema;
+USE default_domain_schema;
 
 --  Changeset src/main/resources/db/changelog-data.xml::EDELIVERY-2144_1::thomas dussart
 INSERT INTO TB_USER_ROLE (ID_PK, ROLE_NAME) VALUES ('197001010000000001', 'ROLE_ADMIN');
