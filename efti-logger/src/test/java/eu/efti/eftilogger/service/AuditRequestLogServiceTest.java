@@ -46,8 +46,7 @@ class AuditRequestLogServiceTest extends AbstractTestService {
                         .nationalUniqueIdentifier("nui").build())
                 .requestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH)
                 .requestId("requestId")
-                .subsetEuRequested("subsetEu")
-                .subsetMsRequested("subsetMS")
+                .subsetId("full")
                 .eftiDataUuid("dataUuid")
                 .error(ErrorDto.fromErrorCode(ErrorCodesEnum.DEFAULT_ERROR))
                 .build();
@@ -64,7 +63,7 @@ class AuditRequestLogServiceTest extends AbstractTestService {
 
     @Test
     void shouldLogAckTrue() throws JSONException {
-        final String expected = "{\"messageDate\":\"2024-07-31 15:05:53\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"sender\",\"requestingComponentCountry\":\"senderCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"receiver\",\"respondingComponentCountry\":\"receiverCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"DEFAULT_ERROR\",\"errorDescriptionMessage\":\"Error\",\"timeoutComponentType\":\"timeoutComponentType\",\"requestId\":\"requestId\",\"responseId\":\"responseId\",\"authorityNationalUniqueIdentifier\":\"nui\",\"authorityName\":\"name\",\"officerId\":\"officerId\",\"subsetEURequested\":\"subsetEu\",\"subsetMSRequested\":\"subsetMS\",\"requestType\":\"UIL_ACK\",\"eFTIDataId\":\"dataUuid\"}";
+        final String expected = "{\"messageDate\":\"2024-07-31 15:05:53\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"sender\",\"requestingComponentCountry\":\"senderCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"receiver\",\"respondingComponentCountry\":\"receiverCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"DEFAULT_ERROR\",\"errorDescriptionMessage\":\"Error\",\"timeoutComponentType\":\"timeoutComponentType\",\"requestId\":\"requestId\",\"responseId\":\"responseId\",\"authorityNationalUniqueIdentifier\":\"nui\",\"authorityName\":\"name\",\"officerId\":\"officerId\",\"subsetId\":\"full\",\"requestType\":\"UIL_ACK\",\"eFTIDataId\":\"dataUuid\"}";
         auditRequestLogService.log(controlDto, messagePartiesDto, GATE_ID, GATE_COUNTRY, BODY, status, true, "name");
         JSONAssert.assertEquals(expected, logWatcher.list.get(0).getFormattedMessage(),
                 new CustomComparator(JSONCompareMode.LENIENT,
@@ -73,7 +72,7 @@ class AuditRequestLogServiceTest extends AbstractTestService {
 
     @Test
     void shouldLogAckFalse() throws JSONException {
-        final String expected = "{\"messageDate\":\"2024-07-31 15:05:53\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"sender\",\"requestingComponentCountry\":\"senderCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"receiver\",\"respondingComponentCountry\":\"receiverCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"DEFAULT_ERROR\",\"errorDescriptionMessage\":\"Error\",\"timeoutComponentType\":\"timeoutComponentType\",\"requestId\":\"requestId\",\"responseId\":\"responseId\",\"authorityNationalUniqueIdentifier\":\"nui\",\"authorityName\":\"name\",\"officerId\":\"officerId\",\"subsetEURequested\":\"subsetEu\",\"subsetMSRequested\":\"subsetMS\",\"requestType\":\"UIL\",\"eFTIDataId\":\"dataUuid\"}";
+        final String expected = "{\"messageDate\":\"2024-07-31 15:05:53\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"sender\",\"requestingComponentCountry\":\"senderCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"receiver\",\"respondingComponentCountry\":\"receiverCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"DEFAULT_ERROR\",\"errorDescriptionMessage\":\"Error\",\"timeoutComponentType\":\"timeoutComponentType\",\"requestId\":\"requestId\",\"responseId\":\"responseId\",\"authorityNationalUniqueIdentifier\":\"nui\",\"authorityName\":\"name\",\"officerId\":\"officerId\",\"subsetId\":\"full\",\"requestType\":\"UIL\",\"eFTIDataId\":\"dataUuid\"}";
         auditRequestLogService.log(controlDto, messagePartiesDto, GATE_ID, GATE_COUNTRY, BODY, status, false, "name");
         JSONAssert.assertEquals(expected, logWatcher.list.get(0).getFormattedMessage(),
                 new CustomComparator(JSONCompareMode.LENIENT,

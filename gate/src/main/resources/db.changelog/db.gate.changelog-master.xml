@@ -240,4 +240,14 @@
                       remarks="Change of column gateurldest to gateiddest"
                       tableName="request"/>
     </changeSet>
+
+    <changeSet author="osouley" id="1707315732219-26">
+        <dropColumn tableName="control" columnName="subsetmsrequested"/>
+        <dropColumn tableName="control" columnName="subseteurequested"/>
+        <addColumn catalogName="efti" tableName="control">
+            <column name="subsetid" type="VARCHAR(255)" defaultValue="full">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -175,8 +175,7 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlDto.setRequestId(requestId);
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(status);
-        this.controlDto.setSubsetEuRequested("oki");
-        this.controlDto.setSubsetMsRequested("oki");
+        this.controlDto.setSubsetId("oki");
         this.controlDto.setCreatedDate(localDateTime);
         this.controlDto.setLastModifiedDate(localDateTime);
         this.controlDto.setAuthority(AuthorityDto.builder()
@@ -192,8 +191,7 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlEntity.setStatus(controlDto.getStatus());
         this.controlEntity.setPlatformId(controlDto.getPlatformId());
         this.controlEntity.setGateId(controlDto.getGateId());
-        this.controlEntity.setSubsetEuRequested(controlDto.getSubsetEuRequested());
-        this.controlEntity.setSubsetMsRequested(controlDto.getSubsetMsRequested());
+        this.controlEntity.setSubsetId(controlDto.getSubsetId());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
         this.controlEntity.setFromGateId(controlDto.getFromGateId());
@@ -613,8 +611,7 @@ class ControlServiceTest extends AbstractServiceTest {
                 .requestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")
                 .status(StatusEnum.PENDING)
                 .requestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH)
-                .subsetEuRequested("SubsetEuRequested")
-                .subsetMsRequested("SubsetMsRequested")
+                .subsetId("full")
                 .gateId("france")
                 .fromGateId("https://efti.gate.france.eu")
                 .transportIdentifiers(SearchParameter.builder()
@@ -636,8 +633,7 @@ class ControlServiceTest extends AbstractServiceTest {
                 .requestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")
                 .status(StatusEnum.PENDING)
                 .requestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH)
-                .subsetEuRequested("SubsetEuRequested")
-                .subsetMsRequested("SubsetMsRequested")
+                .subsetId("full")
                 .gateId("france")
                 .fromGateId("https://efti.gate.france.eu")
                 .transportIdentifiers(SearchParameter.builder()

@@ -78,8 +78,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlDto.setRequestId(requestId);
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(StatusEnum.PENDING);
-        this.controlDto.setSubsetEuRequested("oki");
-        this.controlDto.setSubsetMsRequested("oki");
+        this.controlDto.setSubsetId("oki");
         this.controlDto.setCreatedDate(localDateTime);
         this.controlDto.setLastModifiedDate(localDateTime);
 
@@ -89,8 +88,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlEntity.setStatus(controlDto.getStatus());
         this.controlEntity.setPlatformId(controlDto.getPlatformId());
         this.controlEntity.setGateId(controlDto.getGateId());
-        this.controlEntity.setSubsetEuRequested(controlDto.getSubsetEuRequested());
-        this.controlEntity.setSubsetMsRequested(controlDto.getSubsetMsRequested());
+        this.controlEntity.setSubsetId(controlDto.getSubsetId());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
         this.controlEntity.setFromGateId(controlDto.getFromGateId());

@@ -151,6 +151,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         uil.setGateId(requestDto.getGateIdDest());
         uilQuery.setUil(uil);
         uilQuery.setRequestId(requestDto.getControl().getRequestId());
+        uilQuery.setSubsetId(controlDto.getSubsetId());
 
         final JAXBElement<UILQuery> jaxBResponse = getObjectFactory().createUilQuery(uilQuery);
         return getSerializeUtils().mapJaxbObjectToXmlString(jaxBResponse, UILQuery.class);
