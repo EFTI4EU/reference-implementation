@@ -33,4 +33,6 @@ public class UilDto implements ValidableDto {
     @Pattern(regexp = REGEX_URI, message = "PLATFORM_ID_INCORRECT_FORMAT")
     @Schema(example = "regex = ^[-@./#&+\\w\\s]*$")
     private String platformId;
+
+    private String subsetId;
 }

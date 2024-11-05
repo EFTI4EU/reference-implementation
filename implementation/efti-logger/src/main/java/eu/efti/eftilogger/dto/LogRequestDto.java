@@ -15,7 +15,7 @@ public class LogRequestDto extends LogCommonDto {
     public final String authorityNationalUniqueIdentifier;
     public final String authorityName;
     public final String officerId;
-    public final String subsetEURequested;
+    public final String subsetId;
     public final String subsetMSRequested;
     public final String requestType;
 }

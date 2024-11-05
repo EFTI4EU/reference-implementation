@@ -24,8 +24,7 @@
     "status": "PENDING",
     "platformId": "acme",
     "gateId": "borduria",
-    "subsetEuRequested": "SubsetEuRequested",
-    "subsetMsRequested": "SubsetMsRequested",
+    "subsetId": "full",
     "createdDate": [
       2024,
       3,
