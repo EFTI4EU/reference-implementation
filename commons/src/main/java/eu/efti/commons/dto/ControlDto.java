@@ -32,15 +32,15 @@ public class ControlDto {
     private String requestId;
     private RequestTypeEnum requestType;
     private StatusEnum status;
-    private String eftiPlatformUrl;
-    private String eftiGateUrl;
+    private String platformId;
+    private String gateId;
     private String subsetEuRequested;
     private String subsetMsRequested;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private byte[] eftiData;
     private SearchParameter transportIdentifiers;
-    private String fromGateUrl;
+    private String fromGateId;
     private AuthorityDto authority;
     private ErrorDto error;
     private List<ConsignmentDto> identifiersResults;

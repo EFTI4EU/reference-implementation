@@ -31,7 +31,7 @@ spring:
 
 gate:
   country: BO
-  owner: http://efti.gate.borduria.eu
+  owner: borduria
   ap:
     url: http://efti.gate.borduria.eu:81/domibus/services/wsplugin
     username: borduria_service_account

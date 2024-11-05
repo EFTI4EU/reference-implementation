@@ -5,7 +5,7 @@
 
 TRUNCATE eftifr.gate;
 
-INSERT INTO eftifr.gate(country, url, createddate, lastmodifieddate) VALUES
- ('BO', 'https://mock.efti.int.k8s.groupein.local/bo', now(), now()),
- ('SY', 'https://mock.efti.int.k8s.groupein.local/sy', now(), now()),
- ('FR', 'https://gate-fr.efti.int.k8s.groupein.local', now(), now())
+INSERT INTO eftifr.gate(country, gateid, createddate, lastmodifieddate) VALUES
+    ('BO', 'borduria', now(), now()),
+    ('SY', 'syldavia', now(), now()),
+    ('FR', 'france', now(), now())

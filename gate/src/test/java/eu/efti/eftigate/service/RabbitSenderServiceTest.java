@@ -34,7 +34,7 @@ class RabbitSenderServiceTest {
         requestDto.setStatus(RequestStatusEnum.RECEIVED);
         requestDto.setRetry(0);
         requestDto.setControl(ControlDto.builder().id(1).build());
-        requestDto.setGateUrlDest("https://efti.gate.be.eu");
+        requestDto.setGateIdDest("https://efti.gate.be.eu");
         requestDto.setRequestType(RequestType.UIL);
 
         rabbitSenderService.sendMessageToRabbit("exchange", "key", requestDto);

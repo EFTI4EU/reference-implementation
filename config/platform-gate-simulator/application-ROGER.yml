@@ -11,11 +11,11 @@ server:
 gate:
   minSleep: 1000
   maxSleep: 2000
-  owner: http://efti.platform.umbrellainc.com
+  owner: roger
   cda_path: classpath:cda/
-  gate: http://efti.gate.listenbourg.eu
+  gate: france
   ap:
-    url: http://efti.platform.umbrellainc.com:81/domibus/services/wsplugin
-    username: umbrellacorporation_service_account
+    url: http://efti.platform.roger.com:81/domibus/services/wsplugin
+    username: roger_service_account
     password: Azerty59*1234567
 

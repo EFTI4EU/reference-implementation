@@ -29,21 +29,21 @@ public class RequestDto {
     private LocalDateTime nextRetryDate;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
-    private String gateUrlDest;
+    private String gateIdDest;
     private ControlDto control;
     private ErrorDto error;
     private RequestType requestType;
 
     protected RequestDto(final ControlDto controlDto) {
         this.retry = 0;
-        this.gateUrlDest = controlDto.getEftiGateUrl();
+        this.gateIdDest = controlDto.getGateId();
         this.control = controlDto;
     }
 
     public RequestDto(final ControlDto controlDto, final String destinationUrl) {
         this.status = RequestStatusEnum.RECEIVED;
         this.retry = 0;
-        this.gateUrlDest = StringUtils.isEmpty(destinationUrl) ? controlDto.getEftiGateUrl() : destinationUrl;
+        this.gateIdDest = StringUtils.isEmpty(destinationUrl) ? controlDto.getGateId() : destinationUrl;
         this.control = controlDto;
     }
 }

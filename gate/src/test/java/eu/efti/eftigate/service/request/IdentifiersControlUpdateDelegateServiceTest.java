@@ -74,9 +74,9 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
         identifierResponse.getConsignment().add(consignment);
         //Arrange
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
-        when(identifiersRequestRepository.findByControlRequestIdAndStatusAndGateUrlDest("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS, "https://efti.platform.borduria.eu")).thenReturn(identifiersRequestEntity);
+        when(identifiersRequestRepository.findByControlRequestIdAndStatusAndGateIdDest("67fe38bd-6bf7-4b06-b20e-206264bd639c", RequestStatusEnum.IN_PROGRESS, "borduria")).thenReturn(identifiersRequestEntity);
         //Act
-        identifiersControlUpdateDelegateService.updateExistingControl(identifierResponse, "https://efti.platform.borduria.eu");
+        identifiersControlUpdateDelegateService.updateExistingControl(identifierResponse, "borduria");
 
         //Assert
         verify(identifiersRequestRepository).save(requestEntityArgumentCaptor.capture());

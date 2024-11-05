@@ -1,7 +1,9 @@
-<identifierResponse xmlns="http://efti.eu/v1/edelivery" xmlns:ns2="http://efti.eu/v1/consignment/identifier" xmlns:ns3="http://efti.eu/v1/consignment/common" requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c" status="PENDING">
+<identifierResponse xmlns="http://efti.eu/v1/edelivery"
+                    requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c"
+                    status="PENDING">
     <consignment>
         <uil>
-            <platformId>http://efti.platform.truc.eu</platformId>
+            <platformId>ttf</platformId>
             <datasetId>12345678-ab12-4ab6-8999-123456789abc</datasetId>
         </uil>
     </consignment>

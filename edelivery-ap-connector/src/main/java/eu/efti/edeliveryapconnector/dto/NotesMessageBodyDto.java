@@ -14,8 +14,7 @@ import lombok.NoArgsConstructor;
 @XmlRootElement(name = "body")
 public class NotesMessageBodyDto {
     private String requestId;
-    @XmlElement(name = "eFTIPlatformUrl")
-    private String eFTIPlatformUrl;
+    private String platformId;
     @XmlElement(name = "eFTIDataUuid")
     private String eFTIDataUuid;
     private String note;

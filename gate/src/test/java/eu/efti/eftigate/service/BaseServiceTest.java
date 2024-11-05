@@ -16,7 +16,7 @@ import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.entity.RequestEntity;
-import eu.efti.eftigate.service.gate.EftiGateUrlResolver;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +44,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
     @Mock
     protected LogManager logManager;
     @Mock
-    protected EftiGateUrlResolver eftiGateUrlResolver;
+    protected EftiGateIdResolver eftiGateIdResolver;
 
     protected final UilDto uilDto = new UilDto();
     protected final ControlDto controlDto = new ControlDto();
@@ -73,8 +73,8 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         searchParameter.setModeCode("1");
 
         this.controlDto.setEftiDataUuid(uilDto.getDatasetId());
-        this.controlDto.setEftiGateUrl(uilDto.getGateId());
-        this.controlDto.setEftiPlatformUrl(uilDto.getPlatformId());
+        this.controlDto.setGateId(uilDto.getGateId());
+        this.controlDto.setPlatformId(uilDto.getPlatformId());
         this.controlDto.setRequestId(requestId);
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(StatusEnum.PENDING);
@@ -87,17 +87,17 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlEntity.setRequestId(controlDto.getRequestId());
         this.controlEntity.setRequestType(controlDto.getRequestType());
         this.controlEntity.setStatus(controlDto.getStatus());
-        this.controlEntity.setEftiPlatformUrl(controlDto.getEftiPlatformUrl());
-        this.controlEntity.setEftiGateUrl(controlDto.getEftiGateUrl());
+        this.controlEntity.setPlatformId(controlDto.getPlatformId());
+        this.controlEntity.setGateId(controlDto.getGateId());
         this.controlEntity.setSubsetEuRequested(controlDto.getSubsetEuRequested());
         this.controlEntity.setSubsetMsRequested(controlDto.getSubsetMsRequested());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
-        this.controlEntity.setFromGateUrl(controlDto.getFromGateUrl());
+        this.controlEntity.setFromGateId(controlDto.getFromGateId());
 
-        identifiersResult.setGateId("France");
+        identifiersResult.setGateId("france");
         identifiersResult.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
-        identifiersResult.setPlatformId("http://efti.platform.truc.eu");
+        identifiersResult.setPlatformId("ttf");
         identifiersResult.setUsedTransportEquipments(List.of(UsedTransportEquipment.builder()
                         .equipmentId("vehicleId1")
                         .registrationCountry(CountryIndicator.FR.name())
@@ -115,7 +115,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         requestEntity.setStatus(this.requestDto.getStatus());
         requestEntity.setRetry(this.requestDto.getRetry());
         requestEntity.setCreatedDate(LocalDateTime.now());
-        requestEntity.setGateUrlDest(this.requestDto.getGateUrlDest());
+        requestEntity.setGateIdDest(this.requestDto.getGateIdDest());
         requestEntity.setControl(controlEntity);
     }
 
@@ -123,7 +123,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         requestDto.setStatus(RequestStatusEnum.RECEIVED);
         requestDto.setRetry(0);
         requestDto.setCreatedDate(LocalDateTime.now());
-        requestDto.setGateUrlDest(controlEntity.getEftiGateUrl());
+        requestDto.setGateIdDest(controlEntity.getGateId());
         requestDto.setControl(ControlDto.builder().id(1).build());
     }
 }

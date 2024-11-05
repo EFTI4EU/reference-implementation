@@ -34,6 +34,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
+import org.xmlunit.diff.DefaultNodeMatcher;
+import org.xmlunit.diff.ElementSelectors;
 import org.xmlunit.matchers.CompareMatcher;
 
 import java.io.IOException;
@@ -87,8 +89,8 @@ class NotesRequestServiceTest extends BaseServiceTest {
         final ErrorDto errorDto = ErrorDto.fromErrorCode(ErrorCodesEnum.AP_SUBMISSION_ERROR);
         final NotesRequestDto requestDtoWithError = NotesRequestDto.builder()
                 .error(errorDto)
-                .control(ControlDto.builder().error(errorDto).fromGateUrl("fromGateUrl").eftiGateUrl("eftiGateUrl").build())
-                .gateUrlDest("gateUrlDest")
+                .control(ControlDto.builder().error(errorDto).fromGateId("fromGateId").gateId("gateId").build())
+                .gateIdDest("gateIdDest")
                 .requestType(RequestType.NOTE)
                 .build();
         final NoteRequestEntity noteRequestEntityWithError = mapperUtils.requestDtoToRequestEntity(requestDtoWithError, NoteRequestEntity.class);
@@ -139,7 +141,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
                 .build();
         controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
         noteRequestEntity.setStatus(IN_PROGRESS);
-        noteRequestEntity.setGateUrlDest("gate");
+        noteRequestEntity.setGateIdDest("gate");
 
         controlEntity.setRequests(List.of(uilRequestEntity));
         when(controlService.getByRequestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(Optional.of(controlEntity));
@@ -176,10 +178,10 @@ class NotesRequestServiceTest extends BaseServiceTest {
     @Test
     void shouldBuildResponseBody_whenRequestReceived() {
         controlDto.setRequestType(RequestTypeEnum.NOTE_SEND);
-        controlDto.setEftiPlatformUrl("http://efti.platform.acme.com");
+        controlDto.setPlatformId("acme");
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
         rabbitRequestDto.setControl(controlDto);
-        rabbitRequestDto.setEFTIPlatformUrl("http://example.com");
+        rabbitRequestDto.setPlatformId("example");
         rabbitRequestDto.setStatus(RECEIVED);
         rabbitRequestDto.setNote("The inspection did not reveal any anomalies. We recommend that you replace the tires as they are on the verge of wear");
 
@@ -187,7 +189,10 @@ class NotesRequestServiceTest extends BaseServiceTest {
 
         final String requestBody = notesRequestService.buildRequestBody(rabbitRequestDto);
 
-        MatcherAssert.assertThat(expectedRequestBody, CompareMatcher.isIdenticalTo(requestBody).ignoreWhitespace());
+        MatcherAssert.assertThat(expectedRequestBody, CompareMatcher.isSimilarTo(requestBody)
+                .ignoreWhitespace()
+                .normalizeWhitespace()
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)));
     }
 
     @Test

@@ -45,18 +45,18 @@ class LogManagerTest extends BaseServiceTest {
     @BeforeEach
     public void setUp() {
         gateProperties = GateProperties.builder().owner("ownerId").country("ownerCountry").build();
-        logManager = new LogManager(gateProperties, eftiGateUrlResolver, auditRequestLogService, auditRegistryLogService, serializeUtils, mapperUtils);
+        logManager = new LogManager(gateProperties, eftiGateIdResolver, auditRequestLogService, auditRegistryLogService, serializeUtils, mapperUtils);
         controlDto = ControlDto.builder()
                 .requestType(RequestTypeEnum.LOCAL_UIL_SEARCH)
-                .eftiPlatformUrl("platformUrl")
+                .platformId("platformId")
                 .id(1).build();
         uilDto = UilDto.builder()
-                .gateId("gateUrl").build();
+                .gateId("gateId").build();
     }
 
     @Test
     void testLogSentMessageError() {
-        when(eftiGateUrlResolver.resolve("receiver")).thenReturn("receiverCountry");
+        when(eftiGateIdResolver.resolve("receiver")).thenReturn("receiverCountry");
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
                 .requestingComponentId("ownerId")
                 .requestingComponentType(GATE)
@@ -73,7 +73,7 @@ class LogManagerTest extends BaseServiceTest {
 
     @Test
     void testLogSentMessageSuccess() {
-        when(eftiGateUrlResolver.resolve("receiver")).thenReturn("receiverCountry");
+        when(eftiGateIdResolver.resolve("receiver")).thenReturn("receiverCountry");
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
                 .requestingComponentId("ownerId")
                 .requestingComponentType(GATE)
@@ -91,7 +91,7 @@ class LogManagerTest extends BaseServiceTest {
     @Test
     void testLogAckMessageSuccess() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
-                .requestingComponentId("platformUrl")
+                .requestingComponentId("platformId")
                 .requestingComponentType(PLATFORM)
                 .requestingComponentCountry("ownerCountry")
                 .respondingComponentId("ownerId")
@@ -106,7 +106,7 @@ class LogManagerTest extends BaseServiceTest {
     @Test
     void testLogAckMessageError() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
-                .requestingComponentId("platformUrl")
+                .requestingComponentId("platformId")
                 .requestingComponentType(PLATFORM)
                 .requestingComponentCountry("ownerCountry")
                 .respondingComponentId("ownerId")
@@ -120,7 +120,7 @@ class LogManagerTest extends BaseServiceTest {
 
     @Test
     void testLogReceivedMessage() {
-        when(eftiGateUrlResolver.resolve("sender")).thenReturn("senderCountry");
+        when(eftiGateIdResolver.resolve("sender")).thenReturn("senderCountry");
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
                 .requestingComponentId("sender")
                 .requestingComponentType(GATE)

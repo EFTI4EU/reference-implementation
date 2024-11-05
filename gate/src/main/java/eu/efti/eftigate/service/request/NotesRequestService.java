@@ -60,9 +60,9 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
         final ControlDto controlDto = requestDto.getControl();
         final NotesRequestBodyDto requestBodyDto = NotesRequestBodyDto.builder()
                 .requestId(controlDto.getRequestId())
-                .eFTIPlatformUrl(StringUtils.isNotBlank(controlDto.getEftiPlatformUrl()) ? controlDto.getEftiPlatformUrl() : requestDto.getEFTIPlatformUrl())
+                .platformId(StringUtils.isNotBlank(controlDto.getPlatformId()) ? controlDto.getPlatformId() : requestDto.getPlatformId())
                 .eFTIDataUuid(controlDto.getEftiDataUuid())
-                .eFTIGateUrl(requestDto.getGateUrlDest())
+                .gateId(requestDto.getGateIdDest())
                 .note(requestDto.getNote())
                 .build();
         return getSerializeUtils().mapObjectToXmlString(requestBodyDto);
@@ -79,7 +79,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
         getControlService().getByRequestId(messageBody.getRequestId()).ifPresent(controlEntity -> {
             final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(controlEntity);
             controlDto.setNotes(messageBody.getNote());
-            createAndSendRequest(controlDto, messageBody.getEFTIPlatformUrl());
+            createAndSendRequest(controlDto, messageBody.getPlatformId());
             markMessageAsDownloaded(notificationDto.getMessageId());
         });
     }

@@ -19,8 +19,8 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class EftiGateUrlResolverTest {
-    private EftiGateUrlResolver eftiGateUrlResolver;
+class EftiGateIdResolverTest {
+    private EftiGateIdResolver eftiGateIdResolver;
     @Mock
     private GateRepository gateRepository;
 
@@ -32,7 +32,7 @@ class EftiGateUrlResolverTest {
 
     @BeforeEach
     public void before() {
-        eftiGateUrlResolver = new EftiGateUrlResolver(gateRepository);
+        eftiGateIdResolver = new EftiGateIdResolver(gateRepository);
 
         final AuthorityDto authorityDto = new AuthorityDto();
 
@@ -41,9 +41,9 @@ class EftiGateUrlResolverTest {
         this.searchWithIdentifiersRequestDto.setAuthority(authorityDto);
         this.searchWithIdentifiersRequestDto.setModeCode("ROAD");
 
-        frGateEntity = GateEntity.builder().id(1L).url("https://efti.gate.fr.eu").country(CountryIndicator.FR).build();
-        beGateEntity = GateEntity.builder().id(2L).url("https://efti.gate.be.eu").country(CountryIndicator.BE).build();
-        deGateEntity = GateEntity.builder().id(3L).url("https://efti.gate.de.eu").country(CountryIndicator.DE).build();
+        frGateEntity = GateEntity.builder().id(1L).gateId("https://efti.gate.fr.eu").country(CountryIndicator.FR).build();
+        beGateEntity = GateEntity.builder().id(2L).gateId("https://efti.gate.be.eu").country(CountryIndicator.BE).build();
+        deGateEntity = GateEntity.builder().id(3L).gateId("https://efti.gate.de.eu").country(CountryIndicator.DE).build();
     }
 
     @Test
@@ -53,11 +53,11 @@ class EftiGateUrlResolverTest {
         when(gateRepository.findByCountryIn(anyList())).thenReturn(List.of(frGateEntity, beGateEntity));
 
         //Act
-        final List<String> destinationGates = eftiGateUrlResolver.resolve(searchWithIdentifiersRequestDto);
+        final List<String> destinationGates = eftiGateIdResolver.resolve(searchWithIdentifiersRequestDto);
 
         //Assert
         assertFalse(destinationGates.isEmpty());
-        assertThat(List.of(frGateEntity.getUrl(), beGateEntity.getUrl())).hasSameElementsAs(destinationGates);
+        assertThat(List.of(frGateEntity.getGateId(), beGateEntity.getGateId())).hasSameElementsAs(destinationGates);
     }
 
     @Test
@@ -66,10 +66,10 @@ class EftiGateUrlResolverTest {
         when(gateRepository.findAll()).thenReturn(List.of(frGateEntity, beGateEntity, deGateEntity));
 
         //Act
-        final List<String> destinationGates = eftiGateUrlResolver.resolve(searchWithIdentifiersRequestDto);
+        final List<String> destinationGates = eftiGateIdResolver.resolve(searchWithIdentifiersRequestDto);
 
         //Assert
         assertFalse(destinationGates.isEmpty());
-        assertThat(List.of(frGateEntity.getUrl(), beGateEntity.getUrl(), deGateEntity.getUrl())).hasSameElementsAs(destinationGates);
+        assertThat(List.of(frGateEntity.getGateId(), beGateEntity.getGateId(), deGateEntity.getGateId())).hasSameElementsAs(destinationGates);
     }
 }

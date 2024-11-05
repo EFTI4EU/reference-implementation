@@ -11,9 +11,9 @@ server:
 gate:
   minSleep: 1000
   maxSleep: 2000
-  owner: http://efti.platform.massivedynamic.com
+  owner: massivedynamic
   cda_path: classpath:cda/
-  gate: http://efti.gate.syldavia.eu
+  gate: syldavia
   ap:
     url: http://efti.platform.massivedynamic.com:81/domibus/services/wsplugin
     username: massivedynamic_service_account

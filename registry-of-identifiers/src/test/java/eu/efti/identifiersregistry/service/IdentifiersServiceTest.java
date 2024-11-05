@@ -18,16 +18,18 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class IdentifiersServiceTest extends AbstractServiceTest {
 
-    public static final String GATE_URL = "http://efti.gate.borduria.eu";
+    public static final String GATE_ID = "france";
     public static final String DATA_UUID = "12345678-ab12-4ab6-8999-123456789abc";
-    public static final String PLATFORM_URL = "http://efti.platform.truc.eu";
+    public static final String PLATFORM_ID = "ttf";
     AutoCloseable openMocks;
 
     private IdentifiersService service;
@@ -42,17 +44,17 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         openMocks = MockitoAnnotations.openMocks(this);
         service = new IdentifiersService(repository, mapperUtils, auditRegistryLogService, serializeUtils);
 
-        ReflectionTestUtils.setField(service, "gateOwner", "http://efti.gate.borduria.eu");
+        ReflectionTestUtils.setField(service, "gateOwner", "france");
         ReflectionTestUtils.setField(service, "gateCountry", "BO");
 
         SaveIdentifiersRequest identifiersRequest = defaultSaveIdentifiersRequest();
-        saveIdentifiersRequestWrapper = new SaveIdentifiersRequestWrapper(PLATFORM_URL, identifiersRequest);
+        saveIdentifiersRequestWrapper = new SaveIdentifiersRequestWrapper(PLATFORM_ID, identifiersRequest);
 
 
         consignment = new Consignment();
-        consignment.setGateId(GATE_URL);
+        consignment.setGateId(GATE_ID);
         consignment.setDatasetId(DATA_UUID);
-        consignment.setPlatformId(PLATFORM_URL);
+        consignment.setPlatformId(PLATFORM_ID);
     }
 
     private static SaveIdentifiersRequest defaultSaveIdentifiersRequest() {
@@ -87,8 +89,8 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         verify(repository).save(argumentCaptor.capture());
         verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
-        assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());
-        assertEquals(GATE_URL, argumentCaptor.getValue().getGateId());
+        assertEquals(PLATFORM_ID, argumentCaptor.getValue().getPlatformId());
+        assertEquals(GATE_ID, argumentCaptor.getValue().getGateId());
     }
 
     @Test
@@ -101,54 +103,54 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         verify(repository).save(argumentCaptor.capture());
         verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
-        assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());
-        assertEquals(GATE_URL, argumentCaptor.getValue().getGateId());
+        assertEquals(PLATFORM_ID, argumentCaptor.getValue().getPlatformId());
+        assertEquals(GATE_ID, argumentCaptor.getValue().getGateId());
     }
 
     @Test
     void shouldCreateIfUilNotFound() {
         when(repository.save(any())).thenReturn(consignment);
-        when(repository.findByUil(GATE_URL, DATA_UUID, PLATFORM_URL)).thenReturn(Optional.empty());
+        when(repository.findByUil(GATE_ID, DATA_UUID, PLATFORM_ID)).thenReturn(Optional.empty());
         final ArgumentCaptor<Consignment> argumentCaptor = ArgumentCaptor.forClass(Consignment.class);
 
         service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
         verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
-        verify(repository).findByUil(GATE_URL, DATA_UUID, PLATFORM_URL);
+        verify(repository).findByUil(GATE_ID, DATA_UUID, PLATFORM_ID);
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
-        assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());
-        assertEquals(GATE_URL, argumentCaptor.getValue().getGateId());
+        assertEquals(PLATFORM_ID, argumentCaptor.getValue().getPlatformId());
+        assertEquals(GATE_ID, argumentCaptor.getValue().getGateId());
     }
 
     @Test
     void shouldExistByUil() {
-        when(repository.findByUil(GATE_URL, DATA_UUID, PLATFORM_URL)).thenReturn(Optional.of(new Consignment()));
+        when(repository.findByUil(GATE_ID, DATA_UUID, PLATFORM_ID)).thenReturn(Optional.of(new Consignment()));
 
-        assertTrue(service.existByUIL(DATA_UUID, GATE_URL, PLATFORM_URL));
+        assertTrue(service.existByUIL(DATA_UUID, GATE_ID, PLATFORM_ID));
     }
 
     @Test
     void shouldNotExistByUil() {
-        when(repository.findByUil(GATE_URL, DATA_UUID, PLATFORM_URL)).thenReturn(Optional.empty());
+        when(repository.findByUil(GATE_ID, DATA_UUID, PLATFORM_ID)).thenReturn(Optional.empty());
 
-        assertFalse(service.existByUIL(DATA_UUID, GATE_URL, PLATFORM_URL));
+        assertFalse(service.existByUIL(DATA_UUID, GATE_ID, PLATFORM_ID));
     }
 
     @Test
     void shouldUpdateIfUILFound() {
         when(repository.save(any())).thenReturn(consignment);
-        when(repository.findByUil(GATE_URL, DATA_UUID, PLATFORM_URL)).thenReturn(Optional.of(new Consignment()));
+        when(repository.findByUil(GATE_ID, DATA_UUID, PLATFORM_ID)).thenReturn(Optional.of(new Consignment()));
         final ArgumentCaptor<Consignment> argumentCaptor = ArgumentCaptor.forClass(Consignment.class);
 
         service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
         verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
-        verify(repository).findByUil(GATE_URL, DATA_UUID, PLATFORM_URL);
+        verify(repository).findByUil(GATE_ID, DATA_UUID, PLATFORM_ID);
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
-        assertEquals(PLATFORM_URL, argumentCaptor.getValue().getPlatformId());
-        assertEquals(GATE_URL, argumentCaptor.getValue().getGateId());
+        assertEquals(PLATFORM_ID, argumentCaptor.getValue().getPlatformId());
+        assertEquals(GATE_ID, argumentCaptor.getValue().getGateId());
     }
 
     @Test

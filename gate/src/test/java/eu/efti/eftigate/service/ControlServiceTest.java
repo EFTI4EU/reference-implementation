@@ -27,7 +27,7 @@ import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.AmbiguousIdentifierException;
 import eu.efti.eftigate.repository.ControlRepository;
-import eu.efti.eftigate.service.gate.EftiGateUrlResolver;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.IdentifiersRequestService;
 import eu.efti.eftigate.service.request.NotesRequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
@@ -86,7 +86,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     private ControlService controlService;
     @Mock
-    private EftiGateUrlResolver eftiGateUrlResolver;
+    private EftiGateIdResolver eftiGateIdResolver;
 
     @Mock
     private LogManager logManager;
@@ -128,13 +128,13 @@ class ControlServiceTest extends AbstractServiceTest {
     @BeforeEach
     public void before() {
         final GateProperties gateProperties = GateProperties.builder()
-                .owner("http://france.lol")
+                .owner("france")
                 .country("FR")
                 .ap(GateProperties.ApConfig.builder()
                         .url(URL)
                         .password(PASSWORD)
                         .username(USERNAME).build()).build();
-        controlService = new ControlService(controlRepository, eftiGateUrlResolver, identifiersService, mapperUtils,
+        controlService = new ControlService(controlRepository, eftiGateIdResolver, identifiersService, mapperUtils,
                 requestServiceFactory, logManager, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
                 gateProperties);
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
@@ -160,9 +160,9 @@ class ControlServiceTest extends AbstractServiceTest {
         requestIdDto.setRequestId(requestId);
         requestIdDto.setStatus(status);
 
-        this.uilDto.setGateId("http://www.gate.com");
+        this.uilDto.setGateId("france");
         this.uilDto.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
-        this.uilDto.setPlatformId("http://www.platform.com");
+        this.uilDto.setPlatformId("ttf");
 
         this.searchWithIdentifiersRequestDto.setIdentifier("abc123");
         this.searchWithIdentifiersRequestDto.setRegistrationCountryCode("FR");
@@ -170,8 +170,8 @@ class ControlServiceTest extends AbstractServiceTest {
         this.searchWithIdentifiersRequestDto.setModeCode("1");
 
         this.controlDto.setEftiDataUuid(uilDto.getDatasetId());
-        this.controlDto.setEftiGateUrl(uilDto.getGateId());
-        this.controlDto.setEftiPlatformUrl(uilDto.getPlatformId());
+        this.controlDto.setGateId(uilDto.getGateId());
+        this.controlDto.setPlatformId(uilDto.getPlatformId());
         this.controlDto.setRequestId(requestId);
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(status);
@@ -190,13 +190,13 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlEntity.setRequestId(controlDto.getRequestId());
         this.controlEntity.setRequestType(controlDto.getRequestType());
         this.controlEntity.setStatus(controlDto.getStatus());
-        this.controlEntity.setEftiPlatformUrl(controlDto.getEftiPlatformUrl());
-        this.controlEntity.setEftiGateUrl(controlDto.getEftiGateUrl());
+        this.controlEntity.setPlatformId(controlDto.getPlatformId());
+        this.controlEntity.setGateId(controlDto.getGateId());
         this.controlEntity.setSubsetEuRequested(controlDto.getSubsetEuRequested());
         this.controlEntity.setSubsetMsRequested(controlDto.getSubsetMsRequested());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
-        this.controlEntity.setFromGateUrl(controlDto.getFromGateUrl());
+        this.controlEntity.setFromGateId(controlDto.getFromGateId());
 
 
         identifiersResult.setDatasetId("datasetId");
@@ -230,7 +230,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createControlEntitySameGate() {
-        uilDto.setGateId("http://france.lol");
+        uilDto.setGateId("france");
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
@@ -249,6 +249,8 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createControlEntityTest() {
+        uilDto.setGateId("borduria");
+        uilDto.setPlatformId("acme");
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
 
@@ -266,7 +268,7 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void createControlEntityErrorGateNullTest() {
         uilDto.setGateId(null);
-        controlDto.setEftiGateUrl(null);
+        controlDto.setGateId(null);
         controlEntity.setStatus(StatusEnum.ERROR);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
@@ -282,7 +284,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createControlEntityErrorGateFormatTest() {
-        uilDto.setGateId("toto");
+        uilDto.setGateId("france@123");
         controlEntity.setStatus(StatusEnum.ERROR);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
@@ -299,7 +301,7 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void createControlEntityErrorPlatformNullTest() {
         uilDto.setPlatformId(null);
-        controlDto.setEftiPlatformUrl(null);
+        controlDto.setPlatformId(null);
         controlEntity.setStatus(StatusEnum.ERROR);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
@@ -315,7 +317,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createControlEntityErrorPlatformFormatTest() {
-        uilDto.setPlatformId("toto");
+        uilDto.setPlatformId("acme.com");
         controlEntity.setStatus(StatusEnum.ERROR);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
@@ -347,7 +349,7 @@ class ControlServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void createControlEntityErrorUuidFormatTest() {
+    void createControlEntityErrorDatasetIdFormatTest() {
         uilDto.setDatasetId("toto");
         controlEntity.setStatus(StatusEnum.ERROR);
 
@@ -476,7 +478,7 @@ class ControlServiceTest extends AbstractServiceTest {
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
         when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
-        when(eftiGateUrlResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("http://efti.gate.borduria.eu"));
+        when(eftiGateIdResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("borduria"));
 
 
         final RequestIdDto requestIdDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
@@ -493,7 +495,7 @@ class ControlServiceTest extends AbstractServiceTest {
     void createIdentifiersControlForLocalRequestTest() {
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH);
-        when(eftiGateUrlResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("http://france.lol"));
+        when(eftiGateIdResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("france"));
 
 
         final RequestIdDto requestIdDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
@@ -513,7 +515,7 @@ class ControlServiceTest extends AbstractServiceTest {
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
-        when(eftiGateUrlResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("http://italie.it"));
+        when(eftiGateIdResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("http://italie.it"));
 
 
         final RequestIdDto requestIdDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
@@ -550,7 +552,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(gateToRequestTypeFunction.apply(any())).thenReturn(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
-        when(eftiGateUrlResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("http://efti.gate.borduria.eu"));
+        when(eftiGateIdResolver.resolve(any(SearchWithIdentifiersRequestDto.class))).thenReturn(List.of("borduria"));
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
 
 
@@ -613,8 +615,8 @@ class ControlServiceTest extends AbstractServiceTest {
                 .requestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH)
                 .subsetEuRequested("SubsetEuRequested")
                 .subsetMsRequested("SubsetMsRequested")
-                .eftiGateUrl("france")
-                .fromGateUrl("https://efti.gate.france.eu")
+                .gateId("france")
+                .fromGateId("https://efti.gate.france.eu")
                 .transportIdentifiers(SearchParameter.builder()
                         .identifier("AA123VV")
                         .modeCode("1")
@@ -636,8 +638,8 @@ class ControlServiceTest extends AbstractServiceTest {
                 .requestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH)
                 .subsetEuRequested("SubsetEuRequested")
                 .subsetMsRequested("SubsetMsRequested")
-                .eftiGateUrl("france")
-                .fromGateUrl("https://efti.gate.france.eu")
+                .gateId("france")
+                .fromGateId("https://efti.gate.france.eu")
                 .transportIdentifiers(SearchParameter.builder()
                         .identifier("AA123VV")
                         .modeCode("1")
@@ -868,7 +870,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void shouldNotSendRequestIfNotFoundOnLocalRegistry() {
-        uilDto.setGateId("http://france.lol");
+        uilDto.setGateId("france");
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(identifiersService.existByUIL(any(), any(), any())).thenReturn(false);
@@ -884,9 +886,9 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void shouldCreateNoteRequestForExistingControl() {
         notesDto.setRequestId("requestId");
-        notesDto.setEFTIGateUrl("http://www.gate.com");
+        notesDto.setGateId("gate");
         notesDto.setEFTIDataUuid("12345678-ab12-4ab6-8999-123456789abc");
-        notesDto.setEFTIPlatformUrl("http://www.platform.com");
+        notesDto.setPlatformId("platform");
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(notesRequestService);
@@ -906,9 +908,9 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void shouldNotCreateNoteRequest_whenAssociatedControlDoesNotExist() {
         notesDto.setRequestId("requestId");
-        notesDto.setEFTIGateUrl("http://www.gate.com");
+        notesDto.setGateId("gate");
         notesDto.setEFTIDataUuid("12345678-ab12-4ab6-8999-123456789abc");
-        notesDto.setEFTIPlatformUrl("http://www.platform.com");
+        notesDto.setPlatformId("platform");
 
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
 
@@ -923,9 +925,9 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void shouldNotCreateNoteRequestForExistingControl_whenNoteHasMoreThan255Characters() {
         notesDto.setRequestId("requestId");
-        notesDto.setEFTIGateUrl("http://www.gate.com");
+        notesDto.setGateId("gate");
         notesDto.setEFTIDataUuid("12345678-ab12-4ab6-8999-123456789abc");
-        notesDto.setEFTIPlatformUrl("http://www.platform.com");
+        notesDto.setPlatformId("platform");
         notesDto.setNote(RandomStringUtils.randomAlphabetic(256));
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
@@ -945,6 +947,7 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void shouldCreateUilControl_whenGateIsNotTheCurrentOne() {
         //Arrange
+        controlDto.setGateId("italy");
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
@@ -961,8 +964,8 @@ class ControlServiceTest extends AbstractServiceTest {
     void shouldCreateUilControlAndRespondWithErrorForExternalAsk_whileOnCurrentGateAndDataNotFoundOnlocalRegistry() {
         //Arrange
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
-        controlDto.setEftiGateUrl("http://france.lol");
-        controlDto.setFromGateUrl("http://italie.lol");
+        controlDto.setGateId("france");
+        controlDto.setFromGateId("finland");
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
 
@@ -970,7 +973,7 @@ class ControlServiceTest extends AbstractServiceTest {
         ControlDto createdControl = controlService.createUilControl(controlDto);
 
         //Assert
-        verify(uilRequestService, times(1)).createAndSendRequest(createdControl, "http://italie.lol", RequestStatusEnum.ERROR);
+        verify(uilRequestService, times(1)).createAndSendRequest(createdControl, "finland", RequestStatusEnum.ERROR);
         verify(identifiersService, times(1)).existByUIL(any(), any(), any());
         assertNotNull(createdControl);
     }

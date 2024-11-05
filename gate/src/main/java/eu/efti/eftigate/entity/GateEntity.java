@@ -38,5 +38,6 @@ public class GateEntity extends AbstractModel implements Serializable {
     @Enumerated(EnumType.STRING)
     private CountryIndicator country;
 
-    private String url;
+    @Column(name = "gateid")
+    private String gateId;
 }
