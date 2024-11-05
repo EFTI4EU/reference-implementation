@@ -25,7 +25,7 @@ import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.exception.AmbiguousIdentifierException;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.ControlRepository;
-import eu.efti.eftigate.service.gate.EftiGateUrlResolver;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.utils.ControlUtils;
@@ -68,7 +68,7 @@ public class ControlService {
     public static final String ERROR_REQUEST_ID_NOT_FOUND = "Error requestId not found.";
     public static final String NOTE_WAS_NOT_SENT = "note was not sent";
     private final ControlRepository controlRepository;
-    private final EftiGateUrlResolver eftiGateUrlResolver;
+    private final EftiGateIdResolver eftiGateIdResolver;
     private final IdentifiersService identifiersService;
     private final MapperUtils mapperUtils;
     private final RequestServiceFactory requestServiceFactory;
@@ -122,7 +122,7 @@ public class ControlService {
             return new NoteResponseDto(NOTE_WAS_NOT_SENT, errorDto.getErrorCode(), errorDto.getErrorDescription());
         } else {
             controlDto.setNotes(notesDto.getNote());
-            getRequestService(RequestTypeEnum.NOTE_SEND).createAndSendRequest(controlDto, !gateProperties.isCurrentGate(controlDto.getEftiGateUrl()) ? controlDto.getEftiGateUrl() : null);
+            getRequestService(RequestTypeEnum.NOTE_SEND).createAndSendRequest(controlDto, !gateProperties.isCurrentGate(controlDto.getGateId()) ? controlDto.getGateId() : null);
             log.info("Note has been registered for control with request uuid '{}'", controlDto.getRequestId());
             return NoteResponseDto.builder().message("Note sent").build();
         }
@@ -248,8 +248,8 @@ public class ControlService {
                 .errorDescription(ERROR_REQUEST_ID_NOT_FOUND).build();
     }
 
-    public ControlDto createControlFrom(final IdentifierQuery identifierQuery, final String fromGateUrl, final IdentifiersResultsDto identifiersResultsDto) {
-        final ControlDto controlDto = ControlUtils.fromExternalIdentifiersControl(identifierQuery, EXTERNAL_ASK_IDENTIFIERS_SEARCH, fromGateUrl, gateProperties.getOwner(), identifiersResultsDto);
+    public ControlDto createControlFrom(final IdentifierQuery identifierQuery, final String fromGateId, final IdentifiersResultsDto identifiersResultsDto) {
+        final ControlDto controlDto = ControlUtils.fromExternalIdentifiersControl(identifierQuery, EXTERNAL_ASK_IDENTIFIERS_SEARCH, fromGateId, gateProperties.getOwner(), identifiersResultsDto);
         return this.save(controlDto);
     }
 
@@ -271,12 +271,12 @@ public class ControlService {
     }
 
     public ControlDto createUilControl(final ControlDto controlDto) {
-        if (gateProperties.isCurrentGate(controlDto.getEftiGateUrl()) && !checkOnLocalRegistry(controlDto)) {
+        if (gateProperties.isCurrentGate(controlDto.getGateId()) && !checkOnLocalRegistry(controlDto)) {
             createErrorControl(controlDto, ErrorDto.fromErrorCode(ErrorCodesEnum.DATA_NOT_FOUND_ON_REGISTRY), false);
             final ControlDto saveControl = this.save(controlDto);
             //respond with the error
             if (controlDto.isExternalAsk()) {
-                getRequestService(controlDto.getRequestType()).createAndSendRequest(saveControl, controlDto.getFromGateUrl(), RequestStatusEnum.ERROR);
+                getRequestService(controlDto.getRequestType()).createAndSendRequest(saveControl, controlDto.getFromGateId(), RequestStatusEnum.ERROR);
             }
             return saveControl;
         } else {
@@ -291,14 +291,14 @@ public class ControlService {
         log.info("checking local registry for dataUuid {}", controlDto.getEftiDataUuid());
         //log fti015
         logManager.logRequestRegistry(controlDto, null, LogManager.FTI_015);
-        final boolean result = this.identifiersService.existByUIL(controlDto.getEftiDataUuid(), controlDto.getEftiGateUrl(), controlDto.getEftiPlatformUrl());
+        final boolean result = this.identifiersService.existByUIL(controlDto.getEftiDataUuid(), controlDto.getGateId(), controlDto.getPlatformId());
         //log fti016
         logManager.logRequestRegistry(controlDto, String.valueOf(result), LogManager.FTI_016);
         return result;
     }
 
     private void createIdentifiersControl(final ControlDto controlDto, final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {
-        final List<String> destinationGatesUrls = eftiGateUrlResolver.resolve(searchWithIdentifiersRequestDto);
+        final List<String> destinationGatesUrls = eftiGateIdResolver.resolve(searchWithIdentifiersRequestDto);
 
         controlDto.setRequestType(gateToRequestTypeFunction.apply(destinationGatesUrls));
         final ControlDto saveControl = this.save(controlDto);
@@ -310,7 +310,7 @@ public class ControlService {
             } else {
                 getRequestService(saveControl.getRequestType()).createAndSendRequest(saveControl, destinationUrl);
                 final boolean isCurrentGate = gateProperties.isCurrentGate(destinationUrl);
-                logManager.logFromIdentifiersRequestDto(controlDto, searchWithIdentifiersRequestDto, isCurrentGate, isCurrentGate ? controlDto.getEftiPlatformUrl() : destinationUrl, true, false, LogManager.LOG_FROM_IDENTIFIERS_REQUEST_DTO);
+                logManager.logFromIdentifiersRequestDto(controlDto, searchWithIdentifiersRequestDto, isCurrentGate, isCurrentGate ? controlDto.getPlatformId() : destinationUrl, true, false, LogManager.LOG_FROM_IDENTIFIERS_REQUEST_DTO);
             }
         });
         log.info("Identifier control with request uuid '{}' has been register", saveControl.getRequestId());

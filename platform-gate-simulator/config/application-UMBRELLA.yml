@@ -11,9 +11,9 @@ server:
 gate:
   minSleep: 1000
   maxSleep: 2000
-  owner: http://efti.platform.umbrellainc.com
+  owner: umbrellainc
   cda_path: classpath:cda/
-  gate: http://efti.gate.listenbourg.eu
+  gate: listenbourg
   ap:
     url: http://efti.platform.umbrellainc.com:81/domibus/services/wsplugin
     username: umbrellacorporation_service_account

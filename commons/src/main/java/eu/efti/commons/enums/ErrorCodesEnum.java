@@ -8,7 +8,7 @@ import java.util.Optional;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCodesEnum {
-    UIL_GATE_MISSING("Missing parameter eFTIGateUrl"),
+    UIL_GATE_MISSING("Missing parameter GateId"),
     UIL_GATE_TOO_LONG("Gate max length is 255 characters."),
     UIL_GATE_INCORRECT_FORMAT("Gate format incorrect."),
 
@@ -29,7 +29,7 @@ public enum ErrorCodesEnum {
     PLATFORM_ID_INCORRECT_FORMAT("Platform Id format incorrect."),
 
 
-    UIL_PLATFORM_MISSING("Missing parameter eFTIPlatformUrl"),
+    UIL_PLATFORM_MISSING("Missing parameter platformId"),
     UIL_UUID_TOO_LONG("Uuid max length is 36 characters."),
     UIL_UUID_INCORRECT_FORMAT("Uuid format incorrect."),
 

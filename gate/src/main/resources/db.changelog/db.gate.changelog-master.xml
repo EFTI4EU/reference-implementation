@@ -204,4 +204,40 @@
                       remarks="Change of column requestuuid to requestid"
                       tableName="control"/>
     </changeSet>
+
+    <changeSet author="osouley" id="1707315732219-21">
+        <renameColumn columnDataType="VARCHAR(255)"
+                      newColumnName="gateid"
+                      oldColumnName="url"
+                      remarks="Change of column url to gateid"
+                      tableName="gate"/>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-22">
+        <renameColumn columnDataType="VARCHAR(255)"
+                      newColumnName="gateid"
+                      oldColumnName="eftigateurl"
+                      remarks="Change of column eftigateurl to gateid"
+                      tableName="control"/>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-23">
+        <renameColumn columnDataType="VARCHAR(255)"
+                      newColumnName="fromgateid"
+                      oldColumnName="fromgateurl"
+                      remarks="Change of column fromgateurl to fromgateid"
+                      tableName="control"/>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-24">
+        <renameColumn columnDataType="VARCHAR(255)"
+                      newColumnName="platformid"
+                      oldColumnName="eftiplatformurl"
+                      remarks="Change of column eftiplatformurl to platformid"
+                      tableName="control"/>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-25">
+        <renameColumn columnDataType="VARCHAR(255)"
+                      newColumnName="gateiddest"
+                      oldColumnName="gateurldest"
+                      remarks="Change of column gateurldest to gateiddest"
+                      tableName="request"/>
+    </changeSet>
 </databaseChangeLog>

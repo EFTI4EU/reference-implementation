@@ -11,7 +11,7 @@ import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.mapper.MapperUtils;
-import eu.efti.eftigate.service.gate.EftiGateUrlResolver;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftilogger.dto.MessagePartiesDto;
 import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
@@ -30,7 +30,7 @@ import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
 public class LogManager {
 
     private final GateProperties gateProperties;
-    private final EftiGateUrlResolver eftiGateUrlResolver;
+    private final EftiGateIdResolver eftiGateIdResolver;
     private final AuditRequestLogService auditRequestLogService;
     private final AuditRegistryLogService auditRegistryLogService;
     private final SerializeUtils serializeUtils;
@@ -64,7 +64,7 @@ public class LogManager {
                 .requestingComponentCountry(gateProperties.getCountry())
                 .respondingComponentType(isCurrentGate ? ComponentType.PLATFORM : ComponentType.GATE)
                 .respondingComponentId(receiver)
-                .respondingComponentCountry(eftiGateUrlResolver.resolve(receiver)).build();
+                .respondingComponentCountry(eftiGateIdResolver.resolve(receiver)).build();
         final StatusEnum status = isSucess ? StatusEnum.COMPLETE : StatusEnum.ERROR;
         final String body = serializeUtils.mapObjectToBase64String(message);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, status, false, name);
@@ -81,7 +81,7 @@ public class LogManager {
                 .requestingComponentCountry(gateProperties.getCountry())
                 .respondingComponentType(isCurrentGate ? ComponentType.PLATFORM : ComponentType.GATE)
                 .respondingComponentId(receiver)
-                .respondingComponentCountry(eftiGateUrlResolver.resolve(receiver)).build();
+                .respondingComponentCountry(eftiGateIdResolver.resolve(receiver)).build();
         final String body = serializeUtils.mapObjectToBase64String(identifiersRequestDto);
         final StatusEnum status = isSucess ? StatusEnum.COMPLETE : StatusEnum.ERROR;
 
@@ -93,11 +93,11 @@ public class LogManager {
                               final String name) {
         //todo not working for gate to gate, need to find a way to find the receiver
         final boolean isLocalRequest = control.getRequestType() == RequestTypeEnum.LOCAL_UIL_SEARCH;
-        final String receiver = isLocalRequest ? control.getEftiPlatformUrl() : control.getEftiGateUrl();
+        final String receiver = isLocalRequest ? control.getPlatformId() : control.getGateId();
         final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
                 .requestingComponentType(isLocalRequest ? PLATFORM : GATE)
                 .requestingComponentId(receiver)
-                .requestingComponentCountry(isLocalRequest ? gateProperties.getCountry() : eftiGateUrlResolver.resolve(receiver))
+                .requestingComponentCountry(isLocalRequest ? gateProperties.getCountry() : eftiGateIdResolver.resolve(receiver))
                 .respondingComponentType(GATE)
                 .respondingComponentId(gateProperties.getOwner())
                 .respondingComponentCountry(gateProperties.getCountry()).build();
@@ -109,7 +109,7 @@ public class LogManager {
                                    final String body,
                                    final String sender,
                                    final String name) {
-        final String senderCountry = eftiGateUrlResolver.resolve(sender);
+        final String senderCountry = eftiGateIdResolver.resolve(sender);
         final boolean senderIsKnown = senderCountry != null;
         final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
                 .requestingComponentType(senderIsKnown ? GATE : PLATFORM) // if sender is unknown, its a platform

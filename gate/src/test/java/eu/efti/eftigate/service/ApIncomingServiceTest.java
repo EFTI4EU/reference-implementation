@@ -44,7 +44,8 @@ class ApIncomingServiceTest extends BaseServiceTest {
     private EftiRequestUpdater eftiRequestUpdater;
     private EDeliveryMessageRouter router;
 
-    private final static String XML_BODY = """
+    //todo change body
+    private static final String XML_BODY = """
             <SaveIdentifiersRequest>
                 <eFTIPlatformUrl>https://efti.platform.001.eu</eFTIPlatformUrl>
                 <eFTIDataUuid>ac0bbbc9-f46e-4093-b523-830431fb1001</eFTIDataUuid>

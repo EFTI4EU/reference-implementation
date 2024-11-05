@@ -1,7 +1,6 @@
 package eu.efti.eftigate.dto;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
@@ -31,12 +30,11 @@ public class RabbitRequestDto {
     private LocalDateTime nextRetryDate;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
-    private String gateUrlDest;
+    private String gateIdDest;
     private ControlDto control;
     private ErrorDto error;
     private IdentifiersResults identifiersResults;
     private RequestType requestType;
     private String note;
-    @JsonProperty("eFTIPlatformUrl")
-    private String eFTIPlatformUrl;
+    private String platformId;
 }

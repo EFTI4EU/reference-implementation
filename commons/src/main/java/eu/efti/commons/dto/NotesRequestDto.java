@@ -14,11 +14,12 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class NotesRequestDto extends RequestDto {
     private String note;
-    private String eFTIPlatformUrl;
+    private String platformId;
+
     public NotesRequestDto(final ControlDto controlDto) {
         super(controlDto);
         this.setRequestType(RequestType.NOTE);
         this.setNote(controlDto.getNotes());
-        this.setEFTIPlatformUrl(controlDto.getEftiPlatformUrl());
+        this.setPlatformId(controlDto.getPlatformId());
     }
 }

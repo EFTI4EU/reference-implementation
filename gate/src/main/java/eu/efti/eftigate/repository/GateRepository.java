@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface GateRepository extends JpaRepository<GateEntity, Long> {
     List<GateEntity> findByCountryIn(List<CountryIndicator> countries);
-    GateEntity findByUrl(String url);
+
+    GateEntity findByGateId(String gateId);
 }

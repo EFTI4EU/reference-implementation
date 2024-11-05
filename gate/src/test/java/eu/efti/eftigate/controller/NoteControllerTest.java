@@ -39,9 +39,9 @@ class NoteControllerTest {
     @WithMockUser
     void createNoteTestAccepted() throws Exception {
         final NotesDto notesDto = new NotesDto();
-        notesDto.setEFTIPlatformUrl("platform");
+        notesDto.setPlatformId("platform");
         notesDto.setEFTIDataUuid("uuid");
-        notesDto.setEFTIGateUrl("gate");
+        notesDto.setGateId("gate");
         notesDto.setRequestId("requestId");
         notesDto.setNote("Conducteur suspect");
 
@@ -63,9 +63,9 @@ class NoteControllerTest {
     @WithMockUser
     void createNoteTestNotAccepted() throws Exception {
         final NotesDto notesDto = new NotesDto();
-        notesDto.setEFTIPlatformUrl("platform");
+        notesDto.setPlatformId("platform");
         notesDto.setEFTIDataUuid("uuid");
-        notesDto.setEFTIGateUrl("gate");
+        notesDto.setGateId("gate");
         notesDto.setRequestId("requestId");
         notesDto.setNote("Conducteur suspect");
 

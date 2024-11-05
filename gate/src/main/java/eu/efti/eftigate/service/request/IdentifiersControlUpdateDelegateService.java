@@ -30,9 +30,9 @@ public class IdentifiersControlUpdateDelegateService {
     }
 
     @Transactional("controlTransactionManager")
-    public void updateExistingControl(final IdentifierResponse response, final String gateUrlDest) {
+    public void updateExistingControl(final IdentifierResponse response, final String gateIdDest) {
         final IdentifiersResults identifiersResults = IdentifiersResults.builder().consignments(mapperUtils.eDeliveryToDto(response.getConsignment())).build();
-        final IdentifiersRequestEntity waitingRequest = identifiersRequestRepository.findByControlRequestIdAndStatusAndGateUrlDest(response.getRequestId(), RequestStatusEnum.IN_PROGRESS, gateUrlDest);
+        final IdentifiersRequestEntity waitingRequest = identifiersRequestRepository.findByControlRequestIdAndStatusAndGateIdDest(response.getRequestId(), RequestStatusEnum.IN_PROGRESS, gateIdDest);
         if (waitingRequest != null) {
             updateControlRequests(waitingRequest, identifiersResults);
         }

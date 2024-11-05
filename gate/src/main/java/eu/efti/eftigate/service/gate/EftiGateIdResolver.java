@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
 @Slf4j
-public class EftiGateUrlResolver {
+public class EftiGateIdResolver {
 
     private final GateRepository gateRepository;
 
@@ -39,12 +39,12 @@ public class EftiGateUrlResolver {
 
         return destinationGatesIndicatorMap.values()
                 .stream()
-                .map(gateEntity -> gateEntity != null ? gateEntity.getUrl() : null)
+                .map(gateEntity -> gateEntity != null ? gateEntity.getGateId() : null)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public String resolve(final String url) {
-        final GateEntity gateEntity = gateRepository.findByUrl(url);
+    public String resolve(final String gateId) {
+        final GateEntity gateEntity = gateRepository.findByGateId(gateId);
         return gateEntity != null ? gateEntity.getCountry().name() : null;
     }
 

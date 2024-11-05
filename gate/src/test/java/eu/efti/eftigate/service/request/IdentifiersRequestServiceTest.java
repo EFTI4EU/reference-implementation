@@ -56,7 +56,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class IdentifiersRequestServiceTest extends BaseServiceTest {
     private static final String DATA_UUID = "12345678-ab12-4ab6-8999-123456789abc";
-    private static final String PLATFORM_URL = "http://efti.platform.truc.eu";
+    private static final String PLATFORM_ID = "ttf";
 
     @Mock
     private IdentifiersService identifiersService;
@@ -86,7 +86,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
 
         consignmentDto = ConsignmentDto.builder()
                 .datasetId(DATA_UUID)
-                .platformId(PLATFORM_URL)
+                .platformId(PLATFORM_ID)
                 .usedTransportEquipments(List.of(UsedTransportEquipmentDto.builder()
                         .equipmentId("abc123").registrationCountry("FR").build(), UsedTransportEquipmentDto.builder()
                         .equipmentId("abc124").registrationCountry("BE").build()))
@@ -106,7 +106,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
 
         //Assert
         verify(mapperUtils, times(1)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
-        assertEquals("https://efti.platform.borduria.eu", requestDtoArgumentCaptor.getValue().getGateUrlDest());
+        assertEquals("https://efti.platform.borduria.eu", requestDtoArgumentCaptor.getValue().getGateIdDest());
     }
 
     @Test
