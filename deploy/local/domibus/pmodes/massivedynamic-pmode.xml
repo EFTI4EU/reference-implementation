@@ -26,11 +26,11 @@
 			</partyIdTypes>
 			<party name="syldavia"
 				   endpoint="http://efti.gate.syldavia.eu:81/domibus/services/msh?domain=syldavia">
-				<identifier partyId="http://efti.gate.syldavia.eu" partyIdType="partyTypeUrn"/>
+				<identifier partyId="syldavia" partyIdType="partyTypeUrn"/>
 			</party>
 			<party name="massivedynamic"
 				   endpoint="http://efti.platform.massivedynamic.com:81/domibus/services/msh?domain=massivedynamic">
-				<identifier partyId="http://efti.platform.massivedynamic.com" partyIdType="partyTypeUrn"/>
+				<identifier partyId="massivedynamic" partyIdType="partyTypeUrn"/>
 			</party>
 		</parties>
 		<meps>

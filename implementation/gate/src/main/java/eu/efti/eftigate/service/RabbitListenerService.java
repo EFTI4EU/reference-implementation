@@ -58,8 +58,8 @@ public class RabbitListenerService {
     private void trySendDomibus(final RabbitRequestDto rabbitRequestDto) {
 
         final RequestTypeEnum requestTypeEnum = rabbitRequestDto.getControl().getRequestType();
-        final boolean isCurrentGate = gateProperties.isCurrentGate(rabbitRequestDto.getGateUrlDest());
-        final String receiver = isCurrentGate ? rabbitRequestDto.getControl().getEftiPlatformUrl() : rabbitRequestDto.getGateUrlDest();
+        final boolean isCurrentGate = gateProperties.isCurrentGate(rabbitRequestDto.getGateIdDest());
+        final String receiver = isCurrentGate ? rabbitRequestDto.getControl().getPlatformId() : rabbitRequestDto.getGateIdDest();
         final RequestDto requestDto = mapperUtils.rabbitRequestDtoToRequestDto(rabbitRequestDto, EftiGateConstants.REQUEST_TYPE_CLASS_MAP.get(rabbitRequestDto.getRequestType()));
         boolean hasBeenSent = false;
 
@@ -83,7 +83,7 @@ public class RabbitListenerService {
     }
 
     private ApRequestDto buildApRequestDto(final RabbitRequestDto requestDto, final RequestTypeEnum requestTypeEnum) {
-        final String receiver = gateProperties.isCurrentGate(requestDto.getGateUrlDest()) ? requestDto.getControl().getEftiPlatformUrl() : requestDto.getGateUrlDest();
+        final String receiver = gateProperties.isCurrentGate(requestDto.getGateIdDest()) ? requestDto.getControl().getPlatformId() : requestDto.getGateIdDest();
         return ApRequestDto.builder()
                 .requestId(requestDto.getControl().getRequestId())
                 .sender(gateProperties.getOwner()).receiver(receiver)

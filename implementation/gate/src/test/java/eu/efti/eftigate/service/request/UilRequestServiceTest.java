@@ -84,11 +84,11 @@ class UilRequestServiceTest extends BaseServiceTest {
                         ControlDto
                                 .builder()
                                 .error(errorDto)
-                                .fromGateUrl("fromGateUrl")
-                                .eftiGateUrl("eftiGateUrl")
+                                .fromGateId("fromGateId")
+                                .gateId("gateId")
                                 .build()
                 )
-                .gateUrlDest("gateUrlDest")
+                .gateIdDest("gateIdDest")
                 .requestType(RequestType.UIL)
                 .build();
         final UilRequestEntity uilRequestEntityWithError = mapperUtils.requestDtoToRequestEntity(requestDtoWithError, UilRequestEntity.class);
@@ -107,13 +107,13 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                <uilResponse
-                        xmlns="http://efti.eu/v1/edelivery"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="200">
-                </uilResponse>
-        """;
+                        <uilResponse
+                                xmlns="http://efti.eu/v1/edelivery"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                                status="200">
+                        </uilResponse>
+                """;
 
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -269,7 +269,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
         final ArgumentCaptor<UilRequestEntity> requestEntityArgumentCaptor = ArgumentCaptor.forClass(UilRequestEntity.class);
-        uilRequestEntity.getControl().setFromGateUrl("other");
+        uilRequestEntity.getControl().setFromGateId("other");
         when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
 
@@ -406,7 +406,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
         rabbitRequestDto.setControl(controlDto);
-        rabbitRequestDto.setEFTIPlatformUrl("http://example.com");
+        rabbitRequestDto.setPlatformId("example");
         rabbitRequestDto.setStatus(RequestStatusEnum.RESPONSE_IN_PROGRESS);
 
         final String expectedRequestBody = EftiTestUtils.testFile("/xml/FTI022.xml");

@@ -22,7 +22,7 @@ spring:
         identifiers_schema: "eftili"
 
 gate:
-  owner: http://efti.gate.listenbourg.eu
+  owner: listenbourg
   country: LI
   ap:
     url: http://efti.gate.listenbourg.eu:81/domibus/services/wsplugin

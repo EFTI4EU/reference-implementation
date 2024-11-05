@@ -73,7 +73,7 @@ public abstract class RequestService<T extends RequestEntity> {
 
     protected abstract T findRequestByMessageIdOrThrow(final String eDeliveryMessageId);
 
-    public void createAndSendRequest(final ControlDto controlDto, final String destinationUrl){
+    public void createAndSendRequest(final ControlDto controlDto, final String destinationUrl) {
         this.createAndSendRequest(controlDto, destinationUrl, RequestStatusEnum.RECEIVED);
     }
 
@@ -86,7 +86,7 @@ public abstract class RequestService<T extends RequestEntity> {
 
     protected RequestDto initRequest(final ControlDto controlDto, final String destinationUrl) {
         final RequestDto requestDto = createRequest(controlDto);
-        requestDto.setGateUrlDest(StringUtils.isNotBlank(destinationUrl) ? destinationUrl : controlDto.getEftiGateUrl());
+        requestDto.setGateIdDest(StringUtils.isNotBlank(destinationUrl) ? destinationUrl : controlDto.getGateId());
         log.info("Request has been register with controlId : {}", requestDto.getControl().getId());
         return requestDto;
     }
@@ -109,11 +109,11 @@ public abstract class RequestService<T extends RequestEntity> {
         requestDto.setError(errorDto);
         controlService.setError(requestDto.getControl(), errorDto);
         final RequestDto requestDtoUpdated = this.updateStatus(requestDto, ERROR);
-        if (requestDtoUpdated.getControl().getFromGateUrl() != null &&
-                !gateProperties.isCurrentGate(requestDtoUpdated.getControl().getFromGateUrl()) &&
+        if (requestDtoUpdated.getControl().getFromGateId() != null &&
+                !gateProperties.isCurrentGate(requestDtoUpdated.getControl().getFromGateId()) &&
                 ErrorCodesEnum.AP_SUBMISSION_ERROR.name().equals(requestDto.getControl().getError().getErrorCode())) {
-            requestDtoUpdated.setGateUrlDest(requestDtoUpdated.getControl().getFromGateUrl());
-            requestDtoUpdated.getControl().setEftiGateUrl(requestDtoUpdated.getControl().getFromGateUrl());
+            requestDtoUpdated.setGateIdDest(requestDtoUpdated.getControl().getFromGateId());
+            requestDtoUpdated.getControl().setGateId(requestDtoUpdated.getControl().getFromGateId());
             this.sendRequest(requestDtoUpdated);
         }
     }
@@ -126,13 +126,13 @@ public abstract class RequestService<T extends RequestEntity> {
     public void updateSentRequestStatus(final RequestDto requestDto, final String edeliveryMessageId) {
         requestDto.setEdeliveryMessageId(edeliveryMessageId);
         final RequestStatusEnum requestStatus = requestDto.getStatus();
-        if (!(RESPONSE_IN_PROGRESS.equals(requestStatus) || ERROR.equals(requestStatus) || TIMEOUT.equals(requestStatus))){
+        if (!(RESPONSE_IN_PROGRESS.equals(requestStatus) || ERROR.equals(requestStatus) || TIMEOUT.equals(requestStatus))) {
             requestDto.setStatus(IN_PROGRESS);
         }
         this.save(requestDto);
     }
 
-    protected void markMessageAsDownloaded(final String eDeliveryMessageId){
+    protected void markMessageAsDownloaded(final String eDeliveryMessageId) {
         try {
             getRequestUpdaterService().setMarkedAsDownload(createApConfig(), eDeliveryMessageId);
         } catch (final MalformedURLException e) {
@@ -157,12 +157,12 @@ public abstract class RequestService<T extends RequestEntity> {
                 .retry(0)
                 .control(controlDto)
                 .status(status)
-                .gateUrlDest(controlDto.getFromGateUrl())
+                .gateIdDest(controlDto.getFromGateId())
                 .build();
     }
 
     public void notifyTimeout(final RequestDto requestDto) {
-        requestDto.setGateUrlDest(requestDto.getControl().getFromGateUrl());
+        requestDto.setGateIdDest(requestDto.getControl().getFromGateId());
         sendRequest(requestDto);
     }
 }

@@ -22,7 +22,7 @@ spring:
         identifiers_schema: "eftisy"
 
 gate:
-  owner: http://efti.gate.syldavia.eu
+  owner: syldavia
   country: SY
   ap:
     url: http://efti.gate.syldavia.eu:81/domibus/services/wsplugin

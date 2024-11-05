@@ -192,7 +192,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 .control(controlDto)
                 .status(status)
                 .identifiersResults(IdentifiersResultsDto.builder().consignments(identifiersDtoList).build())
-                .gateUrlDest(controlDto.getFromGateUrl())
+                .gateIdDest(controlDto.getFromGateId())
                 .requestType(RequestType.IDENTIFIER)
                 .build();
     }

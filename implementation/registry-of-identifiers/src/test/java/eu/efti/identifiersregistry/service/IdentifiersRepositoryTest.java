@@ -43,9 +43,9 @@ class IdentifiersRepositoryTest {
         openMocks = MockitoAnnotations.openMocks(this);
 
         final Consignment consignment = new Consignment();
-        consignment.setGateId("thegateurl");
+        consignment.setGateId("thegateid");
         consignment.setDatasetId("thedatauuid");
-        consignment.setPlatformId("theplatformurl");
+        consignment.setPlatformId("theplatformid");
 
         consignment.setMainCarriageTransportMovements(List.of(MainCarriageTransportMovement.builder()
                 .dangerousGoodsIndicator(true)
@@ -62,9 +62,9 @@ class IdentifiersRepositoryTest {
         identifiersRepository.save(consignment);
 
         final Consignment otherConsignment = new Consignment();
-        otherConsignment.setGateId("othergateurl");
+        otherConsignment.setGateId("othergateid");
         otherConsignment.setDatasetId("thedatauuid");
-        otherConsignment.setPlatformId("theplatformurl");
+        otherConsignment.setPlatformId("theplatformid");
 
         otherConsignment.setMainCarriageTransportMovements(List.of(MainCarriageTransportMovement.builder()
                 .dangerousGoodsIndicator(false).build()));
@@ -88,14 +88,14 @@ class IdentifiersRepositoryTest {
     @Test
     void shouldGetDataByUil() {
 
-        final Optional<Consignment> result = identifiersRepository.findByUil("thegateurl", "thedatauuid", "theplatformurl");
-        final Optional<Consignment> otherResult = identifiersRepository.findByUil("othergateurl", "thedatauuid", "theplatformurl");
-        final Optional<Consignment> emptyResult = identifiersRepository.findByUil("notgateurl", "thedatauuid", "theplatformurl");
+        final Optional<Consignment> result = identifiersRepository.findByUil("thegateid", "thedatauuid", "theplatformid");
+        final Optional<Consignment> otherResult = identifiersRepository.findByUil("othergateid", "thedatauuid", "theplatformid");
+        final Optional<Consignment> emptyResult = identifiersRepository.findByUil("notgateid", "thedatauuid", "theplatformid");
 
         assertTrue(result.isPresent());
-        assertEquals("thegateurl", result.get().getGateId());
+        assertEquals("thegateid", result.get().getGateId());
         assertTrue(otherResult.isPresent());
-        assertEquals("othergateurl", otherResult.get().getGateId());
+        assertEquals("othergateid", otherResult.get().getGateId());
         assertTrue(emptyResult.isEmpty());
 
     }

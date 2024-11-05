@@ -24,7 +24,7 @@ class AuditRegistryLogServiceTest extends AbstractTestService {
         ((Logger) LoggerFactory.getLogger(LogService.class)).addAppender(logWatcher);
 
         consignmentDto = ConsignmentDto.builder()
-                .platformId("platformUrl")
+                .platformId("platformId")
                 .datasetId("dataUid")
                 .build();
         auditRegistryLogService = new AuditRegistryLogService(serializeUtils);
@@ -32,15 +32,15 @@ class AuditRegistryLogServiceTest extends AbstractTestService {
 
     @Test
     void shouldLogCreation() {
-        final String expected = "\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"PLATFORM\",\"requestingComponentId\":\"platformUrl\",\"requestingComponentCountry\":\"gateCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"gateId\",\"respondingComponentCountry\":\"gateCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"\",\"errorDescriptionMessage\":\"\",\"timeoutComponentType\":\"timeoutComponentType\",\"identifiersId\":null,\"eFTIDataId\":\"dataUid\",\"interfaceType\":\"EDELIVERY\",\"eftidataId\":\"dataUid\"";
-        auditRegistryLogService.log(consignmentDto, gateId, gateCountry, body, "name");
+        final String expected = "\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"PLATFORM\",\"requestingComponentId\":\"platformId\",\"requestingComponentCountry\":\"gateCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"gateId\",\"respondingComponentCountry\":\"gateCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"\",\"errorDescriptionMessage\":\"\",\"timeoutComponentType\":\"timeoutComponentType\",\"identifiersId\":null,\"eFTIDataId\":\"dataUid\",\"interfaceType\":\"EDELIVERY\",\"eftidataId\":\"dataUid\"";
+        auditRegistryLogService.log(consignmentDto, GATE_ID, GATE_COUNTRY, BODY, "name");
         assertThat(logWatcher.list.get(0).getFormattedMessage()).contains(expected);
     }
 
     @Test
     void shouldLogCreationError() {
-        final String expected = "\"name\":\"name\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"PLATFORM\",\"requestingComponentId\":\"platformUrl\",\"requestingComponentCountry\":\"gateCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"gateId\",\"respondingComponentCountry\":\"gateCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"\",\"errorDescriptionMessage\":\"\",\"timeoutComponentType\":\"timeoutComponentType\",\"identifiersId\":null,\"eFTIDataId\":\"dataUid\",\"interfaceType\":\"EDELIVERY\",\"eftidataId\":\"dataUid\"";
-        auditRegistryLogService.log(consignmentDto, gateId, gateCountry, body, "name");
+        final String expected = "\"name\":\"name\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"PLATFORM\",\"requestingComponentId\":\"platformId\",\"requestingComponentCountry\":\"gateCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"gateId\",\"respondingComponentCountry\":\"gateCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"\",\"errorDescriptionMessage\":\"\",\"timeoutComponentType\":\"timeoutComponentType\",\"identifiersId\":null,\"eFTIDataId\":\"dataUid\",\"interfaceType\":\"EDELIVERY\",\"eftidataId\":\"dataUid\"";
+        auditRegistryLogService.log(consignmentDto, GATE_ID, GATE_COUNTRY, BODY, "name");
         assertThat(logWatcher.list.get(0).getFormattedMessage()).contains(expected);
     }
 }

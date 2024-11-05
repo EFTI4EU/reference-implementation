@@ -22,7 +22,7 @@ spring:
         identifiers_schema: "eftibo"
 
 gate:
-  owner: http://efti.gate.borduria.eu
+  owner: borduria
   country: BO
   ap:
     url: http://efti.gate.borduria.eu:81/domibus/services/wsplugin

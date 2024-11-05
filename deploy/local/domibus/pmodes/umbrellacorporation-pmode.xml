@@ -26,11 +26,11 @@
 			</partyIdTypes>
 			<party name="listenbourg"
 				   endpoint="http://efti.gate.listenbourg.eu:81/domibus/services/msh?domain=listenbourg">
-				<identifier partyId="http://efti.gate.listenbourg.eu" partyIdType="partyTypeUrn"/>
+				<identifier partyId="listenbourg" partyIdType="partyTypeUrn"/>
 			</party>
 			<party name="umbrellacorporation"
 				   endpoint="http://efti.platform.umbrellainc.com:81/domibus/services/msh?domain=umbrellacorporation">
-				<identifier partyId="http://efti.platform.umbrellainc.com" partyIdType="partyTypeUrn"/>
+				<identifier partyId="umbrellainc" partyIdType="partyTypeUrn"/>
 			</party>
 		</parties>
 		<meps>

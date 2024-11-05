@@ -26,11 +26,11 @@
 			</partyIdTypes>
 			<party name="borduria"
 				   endpoint="http://efti.gate.borduria.eu:81/domibus/services/msh?domain=borduria">
-				<identifier partyId="http://efti.gate.borduria.eu" partyIdType="partyTypeUrn"/>
+				<identifier partyId="borduria" partyIdType="partyTypeUrn"/>
 			</party>
 			<party name="acme"
 				   endpoint="http://efti.platform.acme.com:81/domibus/services/msh?domain=acme">
-				<identifier partyId="http://efti.platform.acme.com" partyIdType="partyTypeUrn"/>
+				<identifier partyId="acme" partyIdType="partyTypeUrn"/>
 			</party>
 		</parties>
 		<meps>

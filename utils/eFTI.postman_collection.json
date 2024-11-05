@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "17e1803a-ec5b-4acf-b2f7-268df6d89754",
+		"_postman_id": "25a18b1d-50d8-49bd-9ed3-83cbd13507ab",
 		"name": "eFTI",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "30836777"
+		"_exporter_id": "32860366"
 	},
 	"item": [
 		{
@@ -102,7 +102,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"http://efti.gate.borduria.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"gateId\": \"borduria\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"acme\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -157,7 +157,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{gate_bo_url}}/v1/requestUil?requestUuid=6ec2bb3b-d984-4d0c-a272-0110d3fd56fa",
+									"raw": "{{gate_bo_url}}/v1/requestUil?requestId=6ec2bb3b-d984-4d0c-a272-0110d3fd56fa",
 									"host": [
 										"{{gate_bo_url}}"
 									],
@@ -167,7 +167,7 @@
 									],
 									"query": [
 										{
-											"key": "requestUuid",
+											"key": "requestId",
 											"value": "6ec2bb3b-d984-4d0c-a272-0110d3fd56fa"
 										}
 									]
@@ -211,7 +211,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"isDangerousGoods\": true,\r\n    \"vehicleID\": \"AA123BB\",\r\n    \"eFTIGateIndicator\": [\"BO\", \"SY\", \"LI\"],\r\n    \"authority\" : {\r\n        \"country\": \"BO\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"additionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"BO\", \"SY\"]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -247,7 +247,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{gate_bo_url}}/v1/getIdentifiers?requestUuid=83df07ac-44de-4ac4-9774-4939adead502",
+									"raw": "{{gate_bo_url}}/v1/getIdentifiers?requestId=83df07ac-44de-4ac4-9774-4939adead502",
 									"host": [
 										"{{gate_bo_url}}"
 									],
@@ -257,7 +257,7 @@
 									],
 									"query": [
 										{
-											"key": "requestUuid",
+											"key": "requestId",
 											"value": "83df07ac-44de-4ac4-9774-4939adead502"
 										}
 									]
@@ -282,7 +282,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"http://efti.gate.syldavia.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.massivedynamic.com\",\r\n    \"authority\" : {\r\n        \"country\": \"BO\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"gateId\": \"syldavia\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"massivedynamic\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -319,7 +319,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"http://efti.gate.listenbourg.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.umbrellainc.com\",\r\n    \"authority\" : {\r\n        \"country\": \"BO\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"gateId\": \"listenbourg\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"umbrellainc\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -647,7 +647,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"http://efti.gate.listenbourg.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.umbrellainc.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"gateId\": \"listenbourg\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"umbrellainc\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -702,7 +702,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{gate_li_url}}/v1/requestUil?requestUuid=9d5711db-cb33-436a-b9a6-d2efb25fe619",
+									"raw": "{{gate_li_url}}/v1/requestUil?requestId=9d5711db-cb33-436a-b9a6-d2efb25fe619",
 									"host": [
 										"{{gate_li_url}}"
 									],
@@ -712,7 +712,7 @@
 									],
 									"query": [
 										{
-											"key": "requestUuid",
+											"key": "requestId",
 											"value": "9d5711db-cb33-436a-b9a6-d2efb25fe619"
 										}
 									]
@@ -756,7 +756,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"isDangerousGoods\": true,\r\n    \"vehicleID\": \"AA123BB\",\r\n    \"authority\" : {\r\n        \"country\": \"LI\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"additionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"LI\", \"SY\"]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -792,7 +792,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{gate_li_url}}/v1/getIdentifiers?requestUuid=5ec2b791-7953-4bd7-8f8a-d8efdfaca280",
+									"raw": "{{gate_li_url}}/v1/getIdentifiers?requestId=5ec2b791-7953-4bd7-8f8a-d8efdfaca280",
 									"host": [
 										"{{gate_li_url}}"
 									],
@@ -802,7 +802,7 @@
 									],
 									"query": [
 										{
-											"key": "requestUuid",
+											"key": "requestId",
 											"value": "5ec2b791-7953-4bd7-8f8a-d8efdfaca280"
 										}
 									]
@@ -827,7 +827,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_bo_domain}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"authority\" : {\r\n        \"country\": \"LI\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"gateId\": \"borduria\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"acme\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1157,7 +1157,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"http://efti.gate.syldavia.eu\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.massivedynamic.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"gateId\": \"syldavia\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"massivedynamic\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1212,7 +1212,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{gate_sy_url}}/v1/requestUil?requestUuid=6d84d0dc-1846-4602-ae32-e50fabc43a91",
+									"raw": "{{gate_sy_url}}/v1/requestUil?requestId=6d84d0dc-1846-4602-ae32-e50fabc43a91",
 									"host": [
 										"{{gate_sy_url}}"
 									],
@@ -1222,7 +1222,7 @@
 									],
 									"query": [
 										{
-											"key": "requestUuid",
+											"key": "requestId",
 											"value": "6d84d0dc-1846-4602-ae32-e50fabc43a91"
 										}
 									]
@@ -1266,7 +1266,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"isDangerousGoods\": false,\r\n    \"vehicleID\": \"abc123\",\r\n    \"eFTIGateIndicator\": [\"DE\",\"BE\"],\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"additionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"LI\", \"SY\"]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1302,7 +1302,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{gate_sy_url}}/v1/getIdentifiers?requestUuid=98188661-b803-4d0c-b21f-d368c7417b8b",
+									"raw": "{{gate_sy_url}}/v1/getIdentifiers?requestId=98188661-b803-4d0c-b21f-d368c7417b8b",
 									"host": [
 										"{{gate_sy_url}}"
 									],
@@ -1312,7 +1312,7 @@
 									],
 									"query": [
 										{
-											"key": "requestUuid",
+											"key": "requestId",
 											"value": "98188661-b803-4d0c-b21f-d368c7417b8b"
 										}
 									]
@@ -1337,7 +1337,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"eFTIGateUrl\": \"{{gate_bo_domain}}\",\r\n    \"eFTIDataUuid\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"eFTIPlatformUrl\": \"http://efti.platform.acme.com\",\r\n    \"authority\" : {\r\n        \"country\": \"FR\",\r\n        \"legalContact\": {\r\n            \"email\": \"test@gmail.com\",\r\n            \"streetName\": \"rue des rossignols\",\r\n            \"buildingNumber\": \"12\",\r\n            \"city\":\"Acheville\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"62320\"\r\n        },\r\n        \"workingContact\": {\r\n            \"email\": \"toto@gmail.com\",\r\n            \"streetName\": \"rue des cafés\",\r\n            \"buildingNumber\": \"14\",\r\n            \"city\":\"Lille\",\r\n            \"addtionalLine\": \"osef\",\r\n            \"postalCode\": \"59000\"\r\n\r\n        },\r\n        \"isEmergencyService\": true,\r\n        \"name\": \"toto\",\r\n        \"nationalUniqueIdentifier\": \"nuid123\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"gateId\": \"borduria\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"acme\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"

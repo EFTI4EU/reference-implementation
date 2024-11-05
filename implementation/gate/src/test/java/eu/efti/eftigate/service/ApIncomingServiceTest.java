@@ -22,6 +22,7 @@ import java.util.Optional;
 import static eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto.SUBMIT_MESSAGE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +41,8 @@ class ApIncomingServiceTest extends BaseServiceTest {
     private EftiRequestUpdater eftiRequestUpdater;
     private EDeliveryMessageRouter router;
 
-    private final static String xml_body = """
+    //todo change body
+    private static final String XML_BODY = """
             <SaveIdentifiersRequest>
                 <eFTIPlatformUrl>https://efti.platform.001.eu</eFTIPlatformUrl>
                 <eFTIDataUuid>ac0bbbc9-f46e-4093-b523-830431fb1001</eFTIDataUuid>
@@ -131,7 +133,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
         final NotificationDto notificationDto = NotificationDto.builder()
                 .content(NotificationContentDto.builder()
                         .messageId(messageId)
-                        .body(xml_body)
+                        .body(XML_BODY)
                         .contentType(MediaType.TEXT_XML_VALUE)
                         .build())
                 .notificationType(NotificationType.RECEIVED)
@@ -141,7 +143,48 @@ class ApIncomingServiceTest extends BaseServiceTest {
         service.manageIncomingNotification(receivedNotificationDto);
 
         verify(notificationService).consume(receivedNotificationDto);
-        // verify(identifiersService).createOrUpdate(any());
+    }
+
+    @Test
+    void shouldManageIncomingNotificationCreateIdentifiersXml_whenSendSuccess() {
+        final String messageId = "messageId";
+        final ReceivedNotificationDto receivedNotificationDto = ReceivedNotificationDto.builder()
+                .body(Map.of(SUBMIT_MESSAGE, Map.of(MESSAGE_ID, messageId))).build();
+        final NotificationDto notificationDto = NotificationDto.builder()
+                .content(NotificationContentDto.builder()
+                        .messageId(messageId)
+                        .body(XML_BODY)
+                        .contentType(MediaType.TEXT_XML_VALUE)
+                        .build())
+                .notificationType(NotificationType.SEND_SUCCESS)
+                .build();
+
+        when(notificationService.consume(receivedNotificationDto)).thenReturn(Optional.of(notificationDto));
+        service.manageIncomingNotification(receivedNotificationDto);
+
+        verify(notificationService).consume(receivedNotificationDto);
+        verify(eftiRequestUpdater, times(1)).manageSendSuccess(notificationDto, "fti root response sucess");
+    }
+
+    @Test
+    void shouldManageIncomingNotificationCreateIdentifiersXml_whenSendFailure() {
+        final String messageId = "messageId";
+        final ReceivedNotificationDto receivedNotificationDto = ReceivedNotificationDto.builder()
+                .body(Map.of(SUBMIT_MESSAGE, Map.of(MESSAGE_ID, messageId))).build();
+        final NotificationDto notificationDto = NotificationDto.builder()
+                .content(NotificationContentDto.builder()
+                        .messageId(messageId)
+                        .body(XML_BODY)
+                        .contentType(MediaType.TEXT_XML_VALUE)
+                        .build())
+                .notificationType(NotificationType.SEND_FAILURE)
+                .build();
+
+        when(notificationService.consume(receivedNotificationDto)).thenReturn(Optional.of(notificationDto));
+        service.manageIncomingNotification(receivedNotificationDto);
+
+        verify(notificationService).consume(receivedNotificationDto);
+        verify(eftiRequestUpdater, times(1)).manageSendFailure(notificationDto, "fti send fail");
     }
 
     @Test

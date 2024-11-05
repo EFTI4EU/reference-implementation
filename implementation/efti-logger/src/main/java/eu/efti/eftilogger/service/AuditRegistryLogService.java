@@ -38,7 +38,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .componentId(currentGateId)
                 .componentCountry(currentGateCountry)
                 .requestingComponentType(ComponentType.PLATFORM)
-                .requestingComponentId(controlDto.getEftiPlatformUrl())
+                .requestingComponentId(controlDto.getPlatformId())
                 .requestingComponentCountry(currentGateCountry)
                 .respondingComponentType(ComponentType.GATE)
                 .respondingComponentId(currentGateId)

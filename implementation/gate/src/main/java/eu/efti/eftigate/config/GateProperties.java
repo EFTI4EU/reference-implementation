@@ -22,7 +22,7 @@ public class GateProperties {
         private String password;
     }
 
-    public boolean isCurrentGate(final String gateUrl) {
-        return this.owner.equals(gateUrl);
+    public boolean isCurrentGate(final String gateId) {
+        return this.owner.equalsIgnoreCase(gateId);
     }
 }

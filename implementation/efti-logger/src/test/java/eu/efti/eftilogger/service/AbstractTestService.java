@@ -12,9 +12,9 @@ import eu.efti.commons.utils.SerializeUtils;
 
 public class AbstractTestService {
     public final SerializeUtils serializeUtils = new SerializeUtils(objectMapper(), xmlMapper());
-    final static String gateId = "gateId";
-    final static String gateCountry = "gateCountry";
-    final static String body = "body";
+    static final String GATE_ID = "gateId";
+    static final String GATE_COUNTRY = "gateCountry";
+    static final String BODY = "body";
 
     public ObjectMapper objectMapper() {
         final ObjectMapper objectMapper = new ObjectMapper();

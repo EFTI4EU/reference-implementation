@@ -11,9 +11,9 @@ server:
 gate:
   minSleep: 1000
   maxSleep: 2000
-  owner: http://efti.platform.acme.com
+  owner: acme
   cda_path: file:/usr/src/myapp/cda/
-  gate: http://efti.gate.borduria.eu
+  gate: borduria
   ap:
     url: http://efti.platform.acme.com:81/domibus/services/wsplugin
     username: acme_service_account

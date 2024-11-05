@@ -1,8 +1,8 @@
 package eu.efti.eftigate.entity;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.model.AbstractModel;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -43,22 +43,22 @@ public class RequestEntity extends AbstractModel implements Serializable {
     @Id
     @Column(name = "id")
     private long id;
-    
+
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private RequestStatusEnum status;
-    
+
     @Column(name = "edeliverymessageid")
     private String edeliveryMessageId;
-    
+
     @Column(name = "retry")
     private Integer retry;
 
     @Column(name = "nextretrydate")
     private LocalDateTime nextRetryDate;
-    
-    @Column(name = "gateurldest")
-    private String gateUrlDest;
+
+    @Column(name = "gateiddest")
+    private String gateIdDest;
 
     @ManyToOne
     @JoinColumn(name = "control")
@@ -66,10 +66,11 @@ public class RequestEntity extends AbstractModel implements Serializable {
 
     @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "error", referencedColumnName = "id")
-    @ToString.Exclude @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     ErrorEntity error;
 
     @Getter
-    @Column(name="request_type", insertable = false, updatable = false)
+    @Column(name = "request_type", insertable = false, updatable = false)
     protected String requestType;
 }

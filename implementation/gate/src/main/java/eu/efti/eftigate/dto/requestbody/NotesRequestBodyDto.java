@@ -17,10 +17,8 @@ import lombok.NoArgsConstructor;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class NotesRequestBodyDto {
     private String requestId;
-    @XmlElement(name = "eFTIPlatformUrl")
-    private String eFTIPlatformUrl;
-    @XmlElement(name = "eFTIGateUrl")
-    private String eFTIGateUrl;
+    private String platformId;
+    private String gateId;
     @XmlElement(name = "eFTIDataUuid")
     private String eFTIDataUuid;
     private String note;
