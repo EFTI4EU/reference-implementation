@@ -284,7 +284,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createControlEntityErrorGateFormatTest() {
-        uilDto.setGateId("france@123");
+        uilDto.setGateId("http://france.com");
         controlEntity.setStatus(StatusEnum.ERROR);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
@@ -317,7 +317,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createControlEntityErrorPlatformFormatTest() {
-        uilDto.setPlatformId("acme.com");
+        uilDto.setPlatformId("https://acme.com");
         controlEntity.setStatus(StatusEnum.ERROR);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);

@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UilDto implements ValidableDto {
-    private static final String REGEX_URI = "^\\w+$";
+    private static final String REGEX_URI = "^[-@./#&+\\w\\s]*$";
 
     @NotBlank(message = "GATE_ID_MISSING")
     @Size(max = 255, message = "GATE_ID_TOO_LONG")
     @Pattern(regexp = REGEX_URI, message = "GATE_ID_INCORRECT_FORMAT")
-    @Schema(example = "regex = ^\\w+$")
+    @Schema(example = "regex = ^[-@./#&+\\w\\s]*$")
     private String gateId;
 
     @NotBlank(message = "DATASET_ID_MISSING")
@@ -31,6 +31,6 @@ public class UilDto implements ValidableDto {
     @NotBlank(message = "PLATFORM_ID_MISSING")
     @Size(max = 255, message = "PLATFORM_ID_TOO_LONG")
     @Pattern(regexp = REGEX_URI, message = "PLATFORM_ID_INCORRECT_FORMAT")
-    @Schema(example = "regex = ^\\w+$")
+    @Schema(example = "regex = ^[-@./#&+\\w\\s]*$")
     private String platformId;
 }
