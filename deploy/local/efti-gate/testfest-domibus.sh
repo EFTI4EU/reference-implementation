@@ -16,7 +16,7 @@ cd $REPOS_DIR
 git switch testfest-fr
 
 #JAVA
-apt install -y openjdk-17-jre
+apt install -y openjdk-11-jre
 
 #ActiveMQ
 wget http://archive.apache.org/dist/activemq/5.16.3/apache-activemq-5.16.3-bin.tar.gz
