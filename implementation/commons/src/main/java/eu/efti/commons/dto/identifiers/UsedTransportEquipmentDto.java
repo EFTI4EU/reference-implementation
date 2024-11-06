@@ -20,5 +20,6 @@ public class UsedTransportEquipmentDto implements Serializable {
     private String equipmentId;
     private String idSchemeAgencyId;
     private String registrationCountry;
+    private String categoryCode;
     private List<CarriedTransportEquipmentDto> carriedTransportEquipments;
 }
