@@ -28,6 +28,7 @@ service rabbitmq-server restart
 
 #Postgres
 apt install -y postgresql
+sudo service postgresql start
 sudo -H -u postgres createdb efti
 sudo -H -u postgres psql -d efti < "${GATE_DIR}/sql/1-create_tables.sql"
 sudo -H -u postgres psql -d efti < "${GATE_DIR}/sql/5-create_tables_FR.sql"
