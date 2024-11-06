@@ -54,6 +54,7 @@ class IdentifiersRepositoryTest {
         consignment.setUsedTransportEquipments(List.of(UsedTransportEquipment.builder()
                         .equipmentId("vehicleId1")
                         .registrationCountry(CountryIndicator.FR.name())
+                        .categoryCode("AA")
                         .build(),
                 UsedTransportEquipment.builder()
                         .equipmentId("vehicleId2")
@@ -102,10 +103,14 @@ class IdentifiersRepositoryTest {
 
     @Test
     void shouldGetDataByCriteria() {
-        assertEquals(2, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+        List<Consignment> foundConsignments = identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
                 .identifier("vehicleId1")
                 .registrationCountryCode(CountryIndicator.FR.name())
-                .build()).size());
+                .build());
+
+        assertTrue(foundConsignments.stream().anyMatch(c -> c.getUsedTransportEquipments().stream().anyMatch(e -> e.getCategoryCode().equals("AA"))),
+                "One of the consignments should have categoryCode AA");
+        assertEquals(2, foundConsignments.size());
 
         assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
                 .identifier("vehicleId1")

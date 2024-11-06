@@ -49,6 +49,9 @@ public class UsedTransportEquipment implements Serializable {
     @Column(name = "registration_country")
     private String registrationCountry;
 
+    @Column(name = "category_code")
+    private String categoryCode;
+
     @ManyToOne
     @JoinColumn(name = "consignment_id", referencedColumnName = "id", insertable = true, updatable = false)
     private Consignment consignment;

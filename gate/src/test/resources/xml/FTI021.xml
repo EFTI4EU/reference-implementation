@@ -4,6 +4,7 @@
     <consignment>
         <ns2:deliveryEvent/>
         <ns2:usedTransportEquipment>
+            <ns2:categoryCode>BPQ</ns2:categoryCode>
             <ns2:id>abc123</ns2:id>
             <ns2:registrationCountry>
                 <ns2:code>FR</ns2:code>

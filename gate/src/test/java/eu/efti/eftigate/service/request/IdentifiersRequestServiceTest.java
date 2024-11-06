@@ -16,6 +16,7 @@ import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
 import eu.efti.identifiersregistry.service.IdentifiersService;
+import eu.efti.v1.codes.TransportEquipmentCategoryCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -88,7 +89,10 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                 .datasetId(DATA_UUID)
                 .platformId(PLATFORM_ID)
                 .usedTransportEquipments(List.of(UsedTransportEquipmentDto.builder()
-                        .equipmentId("abc123").registrationCountry("FR").build(), UsedTransportEquipmentDto.builder()
+                        .equipmentId("abc123")
+                        .registrationCountry("FR")
+                        .categoryCode(TransportEquipmentCategoryCode.BPQ.value())
+                        .build(), UsedTransportEquipmentDto.builder()
                         .equipmentId("abc124").registrationCountry("BE").build()))
                 .build();
 

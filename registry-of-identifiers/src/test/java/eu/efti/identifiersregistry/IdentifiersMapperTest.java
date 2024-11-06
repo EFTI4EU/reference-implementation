@@ -1,5 +1,9 @@
 package eu.efti.identifiersregistry;
 
+import eu.efti.identifiersregistry.entity.CarriedTransportEquipment;
+import eu.efti.identifiersregistry.entity.Consignment;
+import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
+import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
 import eu.efti.v1.codes.CountryCode;
 import eu.efti.v1.codes.TransportEquipmentCategoryCode;
 import eu.efti.v1.consignment.identifier.AssociatedTransportEquipment;
@@ -76,6 +80,7 @@ class IdentifiersMapperTest {
         assertEquals("123", internalConsignment.getUsedTransportEquipments().get(0).getEquipmentId());
         assertEquals("AE", internalConsignment.getUsedTransportEquipments().get(0).getRegistrationCountry());
         assertEquals(1, internalConsignment.getUsedTransportEquipments().get(0).getSequenceNumber());
+        assertEquals(TransportEquipmentCategoryCode.BPQ.value(), internalConsignment.getUsedTransportEquipments().get(0).getCategoryCode());
 
         // Check that carried equipment got mapped
         assertEquals(1, internalConsignment.getUsedTransportEquipments().get(0).getCarriedTransportEquipments().size());
@@ -103,5 +108,58 @@ class IdentifiersMapperTest {
 
         carrierAcceptanceDateTime.setFormatId(typeCode);
         return carrierAcceptanceDateTime;
+    }
+
+    @Test
+    void testMapInternalModelToConsignment() {
+        Consignment internalConsignment = new Consignment();
+        internalConsignment.setDatasetId("datasetId");
+        internalConsignment.setCarrierAcceptanceDatetime(OffsetDateTime.of(2021, 7, 11, 12, 0, 0, 0, ZoneOffset.ofHours(1)));
+        internalConsignment.setDeliveryEventActualOccurrenceDatetime(OffsetDateTime.of(2021, 7, 23, 0, 0, 0, 0, ZoneOffset.UTC));
+
+        MainCarriageTransportMovement movement = new MainCarriageTransportMovement();
+        movement.setDangerousGoodsIndicator(true);
+        movement.setModeCode((short) 1);
+        movement.setUsedTransportMeansId("123");
+        movement.setUsedTransportMeansRegistrationCountry("AE");
+        internalConsignment.getMainCarriageTransportMovements().add(movement);
+
+        UsedTransportEquipment equipment = new UsedTransportEquipment();
+        equipment.setEquipmentId("123");
+        equipment.setRegistrationCountry("AE");
+        equipment.setSequenceNumber(1);
+        equipment.setCategoryCode(TransportEquipmentCategoryCode.BPQ.value());
+
+        CarriedTransportEquipment carriedEquipment = new CarriedTransportEquipment();
+        carriedEquipment.setEquipmentId("456");
+        carriedEquipment.setSequenceNumber(2);
+        equipment.getCarriedTransportEquipments().add(carriedEquipment);
+
+        internalConsignment.getUsedTransportEquipments().add(equipment);
+
+        IdentifiersMapper identifiersMapper = new IdentifiersMapper(new ModelMapper());
+        var eDeliveryConsignment = identifiersMapper.entityToEdelivery(internalConsignment);
+
+        assertEquals("datasetId", eDeliveryConsignment.getUil().getDatasetId());
+        assertEquals("202107111200+0100", eDeliveryConsignment.getCarrierAcceptanceDateTime().getValue());
+        assertEquals("202107230000+0000", eDeliveryConsignment.getDeliveryEvent().getActualOccurrenceDateTime().getValue());
+
+        assertEquals(1, eDeliveryConsignment.getMainCarriageTransportMovement().size());
+        assertEquals("1", eDeliveryConsignment.getMainCarriageTransportMovement().get(0).getModeCode());
+        assertTrue(eDeliveryConsignment.getMainCarriageTransportMovement().get(0).isDangerousGoodsIndicator());
+        assertEquals("123", eDeliveryConsignment.getMainCarriageTransportMovement().get(0).getUsedTransportMeans().getId().getValue());
+        assertEquals("AE", eDeliveryConsignment.getMainCarriageTransportMovement().get(0).getUsedTransportMeans().getRegistrationCountry().getCode().value());
+
+        assertEquals(1, eDeliveryConsignment.getUsedTransportEquipment().size());
+        LogisticsTransportEquipment theOnlyTransportEquipment = eDeliveryConsignment.getUsedTransportEquipment().get(0);
+        assertEquals("123", theOnlyTransportEquipment.getId().getValue());
+        assertEquals("AE", theOnlyTransportEquipment.getRegistrationCountry().getCode().value());
+        assertEquals(BigInteger.ONE, theOnlyTransportEquipment.getSequenceNumber());
+        assertEquals(TransportEquipmentCategoryCode.BPQ, theOnlyTransportEquipment.getCategoryCode());
+
+        assertEquals(1, theOnlyTransportEquipment.getCarriedTransportEquipment().size());
+        AssociatedTransportEquipment theOnlyAssociatedEquipment = theOnlyTransportEquipment.getCarriedTransportEquipment().get(0);
+        assertEquals("456", theOnlyAssociatedEquipment.getId().getValue());
+        assertEquals(BigInteger.TWO, theOnlyAssociatedEquipment.getSequenceNumber());
     }
 }
