@@ -4,7 +4,7 @@ spring:
       max-file-size: 5MB
       max-request-size: 5MB
   rabbitmq:
-    host: host.docker.internal
+    host: rabbitmq
     listener:
       default-requeue-rejected: false
       simple:
@@ -29,16 +29,16 @@ spring:
     name: efti-gate
   datasource:
     control:
-      jdbc-url: jdbc:postgresql://host.docker.internal:9001/efti
-      url: jdbc:postgresql://host.docker.internal:9001/efti
+      jdbc-url: jdbc:postgresql://psql:5432/efti
+      url: jdbc:postgresql://psql:5432/efti
       username: efti
       password: root
       driverClassName: org.postgresql.Driver
       liquibase:
         change-log: classpath:db.changelog/db.gate.changelog-master.xml
     identifiers:
-      jdbc-url: jdbc:postgresql://host.docker.internal:2345/efti
-      url: jdbc:postgresql://host.docker.internal:2345/efti
+      jdbc-url: jdbc:postgresql://psql-meta:5432/efti
+      url: jdbc:postgresql://psql-meta:5432/efti
       username: root
       password: root
       driverClassName: org.postgresql.Driver
@@ -49,6 +49,15 @@ spring:
 
 server:
   port: ${PORT}
+
+management:
+  endpoint:
+    health:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
 
 batch:
   update:
