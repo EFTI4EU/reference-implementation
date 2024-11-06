@@ -153,19 +153,18 @@ class ControlServiceTest extends AbstractServiceTest {
         requestIdDto.setRequestId(requestId);
         requestIdDto.setStatus(status);
 
-        this.uilDto.setEFTIGateUrl("http://www.gate.com");
-        this.uilDto.setEFTIDataUuid("12345678-ab12-4ab6-8999-123456789abc");
-        this.uilDto.setEFTIPlatformUrl("http://www.platform.com");
-        this.uilDto.setAuthority(authorityDto);
+        this.uilDto.setGateId("http://www.gate.com");
+        this.uilDto.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
+        this.uilDto.setPlatformId("http://www.platform.com");
 
         this.searchWithIdentifiersRequestDto.setIdentifier("abc123");
         this.searchWithIdentifiersRequestDto.setRegistrationCountryCode("FR");
         this.searchWithIdentifiersRequestDto.setAuthority(authorityDto);
         this.searchWithIdentifiersRequestDto.setModeCode("1");
 
-        this.controlDto.setEftiDataUuid(uilDto.getEFTIDataUuid());
-        this.controlDto.setEftiGateUrl(uilDto.getEFTIGateUrl());
-        this.controlDto.setEftiPlatformUrl(uilDto.getEFTIPlatformUrl());
+        this.controlDto.setEftiDataUuid(uilDto.getDatasetId());
+        this.controlDto.setEftiGateUrl(uilDto.getGateId());
+        this.controlDto.setEftiPlatformUrl(uilDto.getPlatformId());
         this.controlDto.setRequestId(requestId);
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(status);
@@ -224,7 +223,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createControlEntitySameGate() {
-        uilDto.setEFTIGateUrl("http://france.lol");
+        uilDto.setGateId("http://france.lol");
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
@@ -259,7 +258,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createControlEntityErrorGateNullTest() {
-        uilDto.setEFTIGateUrl(null);
+        uilDto.setGateId(null);
         controlDto.setEftiGateUrl(null);
         controlEntity.setStatus(StatusEnum.ERROR);
 
@@ -270,13 +269,13 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.UIL_GATE_MISSING.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Missing parameter eFTIGateUrl", requestIdDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.GATE_ID_MISSING.name(), requestIdDtoResult.getErrorCode());
+        assertEquals("Missing parameter GateId", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
     void createControlEntityErrorGateFormatTest() {
-        uilDto.setEFTIGateUrl("toto");
+        uilDto.setGateId("toto");
         controlEntity.setStatus(StatusEnum.ERROR);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
@@ -286,13 +285,13 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.UIL_GATE_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Gate format incorrect.", requestIdDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.GATE_ID_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
+        assertEquals("Gate Id format incorrect.", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
     void createControlEntityErrorPlatformNullTest() {
-        uilDto.setEFTIPlatformUrl(null);
+        uilDto.setPlatformId(null);
         controlDto.setEftiPlatformUrl(null);
         controlEntity.setStatus(StatusEnum.ERROR);
 
@@ -303,13 +302,13 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.UIL_PLATFORM_MISSING.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Missing parameter eFTIPlatformUrl", requestIdDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.PLATFORM_ID_MISSING.name(), requestIdDtoResult.getErrorCode());
+        assertEquals("Missing parameter platformId", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
     void createControlEntityErrorPlatformFormatTest() {
-        uilDto.setEFTIPlatformUrl("toto");
+        uilDto.setPlatformId("toto");
         controlEntity.setStatus(StatusEnum.ERROR);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
@@ -319,13 +318,13 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.UIL_PLATFORM_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Platform format incorrect.", requestIdDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.PLATFORM_ID_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
+        assertEquals("Platform Id format incorrect.", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
     void createControlEntityErrorUuidNullTest() {
-        uilDto.setEFTIDataUuid(null);
+        uilDto.setDatasetId(null);
         controlDto.setRequestId(null);
         controlEntity.setStatus(StatusEnum.ERROR);
 
@@ -336,13 +335,13 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.UIL_UUID_MISSING.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Missing parameter eFTIDataUuid", requestIdDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.DATASET_ID_MISSING.name(), requestIdDtoResult.getErrorCode());
+        assertEquals("Missing parameter DatasetId", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
     void createControlEntityErrorUuidFormatTest() {
-        uilDto.setEFTIDataUuid("toto");
+        uilDto.setDatasetId("toto");
         controlEntity.setStatus(StatusEnum.ERROR);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
@@ -352,8 +351,8 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.UIL_UUID_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Uuid format incorrect.", requestIdDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.DATASET_ID_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
+        assertEquals("Dataset Id format is incorrect.", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
@@ -447,7 +446,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(controlRepository, times(1)).findByRequestId(any());
         assertNotNull(requestIdDtoResult);
         assertEquals(StatusEnum.ERROR, requestIdDtoResult.getStatus());
-        assertEquals(0, requestIdDtoResult.getEFTIData().length);
+        assertEquals(0, requestIdDtoResult.getData().length);
     }
 
     @Test
@@ -835,7 +834,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void shouldNotSendRequestIfNotFoundOnLocalRegistry() {
-        uilDto.setEFTIGateUrl("http://france.lol");
+        uilDto.setGateId("http://france.lol");
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(identifiersService.existByUIL(any(), any(), any())).thenReturn(false);

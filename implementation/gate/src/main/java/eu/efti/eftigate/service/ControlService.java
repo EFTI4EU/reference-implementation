@@ -95,9 +95,9 @@ public class ControlService {
 
     @Transactional("controlTransactionManager")
     public RequestIdDto createUilControl(final UilDto uilDto) {
-        log.info("create Uil control for uuid : {}", uilDto.getEFTIDataUuid());
+        log.info("create Uil control for dataset id : {}", uilDto.getDatasetId());
         return createControl(uilDto, ControlUtils
-                .fromUilControl(uilDto, gateProperties.isCurrentGate(uilDto.getEFTIGateUrl()) ? RequestTypeEnum.LOCAL_UIL_SEARCH : RequestTypeEnum.EXTERNAL_UIL_SEARCH));
+                .fromUilControl(uilDto, gateProperties.isCurrentGate(uilDto.getGateId()) ? RequestTypeEnum.LOCAL_UIL_SEARCH : RequestTypeEnum.EXTERNAL_UIL_SEARCH));
     }
 
     public RequestIdDto createIdentifiersControl(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
@@ -329,7 +329,7 @@ public class ControlService {
         final RequestIdDto result = RequestIdDto.builder()
                 .requestId(controlDto.getRequestId())
                 .status(controlDto.getStatus())
-                .eFTIData(controlDto.getEftiData()).build();
+                .data(controlDto.getEftiData()).build();
         if (controlDto.isError() && controlDto.getError() != null) {
             result.setErrorDescription(controlDto.getError().getErrorDescription());
             result.setErrorCode(controlDto.getError().getErrorCode());
