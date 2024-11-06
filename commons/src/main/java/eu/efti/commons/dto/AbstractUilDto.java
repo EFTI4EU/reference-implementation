@@ -17,13 +17,13 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public abstract class AbstractUilDto {
 
-    private static final String REGEX_URI = "^\\w+$";
+    private static final String REGEX_URI = "^[-@./#&+\\w\\s]*$";
 
     @NotNull(message = "UIL_GATE_MISSING")
     @NotBlank(message = "UIL_GATE_MISSING")
     @Size(max = 255, message = "UIL_GATE_TOO_LONG")
     @Pattern(regexp = REGEX_URI, message = "UIL_GATE_INCORRECT_FORMAT")
-    @Schema(example = "regex = ^\\w+$")
+    @Schema(example = "regex = ^[-@./#&+\\w\\s]*$")
     private String gateId;
 
     @NotNull(message = "UIL_UUID_MISSING")
@@ -38,6 +38,6 @@ public abstract class AbstractUilDto {
     @NotBlank(message = "UIL_PLATFORM_MISSING")
     @Size(max = 255, message = "UIL_PLATFORM_TOO_LONG")
     @Pattern(regexp = REGEX_URI, message = "UIL_PLATFORM_INCORRECT_FORMAT")
-    @Schema(example = "regex = ^\\w+$")
+    @Schema(example = "regex = ^[-@./#&+\\w\\s]*$")
     private String platformId;
 }
