@@ -10,8 +10,10 @@ import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.v1.edelivery.IdentifierQuery;
+import eu.efti.v1.edelivery.UIL;
 import eu.efti.v1.edelivery.UILQuery;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.UUID;
 
@@ -20,20 +22,19 @@ import static eu.efti.commons.enums.StatusEnum.PENDING;
 @UtilityClass
 public class ControlUtils {
 
-    public static final String SUBSET_EU_REQUESTED = "SubsetEuRequested";
-    public static final String SUBSET_MS_REQUESTED = "SubsetMsRequested";
+    public static final String SUBSET_ID = "full";
 
     public static ControlDto fromGateToGateQuery(final UILQuery uilQuery, final RequestTypeEnum requestTypeEnum, final NotificationDto notificationDto, final String gateId) {
         final ControlDto controlDto = new ControlDto();
-        controlDto.setEftiDataUuid(uilQuery.getUil().getDatasetId());
+        UIL uil = uilQuery.getUil();
+        controlDto.setEftiDataUuid(uil.getDatasetId());
         controlDto.setGateId(gateId);
         controlDto.setFromGateId(notificationDto.getContent().getFromPartyId());
-        controlDto.setPlatformId(uilQuery.getUil().getPlatformId());
+        controlDto.setPlatformId(uil.getPlatformId());
         controlDto.setRequestId(uilQuery.getRequestId());
         controlDto.setRequestType(requestTypeEnum);
         controlDto.setStatus(StatusEnum.PENDING);
-        controlDto.setSubsetEuRequested(SUBSET_EU_REQUESTED);
-        controlDto.setSubsetMsRequested(SUBSET_MS_REQUESTED);
+        controlDto.setSubsetId(StringUtils.isNotBlank(uilQuery.getSubsetId()) ? uilQuery.getSubsetId() : SUBSET_ID);
         controlDto.setAuthority(null);
         return controlDto;
     }
@@ -48,8 +49,7 @@ public class ControlUtils {
         controlDto.setRequestId(uuidGenerator);
         controlDto.setRequestType(requestTypeEnum);
         controlDto.setStatus(StatusEnum.PENDING);
-        controlDto.setSubsetEuRequested(SUBSET_EU_REQUESTED);
-        controlDto.setSubsetMsRequested(SUBSET_MS_REQUESTED);
+        controlDto.setSubsetId(StringUtils.isNotBlank(uilDto.getSubsetId()) ? uilDto.getSubsetId() : SUBSET_ID);
         return controlDto;
     }
 
@@ -86,8 +86,7 @@ public class ControlUtils {
         controlDto.setRequestId(requestId);
         controlDto.setRequestType(requestTypeEnum);
         controlDto.setStatus(PENDING);
-        controlDto.setSubsetEuRequested(SUBSET_EU_REQUESTED);
-        controlDto.setSubsetMsRequested(SUBSET_MS_REQUESTED);
+        controlDto.setSubsetId(SUBSET_ID);
         controlDto.setAuthority(authorityDto);
         return controlDto;
     }

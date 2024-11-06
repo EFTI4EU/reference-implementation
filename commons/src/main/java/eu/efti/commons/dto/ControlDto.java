@@ -34,8 +34,7 @@ public class ControlDto {
     private StatusEnum status;
     private String platformId;
     private String gateId;
-    private String subsetEuRequested;
-    private String subsetMsRequested;
+    private String subsetId;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private byte[] eftiData;
