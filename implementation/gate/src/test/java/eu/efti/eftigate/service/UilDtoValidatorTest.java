@@ -37,8 +37,8 @@ class UilDtoValidatorTest {
     void shouldValidateAllFieldsIncorrect() {
         final UilDto uilDto = UilDto.builder()
                 .datasetId("abc-123")
-                .platformId("pas une uri")
-                .gateId("pas une uri")
+                .platformId("https://platform.com")
+                .gateId("https://gate.com")
                 .build();
 
         final Validator validator;
