@@ -6,6 +6,7 @@ import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
 import eu.efti.v1.codes.CountryCode;
+import eu.efti.v1.codes.TransportEquipmentCategoryCode;
 import eu.efti.v1.consignment.identifier.AssociatedTransportEquipment;
 import eu.efti.v1.consignment.identifier.LogisticsTransportEquipment;
 import eu.efti.v1.consignment.identifier.LogisticsTransportMeans;
@@ -52,7 +53,7 @@ public class IdentifiersMapper {
     }
 
     private OffsetDateTime fromDateTime(DateTime dateTime) {
-        if(dateTime == null || StringUtils.isBlank(dateTime.getValue())) return null;
+        if (dateTime == null || StringUtils.isBlank(dateTime.getValue())) return null;
         return switch (dateTime.getFormatId()) {
             case "102" -> {
                 LocalDate localDate = LocalDate.parse(dateTime.getValue(), DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -64,7 +65,7 @@ public class IdentifiersMapper {
     }
 
     private DateTime fromOffsetDate(OffsetDateTime offsetDateTime) {
-        if(offsetDateTime == null) {
+        if (offsetDateTime == null) {
             return null;
         }
         final DateTime dateTime = new DateTime();
@@ -94,7 +95,7 @@ public class IdentifiersMapper {
         Consignment consignment = new Consignment();
 
         consignment.setCarrierAcceptanceDatetime(fromDateTime(sourceConsignment.getCarrierAcceptanceDateTime()));
-        if(sourceConsignment.getDeliveryEvent() != null) {
+        if (sourceConsignment.getDeliveryEvent() != null) {
             consignment.setDeliveryEventActualOccurrenceDatetime(fromDateTime(sourceConsignment.getDeliveryEvent().getActualOccurrenceDateTime()));
         }
 
@@ -109,11 +110,7 @@ public class IdentifiersMapper {
         }).toList());
 
         consignment.setUsedTransportEquipments(sourceConsignment.getUsedTransportEquipment().stream().map(equipment -> {
-            UsedTransportEquipment usedTransportEquipment = new UsedTransportEquipment();
-            usedTransportEquipment.setEquipmentId(equipment.getId().getValue());
-            usedTransportEquipment.setIdSchemeAgencyId(equipment.getId().getSchemeAgencyId());
-            usedTransportEquipment.setRegistrationCountry(equipment.getRegistrationCountry().getCode().value());
-            usedTransportEquipment.setSequenceNumber(equipment.getSequenceNumber().intValue());
+            UsedTransportEquipment usedTransportEquipment = toUsedTransportEquipmentEntity(equipment);
 
             usedTransportEquipment.getCarriedTransportEquipments().addAll(equipment.getCarriedTransportEquipment().stream().map(carriedEquipment -> {
                 CarriedTransportEquipment carriedTransportEquipment = new CarriedTransportEquipment();
@@ -127,6 +124,16 @@ public class IdentifiersMapper {
             return usedTransportEquipment;
         }).toList());
         return consignment;
+    }
+
+    private static UsedTransportEquipment toUsedTransportEquipmentEntity(LogisticsTransportEquipment equipment) {
+        UsedTransportEquipment usedTransportEquipment = new UsedTransportEquipment();
+        usedTransportEquipment.setEquipmentId(equipment.getId().getValue());
+        usedTransportEquipment.setIdSchemeAgencyId(equipment.getId().getSchemeAgencyId());
+        usedTransportEquipment.setRegistrationCountry(equipment.getRegistrationCountry().getCode().value());
+        usedTransportEquipment.setSequenceNumber(equipment.getSequenceNumber().intValue());
+        usedTransportEquipment.setCategoryCode(equipment.getCategoryCode().value());
+        return usedTransportEquipment;
     }
 
     public eu.efti.v1.edelivery.Consignment entityToEdelivery(final Consignment sourceConsignment) {
@@ -155,10 +162,11 @@ public class IdentifiersMapper {
             logisticsTransportEquipment.setSequenceNumber(BigInteger.valueOf(equipment.getSequenceNumber()));
             logisticsTransportEquipment.setRegistrationCountry(fromRegistrationCode(equipment.getRegistrationCountry()));
             logisticsTransportEquipment.setId(fromId(equipment.getEquipmentId()));
+            logisticsTransportEquipment.setCategoryCode(equipment.getCategoryCode() != null ? TransportEquipmentCategoryCode.fromValue(equipment.getCategoryCode()) : null);
 
             logisticsTransportEquipment.getCarriedTransportEquipment().addAll(CollectionUtils.emptyIfNull(equipment.getCarriedTransportEquipments()).stream().map(carriedEquipment -> {
                 AssociatedTransportEquipment associatedTransportEquipment = new AssociatedTransportEquipment();
-                associatedTransportEquipment.setId(fromId(String.valueOf(carriedEquipment.getId())));
+                associatedTransportEquipment.setId(fromId(carriedEquipment.getEquipmentId()));
                 associatedTransportEquipment.setSequenceNumber(BigInteger.valueOf(carriedEquipment.getSequenceNumber()));
                 return associatedTransportEquipment;
             }).toList());
