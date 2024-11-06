@@ -13,9 +13,9 @@ server:
 gate:
   minSleep: 1000
   maxSleep: 2000
-  owner: http://efti.platform.acme.com
+  owner: acme
   cda_path: file:/opt/javapp/config/cda
-  gate: https://mock.efti.qlf.k8s.groupein.local/bo
+  gate: borduria
   ap:
     url: https://edelivery-bo.qlf.efti.service.groupein.local/ap-mock/domibus/services/wsplugin
     username: borduria_service_account

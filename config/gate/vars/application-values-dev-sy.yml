@@ -22,7 +22,7 @@ spring:
         identifiers_schema: "metadatasy"
 
 gate:
-  owner: https://mock.efti.dev.k8s.groupein.local/sy
+  owner: syldavia
   country: SY
   ap:
     url: http://172.16.201.146:8080/domibus/services/wsplugin
