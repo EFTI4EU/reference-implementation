@@ -13,9 +13,9 @@ server:
 gate:
   minSleep: 1000
   maxSleep: 2000
-  owner: http://efti.platform.ttf.com
+  owner: ttf
   cda_path: file:/opt/javapp/config/cda
-  gate: https://gate-fr.efti.dev.k8s.groupein.local
+  gate: france
   ap:
     url: http://172.16.201.115:8080/domibus/services/wsplugin
     username: ttf_service_account

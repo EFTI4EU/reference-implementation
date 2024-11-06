@@ -13,9 +13,9 @@ server:
 gate:
   minSleep: 1000
   maxSleep: 2000
-  owner: http://efti.platform.massivedynamic.com
+  owner: massivedynamic
   cda_path: file:/opt/javapp/config/cda
-  gate: https://mock.efti.qlf.k8s.groupein.local/sy
+  gate: syldavia
   ap:
     url: https://edelivery-sy.qlf.efti.service.groupein.local/ap-mock/domibus/services/wsplugin
     username: syldavia_service_account

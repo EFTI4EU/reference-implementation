@@ -13,9 +13,9 @@ server:
 gate:
   minSleep: 1000
   maxSleep: 2000
-  owner: http://efti.platform.massivedynamic.com
+  owner: massivedynamic
   cda_path: file:/opt/javapp/config/cda
-  gate: https://mock.efti.dev.k8s.groupein.local/sy
+  gate: syldavia
   ap:
     url: http://172.16.201.115:8080/domibus/services/wsplugin
     username: massivedynamic_service_account

@@ -22,7 +22,7 @@ spring:
         identifiers_schema: "metadatafr"
 
 gate:
-  owner: https://gate-fr.efti.int.k8s.groupein.local
+  owner: france
   country: FR
   ap:
     url: http://ileftimicr01in.service.groupein.local:8080/domibus/services/wsplugin

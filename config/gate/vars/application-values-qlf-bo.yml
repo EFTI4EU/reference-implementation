@@ -22,7 +22,7 @@ spring:
         identifiers_schema: "metadatabo"
 
 gate:
-  owner: https://mock.efti.qlf.k8s.groupein.local/bo
+  owner: borduria
   country: BO
   ap:
     url: https://edelivery-bo.qlf.efti.service.groupein.local/ap-gate/domibus/services/wsplugin

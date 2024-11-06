@@ -13,9 +13,9 @@ server:
 gate:
   minSleep: 1000
   maxSleep: 2000
-  owner: http://efti.platform.roger.com
+  owner: roger
   cda_path: file:/opt/javapp/config/cda
-  gate: https://gate-fr.efti.int.k8s.groupein.local
+  gate: france
   ap:
     url: http://ileftimicr02in.service.groupein.local:8080/domibus/services/wsplugin
     username: roger_service_account
