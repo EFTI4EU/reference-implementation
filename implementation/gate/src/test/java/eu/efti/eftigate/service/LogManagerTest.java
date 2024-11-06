@@ -51,7 +51,7 @@ class LogManagerTest extends BaseServiceTest {
                 .eftiPlatformUrl("platformUrl")
                 .id(1).build();
         uilDto = UilDto.builder()
-                .eFTIGateUrl("gateUrl").build();
+                .gateId("gateUrl").build();
     }
 
     @Test

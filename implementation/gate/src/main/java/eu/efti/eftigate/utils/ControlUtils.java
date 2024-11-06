@@ -65,15 +65,14 @@ public class ControlUtils {
         final String uuidGenerator = UUID.randomUUID().toString();
 
         final ControlDto controlDto = new ControlDto();
-        controlDto.setEftiDataUuid(uilDto.getEFTIDataUuid());
-        controlDto.setEftiGateUrl(uilDto.getEFTIGateUrl());
-        controlDto.setEftiPlatformUrl(uilDto.getEFTIPlatformUrl());
+        controlDto.setEftiDataUuid(uilDto.getDatasetId());
+        controlDto.setEftiGateUrl(uilDto.getGateId());
+        controlDto.setEftiPlatformUrl(uilDto.getPlatformId());
         controlDto.setRequestId(uuidGenerator);
         controlDto.setRequestType(requestTypeEnum);
         controlDto.setStatus(StatusEnum.PENDING);
         controlDto.setSubsetEuRequested(SUBSET_EU_REQUESTED);
         controlDto.setSubsetMsRequested(SUBSET_MS_REQUESTED);
-        controlDto.setAuthority(uilDto.getAuthority());
         return controlDto;
     }
 
@@ -93,7 +92,6 @@ public class ControlUtils {
 
     public static ControlDto fromExternalIdentifiersControl(final IdentifierQuery identifierQuery, final RequestTypeEnum requestTypeEnum, final String fromGateUrl, final String eftiGateUrl, final IdentifiersResultsDto identifiersResultsDto) {
         final ControlDto controlDto = getControlFrom(requestTypeEnum, null, identifierQuery.getRequestId());
-        //to check
         controlDto.setEftiGateUrl(eftiGateUrl);
         controlDto.setFromGateUrl(fromGateUrl);
         controlDto.setTransportIdentifiers(SearchParameter.builder()
