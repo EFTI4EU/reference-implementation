@@ -35,6 +35,7 @@ import eu.efti.v1.edelivery.IdentifierType;
 import jakarta.xml.bind.JAXBElement;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -198,8 +199,10 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     private SearchWithIdentifiersRequestDto buildIdentifiersRequestDtoFrom(final IdentifierQuery identifierQuery) {
+        Identifier identifier = identifierQuery.getIdentifier();
         return SearchWithIdentifiersRequestDto.builder()
-                .identifier(identifierQuery.getIdentifier().getValue())
+                .identifier(identifier.getValue())
+                .identifierType(CollectionUtils.emptyIfNull(identifier.getType()).stream().map(IdentifierType::value).toList())
                 .dangerousGoodsIndicator(identifierQuery.isDangerousGoodsIndicator())
                 .modeCode(identifierQuery.getModeCode())
                 .registrationCountryCode(identifierQuery.getRegistrationCountryCode())
@@ -214,7 +217,9 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
             final Identifier identifier = new Identifier();
             identifier.setValue(searchParameter.getIdentifier());
             try {
-                CollectionUtils.emptyIfNull(searchParameter.getIdentifierType()).forEach(type -> identifier.getType().add(IdentifierType.fromValue(type)));
+                CollectionUtils.emptyIfNull(searchParameter.getIdentifierType()).stream()
+                        .filter(StringUtils::isNotBlank)
+                        .forEach(type -> identifier.getType().add(IdentifierType.fromValue(type.toLowerCase())));
             } catch (final IllegalArgumentException e) {
                 log.error("unknown identifier type {}", e.getMessage());
             }

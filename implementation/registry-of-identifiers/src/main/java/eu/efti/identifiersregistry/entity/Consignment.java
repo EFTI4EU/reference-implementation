@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
@@ -49,6 +50,8 @@ public class Consignment extends AbstractModel implements Serializable {
     private OffsetDateTime deliveryEventActualOccurrenceDatetime;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
+    @Builder.Default
+    @ToString.Exclude
     private List<MainCarriageTransportMovement> mainCarriageTransportMovements = new ArrayList<>();
 
     public void setMainCarriageTransportMovements(List<MainCarriageTransportMovement> mainCarriageTransportMovements) {
@@ -60,6 +63,8 @@ public class Consignment extends AbstractModel implements Serializable {
         }
     }
 
+    @Builder.Default
+    @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
     private List<UsedTransportEquipment> usedTransportEquipments = new ArrayList<>();
 
