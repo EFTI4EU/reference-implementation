@@ -132,7 +132,9 @@ public class IdentifiersMapper {
         usedTransportEquipment.setIdSchemeAgencyId(equipment.getId().getSchemeAgencyId());
         usedTransportEquipment.setRegistrationCountry(equipment.getRegistrationCountry().getCode().value());
         usedTransportEquipment.setSequenceNumber(equipment.getSequenceNumber().intValue());
-        usedTransportEquipment.setCategoryCode(equipment.getCategoryCode().value());
+        if (equipment.getCategoryCode() != null) {
+            usedTransportEquipment.setCategoryCode(equipment.getCategoryCode().value());
+        }
         return usedTransportEquipment;
     }
 
@@ -166,7 +168,7 @@ public class IdentifiersMapper {
 
             logisticsTransportEquipment.getCarriedTransportEquipment().addAll(CollectionUtils.emptyIfNull(equipment.getCarriedTransportEquipments()).stream().map(carriedEquipment -> {
                 AssociatedTransportEquipment associatedTransportEquipment = new AssociatedTransportEquipment();
-                associatedTransportEquipment.setId(fromId(carriedEquipment.getEquipmentId()));
+                associatedTransportEquipment.setId(fromIdAndSchemeAgency(carriedEquipment.getEquipmentId(), carriedEquipment.getSchemeAgencyId()));
                 associatedTransportEquipment.setSequenceNumber(BigInteger.valueOf(carriedEquipment.getSequenceNumber()));
                 return associatedTransportEquipment;
             }).toList());
@@ -185,6 +187,13 @@ public class IdentifiersMapper {
     private Identifier17 fromId(final String id) {
         final Identifier17 identifier17 = new Identifier17();
         identifier17.setValue(id);
+        return identifier17;
+    }
+
+    private Identifier17 fromIdAndSchemeAgency(final String id, final String schemeAgencyId) {
+        final Identifier17 identifier17 = new Identifier17();
+        identifier17.setValue(id);
+        identifier17.setSchemeAgencyId(schemeAgencyId);
         return identifier17;
     }
 
