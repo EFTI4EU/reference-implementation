@@ -16,7 +16,7 @@ cd $REPOS_DIR
 git switch testfest-fr
 
 #JAVA
-apt install -y openjdk-11-jre
+apt install -y openjdk-17-jre
 
 #ActiveMQ
 wget http://archive.apache.org/dist/activemq/5.16.3/apache-activemq-5.16.3-bin.tar.gz
@@ -58,7 +58,12 @@ mv ${DOMIBUS_DIR}/domibus/fr-ttf/domains/france /opt/domibus/conf/domibus/domain
 mv ${DOMIBUS_DIR}/domibus/fr-ttf/domains/ttf /opt/domibus/conf/domibus/domains/ttf
 mv ${DOMIBUS_DIR}/domibus/fr-ttf/domibus-france.properties /opt/domibus/conf/domibus/domibus.properties
 mv ${DOMIBUS_DIR}/domibus/sh/setenv-node-1.sh /opt/domibus/bin/setenv.sh
-mv ${DOMIBUS_DIR}/domibus/fr-ttf/plugins-conf/ /opt/domibus/conf/domibus/plugins/config/domains/
+mv ${DOMIBUS_DIR}/domibus/fr-ttf/plugins-conf/france /opt/domibus/conf/domibus/plugins/config/domains/france
+mv ${DOMIBUS_DIR}/domibus/fr-ttf/plugins-conf/ttf /opt/domibus/conf/domibus/plugins/config/domains/ttf
 dos2unix /opt/domibus/bin/*.sh
 sudo chmod 777 /opt/domibus/bin/*
+#before startup, add line below to /opt/domibus/bin/setenv.sh
+# export JAVA_OPTS="$JAVA_OPTS --add-exports java.base/sun.security.util=ALL-UNNAMED --add-exports java.base/sun.security.x509=ALL-UNNAMED"
 sudo sh /opt/domibus/bin/startup.sh
+
+
