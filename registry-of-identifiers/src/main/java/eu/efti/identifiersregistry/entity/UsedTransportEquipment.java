@@ -53,7 +53,7 @@ public class UsedTransportEquipment implements Serializable {
     private String categoryCode;
 
     @ManyToOne
-    @JoinColumn(name = "consignment_id", referencedColumnName = "id", insertable = true, updatable = false)
+    @JoinColumn(name = "consignment_id", referencedColumnName = "id", updatable = false)
     private Consignment consignment;
 
     @Builder.Default
