@@ -1,10 +1,7 @@
 package eu.efti.identifiersregistry.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
@@ -29,6 +26,7 @@ public class CarriedTransportEquipment {
     @Column(name = "id_scheme_agency_id")
     private String schemeAgencyId;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "used_transport_equipment_id", referencedColumnName = "id", insertable = true, updatable = false)
     private UsedTransportEquipment usedTransportEquipment;

@@ -41,6 +41,7 @@ public class UsedTransportEquipment {
     @Column(name = "category_code")
     private String categoryCode;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "consignment_id", referencedColumnName = "id", updatable = false)
     private Consignment consignment;
