@@ -1,10 +1,7 @@
 package eu.efti.identifiersregistry.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
@@ -32,6 +29,7 @@ public class MainCarriageTransportMovement {
     @Column(name = "used_transport_means_registration_country")
     private String usedTransportMeansRegistrationCountry;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "consignment_id", referencedColumnName = "id", insertable = true, updatable = false)
     private Consignment consignment;
