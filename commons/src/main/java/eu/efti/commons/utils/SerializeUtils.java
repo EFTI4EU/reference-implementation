@@ -50,6 +50,7 @@ public class SerializeUtils {
 
     public <T> String mapObjectToXmlString(final T content) {
         try {
+            xmlMapper.setDefaultUseWrapper(false);
             return xmlMapper.writeValueAsString(content);
         } catch (final JsonProcessingException e) {
             throw new TechnicalException("error while writing content", e);
