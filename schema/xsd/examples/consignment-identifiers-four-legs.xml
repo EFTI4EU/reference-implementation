@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<consignment
+  xmlns="http://efti.eu/v1/consignment/identifier"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://efti.eu/v1/consignment/identifier ../consignment-identifier.xsd">
+  
+  <carrierAcceptanceDateTime>202410220000</carrierAcceptanceDateTime>
+
+  <!-- delivery event populated when consignment is delivered to destination -->
+  <deliveryEvent>
+    <actualOccurrenceDateTime>202410230000</actualOccurrenceDateTime>
+  </deliveryEvent>
+
+  <!-- fourth and final leg, truck -->
+  <mainCarriageTransportMovement>
+    <dangerousGoodsIndicator>false</dangerousGoodsIndicator>
+    <modeCode>3</modeCode>
+    <usedTransportMeans>
+      <id>ABC-125</id>
+      <registrationCountry>
+        <code>FI</code>
+      </registrationCountry>
+    </usedTransportMeans>
+  </mainCarriageTransportMovement>
+
+  <!-- third leg, airplane -->
+  <mainCarriageTransportMovement>
+    <dangerousGoodsIndicator>true</dangerousGoodsIndicator>
+    <modeCode>4</modeCode>
+    <usedTransportMeans>
+      <id>BB12</id>
+      <registrationCountry>
+        <code>FI</code>
+      </registrationCountry>
+    </usedTransportMeans>
+  </mainCarriageTransportMovement>
+
+  <!-- second leg, another truck -->
+  <mainCarriageTransportMovement>
+    <dangerousGoodsIndicator>false</dangerousGoodsIndicator>
+    <modeCode>3</modeCode>
+    <usedTransportMeans>
+      <id>ABC-124</id>
+      <registrationCountry>
+        <code>FI</code>
+      </registrationCountry>
+    </usedTransportMeans>
+  </mainCarriageTransportMovement>
+
+  <!-- first leg, truck -->
+  <mainCarriageTransportMovement>
+    <dangerousGoodsIndicator>false</dangerousGoodsIndicator>
+    <modeCode>3</modeCode>
+    <usedTransportMeans>
+      <id>ABC-123</id>
+      <registrationCountry>
+        <code>FI</code>
+      </registrationCountry>
+    </usedTransportMeans>
+  </mainCarriageTransportMovement>
+
+  <!-- fourth leg, equipment -->
+  <usedTransportEquipment>
+    <!-- container on truck bed, no separate carried transport equipment -->
+    <categoryCode>CN</categoryCode>
+    <id>1234-4</id>
+    <registrationCountry>
+      <code>FI</code>
+    </registrationCountry>
+    <sequenceNumber>1</sequenceNumber>
+  </usedTransportEquipment>
+
+  <!-- third leg, equipment -->
+  <usedTransportEquipment>
+    <!-- container inside airplane, no separate carried transport equipment -->
+    <categoryCode>CN</categoryCode>
+    <id>XYZ123</id>
+    <registrationCountry>
+      <code>FI</code>
+    </registrationCountry>
+    <sequenceNumber>1</sequenceNumber>
+  </usedTransportEquipment>
+
+  <!-- first and second leg, same trailer used in both -->
+  <usedTransportEquipment>
+    <!-- container on trailer -->
+    <carriedTransportEquipment>
+      <id>1234-1</id>
+      <sequenceNumber>1</sequenceNumber>
+    </carriedTransportEquipment>
+    <!-- another container on trailer -->
+    <carriedTransportEquipment>
+      <id>1234-2</id>
+      <sequenceNumber>2</sequenceNumber>
+    </carriedTransportEquipment>
+    <categoryCode>AE</categoryCode>
+    <id>4321-1</id>
+    <registrationCountry>
+      <code>FI</code>
+    </registrationCountry>
+    <sequenceNumber>1</sequenceNumber>
+  </usedTransportEquipment>
+</consignment>

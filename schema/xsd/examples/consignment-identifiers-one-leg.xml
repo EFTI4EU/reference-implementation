@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<consignment
+  xmlns="http://efti.eu/v1/consignment/identifier"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://efti.eu/v1/consignment/identifier ../consignment-identifier.xsd">
+  
+  <carrierAcceptanceDateTime>202410220000</carrierAcceptanceDateTime>
+
+  <mainCarriageTransportMovement>
+    <dangerousGoodsIndicator>false</dangerousGoodsIndicator>
+    <modeCode>3</modeCode>
+    <usedTransportMeans>
+      <id>ABC-123</id>
+      <registrationCountry>
+        <code>FI</code>
+      </registrationCountry>
+    </usedTransportMeans>
+  </mainCarriageTransportMovement>
+
+  <!-- two containers on a trailer -->
+  <usedTransportEquipment>
+    <!-- first container on the trailer -->
+    <carriedTransportEquipment>
+      <id>1234-1</id>
+      <sequenceNumber>1</sequenceNumber>
+    </carriedTransportEquipment>
+    <!-- another container on the trailer -->
+    <carriedTransportEquipment>
+      <id>1234-2</id>
+      <sequenceNumber>2</sequenceNumber>
+    </carriedTransportEquipment>
+    <categoryCode>AE</categoryCode>
+    <id>4321-1</id>
+    <registrationCountry>
+      <code>FI</code>
+    </registrationCountry>
+    <sequenceNumber>1</sequenceNumber>
+  </usedTransportEquipment>
+</consignment>
