@@ -47,7 +47,7 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
                 predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(TRANSPORT_MODE), Short.valueOf(request.getModeCode()))));
             }
 
-            if (StringUtils.isNotBlank(request.getRegistrationCountryCode()) && !identifiersAreEqual(request.getIdentifierType(), CARRIED)) {
+            if (StringUtils.isNotBlank(request.getRegistrationCountryCode()) && !isCarriedIdentifierType(request.getIdentifierType())) {
                 predicates.add(buildRegistrationCountrySubquery(request, cb, root));
             }
             predicates.add(buildIdentifierSubquery(request, cb, root));
@@ -102,7 +102,8 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
         return identifierTypes.stream().anyMatch(identifierKeyword::equalsIgnoreCase);
     }
 
-    private boolean identifiersAreEqual(List<String> identifierTypes, String identifierKeyword) {
-        return CollectionUtils.emptyIfNull(identifierTypes).stream().allMatch(identifierKeyword::equalsIgnoreCase);
+    private boolean isCarriedIdentifierType(List<String> identifierTypes) {
+        return CollectionUtils.isNotEmpty(identifierTypes) && identifierTypes.stream()
+                .allMatch(IdentifiersRepository.CARRIED::equalsIgnoreCase);
     }
 }
