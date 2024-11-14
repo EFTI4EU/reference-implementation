@@ -104,6 +104,6 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
 
     private boolean isCarriedIdentifierType(List<String> identifierTypes) {
         return CollectionUtils.isNotEmpty(identifierTypes) && identifierTypes.stream()
-                .allMatch(IdentifiersRepository.CARRIED::equalsIgnoreCase);
+                .allMatch(CARRIED::equalsIgnoreCase);
     }
 }
