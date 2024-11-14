@@ -30,7 +30,7 @@ public final class EftiGateConstants {
     public static final List<RequestTypeEnum> EXTERNAL_REQUESTS_TYPES = List.of(EXTERNAL_ASK_UIL_SEARCH, EXTERNAL_ASK_IDENTIFIERS_SEARCH);
     public static final List<RequestStatusEnum> IN_PROGRESS_STATUS = List.of(RequestStatusEnum.IN_PROGRESS, RequestStatusEnum.RESPONSE_IN_PROGRESS, RequestStatusEnum.RECEIVED);
 
-    public static final EnumMap<RequestType, Class<? extends RequestDto>> REQUEST_TYPE_CLASS_MAP = new EnumMap<>(Map.of(
+    public static final Map<RequestType, Class<? extends RequestDto>> REQUEST_TYPE_CLASS_MAP = new EnumMap<>(Map.of(
             RequestType.UIL, UilRequestDto.class,
             RequestType.IDENTIFIER, IdentifiersRequestDto.class,
             RequestType.NOTE, NotesRequestDto.class

@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -39,7 +40,7 @@ import static java.lang.Thread.sleep;
 @Slf4j
 public class ApIncomingService {
     private static final String NOT_FOUND_MESSAGE = "file not found with uuid";
-    private static final Random RANDOM = new Random();
+    private static final Random RANDOM = new SecureRandom();
 
     private final RequestSendingService requestSendingService;
 
