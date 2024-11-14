@@ -42,12 +42,12 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
                 Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin = root.join(MOVEMENTS, JoinType.LEFT);
                 predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(IS_DANGEROUS_GOODS), request.getDangerousGoodsIndicator())));
             }
-            if (StringUtils.isNotEmpty(request.getModeCode())) {
+            if (StringUtils.isNotBlank(request.getModeCode())) {
                 Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin = root.join(MOVEMENTS, JoinType.LEFT);
                 predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(TRANSPORT_MODE), Short.valueOf(request.getModeCode()))));
             }
 
-            if (StringUtils.isNotEmpty(request.getRegistrationCountryCode())) {
+            if (StringUtils.isNotBlank(request.getRegistrationCountryCode())) {
                 predicates.add(buildRegistrationCountrySubquery(request.getRegistrationCountryCode(), cb, root));
             }
             predicates.add(buildIdentifierSubquery(request, cb, root));
