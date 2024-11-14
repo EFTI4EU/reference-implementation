@@ -25,11 +25,14 @@ import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
 import eu.efti.eftigate.utils.ControlUtils;
+import eu.efti.v1.consignment.common.ObjectFactory;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import eu.efti.v1.edelivery.UIL;
 import eu.efti.v1.edelivery.UILQuery;
 import eu.efti.v1.edelivery.UILResponse;
+import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -56,6 +59,8 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     private static final String UIL = "UIL";
     private final UilRequestRepository uilRequestRepository;
     private final SerializeUtils serializeUtils;
+    private final ObjectFactory objectFactory = new ObjectFactory();
+
 
     public UilRequestService(final UilRequestRepository uilRequestRepository, final MapperUtils mapperUtils,
                              final RabbitSenderService rabbitSenderService,
@@ -138,7 +143,14 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             final UILResponse uilResponse = new UILResponse();
             uilResponse.setRequestId(controlDto.getRequestId());
             uilResponse.setStatus(getStatus(requestDto, hasError));
-            uilResponse.setConsignment(hasData ? serializeUtils.mapXmlStringToClass(new String(requestDto.getReponseData()), SupplyChainConsignment.class) : null);
+            if (hasData) {
+                try {
+                    SupplyChainConsignment consignment = serializeUtils.mapXmlStringToJaxbObject(new String(requestDto.getReponseData()), JAXBContext.newInstance(ObjectFactory.class));
+                    uilResponse.setConsignment(consignment);
+                } catch (JAXBException e) {
+                    throw new TechnicalException("error while writing content", e);
+                }
+            }
             uilResponse.setDescription(hasError ? requestDto.getError().getErrorDescription() : null);
             final JAXBElement<UILResponse> jaxBResponse = getObjectFactory().createUilResponse(uilResponse);
             return getSerializeUtils().mapJaxbObjectToXmlString(jaxBResponse, UILResponse.class);
@@ -194,7 +206,9 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
     private ControlDto manageResponseFromPlatform(final UilRequestDto uilRequestDto, final UILResponse uilResponse, final String messageId) {
         if (uilResponse.getStatus().equals(EDeliveryStatus.OK.getCode())) {
-            uilRequestDto.setReponseData(serializeUtils.mapObjectToXmlString(uilResponse.getConsignment()).getBytes(Charset.defaultCharset()));
+            JAXBElement<SupplyChainConsignment> consignment = objectFactory.createConsignment(uilResponse.getConsignment());
+            String responseData = serializeUtils.mapJaxbObjectToXmlString(consignment, SupplyChainConsignment.class);
+            uilRequestDto.setReponseData(responseData.getBytes(Charset.defaultCharset()));
             this.updateStatus(uilRequestDto, RequestStatusEnum.SUCCESS, messageId);
         } else {
             this.updateStatus(uilRequestDto, ERROR, messageId);
@@ -217,7 +231,9 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 controlDto.setStatus(controlStatus);
             }
             case OK -> {
-                requestDto.setReponseData(serializeUtils.mapObjectToXmlString(uilResponse.getConsignment()).getBytes(StandardCharsets.UTF_8));
+                JAXBElement<SupplyChainConsignment> consignment = objectFactory.createConsignment(uilResponse.getConsignment());
+                String responseData = serializeUtils.mapJaxbObjectToXmlString(consignment, SupplyChainConsignment.class);
+                requestDto.setReponseData(responseData.getBytes(StandardCharsets.UTF_8));
                 requestDto.setStatus(RequestStatusEnum.SUCCESS);
             }
             case BAD_REQUEST, NOT_FOUND -> {
