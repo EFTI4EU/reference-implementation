@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<consignment
+        xmlns="http://efti.eu/v1/consignment/identifier"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://efti.eu/v1/consignment/identifier ../consignment-identifier.xsd">
+
+    <!-- eFTI39 -->
+    <carrierAcceptanceDateTime formatId="205">202401010000+0000</carrierAcceptanceDateTime>
+
+    <deliveryEvent>
+        <!-- eFTI188 -->
+        <actualOccurrenceDateTime formatId="205">202401020000+0000</actualOccurrenceDateTime>
+    </deliveryEvent>
+
+    <mainCarriageTransportMovement>
+        <!-- eFTI1451 -->
+        <dangerousGoodsIndicator>false</dangerousGoodsIndicator>
+
+        <!-- eFTI581 -->
+        <modeCode>3</modeCode>
+
+        <usedTransportMeans>
+            <!-- eFTI618 -->
+            <id>313</id>
+            <!-- eFTI620 -->
+            <registrationCountry>
+                <code>FI</code>
+            </registrationCountry>
+        </usedTransportMeans>
+    </mainCarriageTransportMovement>
+
+    <usedTransportEquipment>
+        <carriedTransportEquipment>
+            <!-- eFTI448 -->
+            <id>313</id>
+            <!-- eFTI1000 -->
+            <sequenceNumber>1</sequenceNumber>
+        </carriedTransportEquipment>
+
+        <!-- eFTI378 -->
+        <categoryCode>AE</categoryCode>
+        <!-- eFTI374 -->
+        <id schemeAgencyId="20">313</id>
+
+        <!-- eFTI578 -->
+        <registrationCountry>
+            <code>FI</code>
+        </registrationCountry>
+        <!-- eFTI987 -->
+        <sequenceNumber>1</sequenceNumber>
+    </usedTransportEquipment>
+</consignment>

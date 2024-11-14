@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -70,7 +71,7 @@ class ReaderServiceTest {
                 "teest.xml",
                 "teest.xml",
                 "text/plain",
-                "content".getBytes());
+                "content".getBytes(StandardCharsets.UTF_8));
 
         //todo passing test
         assertThrows(UploadException.class, () -> readerService.uploadFile(mockMultipartFile));

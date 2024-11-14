@@ -36,11 +36,9 @@ class IdentifiersRepositoryTest {
     @Autowired
     private IdentifiersRepository identifiersRepository;
 
-    AutoCloseable openMocks;
 
     @BeforeEach
     public void before() {
-        openMocks = MockitoAnnotations.openMocks(this);
 
         final Consignment consignment = new Consignment();
         consignment.setGateId("thegateid");

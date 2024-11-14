@@ -25,6 +25,7 @@ import java.util.Base64;
 @Slf4j
 public class SerializeUtils {
 
+    public static final String ERROR_WHILE_WRITING_CONTENT = "error while writing content";
     private final ObjectMapper objectMapper;
     private final XmlMapper xmlMapper;
 
@@ -53,7 +54,7 @@ public class SerializeUtils {
             xmlMapper.setDefaultUseWrapper(false);
             return xmlMapper.writeValueAsString(content);
         } catch (final JsonProcessingException e) {
-            throw new TechnicalException("error while writing content", e);
+            throw new TechnicalException(ERROR_WHILE_WRITING_CONTENT, e);
         }
     }
 
@@ -64,7 +65,7 @@ public class SerializeUtils {
             marshaller.marshal(content, sw);
             return sw.toString();
         } catch (final JAXBException e) {
-            throw new TechnicalException("error while writing content", e);
+            throw new TechnicalException(ERROR_WHILE_WRITING_CONTENT, e);
         }
     }
 
@@ -76,7 +77,7 @@ public class SerializeUtils {
             final JAXBElement<U> jaxbElement = (JAXBElement<U>) unmarshaller.unmarshal(reader);
             return jaxbElement.getValue();
         } catch (final JAXBException e) {
-            throw new TechnicalException("error while writing content", e);
+            throw new TechnicalException(ERROR_WHILE_WRITING_CONTENT, e);
         }
     }
 
@@ -84,7 +85,7 @@ public class SerializeUtils {
         try {
             return objectMapper.writeValueAsString(content);
         } catch (final JsonProcessingException e) {
-            throw new TechnicalException("error while writing content", e);
+            throw new TechnicalException(ERROR_WHILE_WRITING_CONTENT, e);
         }
     }
 

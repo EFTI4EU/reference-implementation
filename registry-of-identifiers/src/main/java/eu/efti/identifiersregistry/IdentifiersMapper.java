@@ -60,7 +60,7 @@ public class IdentifiersMapper {
                 yield localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
             }
             case "205" -> OffsetDateTime.parse(dateTime.getValue(), DateTimeFormatter.ofPattern("yyyyMMddHHmmZ"));
-            default -> throw new RuntimeException("Unsupported formatId: " + dateTime.getFormatId());
+            default -> throw new UnsupportedOperationException("Unsupported formatId: " + dateTime.getFormatId());
         };
     }
 

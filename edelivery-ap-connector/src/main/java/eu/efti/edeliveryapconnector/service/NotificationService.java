@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -56,7 +57,7 @@ public class NotificationService {
         final PayloadDto payloadDto = objectMapper.convertValue(receivedNotificationDto.getPayload(), PayloadDto.class);
 
         final NotificationContentDto notificationContentDto = NotificationContentDto.builder()
-                .body(new String(Base64.getDecoder().decode(payloadDto.getValue())))
+                .body(new String(Base64.getDecoder().decode(payloadDto.getValue()), StandardCharsets.UTF_8))
                 .contentType(payloadDto.getMimeType())
                 .fromPartyId(messagingDto.getUserMessage().getPartyInfo().getFrom().getPartyId().get(""))
                 .messageId(messagingDto.getUserMessage().getMessageInfo().getMessageId()).build();

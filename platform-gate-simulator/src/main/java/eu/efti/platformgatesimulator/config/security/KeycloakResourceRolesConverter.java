@@ -60,11 +60,11 @@ public class KeycloakResourceRolesConverter implements Converter<Jwt, Collection
     private void addResourcesRoles(final Jwt jwt, final List<GrantedAuthority> authorities) {
         Optional.ofNullable(jwt).ifPresent(jwtToken -> {
             final Map<String, Object> resourcesAccess = jwtToken.getClaimAsMap(RESOURCE_ROLES_BASE_CLAIM_NAME);
-            String resourceId = null;
+            String resourceId = jwtToken.getClaimAsString("azp");
             Map<String, Object> resource = null;
             Collection<String> resourceRoles = null;
             if (resourcesAccess != null
-                    && (StringUtils.isNotBlank((resourceId = jwtToken.getClaimAsString("azp")))
+                    && (StringUtils.isNotBlank((resourceId))
                             && (resource = (Map<String, Object>) resourcesAccess.get(resourceId)) != null)
                     && (resourceRoles = (Collection<String>) resource.get(ROLES_CLAIM_NAME)) != null) {
                 authorities.addAll(resourceRoles.stream().map(role -> new SimpleGrantedAuthority(Roles.ROLE_PREFIX + role))

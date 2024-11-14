@@ -171,8 +171,11 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
     @Override
     public RequestDto save(final RequestDto requestDto) {
+        //todo voir pour changer la façon de mapper
         return getMapperUtils().requestToRequestDto(
-                uilRequestRepository.save(getMapperUtils().requestDtoToRequestEntity(requestDto, UilRequestEntity.class)),
+                uilRequestRepository.save(
+                        getMapperUtils().requestDtoToRequestEntity(requestDto, UilRequestEntity.class)
+                ),
                 UilRequestDto.class);
     }
 

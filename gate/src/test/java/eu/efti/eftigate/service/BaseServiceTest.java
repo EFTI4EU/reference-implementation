@@ -48,6 +48,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
 
     protected final UilDto uilDto = new UilDto();
     protected final ControlDto controlDto = new ControlDto();
+    protected final ControlEntity controlEntityError = new ControlEntity();
     protected final ControlEntity controlEntity = new ControlEntity();
 
     protected final RequestDto requestDto = new RequestDto();
@@ -82,6 +83,13 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlDto.setCreatedDate(localDateTime);
         this.controlDto.setLastModifiedDate(localDateTime);
 
+        this.controlEntityError.setRequestId(requestId);
+        this.controlEntityError.setRequestType(RequestTypeEnum.NOTE_SEND);
+        this.controlEntityError.setStatus(StatusEnum.PENDING);
+        this.controlDto.setSubsetId("oki");
+        this.controlEntityError.setCreatedDate(localDateTime);
+        this.controlEntityError.setLastModifiedDate(localDateTime);
+
         this.controlEntity.setEftiDataUuid(controlDto.getEftiDataUuid());
         this.controlEntity.setRequestId(controlDto.getRequestId());
         this.controlEntity.setRequestType(controlDto.getRequestType());
@@ -115,6 +123,13 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         requestEntity.setCreatedDate(LocalDateTime.now());
         requestEntity.setGateIdDest(this.requestDto.getGateIdDest());
         requestEntity.setControl(controlEntity);
+    }
+
+    protected <T extends RequestEntity> void setEntityRequestCommonAttributesError(final T requestEntity) {
+        requestEntity.setStatus(this.requestDto.getStatus());
+        requestEntity.setRetry(this.requestDto.getRetry());
+        requestEntity.setCreatedDate(LocalDateTime.now());
+        requestEntity.setControl(controlEntityError);
     }
 
     protected <T extends RequestDto> void setDtoRequestCommonAttributes(final T requestDto) {

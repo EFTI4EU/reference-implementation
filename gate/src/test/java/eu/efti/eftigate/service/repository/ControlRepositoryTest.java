@@ -16,6 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,5 +52,29 @@ class ControlRepositoryTest {
         //Assert
         assertThat(controls).containsExactlyInAnyOrder(firstSavedControl);
     }
+
+    @Test
+    void shouldFindControlByCriteriaStatusEnum() {
+        //Arrange
+        final RequestEntity firstRequest = new UilRequestEntity();
+        firstRequest.setStatus(RequestStatusEnum.IN_PROGRESS);
+        final RequestEntity secondRequest = new UilRequestEntity();
+        secondRequest.setStatus(RequestStatusEnum.RECEIVED);
+        final ControlEntity firstControl = ControlEntity.builder().requestId("67fe38bd-6bf7-4b06-b20e-206264bd639c").status(StatusEnum.PENDING).requests(List.of(firstRequest)).build();
+        firstControl.setCreatedDate(LocalDateTime.now());
+        firstRequest.setControl(firstControl);
+        final ControlEntity firstSavedControl = controlRepository.save(firstControl);
+        final ControlEntity secondControl = ControlEntity.builder().requestId("23fe38bd-6bf7-4b06-b20e-206264bd66c").status(StatusEnum.ERROR).requests(List.of(secondRequest)).build();
+        secondRequest.setControl(secondControl);
+        controlRepository.save(secondControl);
+
+        //Act
+        final List<ControlEntity> controls = controlRepository.findByCriteria(StatusEnum.PENDING, 0);
+
+        //Assert
+        assertThat(controls).containsExactlyInAnyOrder(firstSavedControl);
+    }
+
+
 
 }
