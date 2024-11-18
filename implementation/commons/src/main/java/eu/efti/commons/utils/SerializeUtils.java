@@ -25,7 +25,7 @@ import java.util.Base64;
 @Slf4j
 public class SerializeUtils {
 
-    public static final String ERROR_WHILE_WRITING_CONTENT = "error while writing content";
+    private static final String ERROR_WHILE_WRITING_CONTENT = "error while writing content";
     private final ObjectMapper objectMapper;
     private final XmlMapper xmlMapper;
 
