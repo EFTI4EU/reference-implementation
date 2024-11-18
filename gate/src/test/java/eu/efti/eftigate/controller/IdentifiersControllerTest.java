@@ -3,6 +3,7 @@ package eu.efti.eftigate.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.service.ControlService;
@@ -19,7 +20,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
+import static com.jayway.jsonassert.JsonAssert.emptyCollection;
 import static com.jayway.jsonassert.JsonAssert.with;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,6 +40,7 @@ class IdentifiersControllerTest {
     public static final String REQUEST_ID = "requestId";
 
     private final IdentifiersResponseDto identifiersResponseDto = new IdentifiersResponseDto();
+    private final ConsignmentDto consignmentDto = new ConsignmentDto();
 
     @Autowired
     protected MockMvc mockMvc;
@@ -46,6 +52,11 @@ class IdentifiersControllerTest {
     void before() {
         identifiersResponseDto.setStatus(StatusEnum.COMPLETE);
         identifiersResponseDto.setRequestId(REQUEST_ID);
+        consignmentDto.setId(1);
+        consignmentDto.setPlatformId("acme");
+        consignmentDto.setDatasetId("datasetId");
+        consignmentDto.setGateId("gateId");
+        identifiersResponseDto.setIdentifiers(List.of(consignmentDto));
     }
 
     @Test
@@ -83,7 +94,9 @@ class IdentifiersControllerTest {
 
         with(result)
                 .assertThat("$.requestId", is("requestId"))
-                .assertThat("$.status", is("COMPLETE"));
+                .assertThat("$.status", is("COMPLETE"))
+                .assertThat("$.identifiers", is(not(emptyCollection())))
+                .assertThat("$.identifiers[0].platformId", is("acme"));
     }
 
     @Test
