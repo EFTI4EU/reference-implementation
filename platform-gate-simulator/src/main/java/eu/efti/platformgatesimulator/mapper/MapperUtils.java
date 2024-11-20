@@ -68,7 +68,7 @@ public class MapperUtils {
         if (categoryCode == null) {
             return null;
         }
-        return TransportEquipmentCategoryCode.valueOf(categoryCode.name());
+        return TransportEquipmentCategoryCode.fromValue(categoryCode.value());
     }
 
     private eu.efti.v1.consignment.identifier.LogisticsTransportMovement from(MainCarriageTransportMovement mainCarriageTransportMovement) {
