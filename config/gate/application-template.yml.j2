@@ -62,6 +62,10 @@ spring:
       hibernate:
         control_schema: "{{ spring.jpa.properties.hibernate.control_schema }}"
         identifiers_schema: "{{ spring.jpa.properties.hibernate.identifiers_schema }}"
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 management:
   endpoint:
