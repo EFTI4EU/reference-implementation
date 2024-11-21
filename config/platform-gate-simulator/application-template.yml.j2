@@ -13,6 +13,10 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: {{ spring.security.oauth2.resourceserver.jwt.issuer_uri}}
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 gate:
   minSleep: {{ gate.minSleep }}
