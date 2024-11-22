@@ -5,6 +5,7 @@ import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.ValidableDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
+import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -130,7 +131,7 @@ public class LogManager {
     }
 
     public void logLocalRegistryMessage(final ControlDto control,
-                                        final List<ConsignmentDto> consignmentDtos,
+                                        final List<ConsignmentApiDto> consignmentDtos,
                                         final String name) {
         final MessagePartiesDto messagePartiesDto = getMessagePartiesDto();
         final String body = serializeUtils.mapObjectToBase64String(consignmentDtos);

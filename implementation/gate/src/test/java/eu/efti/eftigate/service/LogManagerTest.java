@@ -2,7 +2,7 @@ package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.UilDto;
-import eu.efti.commons.dto.identifiers.ConsignmentDto;
+import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.config.GateProperties;
@@ -144,7 +144,7 @@ class LogManagerTest extends BaseServiceTest {
                 .respondingComponentId("ownerId")
                 .respondingComponentType(GATE)
                 .respondingComponentCountry("ownerCountry").build();
-        final List<ConsignmentDto> consignmentDtos = List.of(ConsignmentDto.builder().build());
+        final List<ConsignmentApiDto> consignmentDtos = List.of(ConsignmentApiDto.builder().build());
         final String body = serializeUtils.mapObjectToBase64String(consignmentDtos);
 
         logManager.logLocalRegistryMessage(controlDto, consignmentDtos, "test");

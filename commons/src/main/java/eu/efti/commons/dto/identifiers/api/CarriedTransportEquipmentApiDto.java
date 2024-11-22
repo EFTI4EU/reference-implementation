@@ -1,6 +1,7 @@
-package eu.efti.commons.dto.identifiers;
+package eu.efti.commons.dto.identifiers.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,11 +14,13 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MainCarriageTransportMovementDto implements Serializable {
-    private long id;
-    private short modeCode;
+@JsonPropertyOrder({
+        "id",
+        "schemeAgencyId",
+        "sequenceNumber"
+})
+public class CarriedTransportEquipmentApiDto implements Serializable {
+    private String id;
+    private int sequenceNumber;
     private String schemeAgencyId;
-    private boolean dangerousGoodsIndicator;
-    private String usedTransportMeansId;
-    private String usedTransportMeansRegistrationCountry;
 }

@@ -30,7 +30,10 @@ public class MainCarriageTransportMovement {
     private String usedTransportMeansRegistrationCountry;
 
     @ToString.Exclude
+    @Column(name = "id_scheme_agency_id")
+    private String schemeAgencyId;
+
     @ManyToOne
-    @JoinColumn(name = "consignment_id", referencedColumnName = "id", insertable = true, updatable = false)
+    @JoinColumn(name = "consignment_id", referencedColumnName = "id", updatable = false)
     private Consignment consignment;
 }

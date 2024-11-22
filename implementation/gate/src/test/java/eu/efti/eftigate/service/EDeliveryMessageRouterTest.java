@@ -6,25 +6,15 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.eftigate.service.request.IdentifiersRequestService;
 import eu.efti.eftigate.service.request.NotesRequestService;
 import eu.efti.eftigate.service.request.UilRequestService;
-import eu.efti.v1.edelivery.IdentifierQuery;
-import eu.efti.v1.edelivery.IdentifierResponse;
-import eu.efti.v1.edelivery.PostFollowUpRequest;
-import eu.efti.v1.edelivery.SaveIdentifiersRequest;
-import eu.efti.v1.edelivery.UILQuery;
-import eu.efti.v1.edelivery.UILResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

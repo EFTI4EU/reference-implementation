@@ -21,6 +21,94 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class IdentifiersMapperTest {
 
+    private ResourceLoader resourceLoader;
+
+    public static final String XML_FILE_TYPE = "xml";
+
+    private final ModelMapper modelMapper = new ModelMapper();
+
+    private final IdentifiersMapper identifiersMapper = new IdentifiersMapper(modelMapper);
+
+    @BeforeEach
+    void before() {
+        resourceLoader = new DefaultResourceLoader();
+    }
+
+    private Resource tryOpenFile(final String path, final String ext) {
+        final String filePath = String.join(".", path, ext);
+        return resourceLoader.getResource(filePath);
+    }
+
+    @Test
+    void entityToEdelivery() {
+        UsedTransportEquipment usedTransportEquipment = UsedTransportEquipment.builder()
+                .equipmentId("equipementId")
+                .id(1)
+                .carriedTransportEquipments(List.of(CarriedTransportEquipment.builder().build()))
+                .consignment(new Consignment())
+                .registrationCountry("FR")
+                .schemeAgencyId("idSchemeAgencyId")
+                .sequenceNumber(1).build();
+
+        Consignment test = new Consignment();
+
+        test.setDatasetId("datasetId");
+        test.setId(1);
+        test.setGateId("gateId");
+        test.setPlatformId("platformId");
+        test.setUsedTransportEquipments(List.of(usedTransportEquipment));
+        test.setMainCarriageTransportMovements(List.of(MainCarriageTransportMovement.builder()
+                .id(1).consignment(new Consignment()).dangerousGoodsIndicator(false)
+                .modeCode((short) 1)
+                .usedTransportMeansId("usedTransportMeansId")
+                .usedTransportMeansRegistrationCountry("FR")
+                .build()));
+        test.setCarrierAcceptanceDatetime(OffsetDateTime.now());
+        test.setDeliveryEventActualOccurrenceDatetime(OffsetDateTime.now());
+
+        eu.efti.v1.edelivery.Consignment consignment = identifiersMapper.entityToEdelivery(test);
+
+        assertEquals("FR", consignment.getUsedTransportEquipment().get(0).getRegistrationCountry().getCode().name());
+        assertEquals("usedTransportMeansId", consignment.getMainCarriageTransportMovement().get(0).getUsedTransportMeans().getId().getValue());
+    }
+
+    @Test
+    void eDeliveryToEntityTest() {
+        DateTime dateTime = new DateTime();
+        UIL uil = new UIL();
+        uil.setDatasetId("datasetId");
+        uil.setGateId("gateId");
+        uil.setPlatformId("platformId");
+        TransportEvent transportEvent = new TransportEvent();
+        transportEvent.setActualOccurrenceDateTime(dateTime);
+        eu.efti.v1.edelivery.Consignment test = new eu.efti.v1.edelivery.Consignment();
+        test.setUil(uil);
+        test.setDeliveryEvent(transportEvent);
+        test.setCarrierAcceptanceDateTime(dateTime);
+
+        Consignment consignment = identifiersMapper.eDeliveryToEntity(test);
+
+        assertEquals("datasetId", consignment.getDatasetId());
+        assertEquals("gateId", consignment.getGateId());
+        assertEquals("platformId", consignment.getPlatformId());
+    }
+
+    @Test
+    void eDeliverySupplyToEntityTest() throws IOException {
+        Resource resource = tryOpenFile("/xml/test", XML_FILE_TYPE);
+        SupplyChainConsignment supplyChainConsignment;
+        try {
+            final Unmarshaller unmarshaller = JAXBContext.newInstance(ObjectFactory.class).createUnmarshaller();
+            final JAXBElement<eu.efti.v1.consignment.identifier.SupplyChainConsignment> jaxbElement = (JAXBElement<eu.efti.v1.consignment.identifier.SupplyChainConsignment>) unmarshaller.unmarshal(resource.getInputStream());
+            supplyChainConsignment = jaxbElement.getValue();
+        } catch (JAXBException e) {
+            throw new TechnicalException("error while writing content", e);
+        }
+        Consignment consignment = identifiersMapper.eDeliverySupplyToEntity(supplyChainConsignment);
+
+        assertEquals("2024-01-01T00:00Z", consignment.getCarrierAcceptanceDatetime().toString());
+    }
+
     @Test
     void testMapConsignmentToInternalModel() {
         SaveIdentifiersRequest request = new SaveIdentifiersRequest();

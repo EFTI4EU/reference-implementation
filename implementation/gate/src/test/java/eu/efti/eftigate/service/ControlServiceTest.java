@@ -12,6 +12,7 @@ import eu.efti.commons.dto.SearchParameter;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
+import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
@@ -118,6 +119,8 @@ class ControlServiceTest extends AbstractServiceTest {
     private final ConsignmentDto identifiersResultDto = new ConsignmentDto();
     private final IdentifiersResultsDto identifiersResultsDto = new IdentifiersResultsDto();
 
+    private final ConsignmentApiDto identifiersApiResultDto = new ConsignmentApiDto();
+
     private final RequestIdDto requestIdDto = new RequestIdDto();
     private final String requestId = UUID.randomUUID().toString();
 
@@ -210,6 +213,10 @@ class ControlServiceTest extends AbstractServiceTest {
         identifiersResultDto.setDatasetId("datasetId");
         identifiersResultDto.setPlatformId("platformId");
         identifiersResultDto.setGateId("gateId");
+
+        identifiersApiResultDto.setDatasetId("datasetId");
+        identifiersApiResultDto.setPlatformId("platformId");
+        identifiersApiResultDto.setGateId("gateId");
 
         identifiersResultsDto.setConsignments(Collections.singletonList(identifiersResultDto));
 
@@ -669,7 +676,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         final IdentifiersResponseDto expectedIdentifiersResponse = IdentifiersResponseDto.builder()
                 .status(StatusEnum.COMPLETE)
-                .identifiers(List.of(identifiersResultDto))
+                .identifiers(List.of(identifiersApiResultDto))
                 .build();
         //Act
         final IdentifiersResponseDto identifiersResponseDto = controlService.getIdentifiersResponse(requestId);

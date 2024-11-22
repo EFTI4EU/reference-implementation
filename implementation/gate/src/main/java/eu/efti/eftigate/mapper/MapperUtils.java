@@ -1,9 +1,9 @@
 package eu.efti.eftigate.mapper;
 
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
+import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.ErrorEntity;
@@ -41,10 +41,6 @@ public class MapperUtils {
             controlEntity.setError(errorEntity);
         }
         return controlEntity;
-    }
-
-    public ErrorEntity errorDtoToErrorEntity(final ErrorDto errorDto) {
-        return modelMapper.map(errorDto, ErrorEntity.class);
     }
 
     public ControlDto controlEntityToControlDto(final ControlEntity controlEntity) {
@@ -106,15 +102,19 @@ public class MapperUtils {
         return modelMapper.map(consignment, ConsignmentDto.class);
     }
 
-    public List<ConsignmentDto> entityToDto(final List<eu.efti.identifiersregistry.entity.Consignment> consignmentList) {
-        return CollectionUtils.emptyIfNull(consignmentList).stream().map(this::entityToDto).toList();
-    }
-
     public eu.efti.identifiersregistry.entity.Consignment dtoToEntity(final ConsignmentDto consignmentDto) {
         return modelMapper.map(consignmentDto, eu.efti.identifiersregistry.entity.Consignment.class);
     }
 
     public List<eu.efti.identifiersregistry.entity.Consignment> dtoToEntity(final List<ConsignmentDto> consignmentDtoList) {
         return CollectionUtils.emptyIfNull(consignmentDtoList).stream().map(this::dtoToEntity).toList();
+    }
+
+    public List<ConsignmentApiDto> consignmentDtoToApiDto(List<ConsignmentDto> consignmentDtos) {
+        return CollectionUtils.emptyIfNull(consignmentDtos).stream().map(this::dtoToApiDto).toList();
+    }
+
+    private ConsignmentApiDto dtoToApiDto(ConsignmentDto consignmentDto) {
+        return modelMapper.map(consignmentDto, ConsignmentApiDto.class);
     }
 }
