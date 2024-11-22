@@ -22,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -37,7 +35,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IdentifiersMapper {
 
-    private static final Logger log = LoggerFactory.getLogger(IdentifiersMapper.class);
     private final ModelMapper mapper;
 
     public ConsignmentDto entityToDto(final Consignment consignmentEntity) {
@@ -46,10 +43,6 @@ public class IdentifiersMapper {
 
     public List<ConsignmentDto> entityToDto(final List<Consignment> consignmentEntityList) {
         return consignmentEntityList.stream().map(this::entityToDto).toList();
-    }
-
-    public Consignment dtoToEntity(final ConsignmentDto dto) {
-        return mapper.map(dto, Consignment.class);
     }
 
     private OffsetDateTime fromDateTime(DateTime dateTime) {
@@ -103,8 +96,16 @@ public class IdentifiersMapper {
             MainCarriageTransportMovement mainCarriageTransportMovement = new MainCarriageTransportMovement();
             mainCarriageTransportMovement.setDangerousGoodsIndicator(movement.isDangerousGoodsIndicator());
             mainCarriageTransportMovement.setModeCode(Short.parseShort(movement.getModeCode()));
-            mainCarriageTransportMovement.setUsedTransportMeansId(movement.getUsedTransportMeans().getId().getValue());
-            mainCarriageTransportMovement.setUsedTransportMeansRegistrationCountry(movement.getUsedTransportMeans().getRegistrationCountry().getCode().value());
+            LogisticsTransportMeans usedTransportMeans = movement.getUsedTransportMeans();
+            if (usedTransportMeans != null) {
+                Identifier17 usedTransportMeansId = usedTransportMeans.getId();
+                mainCarriageTransportMovement.setUsedTransportMeansId(usedTransportMeansId.getValue());
+                mainCarriageTransportMovement.setSchemeAgencyId(usedTransportMeansId.getSchemeAgencyId());
+                TradeCountry usedTransportMeansRegistrationCountry = usedTransportMeans.getRegistrationCountry();
+                if (usedTransportMeansRegistrationCountry != null) {
+                    mainCarriageTransportMovement.setUsedTransportMeansRegistrationCountry(usedTransportMeansRegistrationCountry.getCode().value());
+                }
+            }
             mainCarriageTransportMovement.setConsignment(consignment);
             return mainCarriageTransportMovement;
         }).toList());
@@ -129,7 +130,7 @@ public class IdentifiersMapper {
     private static UsedTransportEquipment toUsedTransportEquipmentEntity(LogisticsTransportEquipment equipment) {
         UsedTransportEquipment usedTransportEquipment = new UsedTransportEquipment();
         usedTransportEquipment.setEquipmentId(equipment.getId().getValue());
-        usedTransportEquipment.setIdSchemeAgencyId(equipment.getId().getSchemeAgencyId());
+        usedTransportEquipment.setSchemeAgencyId(equipment.getId().getSchemeAgencyId());
         usedTransportEquipment.setRegistrationCountry(equipment.getRegistrationCountry().getCode().value());
         usedTransportEquipment.setSequenceNumber(equipment.getSequenceNumber().intValue());
         if (equipment.getCategoryCode() != null) {

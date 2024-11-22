@@ -22,13 +22,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import static org.mockito.ArgumentMatchers.any;
 
 @WebMvcTest(IdentifiersController.class)
-@ContextConfiguration(classes= {IdentifiersController.class})
+@ContextConfiguration(classes = {IdentifiersController.class})
 @ExtendWith(SpringExtension.class)
 class IdentifiersControllerTest {
 

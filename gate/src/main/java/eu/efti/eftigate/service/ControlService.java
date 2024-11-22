@@ -10,7 +10,7 @@ import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.dto.ValidableDto;
-import eu.efti.commons.dto.identifiers.ConsignmentDto;
+import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
@@ -371,9 +371,9 @@ public class ControlService {
         return result;
     }
 
-    private List<ConsignmentDto> getIdentifiersResultDtos(final ControlDto controlDto) {
+    private List<ConsignmentApiDto> getIdentifiersResultDtos(final ControlDto controlDto) {
         if (controlDto.getIdentifiersResults() != null) {
-            return controlDto.getIdentifiersResults();
+            return mapperUtils.consignmentDtoToApiDto(controlDto.getIdentifiersResults());
         }
         return emptyList();
     }

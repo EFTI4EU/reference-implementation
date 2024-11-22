@@ -8,6 +8,12 @@ import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule;
+import eu.efti.commons.dto.identifiers.CarriedTransportEquipmentDto;
+import eu.efti.commons.dto.identifiers.MainCarriageTransportMovementDto;
+import eu.efti.commons.dto.identifiers.UsedTransportEquipmentDto;
+import eu.efti.commons.dto.identifiers.api.CarriedTransportEquipmentApiDto;
+import eu.efti.commons.dto.identifiers.api.MainCarriageTransportMovementApiDto;
+import eu.efti.commons.dto.identifiers.api.UsedTransportEquipmentApiDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.AbstractConverter;
@@ -15,6 +21,7 @@ import org.modelmapper.AbstractProvider;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.Provider;
+import org.modelmapper.TypeMap;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -105,6 +112,19 @@ public class EftiConfig {
         };
         modelMapper.createTypeMap(String.class, LocalDateTime.class);
         modelMapper.createTypeMap(String.class, OffsetDateTime.class);
+
+        TypeMap<MainCarriageTransportMovementDto, MainCarriageTransportMovementApiDto> mainCarriageTypeMap = modelMapper.createTypeMap(MainCarriageTransportMovementDto.class, MainCarriageTransportMovementApiDto.class);
+        mainCarriageTypeMap.addMappings(mapper -> {
+            mapper.map(MainCarriageTransportMovementDto::getUsedTransportMeansId, MainCarriageTransportMovementApiDto::setId);
+            mapper.map(MainCarriageTransportMovementDto::getUsedTransportMeansRegistrationCountry, MainCarriageTransportMovementApiDto::setRegistrationCountry);
+        });
+
+        TypeMap<UsedTransportEquipmentDto, UsedTransportEquipmentApiDto> usedTransportTypeMap = modelMapper.createTypeMap(UsedTransportEquipmentDto.class, UsedTransportEquipmentApiDto.class);
+        usedTransportTypeMap.addMappings(mapper -> mapper.map(UsedTransportEquipmentDto::getEquipmentId, UsedTransportEquipmentApiDto::setId));
+
+        TypeMap<CarriedTransportEquipmentDto, CarriedTransportEquipmentApiDto> carriedTransportTypeMap = modelMapper.createTypeMap(CarriedTransportEquipmentDto.class, CarriedTransportEquipmentApiDto.class);
+        carriedTransportTypeMap.addMappings(mapper -> mapper.map(CarriedTransportEquipmentDto::getEquipmentId, CarriedTransportEquipmentApiDto::setId));
+
         modelMapper.addConverter(toLocalDateTime);
         modelMapper.addConverter(toOffsetDateTime);
         modelMapper.addConverter(toStringLocalDateTime);
