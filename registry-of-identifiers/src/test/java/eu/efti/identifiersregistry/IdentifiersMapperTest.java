@@ -67,7 +67,7 @@ class IdentifiersMapperTest {
                 .carriedTransportEquipments(List.of(CarriedTransportEquipment.builder().build()))
                 .consignment(new Consignment())
                 .registrationCountry("FR")
-                .idSchemeAgencyId("idSchemeAgencyId")
+                .schemeAgencyId("idSchemeAgencyId")
                 .sequenceNumber(1).build();
 
         Consignment test = new Consignment();

@@ -1,6 +1,5 @@
 package eu.efti.commons.dto.identifiers;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,11 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UsedTransportEquipmentDto implements Serializable {
-    @JsonIgnore
     private long id;
     private int sequenceNumber;
     private String equipmentId;
-    private String idSchemeAgencyId;
+    private String schemeAgencyId;
     private String registrationCountry;
     private String categoryCode;
     private List<CarriedTransportEquipmentDto> carriedTransportEquipments;

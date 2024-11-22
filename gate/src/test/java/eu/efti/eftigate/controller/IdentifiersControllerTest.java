@@ -3,7 +3,7 @@ package eu.efti.eftigate.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
-import eu.efti.commons.dto.identifiers.ConsignmentDto;
+import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.service.ControlService;
@@ -40,7 +40,7 @@ class IdentifiersControllerTest {
     public static final String REQUEST_ID = "requestId";
 
     private final IdentifiersResponseDto identifiersResponseDto = new IdentifiersResponseDto();
-    private final ConsignmentDto consignmentDto = new ConsignmentDto();
+    private final ConsignmentApiDto consignmentDto = new ConsignmentApiDto();
 
     @Autowired
     protected MockMvc mockMvc;
@@ -52,7 +52,6 @@ class IdentifiersControllerTest {
     void before() {
         identifiersResponseDto.setStatus(StatusEnum.COMPLETE);
         identifiersResponseDto.setRequestId(REQUEST_ID);
-        consignmentDto.setId(1);
         consignmentDto.setPlatformId("acme");
         consignmentDto.setDatasetId("datasetId");
         consignmentDto.setGateId("gateId");

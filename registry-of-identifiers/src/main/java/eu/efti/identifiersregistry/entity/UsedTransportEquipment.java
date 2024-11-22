@@ -45,7 +45,7 @@ public class UsedTransportEquipment implements Serializable {
     private String equipmentId;
 
     @Column(name = "id_scheme_agency_id")
-    private String idSchemeAgencyId;
+    private String schemeAgencyId;
 
     @Column(name = "registration_country")
     private String registrationCountry;
