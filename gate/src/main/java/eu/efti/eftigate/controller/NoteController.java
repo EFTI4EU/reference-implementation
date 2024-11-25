@@ -1,6 +1,6 @@
 package eu.efti.eftigate.controller;
 
-import eu.efti.commons.dto.NotesDto;
+import eu.efti.commons.dto.PostFollowUpRequestDto;
 import eu.efti.eftigate.controller.api.NoteControllerApi;
 import eu.efti.eftigate.dto.NoteResponseDto;
 import eu.efti.eftigate.service.ControlService;
@@ -22,8 +22,8 @@ public class NoteController implements NoteControllerApi {
     private final ControlService controlService;
 
     @Override
-    public ResponseEntity<NoteResponseDto> createNote(final @RequestBody NotesDto notesDto) {
-        log.info("POST on /notes with param requestId {}", notesDto.getRequestId());
+    public ResponseEntity<NoteResponseDto> createNote(final @RequestBody PostFollowUpRequestDto notesDto) {
+        log.info("POST on /notes with param datasetId {}", notesDto.getDatasetId());
         log.info("sending note to platform {}", notesDto.getPlatformId());
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
         return new ResponseEntity<>(noteResponseDto, StringUtils.isNotBlank(noteResponseDto.getErrorCode()) ? HttpStatus.BAD_REQUEST : HttpStatus.ACCEPTED);

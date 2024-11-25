@@ -12,7 +12,7 @@ public enum ErrorCodesEnum {
     UIL_GATE_TOO_LONG("Gate max length is 255 characters."),
     UIL_GATE_INCORRECT_FORMAT("Gate format incorrect."),
 
-    UIL_UUID_MISSING("Missing parameter eFTIDataUuid"),
+    UIL_UUID_MISSING("Missing parameter DatasetId"),
     UIL_PLATFORM_TOO_LONG("Platform max length is 255 characters."),
     UIL_PLATFORM_INCORRECT_FORMAT("Platform format incorrect."),
 

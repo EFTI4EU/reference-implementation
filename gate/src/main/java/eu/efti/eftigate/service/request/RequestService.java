@@ -6,6 +6,7 @@ import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
+import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
