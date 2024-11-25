@@ -1,5 +1,6 @@
 package eu.efti.eftigate.service.request;
 
+import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import java.util.List;
 public class RequestServiceFactory {
 
     private final List<RequestService<?>> requestServices;
+
 
     public RequestService getRequestServiceByRequestType(final RequestTypeEnum requestType)
     {

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -29,10 +30,10 @@ public abstract class AbstractUilDto {
     @NotNull(message = "UIL_UUID_MISSING")
     @NotBlank(message = "UIL_UUID_MISSING")
     @Size(max = 36, message = "UIL_UUID_TOO_LONG")
-    @Pattern(regexp = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}", message = "UIL_UUID_INCORRECT_FORMAT")
+    @Pattern(regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}", message = "DATASET_ID_INCORRECT_FORMAT")
     @Schema(example = "regex = [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}")
-    @JsonProperty("eFTIDataUuid")
-    private String eFTIDataUuid;
+    @JsonProperty("datasetId")
+    private String datasetId;
 
     @NotNull(message = "UIL_PLATFORM_MISSING")
     @NotBlank(message = "UIL_PLATFORM_MISSING")

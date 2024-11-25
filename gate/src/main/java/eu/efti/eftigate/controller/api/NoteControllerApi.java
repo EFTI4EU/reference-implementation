@@ -1,6 +1,6 @@
 package eu.efti.eftigate.controller.api;
 
-import eu.efti.commons.dto.NotesDto;
+import eu.efti.commons.dto.PostFollowUpRequestDto;
 import eu.efti.eftigate.config.security.Roles;
 import eu.efti.eftigate.dto.NoteResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +27,6 @@ public interface NoteControllerApi {
     })
     @PostMapping("/notes")
     @Secured(Roles.ROLE_ROAD_CONTROLER)
-    ResponseEntity<NoteResponseDto> createNote(final @RequestBody NotesDto notesDto);
+    ResponseEntity<NoteResponseDto> createNote(final @RequestBody PostFollowUpRequestDto notesDto);
 
 }

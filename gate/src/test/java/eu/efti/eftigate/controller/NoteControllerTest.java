@@ -1,8 +1,10 @@
+
 package eu.efti.eftigate.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.NotesDto;
+import eu.efti.commons.dto.PostFollowUpRequestDto;
 import eu.efti.eftigate.dto.NoteResponseDto;
 import eu.efti.eftigate.service.ControlService;
 import org.junit.jupiter.api.Test;
@@ -38,12 +40,12 @@ class NoteControllerTest {
     @Test
     @WithMockUser
     void createNoteTestAccepted() throws Exception {
-        final NotesDto notesDto = new NotesDto();
+        final PostFollowUpRequestDto notesDto = new PostFollowUpRequestDto();
         notesDto.setPlatformId("platform");
-        notesDto.setEFTIDataUuid("uuid");
+        notesDto.setDatasetId("uuid");
         notesDto.setGateId("gate");
         notesDto.setRequestId("requestId");
-        notesDto.setNote("Conducteur suspect");
+        notesDto.setMessage("Conducteur suspect");
 
         when(controlService.getControlByRequestId("requestId")).thenReturn(new ControlDto());
         when(controlService.createNoteRequestForControl(notesDto)).thenReturn(NoteResponseDto.builder().message("Note sent").build());
@@ -62,12 +64,12 @@ class NoteControllerTest {
     @Test
     @WithMockUser
     void createNoteTestNotAccepted() throws Exception {
-        final NotesDto notesDto = new NotesDto();
+        final PostFollowUpRequestDto notesDto = new PostFollowUpRequestDto();
         notesDto.setPlatformId("platform");
-        notesDto.setEFTIDataUuid("uuid");
+        notesDto.setDatasetId("uuid");
         notesDto.setGateId("gate");
         notesDto.setRequestId("requestId");
-        notesDto.setNote("Conducteur suspect");
+        notesDto.setMessage("Conducteur suspect");
 
         when(controlService.createNoteRequestForControl(notesDto)).thenReturn(new NoteResponseDto("Note was not sent", "ID_NOT_FOUND", "Id not found"));
 
@@ -84,3 +86,4 @@ class NoteControllerTest {
         with(response).assertThat("$.errorDescription", is("Id not found"));
     }
 }
+
