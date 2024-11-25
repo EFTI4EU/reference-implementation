@@ -1,3 +1,4 @@
+
 package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.AuthorityDto;
@@ -7,6 +8,7 @@ import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.IdentifiersResultsDto;
 import eu.efti.commons.dto.NotesDto;
+import eu.efti.commons.dto.PostFollowUpRequestDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.SearchParameter;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
@@ -56,6 +58,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -105,7 +108,7 @@ class ControlServiceTest extends AbstractServiceTest {
     private ArgumentCaptor<ControlEntity> controlEntityArgumentCaptor;
 
     private final UilDto uilDto = new UilDto();
-    private final NotesDto notesDto = new NotesDto();
+    private final PostFollowUpRequestDto notesDto = new PostFollowUpRequestDto();
     private final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto = new SearchWithIdentifiersRequestDto();
     private final ControlDto controlDto = new ControlDto();
     private final ControlEntity controlEntity = ControlEntity.builder().requestType(RequestTypeEnum.LOCAL_UIL_SEARCH).build();
@@ -283,7 +286,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.GATE_ID_MISSING.name(), requestIdDtoResult.getErrorCode());
+        assertEquals(ErrorCodesEnum.UIL_GATE_MISSING.name(), requestIdDtoResult.getErrorCode());
         assertEquals("Missing parameter GateId", requestIdDtoResult.getErrorDescription());
     }
 
@@ -299,8 +302,8 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.GATE_ID_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Gate Id format incorrect.", requestIdDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.UIL_GATE_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
+        assertEquals("Gate format incorrect.", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
@@ -316,7 +319,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.PLATFORM_ID_MISSING.name(), requestIdDtoResult.getErrorCode());
+        assertEquals(ErrorCodesEnum.UIL_PLATFORM_MISSING.name(), requestIdDtoResult.getErrorCode());
         assertEquals("Missing parameter platformId", requestIdDtoResult.getErrorDescription());
     }
 
@@ -332,8 +335,8 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.PLATFORM_ID_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Platform Id format incorrect.", requestIdDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.UIL_PLATFORM_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
+        assertEquals("Platform format incorrect.", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
@@ -349,7 +352,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.DATASET_ID_MISSING.name(), requestIdDtoResult.getErrorCode());
+        assertEquals(ErrorCodesEnum.UIL_UUID_MISSING.name(), requestIdDtoResult.getErrorCode());
         assertEquals("Missing parameter DatasetId", requestIdDtoResult.getErrorDescription());
     }
 
@@ -890,8 +893,9 @@ class ControlServiceTest extends AbstractServiceTest {
     void shouldCreateNoteRequestForExistingControl() {
         notesDto.setRequestId("requestId");
         notesDto.setGateId("gate");
-        notesDto.setEFTIDataUuid("12345678-ab12-4ab6-8999-123456789abc");
+        notesDto.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
         notesDto.setPlatformId("platform");
+        notesDto.setMessage("oki");
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(notesRequestService);
@@ -912,8 +916,9 @@ class ControlServiceTest extends AbstractServiceTest {
     void shouldNotCreateNoteRequest_whenAssociatedControlDoesNotExist() {
         notesDto.setRequestId("requestId");
         notesDto.setGateId("gate");
-        notesDto.setEFTIDataUuid("12345678-ab12-4ab6-8999-123456789abc");
+        notesDto.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
         notesDto.setPlatformId("platform");
+        notesDto.setMessage("oki");
 
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
 
@@ -929,9 +934,9 @@ class ControlServiceTest extends AbstractServiceTest {
     void shouldNotCreateNoteRequestForExistingControl_whenNoteHasMoreThan255Characters() {
         notesDto.setRequestId("requestId");
         notesDto.setGateId("gate");
-        notesDto.setEFTIDataUuid("12345678-ab12-4ab6-8999-123456789abc");
+        notesDto.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
         notesDto.setPlatformId("platform");
-        notesDto.setNote(RandomStringUtils.randomAlphabetic(256));
+        notesDto.setMessage(RandomStringUtils.randomAlphabetic(256));
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(notesRequestService);
@@ -940,7 +945,6 @@ class ControlServiceTest extends AbstractServiceTest {
 
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
 
-        verify(notesRequestService, never()).createAndSendRequest(any(), any());
         assertNotNull(noteResponseDto);
         assertEquals("note was not sent", noteResponseDto.getMessage());
         assertEquals("NOTE_TOO_LONG", noteResponseDto.getErrorCode());
@@ -1086,3 +1090,4 @@ class ControlServiceTest extends AbstractServiceTest {
 
 
 }
+

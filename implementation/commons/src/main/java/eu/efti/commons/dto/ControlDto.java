@@ -28,6 +28,7 @@ import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
         property = "id")
 public class ControlDto {
     private int id;
+    //à voir pour changer en datasetId
     private String eftiDataUuid;
     private String requestId;
     private RequestTypeEnum requestType;

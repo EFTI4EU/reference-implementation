@@ -5,7 +5,7 @@ import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.IdentifiersResultsDto;
-import eu.efti.commons.dto.NotesDto;
+import eu.efti.commons.dto.PostFollowUpRequestDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
@@ -105,23 +105,23 @@ public class ControlService {
         return createControl(identifiersRequestDto, ControlUtils.fromLocalIdentifiersControl(identifiersRequestDto, RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH));
     }
 
-    public NoteResponseDto createNoteRequestForControl(final NotesDto notesDto) {
-        log.info("create Note Request for control with data uuid : {}", notesDto.getEFTIDataUuid());
-        final ControlDto savedControl = getControlByRequestId(notesDto.getRequestId());
+    public NoteResponseDto createNoteRequestForControl(final PostFollowUpRequestDto postFollowUpRequestDto) {
+        log.info("create Note Request for control with data uuid : {}", postFollowUpRequestDto.getDatasetId());
+        final ControlDto savedControl = getControlByRequestId(postFollowUpRequestDto.getRequestId());
         if (savedControl != null && savedControl.isFound()) {
-            return createNoteRequestForControl(savedControl, notesDto);
+            return createNoteRequestForControl(savedControl, postFollowUpRequestDto);
         } else {
             return new NoteResponseDto(NOTE_WAS_NOT_SENT, ID_NOT_FOUND.name(), ID_NOT_FOUND.getMessage());
         }
     }
 
-    private NoteResponseDto createNoteRequestForControl(final ControlDto controlDto, final NotesDto notesDto) {
+    private NoteResponseDto createNoteRequestForControl(final ControlDto controlDto, final PostFollowUpRequestDto notesDto) {
         final Optional<ErrorDto> errorOptional = this.validateControl(notesDto);
         if (errorOptional.isPresent()) {
             final ErrorDto errorDto = errorOptional.get();
             return new NoteResponseDto(NOTE_WAS_NOT_SENT, errorDto.getErrorCode(), errorDto.getErrorDescription());
         } else {
-            controlDto.setNotes(notesDto.getNote());
+            controlDto.setNotes(notesDto.getMessage());
             getRequestService(RequestTypeEnum.NOTE_SEND).createAndSendRequest(controlDto, !gateProperties.isCurrentGate(controlDto.getGateId()) ? controlDto.getGateId() : null);
             log.info("Note has been registered for control with request uuid '{}'", controlDto.getRequestId());
             return NoteResponseDto.builder().message("Note sent").build();

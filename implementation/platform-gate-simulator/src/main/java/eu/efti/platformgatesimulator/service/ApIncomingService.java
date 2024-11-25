@@ -6,6 +6,7 @@ import eu.efti.edeliveryapconnector.constant.EDeliveryStatus;
 import eu.efti.platformgatesimulator.mapper.MapperUtils;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import eu.efti.v1.edelivery.ObjectFactory;
+import eu.efti.v1.edelivery.PostFollowUpRequest;
 import eu.efti.v1.edelivery.UILQuery;
 import eu.efti.v1.edelivery.UILResponse;
 import eu.efti.v1.json.SaveIdentifiersRequest;
@@ -90,8 +91,8 @@ public class ApIncomingService {
             }
             sendResponse(buildApConf(), uilQuery.getRequestId(), readerService.readFromFile(gateProperties.getCdaPath() + datasetId));
         } else {
-            final NotesMessageBodyDto messageBody = serializeUtils.mapXmlStringToClass(notificationContentDto.getBody(), NotesMessageBodyDto.class);
-            log.info("note \"{}\" received for request with id {}", messageBody.getNote(), messageBody.getRequestId());
+            final PostFollowUpRequest messageBody = serializeUtils.mapXmlStringToJaxbObject(notificationDto.get().getContent().getBody());
+            log.info("note \"{}\" received for request with id {}", messageBody.getMessage(), messageBody.getRequestId());
         }
     }
 

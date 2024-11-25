@@ -6,12 +6,10 @@ import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.utils.SerializeUtils;
-import eu.efti.edeliveryapconnector.dto.NotesMessageBodyDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
-import eu.efti.eftigate.dto.requestbody.NotesRequestBodyDto;
 import eu.efti.eftigate.entity.NoteRequestEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
@@ -20,8 +18,11 @@ import eu.efti.eftigate.repository.NotesRequestRepository;
 import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
+import eu.efti.v1.edelivery.PostFollowUpRequest;
+import eu.efti.v1.edelivery.UIL;
+import eu.efti.v1.edelivery.UILResponse;
+import jakarta.xml.bind.JAXBElement;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -58,14 +59,19 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     @Override
     public String buildRequestBody(final RabbitRequestDto requestDto) {
         final ControlDto controlDto = requestDto.getControl();
-        final NotesRequestBodyDto requestBodyDto = NotesRequestBodyDto.builder()
-                .requestId(controlDto.getRequestId())
-                .platformId(StringUtils.isNotBlank(controlDto.getPlatformId()) ? controlDto.getPlatformId() : requestDto.getPlatformId())
-                .eFTIDataUuid(controlDto.getEftiDataUuid())
-                .gateId(requestDto.getGateIdDest())
-                .note(requestDto.getNote())
-                .build();
-        return getSerializeUtils().mapObjectToXmlString(requestBodyDto);
+        final PostFollowUpRequest postFollowUpRequest = new PostFollowUpRequest();
+        final UIL uil = new UIL();
+
+        uil.setPlatformId(requestDto.getControl().getPlatformId());
+        uil.setGateId(requestDto.getControl().getGateId());
+        uil.setDatasetId(controlDto.getEftiDataUuid());
+        postFollowUpRequest.setUil(uil);
+        postFollowUpRequest.setMessage(requestDto.getNote());
+        postFollowUpRequest.setRequestId(requestDto.getControl().getRequestId());
+
+
+        final JAXBElement<PostFollowUpRequest> note = getObjectFactory().createPostFollowUpRequest(postFollowUpRequest);
+        return getSerializeUtils().mapJaxbObjectToXmlString(note, PostFollowUpRequest.class);
     }
 
     @Override
@@ -74,12 +80,12 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     }
 
     public void manageMessageReceive(final NotificationDto notificationDto) {
-        final NotesMessageBodyDto messageBody = getSerializeUtils().mapXmlStringToClass(notificationDto.getContent().getBody(), NotesMessageBodyDto.class);
+        final PostFollowUpRequest messageBody = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
 
         getControlService().getByRequestId(messageBody.getRequestId()).ifPresent(controlEntity -> {
             final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(controlEntity);
-            controlDto.setNotes(messageBody.getNote());
-            createAndSendRequest(controlDto, messageBody.getPlatformId());
+            controlDto.setNotes(messageBody.getMessage());
+            createAndSendRequest(controlDto, messageBody.getUil().getPlatformId());
             markMessageAsDownloaded(notificationDto.getMessageId());
         });
     }

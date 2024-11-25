@@ -49,14 +49,6 @@ public class SerializeUtils {
         }
     }
 
-    public <T> String mapObjectToXmlString(final T content) {
-        try {
-            return xmlMapper.writeValueAsString(content);
-        } catch (final JsonProcessingException e) {
-            throw new TechnicalException(ERROR_WHILE_WRITING_CONTENT, e);
-        }
-    }
-
     public <T, U> String mapJaxbObjectToXmlString(final T content, final Class<U> className) {
         try {
             final Marshaller marshaller = JAXBContext.newInstance(className).createMarshaller();

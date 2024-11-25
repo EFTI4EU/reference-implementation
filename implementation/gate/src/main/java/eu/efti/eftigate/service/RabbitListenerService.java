@@ -64,8 +64,8 @@ public class RabbitListenerService {
         boolean hasBeenSent = false;
 
         try {
-            final String edeliveryMessageId = this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto, requestTypeEnum));
-            getRequestService(requestTypeEnum).updateSentRequestStatus(requestDto, edeliveryMessageId);
+            final String edeliveryMessageId = this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto));
+            getRequestService(rabbitRequestDto.getRequestType()).updateSentRequestStatus(requestDto, edeliveryMessageId);
             hasBeenSent = true;
         } catch (final SendRequestException e) {
             log.error("error while sending request" + e);
@@ -82,12 +82,12 @@ public class RabbitListenerService {
         }
     }
 
-    private ApRequestDto buildApRequestDto(final RabbitRequestDto requestDto, final RequestTypeEnum requestTypeEnum) {
+    private ApRequestDto buildApRequestDto(final RabbitRequestDto requestDto) {
         final String receiver = gateProperties.isCurrentGate(requestDto.getGateIdDest()) ? requestDto.getControl().getPlatformId() : requestDto.getGateIdDest();
         return ApRequestDto.builder()
                 .requestId(requestDto.getControl().getRequestId())
                 .sender(gateProperties.getOwner()).receiver(receiver)
-                .body(getRequestService(requestTypeEnum).buildRequestBody(requestDto))
+                .body(getRequestService(requestDto.getRequestType()).buildRequestBody(requestDto))
                 .apConfig(ApConfigDto.builder()
                         .username(gateProperties.getAp().getUsername())
                         .password(gateProperties.getAp().getPassword())
@@ -101,6 +101,10 @@ public class RabbitListenerService {
         log.error("Receive message for dead queue");
         final RequestDto requestDto = serializeUtils.mapJsonStringToClass(message, RequestDto.class);
         this.getRequestService(requestDto.getControl().getRequestType()).manageSendError(requestDto);
+    }
+
+    private RequestService<?> getRequestService(final RequestType requestType) {
+        return requestServiceFactory.getRequestServiceByRequestType(requestType.name());
     }
 
     private RequestService<?> getRequestService(final RequestTypeEnum requestType) {
