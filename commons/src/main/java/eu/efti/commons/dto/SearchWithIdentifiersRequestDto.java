@@ -3,6 +3,7 @@ package eu.efti.commons.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.commons.validator.ValueOfEnum;
+import eu.efti.v1.codes.CountryCode;
 import eu.efti.v1.edelivery.IdentifierType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -28,7 +29,7 @@ public class SearchWithIdentifiersRequestDto implements ValidableDto {
     @Pattern(regexp = "^[A-Za-z0-9]*$", message = "IDENTIFIER_INCORRECT_FORMAT")
     private String identifier;
     private List<@Valid @ValueOfEnum(enumClass = IdentifierType.class, message = "IDENTIFIER_TYPE_INCORRECT") String> identifierType;
-    @ValueOfEnum(enumClass = CountryIndicator.class, message = "REGISTRATION_COUNTRY_INCORRECT")
+    @ValueOfEnum(enumClass = CountryCode.class, message = "REGISTRATION_COUNTRY_INCORRECT")
     private String registrationCountryCode;
     @JsonProperty("dangerousGoodsIndicator")
     private Boolean dangerousGoodsIndicator;

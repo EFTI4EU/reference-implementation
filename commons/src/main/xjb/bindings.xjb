@@ -21,4 +21,7 @@
             </jaxb:typesafeEnumClass>
         </jaxb:bindings>
     </jaxb:bindings>
+    <jaxb:bindings>
+        <jaxb:globalBindings typesafeEnumMaxMembers="1000"/>
+    </jaxb:bindings>
 </jaxb:bindings>
