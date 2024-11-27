@@ -25,8 +25,7 @@ public interface NoteControllerApi {
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PostMapping("/notes")
+    @PostMapping("/control/uil/follow-up")
     @Secured(Roles.ROLE_ROAD_CONTROLER)
     ResponseEntity<NoteResponseDto> createNote(final @RequestBody PostFollowUpRequestDto notesDto);
-
 }

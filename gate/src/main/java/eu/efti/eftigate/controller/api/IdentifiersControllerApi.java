@@ -29,7 +29,7 @@ public interface IdentifiersControllerApi {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema()))
     })
-    @PostMapping("/getIdentifiers")
+    @PostMapping("/control/identifiers")
     @Secured(Roles.ROLE_ROAD_CONTROLER)
     ResponseEntity<RequestIdDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto);
 
@@ -40,8 +40,7 @@ public interface IdentifiersControllerApi {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema()))
     })
-    @GetMapping("/getIdentifiers")
+    @GetMapping("/control/identifiers")
     @Secured(Roles.ROLE_ROAD_CONTROLER)
     ResponseEntity<IdentifiersResponseDto> getIdentifiersResult(final @Parameter String requestId);
-
 }

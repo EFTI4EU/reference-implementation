@@ -23,7 +23,7 @@ public class NoteController implements NoteControllerApi {
 
     @Override
     public ResponseEntity<NoteResponseDto> createNote(final @RequestBody PostFollowUpRequestDto notesDto) {
-        log.info("POST on /notes with param requestId {}", notesDto.getRequestId());
+        log.info("POST on /control/uil/follow-up with param requestId {}", notesDto.getRequestId());
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
         return new ResponseEntity<>(noteResponseDto, StringUtils.isNotBlank(noteResponseDto.getErrorCode()) ? HttpStatus.BAD_REQUEST : HttpStatus.ACCEPTED);
     }

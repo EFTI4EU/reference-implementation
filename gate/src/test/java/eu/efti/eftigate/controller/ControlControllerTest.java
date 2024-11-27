@@ -49,21 +49,11 @@ class ControlControllerTest {
     }
 
     @Test
-    @WithMockUser
-    void getByIdTestWithData() throws Exception {
-        Mockito.when(controlService.getById(1L)).thenReturn(new ControlEntity());
-
-        mockMvc.perform(get("/v1/1"))
-                .andExpect(status().isOk())
-                .andReturn();
-    }
-
-    @Test
     @WithAnonymousUser
     void getByIdshouldGetAuthent() throws Exception {
         Mockito.when(controlService.getById(1L)).thenReturn(new ControlEntity());
 
-        mockMvc.perform(get("/control/1"))
+        mockMvc.perform(get("/v1/control/uil"))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
     }
@@ -78,7 +68,7 @@ class ControlControllerTest {
 
         Mockito.when(controlService.createUilControl(uilDto)).thenReturn(requestIdDto);
 
-        mockMvc.perform(post("/v1/requestUil")
+        mockMvc.perform(post("/v1/control/uil")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsBytes(uilDto)))
@@ -91,7 +81,7 @@ class ControlControllerTest {
     void getRequestUilTest() throws Exception {
         Mockito.when(controlService.getControlEntity(REQUEST_ID)).thenReturn(requestIdDto);
 
-        final MvcResult result = mockMvc.perform(get("/v1/requestUil").param("requestId", REQUEST_ID))
+        final MvcResult result = mockMvc.perform(get("/v1/control/uil").param("requestId", REQUEST_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();

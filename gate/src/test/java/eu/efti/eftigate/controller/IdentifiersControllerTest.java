@@ -69,7 +69,7 @@ class IdentifiersControllerTest {
                         .requestId(REQUEST_ID)
                         .build());
 
-        String result = mockMvc.perform(post("/v1/getIdentifiers")
+        String result = mockMvc.perform(post("/v1/control/identifiers")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsBytes(identifiersRequestDto)))
@@ -86,7 +86,7 @@ class IdentifiersControllerTest {
     void requestIdentifiersGetTest() throws Exception {
         Mockito.when(controlService.getIdentifiersResponse(REQUEST_ID)).thenReturn(identifiersResponseDto);
 
-        final String result = mockMvc.perform(get("/v1/getIdentifiers").param("requestId", REQUEST_ID))
+        final String result = mockMvc.perform(get("/v1/control/identifiers").param("requestId", REQUEST_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
@@ -106,7 +106,7 @@ class IdentifiersControllerTest {
         identifiersResponseDto.setErrorDescription("Error requestId not found.");
         Mockito.when(controlService.getIdentifiersResponse(REQUEST_ID)).thenReturn(identifiersResponseDto);
 
-        final String result = mockMvc.perform(get("/v1/getIdentifiers").param("requestId", REQUEST_ID))
+        final String result = mockMvc.perform(get("/v1/control/identifiers").param("requestId", REQUEST_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
