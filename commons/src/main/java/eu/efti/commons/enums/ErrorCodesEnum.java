@@ -8,30 +8,24 @@ import java.util.Optional;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCodesEnum {
-    UIL_GATE_MISSING("Missing parameter GateId"),
-    UIL_GATE_TOO_LONG("Gate max length is 255 characters."),
-    UIL_GATE_INCORRECT_FORMAT("Gate format incorrect."),
+    UIL_GATE_MISSING("Missing parameter gateId"),
 
-    UIL_UUID_MISSING("Missing parameter DatasetId"),
-    UIL_PLATFORM_TOO_LONG("Platform max length is 255 characters."),
-    UIL_PLATFORM_INCORRECT_FORMAT("Platform format incorrect."),
+    UIL_UUID_MISSING("Missing parameter datasetId"),
 
-    GATE_ID_MISSING("Missing parameter GateId"),
-    GATE_ID_TOO_LONG("Gate Id max length is 255 characters."),
-    GATE_ID_INCORRECT_FORMAT("Gate Id format incorrect."),
+    GATE_ID_MISSING("Missing parameter gateId"),
+    GATE_ID_TOO_LONG("gateId max length is 255 characters."),
+    GATE_ID_INCORRECT_FORMAT("gateId format incorrect."),
 
-    DATASET_ID_MISSING("Missing parameter DatasetId"),
-    DATASET_ID_TOO_LONG("Dataset Id max length is 36 characters."),
-    DATASET_ID_INCORRECT_FORMAT("Dataset Id format is incorrect."),
+    DATASET_ID_MISSING("Missing parameter datasetId"),
+    DATASET_ID_TOO_LONG("datasetId max length is 36 characters."),
+    DATASET_ID_INCORRECT_FORMAT("datasetId format is incorrect."),
 
     PLATFORM_ID_MISSING("Missing parameter platformId"),
-    PLATFORM_ID_TOO_LONG("Platform Id max length is 255 characters."),
-    PLATFORM_ID_INCORRECT_FORMAT("Platform Id format incorrect."),
+    PLATFORM_ID_TOO_LONG("platformId max length is 255 characters."),
+    PLATFORM_ID_INCORRECT_FORMAT("platformId format incorrect."),
 
 
     UIL_PLATFORM_MISSING("Missing parameter platformId"),
-    UIL_UUID_TOO_LONG("Uuid max length is 36 characters."),
-    UIL_UUID_INCORRECT_FORMAT("Uuid format incorrect."),
 
     AUTHORITY_MISSING("Authority missing."),
     AUTHORITY_COUNTRY_MISSING("Authority country missing."),
