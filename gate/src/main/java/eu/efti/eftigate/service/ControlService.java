@@ -106,7 +106,7 @@ public class ControlService {
     }
 
     public NoteResponseDto createNoteRequestForControl(final PostFollowUpRequestDto postFollowUpRequestDto) {
-        log.info("create Note Request for control with data uuid : {}", postFollowUpRequestDto.getDatasetId());
+        //log.info("create Note Request for control with data uuid : {}", postFollowUpRequestDto.getDatasetId());
         final ControlDto savedControl = getControlByRequestId(postFollowUpRequestDto.getRequestId());
         if (savedControl != null && savedControl.isFound()) {
             return createNoteRequestForControl(savedControl, postFollowUpRequestDto);
