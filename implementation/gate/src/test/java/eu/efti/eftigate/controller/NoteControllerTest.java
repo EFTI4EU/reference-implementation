@@ -46,7 +46,7 @@ class NoteControllerTest {
         when(controlService.getControlByRequestId("requestId")).thenReturn(new ControlDto());
         when(controlService.createNoteRequestForControl(notesDto)).thenReturn(NoteResponseDto.builder().message("Note sent").build());
 
-        final String response = mockMvc.perform(post("/v1/notes")
+        final String response = mockMvc.perform(post("/v1/control/uil/follow-up")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsBytes(notesDto)))
@@ -66,7 +66,7 @@ class NoteControllerTest {
 
         when(controlService.createNoteRequestForControl(notesDto)).thenReturn(new NoteResponseDto("Note was not sent", "ID_NOT_FOUND", "Id not found"));
 
-        final String response = mockMvc.perform(post("/v1/notes")
+        final String response = mockMvc.perform(post("/v1/control/uil/follow-up")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsBytes(notesDto)))
