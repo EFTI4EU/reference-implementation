@@ -7,7 +7,6 @@ import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.IdentifiersResultsDto;
-import eu.efti.commons.dto.NotesDto;
 import eu.efti.commons.dto.PostFollowUpRequestDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.SearchParameter;
@@ -58,7 +57,6 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -892,9 +890,6 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void shouldCreateNoteRequestForExistingControl() {
         notesDto.setRequestId("requestId");
-        notesDto.setGateId("gate");
-        notesDto.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
-        notesDto.setPlatformId("platform");
         notesDto.setMessage("oki");
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
@@ -915,9 +910,6 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void shouldNotCreateNoteRequest_whenAssociatedControlDoesNotExist() {
         notesDto.setRequestId("requestId");
-        notesDto.setGateId("gate");
-        notesDto.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
-        notesDto.setPlatformId("platform");
         notesDto.setMessage("oki");
 
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
@@ -933,9 +925,6 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void shouldNotCreateNoteRequestForExistingControl_whenNoteHasMoreThan255Characters() {
         notesDto.setRequestId("requestId");
-        notesDto.setGateId("gate");
-        notesDto.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
-        notesDto.setPlatformId("platform");
         notesDto.setMessage(RandomStringUtils.randomAlphabetic(256));
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
