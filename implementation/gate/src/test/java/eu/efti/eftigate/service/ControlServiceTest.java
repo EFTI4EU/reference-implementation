@@ -285,7 +285,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
         assertEquals(ErrorCodesEnum.UIL_GATE_MISSING.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Missing parameter GateId", requestIdDtoResult.getErrorDescription());
+        assertEquals("Missing parameter gateId", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
@@ -300,8 +300,8 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.UIL_GATE_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Gate format incorrect.", requestIdDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.GATE_ID_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
+        assertEquals("gateId format incorrect.", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
@@ -333,8 +333,8 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppRequest(any(), any(), any());
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
-        assertEquals(ErrorCodesEnum.UIL_PLATFORM_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Platform format incorrect.", requestIdDtoResult.getErrorDescription());
+        assertEquals(ErrorCodesEnum.PLATFORM_ID_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
+        assertEquals("platformId format incorrect.", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
@@ -351,7 +351,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
         assertEquals(ErrorCodesEnum.UIL_UUID_MISSING.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Missing parameter DatasetId", requestIdDtoResult.getErrorDescription());
+        assertEquals("Missing parameter datasetId", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
@@ -367,7 +367,7 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppResponse(any(), any(), any());
         assertNotNull(requestIdDtoResult);
         assertEquals(ErrorCodesEnum.DATASET_ID_INCORRECT_FORMAT.name(), requestIdDtoResult.getErrorCode());
-        assertEquals("Dataset Id format is incorrect.", requestIdDtoResult.getErrorDescription());
+        assertEquals("datasetId format is incorrect.", requestIdDtoResult.getErrorDescription());
     }
 
     @Test
