@@ -116,7 +116,7 @@ public class EftiConfig {
         TypeMap<MainCarriageTransportMovementDto, MainCarriageTransportMovementApiDto> mainCarriageTypeMap = modelMapper.createTypeMap(MainCarriageTransportMovementDto.class, MainCarriageTransportMovementApiDto.class);
         mainCarriageTypeMap.addMappings(mapper -> {
             mapper.map(MainCarriageTransportMovementDto::getUsedTransportMeansId, MainCarriageTransportMovementApiDto::setId);
-            mapper.map(MainCarriageTransportMovementDto::getUsedTransportMeansRegistrationCountry, MainCarriageTransportMovementApiDto::setRegistrationCountry);
+            mapper.map(MainCarriageTransportMovementDto::getUsedTransportMeansRegistrationCountry, MainCarriageTransportMovementApiDto::setRegistrationCountryCode);
         });
 
         TypeMap<UsedTransportEquipmentDto, UsedTransportEquipmentApiDto> usedTransportTypeMap = modelMapper.createTypeMap(UsedTransportEquipmentDto.class, UsedTransportEquipmentApiDto.class);
