@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Tag(name = "Note controller" , description = "Interface to send notes to a platform ")
+@Tag(name = "Follow up communication" , description = "Interface to send a follow up communication to a platform ")
 @RequestMapping("/v1")
 public interface NoteControllerApi {
 
-    @Operation(summary = "Send note", description = "Send a note to a platform for a given control")
+    @Operation(summary = "Send follow up communication", description = "Send a follow up communication to a platform for a given control")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Accepted"),
             @ApiResponse(responseCode = "400", description = "Bad Request"),
