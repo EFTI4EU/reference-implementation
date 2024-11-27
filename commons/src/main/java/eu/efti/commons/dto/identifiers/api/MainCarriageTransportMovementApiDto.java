@@ -26,5 +26,5 @@ public class MainCarriageTransportMovementApiDto implements Serializable {
     private short modeCode;
     private String schemeAgencyId;
     private boolean dangerousGoodsIndicator;
-    private String registrationCountry;
+    private String registrationCountryCode;
 }
