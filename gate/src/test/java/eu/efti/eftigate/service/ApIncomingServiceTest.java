@@ -108,14 +108,14 @@ class ApIncomingServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldManageIncomingNotification() {
+    void shouldManageIncomingNotificationForSaveIdentifierRequest() {
         final String messageId = "messageId";
         final ReceivedNotificationDto receivedNotificationDto = ReceivedNotificationDto.builder()
                 .body(Map.of(SUBMIT_MESSAGE, Map.of(MESSAGE_ID, messageId))).build();
         final NotificationDto notificationDto = NotificationDto.builder()
                 .content(NotificationContentDto.builder()
                         .messageId(messageId)
-                        .body("<UILQuery")
+                        .body("<saveIdentifiersRequest")
                         .build())
                 .notificationType(NotificationType.RECEIVED)
                 .build();
@@ -125,7 +125,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
         service.manageIncomingNotification(receivedNotificationDto);
 
         verify(notificationService).consume(receivedNotificationDto);
-        verify(uilRequestService).manageQueryReceived(notificationDto);
+        verify(identifiersRequestService).createOrUpdate(notificationDto);
     }
 
     @Test

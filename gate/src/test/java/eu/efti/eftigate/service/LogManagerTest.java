@@ -6,6 +6,7 @@ import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.config.GateProperties;
+import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftilogger.dto.MessagePartiesDto;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
@@ -171,15 +172,20 @@ class LogManagerTest extends BaseServiceTest {
     @Test
     void testLogAppResponse() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
-                .requestingComponentId("")
-                .requestingComponentType(CA_APP)
+                .requestingComponentId("ownerId")
+                .requestingComponentType(GATE)
                 .requestingComponentCountry("ownerCountry")
-                .respondingComponentId("ownerId")
-                .respondingComponentType(GATE)
+                .respondingComponentId("")
+                .respondingComponentType(CA_APP)
                 .respondingComponentCountry("ownerCountry").build();
-        final String body = serializeUtils.mapObjectToBase64String(uilDto);
 
-        logManager.logAppRequest(controlDto, uilDto, "test");
+        RequestIdDto requestIdDto = RequestIdDto.builder()
+                .requestId(controlDto.getRequestId())
+                .status(controlDto.getStatus())
+                .data(controlDto.getEftiData()).build();
+        final String body = serializeUtils.mapObjectToBase64String(requestIdDto);
+
+        logManager.logAppResponse(controlDto, requestIdDto, "test");
 
         verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", body, StatusEnum.COMPLETE, false, "test");
     }

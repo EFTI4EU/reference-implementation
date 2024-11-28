@@ -165,7 +165,6 @@ class IdentifiersMapperTest {
 
         request.getConsignment().getUsedTransportEquipment().add(equipment);
 
-        IdentifiersMapper identifiersMapper = new IdentifiersMapper(new ModelMapper());
         eu.efti.identifiersregistry.entity.Consignment internalConsignment = identifiersMapper.eDeliveryToEntity(request);
         assertEquals("datasetId", internalConsignment.getDatasetId());
         assertEquals(OffsetDateTime.of(2021, 7, 11, 12, 0, 0, 0, ZoneOffset.ofHours(1)), internalConsignment.getCarrierAcceptanceDatetime());
@@ -239,7 +238,6 @@ class IdentifiersMapperTest {
 
         internalConsignment.getUsedTransportEquipments().add(equipment);
 
-        IdentifiersMapper identifiersMapper = new IdentifiersMapper(new ModelMapper());
         var eDeliveryConsignment = identifiersMapper.entityToEdelivery(internalConsignment);
 
         assertEquals("datasetId", eDeliveryConsignment.getUil().getDatasetId());
