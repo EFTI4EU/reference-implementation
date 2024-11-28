@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service.request;
 
-import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,15 +13,13 @@ public class RequestServiceFactory {
     private final List<RequestService<?>> requestServices;
 
 
-    public RequestService getRequestServiceByRequestType(final RequestTypeEnum requestType)
-    {
+    public RequestService getRequestServiceByRequestType(final RequestTypeEnum requestType) {
         return requestServices.stream()
                 .filter(requestService -> requestService.supports(requestType)).findFirst()
                 .orElse(null);
     }
 
-    public RequestService getRequestServiceByRequestType(final String requestType)
-    {
+    public RequestService getRequestServiceByRequestType(final String requestType) {
         return requestServices.stream()
                 .filter(requestService -> requestService.supports(requestType)).findFirst()
                 .orElse(null);
