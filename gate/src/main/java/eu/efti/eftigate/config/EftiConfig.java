@@ -120,7 +120,10 @@ public class EftiConfig {
         });
 
         TypeMap<UsedTransportEquipmentDto, UsedTransportEquipmentApiDto> usedTransportTypeMap = modelMapper.createTypeMap(UsedTransportEquipmentDto.class, UsedTransportEquipmentApiDto.class);
-        usedTransportTypeMap.addMappings(mapper -> mapper.map(UsedTransportEquipmentDto::getEquipmentId, UsedTransportEquipmentApiDto::setId));
+        usedTransportTypeMap.addMappings(mapper -> {
+            mapper.map(UsedTransportEquipmentDto::getEquipmentId, UsedTransportEquipmentApiDto::setId);
+            mapper.map(UsedTransportEquipmentDto::getRegistrationCountry, UsedTransportEquipmentApiDto::setRegistrationCountryCode);
+        });
 
         TypeMap<CarriedTransportEquipmentDto, CarriedTransportEquipmentApiDto> carriedTransportTypeMap = modelMapper.createTypeMap(CarriedTransportEquipmentDto.class, CarriedTransportEquipmentApiDto.class);
         carriedTransportTypeMap.addMappings(mapper -> mapper.map(CarriedTransportEquipmentDto::getEquipmentId, CarriedTransportEquipmentApiDto::setId));
