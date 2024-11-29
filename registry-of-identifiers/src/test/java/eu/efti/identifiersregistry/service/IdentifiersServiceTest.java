@@ -95,6 +95,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
 
     @Test
     void shouldCreateIdentifiersAndIgnoreWrongsFields() {
+        saveIdentifiersRequestWrapper.getSaveIdentifiersRequest().setDatasetId("wrong value");
         when(repository.save(any())).thenReturn(consignment);
         final ArgumentCaptor<Consignment> argumentCaptor = ArgumentCaptor.forClass(Consignment.class);
 
@@ -102,7 +103,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
 
         verify(repository).save(argumentCaptor.capture());
         verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
-        assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
+        assertEquals("wrong value", argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_ID, argumentCaptor.getValue().getPlatformId());
         assertEquals(GATE_ID, argumentCaptor.getValue().getGateId());
     }

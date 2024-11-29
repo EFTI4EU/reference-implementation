@@ -1,12 +1,12 @@
 package eu.efti.identifiersregistry.service;
 
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
-import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.identifiersregistry.entity.CarriedTransportEquipment;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.entity.UsedTransportEquipment;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,115 +34,272 @@ class IdentifiersRepositoryTest {
 
     @Autowired
     private IdentifiersRepository identifiersRepository;
+    final Consignment firstConsignment = new Consignment();
+    final Consignment secondConsignment = new Consignment();
+    final Consignment thirdConsignment = new Consignment();
+    final Consignment fourthConsignment = new Consignment();
+    final Consignment fifthConsignment = new Consignment();
+    final Consignment sixthConsignment = new Consignment();
 
 
     @BeforeEach
     public void before() {
 
-        final Consignment consignment = new Consignment();
-        consignment.setGateId("thegateid");
-        consignment.setDatasetId("thedatauuid");
-        consignment.setPlatformId("theplatformid");
-
-        consignment.setMainCarriageTransportMovements(List.of(MainCarriageTransportMovement.builder()
-                .dangerousGoodsIndicator(true)
-                .build()));
-
-        consignment.setUsedTransportEquipments(List.of(UsedTransportEquipment.builder()
-                        .equipmentId("vehicleId1")
-                        .registrationCountry(CountryIndicator.FR.name())
-                        .categoryCode("AA")
-                        .build(),
-                UsedTransportEquipment.builder()
-                        .equipmentId("vehicleId2")
-                        .registrationCountry(CountryIndicator.CY.name())
-                        .build()));
-        identifiersRepository.save(consignment);
-
-        final Consignment otherConsignment = new Consignment();
-        otherConsignment.setGateId("othergateid");
-        otherConsignment.setDatasetId("thedatauuid");
-        otherConsignment.setPlatformId("theplatformid");
-
-        otherConsignment.setMainCarriageTransportMovements(List.of(MainCarriageTransportMovement.builder()
-                .dangerousGoodsIndicator(false).build()));
-
-        UsedTransportEquipment equipment = UsedTransportEquipment.builder()
-                .equipmentId("vehicleId1")
-                .registrationCountry(CountryIndicator.FR.name())
+        CarriedTransportEquipment firstCarriedTransportEquipment = CarriedTransportEquipment.builder()
+                .sequenceNumber(1)
+                .equipmentId("67890")
+                .schemeAgencyId("UN")
                 .build();
-        equipment.setCarriedTransportEquipments(List.of(CarriedTransportEquipment.builder()
-                .equipmentId("carriedId1")
-                .build()));
+        UsedTransportEquipment firstUsedTransportEquipment = UsedTransportEquipment.builder()
+                .equipmentId("54321")
+                .registrationCountry("FR")
+                .categoryCode("AE")
+                .sequenceNumber(2)
+                .schemeAgencyId("UN")
+                .carriedTransportEquipments(List.of(firstCarriedTransportEquipment))
+                .build();
+        MainCarriageTransportMovement firstMainCarriageTransportMovement = MainCarriageTransportMovement.builder()
+                .dangerousGoodsIndicator(false)
+                .modeCode((short) 3)
+                .usedTransportMeansId("FMC888")
+                .usedTransportMeansRegistrationCountry("FR")
+                .schemeAgencyId("UN")
+                .build();
+        firstConsignment.setGateId("france");
+        firstConsignment.setPlatformId("acme");
+        firstConsignment.setDatasetId("67676767-6767-6767-6767-11180123be5b");
+        firstConsignment.setMainCarriageTransportMovements(List.of(firstMainCarriageTransportMovement));
+        firstConsignment.setUsedTransportEquipments(List.of(firstUsedTransportEquipment));
 
-        otherConsignment.setUsedTransportEquipments(List.of(equipment,
-                UsedTransportEquipment.builder()
-                        .equipmentId("vehicleId2")
-                        .registrationCountry(CountryIndicator.FR.name()).build()));
+        identifiersRepository.save(firstConsignment);
 
-        identifiersRepository.save(otherConsignment);
+        CarriedTransportEquipment secondCarriedTransportEquipment = CarriedTransportEquipment.builder()
+                .sequenceNumber(1)
+                .equipmentId("67890")
+                .schemeAgencyId("UN")
+                .build();
+        UsedTransportEquipment secondUsedTransportEquipment = UsedTransportEquipment.builder()
+                .equipmentId("54321")
+                .registrationCountry("FR")
+                .categoryCode("AE")
+                .sequenceNumber(2)
+                .schemeAgencyId("UN")
+                .carriedTransportEquipments(List.of(secondCarriedTransportEquipment))
+                .build();
+        MainCarriageTransportMovement secondMainCarriageTransportMovement = MainCarriageTransportMovement.builder()
+                .dangerousGoodsIndicator(false)
+                .modeCode((short) 3)
+                .usedTransportMeansId("FMC888")
+                .usedTransportMeansRegistrationCountry("FR")
+                .schemeAgencyId("UN")
+                .build();
+
+        secondConsignment.setGateId("france");
+        secondConsignment.setPlatformId("acme");
+        secondConsignment.setDatasetId("67676767-6767-6767-6767-22280123be5b");
+        secondConsignment.setMainCarriageTransportMovements(List.of(secondMainCarriageTransportMovement));
+        secondConsignment.setUsedTransportEquipments(List.of(secondUsedTransportEquipment));
+
+        identifiersRepository.save(secondConsignment);
+
+        CarriedTransportEquipment thirdCarriedTransportEquipment = CarriedTransportEquipment.builder()
+                .sequenceNumber(1)
+                .equipmentId("67890")
+                .schemeAgencyId("UN")
+                .build();
+        UsedTransportEquipment thirdUsedTransportEquipment = UsedTransportEquipment.builder()
+                .equipmentId("54321")
+                .registrationCountry("FR")
+                .categoryCode("AE")
+                .sequenceNumber(2)
+                .schemeAgencyId("UN")
+                .carriedTransportEquipments(List.of(thirdCarriedTransportEquipment))
+                .build();
+        MainCarriageTransportMovement thirdMainCarriageTransportMovement = MainCarriageTransportMovement.builder()
+                .dangerousGoodsIndicator(false)
+                .modeCode((short) 3)
+                .usedTransportMeansId("FMC888")
+                .usedTransportMeansRegistrationCountry("IT")
+                .schemeAgencyId("UN")
+                .build();
+
+        thirdConsignment.setGateId("france");
+        thirdConsignment.setPlatformId("acme");
+        thirdConsignment.setDatasetId("67676767-6767-6767-6767-33380123be5b");
+        thirdConsignment.setMainCarriageTransportMovements(List.of(thirdMainCarriageTransportMovement));
+        thirdConsignment.setUsedTransportEquipments(List.of(thirdUsedTransportEquipment));
+        identifiersRepository.save(thirdConsignment);
+
+        CarriedTransportEquipment fourthCarriedTransportEquipment = CarriedTransportEquipment.builder()
+                .sequenceNumber(1)
+                .equipmentId("67890")
+                .schemeAgencyId("UN")
+                .build();
+        UsedTransportEquipment fourthUsedTransportEquipment = UsedTransportEquipment.builder()
+                .equipmentId("54321")
+                .registrationCountry("FR")
+                .categoryCode("AE")
+                .sequenceNumber(2)
+                .schemeAgencyId("UN")
+                .carriedTransportEquipments(List.of(fourthCarriedTransportEquipment))
+                .build();
+        MainCarriageTransportMovement fourthMainCarriageTransportMovement = MainCarriageTransportMovement.builder()
+                .dangerousGoodsIndicator(false)
+                .modeCode((short) 3)
+                .usedTransportMeansId("ASB-123")
+                .usedTransportMeansRegistrationCountry("FI")
+                .schemeAgencyId("UN")
+                .build();
+
+        fourthConsignment.setGateId("finland");
+        fourthConsignment.setPlatformId("syldavia");
+        fourthConsignment.setDatasetId("67676767-6767-6767-6767-44480123be5b");
+        fourthConsignment.setMainCarriageTransportMovements(List.of(fourthMainCarriageTransportMovement));
+        fourthConsignment.setUsedTransportEquipments(List.of(fourthUsedTransportEquipment));
+        identifiersRepository.save(fourthConsignment);
+
+        CarriedTransportEquipment fifthCarriedTransportEquipment = CarriedTransportEquipment.builder()
+                .sequenceNumber(1)
+                .equipmentId("ASB-123")
+                .schemeAgencyId("UN")
+                .build();
+        UsedTransportEquipment fifthUsedTransportEquipment = UsedTransportEquipment.builder()
+                .equipmentId("54321")
+                .registrationCountry("FR")
+                .categoryCode("AE")
+                .sequenceNumber(2)
+                .schemeAgencyId("UN")
+                .carriedTransportEquipments(List.of(fifthCarriedTransportEquipment))
+                .build();
+        fifthCarriedTransportEquipment.setUsedTransportEquipment(fifthUsedTransportEquipment);
+        MainCarriageTransportMovement fifthMainCarriageTransportMovement = MainCarriageTransportMovement.builder()
+                .dangerousGoodsIndicator(false)
+                .modeCode((short) 3)
+                .usedTransportMeansId("ASB-123")
+                .usedTransportMeansRegistrationCountry("DE")
+                .schemeAgencyId("UN")
+                .build();
+
+        fifthConsignment.setGateId("italy");
+        fifthConsignment.setPlatformId("listenbourg");
+        fifthConsignment.setDatasetId("67676767-6767-6767-6767-55580123be5b");
+        fifthConsignment.setMainCarriageTransportMovements(List.of(fifthMainCarriageTransportMovement));
+        fifthConsignment.setUsedTransportEquipments(List.of(fifthUsedTransportEquipment));
+        identifiersRepository.save(fifthConsignment);
+
+        CarriedTransportEquipment sixthCarriedTransportEquipment = CarriedTransportEquipment.builder()
+                .sequenceNumber(1)
+                .equipmentId("67890")
+                .schemeAgencyId("UN")
+                .build();
+        UsedTransportEquipment sixthUsedTransportEquipment = UsedTransportEquipment.builder()
+                .equipmentId("ASB-123")
+                .registrationCountry("FI")
+                .categoryCode("AE")
+                .sequenceNumber(2)
+                .schemeAgencyId("UN")
+                .carriedTransportEquipments(List.of(sixthCarriedTransportEquipment))
+                .build();
+        MainCarriageTransportMovement sixthMainCarriageTransportMovement = MainCarriageTransportMovement.builder()
+                .dangerousGoodsIndicator(false)
+                .modeCode((short) 3)
+                .usedTransportMeansId("BBB-345")
+                .usedTransportMeansRegistrationCountry("DE")
+                .schemeAgencyId("UN")
+                .build();
+
+        sixthConsignment.setGateId("danemark");
+        sixthConsignment.setPlatformId("umbrellainc");
+        sixthConsignment.setDatasetId("67676767-6767-6767-6767-66680123be5b");
+        sixthConsignment.setMainCarriageTransportMovements(List.of(sixthMainCarriageTransportMovement));
+        sixthConsignment.setUsedTransportEquipments(List.of(sixthUsedTransportEquipment));
+        identifiersRepository.save(sixthConsignment);
+
     }
 
     @Test
     void shouldGetDataByUil() {
 
-        final Optional<Consignment> result = identifiersRepository.findByUil("thegateid", "thedatauuid", "theplatformid");
-        final Optional<Consignment> otherResult = identifiersRepository.findByUil("othergateid", "thedatauuid", "theplatformid");
-        final Optional<Consignment> emptyResult = identifiersRepository.findByUil("notgateid", "thedatauuid", "theplatformid");
+        final Optional<Consignment> result = identifiersRepository.findByUil("france", "67676767-6767-6767-6767-11180123be5b", "acme");
+        final Optional<Consignment> otherResult = identifiersRepository.findByUil("finland", "67676767-6767-6767-6767-44480123be5b", "syldavia");
+        final Optional<Consignment> emptyResult = identifiersRepository.findByUil("notgateid", "thedatauuid", "acme");
 
         assertTrue(result.isPresent());
-        assertEquals("thegateid", result.get().getGateId());
+        assertEquals("france", result.get().getGateId());
         assertTrue(otherResult.isPresent());
-        assertEquals("othergateid", otherResult.get().getGateId());
+        assertEquals("finland", otherResult.get().getGateId());
         assertTrue(emptyResult.isEmpty());
-
     }
 
     @Test
-    void shouldGetDataByCriteria() {
+    void shouldGetDataByRegistrationCountryCriteria() {
         List<Consignment> foundConsignments = identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .identifier("vehicleId1")
-                .registrationCountryCode(CountryIndicator.FR.name())
+                .identifier("FMC888").modeCode("3")
+                .registrationCountryCode("FR")
+                .identifierType(List.of("means"))
+                .eftiGateIndicator(List.of("FR"))
                 .build());
 
-        assertTrue(foundConsignments.stream().anyMatch(c -> c.getUsedTransportEquipments().stream().anyMatch(e -> e.getCategoryCode().equals("AA"))),
-                "One of the consignments should have categoryCode AA");
         assertEquals(2, foundConsignments.size());
-
-        assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .identifier("vehicleId1")
-                .registrationCountryCode(CountryIndicator.FR.name())
-                .dangerousGoodsIndicator(false)
-                .build()).size());
-
-        assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .identifier("vehicleId2")
-                .registrationCountryCode(CountryIndicator.CY.name())
-                .build()).size());
-
-        assertEquals(2, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .identifier("vehicleId2")
-                .build()).size());
-
-        assertEquals(0, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .identifier("vehicleId2")
-                .registrationCountryCode(CountryIndicator.BE.name())
-                .build()).size());
-
-        assertEquals(0, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .identifier("vehicleId2")
-                .registrationCountryCode(CountryIndicator.CY.name())
-                .identifierType(List.of("carried"))
-                .build()).size());
-
-        assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .identifier("carriedId1")
-                .identifierType(List.of("carried"))
-                .build()).size());
-
-        assertEquals(1, identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
-                .identifier("carriedId1")
-                .build()).size());
+        assertTrue(foundConsignments.stream().anyMatch(c -> c.getDatasetId().equals("67676767-6767-6767-6767-11180123be5b")));
+        assertTrue(foundConsignments.stream().anyMatch(c -> c.getDatasetId().equals("67676767-6767-6767-6767-22280123be5b")));
     }
 
+    @Test
+    void shouldGetDataByOneIdentifierTypeAndIdCriteria() {
+        List<Consignment> foundConsignments = identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .identifier("ASB-123")
+                .identifierType(List.of("means"))
+                .build());
+
+        assertEquals(2, foundConsignments.size());
+        assertTrue(CollectionUtils.isEqualCollection(foundConsignments, List.of(fourthConsignment, fifthConsignment)));
+    }
+
+    @Test
+    void shouldGetDataByOneIdentifierTypeAndIdAndCountryCriteria() {
+        List<Consignment> foundConsignments = identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .identifier("ASB-123")
+                .identifierType(List.of("means"))
+                .registrationCountryCode("FI")
+                .build());
+
+        assertEquals(1, foundConsignments.size());
+        assertEquals("67676767-6767-6767-6767-44480123be5b", foundConsignments.iterator().next().getDatasetId());
+    }
+
+    @Test
+    void shouldGetDataByTwoIdentifierTypeAndIdAndCountryCriteria() {
+        List<Consignment> foundConsignments = identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .identifier("ASB-123")
+                .identifierType(List.of("means", "equipment"))
+                .registrationCountryCode("FI")
+                .build());
+
+        assertEquals(2, foundConsignments.size());
+        assertTrue(CollectionUtils.isEqualCollection(foundConsignments, List.of(fourthConsignment, sixthConsignment)));
+    }
+
+    @Test
+    void shouldGetDataByThreeIdentifierTypeAndIdAndCountryCriteria() {
+        List<Consignment> foundConsignments = identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .identifier("ASB-123")
+                .identifierType(List.of("means", "carried", "equipment"))
+                .registrationCountryCode("FI")
+                .build());
+
+        assertEquals(3, foundConsignments.size());
+        assertTrue(CollectionUtils.isEqualCollection(foundConsignments, List.of(fourthConsignment, fifthConsignment, sixthConsignment)));
+    }
+
+    @Test
+    void shouldSearchDataUsingAllIdentifierTypeWhenGivenIdentifierTypesAreEmpty() {
+        List<Consignment> foundConsignments = identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                .identifier("FMC888")
+                .registrationCountryCode("FR")
+                .build());
+
+        assertEquals(2, foundConsignments.size());
+        assertTrue(CollectionUtils.isEqualCollection(foundConsignments, List.of(firstConsignment, secondConsignment)));
+    }
 }

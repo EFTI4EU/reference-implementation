@@ -2,7 +2,6 @@ package eu.efti.eftigate.service;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.exception.TechnicalException;
 import eu.efti.commons.utils.MemoryAppender;

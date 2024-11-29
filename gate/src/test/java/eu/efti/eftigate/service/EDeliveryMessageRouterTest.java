@@ -58,13 +58,13 @@ class EDeliveryMessageRouterTest {
     }
 
     private Map<String, Consumer<NotificationDto>> buildHashMap() {
-        final Map<String, Consumer<NotificationDto>> casesMap = new HashMap<>();
-        casesMap.put("<UILQuery></UILQuery>", message -> verify(uilRequestService).manageQueryReceived(message));
-        casesMap.put("<UILResponse></UILResponse>", message -> verify(uilRequestService).manageResponseReceived(message));
-        casesMap.put("<IdentifierQuery></IdentifierQuery>", message -> verify(identifiersRequestService).manageQueryReceived(message));
-        casesMap.put("<IdentifierResponse></IdentifierResponse>", message -> verify(identifiersRequestService).manageResponseReceived(message));
-        casesMap.put("<SaveIdentifiersRequest></SaveIdentifiersRequest>", message -> verify(identifiersRequestService).createOrUpdate(message));
-        casesMap.put("<PostFollowUpRequest></PostFollowUpRequest>", message -> verify(notesRequestService).manageMessageReceive(message));
-        return casesMap;
+        final Map<String, Consumer<NotificationDto>> map = new HashMap<>();
+        map.put("<UILQuery></UILQuery>", message -> verify(uilRequestService).manageQueryReceived(message));
+        map.put("<UILResponse></UILResponse>", message -> verify(uilRequestService).manageResponseReceived(message));
+        map.put("<IdentifierQuery></IdentifierQuery>", message -> verify(identifiersRequestService).manageQueryReceived(message));
+        map.put("<IdentifierResponse></IdentifierResponse>", message -> verify(identifiersRequestService).manageResponseReceived(message));
+        map.put("<SaveIdentifiersRequest></SaveIdentifiersRequest>", message -> verify(identifiersRequestService).createOrUpdate(message));
+        map.put("<PostFollowUpRequest></PostFollowUpRequest>", message -> verify(notesRequestService).manageMessageReceive(message));
+        return map;
     }
 }
