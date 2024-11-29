@@ -1,7 +1,7 @@
 <jaxb:bindings xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                jaxb:version="3.0">
-    <jaxb:bindings schemaLocation="../../../../schema/xsd/codes/UNECE_TransportEquipmentCategoryCode_D23A.xsd">
+    <jaxb:bindings schemaLocation="../../../../../schema/xsd/codes/UNECE_TransportEquipmentCategoryCode_D23A.xsd">
         <jaxb:bindings node="xsd:simpleType[@name='TransportEquipmentCategoryCode']">
             <jaxb:typesafeEnumClass name="TransportEquipmentCategoryCode">
                 <jaxb:typesafeEnumMember value="T1" name="T1"/>

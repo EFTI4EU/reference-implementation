@@ -1,5 +1,6 @@
 package eu.efti.identifiersregistry;
 
+import eu.efti.commons.exception.TechnicalException;
 import eu.efti.identifiersregistry.entity.CarriedTransportEquipment;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
@@ -8,14 +9,25 @@ import eu.efti.v1.codes.CountryCode;
 import eu.efti.v1.codes.TransportEquipmentCategoryCode;
 import eu.efti.v1.consignment.identifier.*;
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
+import eu.efti.v1.edelivery.UIL;
 import eu.efti.v1.types.DateTime;
 import eu.efti.v1.types.Identifier17;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

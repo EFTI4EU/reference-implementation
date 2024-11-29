@@ -12,7 +12,6 @@ import eu.efti.v1.edelivery.UILResponse;
 import eu.efti.v1.json.SaveIdentifiersRequest;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
 import eu.efti.edeliveryapconnector.dto.ApRequestDto;
-import eu.efti.edeliveryapconnector.dto.NotesMessageBodyDto;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
