@@ -20,7 +20,7 @@ import java.util.List;
         "id",
         "sequenceNumber",
         "schemeAgencyId",
-        "registrationCountry",
+        "registrationCountryCode",
         "categoryCode",
         "carriedTransportEquipment"
 })
@@ -28,7 +28,7 @@ public class UsedTransportEquipmentApiDto implements Serializable {
     private String id;
     private int sequenceNumber;
     private String schemeAgencyId;
-    private String registrationCountry;
+    private String registrationCountryCode;
     private String categoryCode;
     @JsonProperty("carriedTransportEquipment")
     private List<CarriedTransportEquipmentApiDto> carriedTransportEquipments;
