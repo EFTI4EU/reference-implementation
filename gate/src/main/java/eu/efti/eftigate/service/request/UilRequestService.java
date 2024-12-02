@@ -138,7 +138,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
         if (requestDto.getStatus() == RESPONSE_IN_PROGRESS || requestDto.getStatus() == ERROR || requestDto.getStatus() == TIMEOUT) {
             final boolean hasData = requestDto.getReponseData() != null;
-            final boolean hasError = controlDto.getError() != null;
+            final boolean hasError = (controlDto.getError() != null || requestDto.getError() != null);
 
             final UILResponse uilResponse = new UILResponse();
             uilResponse.setRequestId(controlDto.getRequestId());
