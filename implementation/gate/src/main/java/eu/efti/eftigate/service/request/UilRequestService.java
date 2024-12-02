@@ -45,12 +45,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static eu.efti.commons.constant.EftiGateConstants.UIL_TYPES;
+import static eu.efti.commons.enums.ErrorCodesEnum.DATA_NOT_FOUND_ON_REGISTRY;
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
 import static eu.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
 import static eu.efti.commons.enums.RequestStatusEnum.TIMEOUT;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH;
 import static eu.efti.commons.enums.StatusEnum.COMPLETE;
+import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.isNotFound;
 
 @Slf4j
 @Component
@@ -138,7 +140,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
         if (requestDto.getStatus() == RESPONSE_IN_PROGRESS || requestDto.getStatus() == ERROR || requestDto.getStatus() == TIMEOUT) {
             final boolean hasData = requestDto.getReponseData() != null;
-            final boolean hasError = controlDto.getError() != null;
+            final boolean hasError = (controlDto.getError() != null || requestDto.getError() != null);
 
             final UILResponse uilResponse = new UILResponse();
             uilResponse.setRequestId(controlDto.getRequestId());
@@ -171,7 +173,8 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
     private String getStatus(final RabbitRequestDto requestDto, final boolean hasError) {
         if (hasError) {
-            if (EDeliveryStatus.isNotFound(requestDto.getError().getErrorCode())) {
+            String errorCode = requestDto.getError().getErrorCode();
+            if (isNotFound(errorCode) || DATA_NOT_FOUND_ON_REGISTRY.name().equalsIgnoreCase(errorCode)) {
                 return EDeliveryStatus.NOT_FOUND.getCode();
             }
             return EDeliveryStatus.BAD_REQUEST.getCode();
@@ -248,8 +251,20 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     private ErrorDto setErrorFromResponse(final UILResponse uilResponse) {
-        return StringUtils.isBlank(uilResponse.getDescription()) ?
-                ErrorDto.fromErrorCode(ErrorCodesEnum.DATA_NOT_FOUND) : ErrorDto.fromAnyError(uilResponse.getDescription());
+        String uilResponseDescription = uilResponse.getDescription();
+        if (StringUtils.isBlank(uilResponseDescription)) {
+            return ErrorDto.fromErrorCode(ErrorCodesEnum.DATA_NOT_FOUND);
+        }
+        return getErrorCodeFromDescription(uilResponseDescription);
+    }
+
+    private ErrorDto getErrorCodeFromDescription(String description) {
+        Optional<ErrorCodesEnum> errorCode = ErrorCodesEnum.fromMessage(description);
+        if (errorCode.isPresent()) {
+            return ErrorDto.fromErrorCode(errorCode.get());
+        } else {
+            return ErrorDto.fromAnyError(description);
+        }
     }
 
     public void updateStatus(final UilRequestDto uilRequestDto, final RequestStatusEnum status, final String eDeliveryMessageId) {
