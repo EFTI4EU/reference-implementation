@@ -8,8 +8,10 @@ import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
+import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
+import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
@@ -83,6 +85,25 @@ public abstract class RequestService<T extends RequestEntity> {
         requestDto.setStatus(status);
         final RequestDto result = this.save(requestDto);
         this.sendRequest(result);
+    }
+
+    public RequestDto buildErrorRequestDto(final NotificationDto notificationDto, final RequestTypeEnum requestTypeEnum) {
+        ErrorDto errorDto = ErrorDto.builder()
+                .errorCode(ErrorCodesEnum.REQUESTID_MISSING.name())
+                .errorDescription(ErrorCodesEnum.REQUESTID_MISSING.getMessage()).build();
+
+        ControlDto controlDto = ControlDto.builder()
+                .requestId(notificationDto.getContent().getConversationId())
+                .requestType(requestTypeEnum)
+                .gateId(getGateProperties().getOwner())
+                .error(errorDto).status(StatusEnum.ERROR).build();
+
+        return RequestDto.builder()
+                .control(controlDto)
+                .error(errorDto)
+                .status(ERROR)
+                .requestType(RequestType.UIL)
+                .gateIdDest(notificationDto.getContent().getFromPartyId()).build();
     }
 
     protected RequestDto initRequest(final ControlDto controlDto, final String destinationUrl) {

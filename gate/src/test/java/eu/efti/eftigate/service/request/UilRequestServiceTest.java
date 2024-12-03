@@ -68,6 +68,8 @@ class UilRequestServiceTest extends BaseServiceTest {
     private final UilRequestEntity uilRequestEntityError = new UilRequestEntity();
     private final UilRequestEntity secondUilRequestEntity = new UilRequestEntity();
 
+    private final ValidationService validationService = new ValidationService();
+
     @Override
     @BeforeEach
     public void before() {
@@ -77,7 +79,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         super.setEntityRequestCommonAttributes(secondUilRequestEntity);
         controlEntity.setRequests(List.of(uilRequestEntity, secondUilRequestEntity));
         uilRequestService = new UilRequestService(uilRequestRepository, mapperUtils, rabbitSenderService, controlService,
-                gateProperties, requestUpdaterService, serializeUtils, logManager);
+                gateProperties, requestUpdaterService, serializeUtils, validationService,logManager);
     }
 
     @Test
@@ -139,7 +141,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns="http://efti.eu/v1/edelivery"
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                                status="200">
+                                status="200"
+                                requestId="42">
                         </uilResponse>
                 """;
 
@@ -173,7 +176,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns="http://efti.eu/v1/edelivery"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="200">
+                        status="200"
+                        requestId="42">
                 </uilResponse>
         """;
 
@@ -207,7 +211,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns="http://efti.eu/v1/edelivery"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="400">
+                        status="400"
+                        requestId="42">
                 </uilResponse>
         """;
 
@@ -241,7 +246,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns="http://efti.eu/v1/edelivery"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="504">
+                        status="504"
+                        requestId="42">
                 </uilResponse>
         """;
 
@@ -276,7 +282,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns="http://efti.eu/v1/edelivery"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="503">
+                        status="503"
+                        requestId="42">
                 </uilResponse>
         """;
 
@@ -308,7 +315,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns="http://efti.eu/v1/edelivery"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="999">
+                        status="999"
+                        requestId="42">
                 </uilResponse>
         """;
 
@@ -341,7 +349,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns="http://efti.eu/v1/edelivery"
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                                status="ERROR">
+                                status="ERROR"
+                                requestId="42">
                         </uilResponse>
                 """;
         final NotificationDto notificationDto = NotificationDto.builder()
@@ -374,7 +383,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns="http://efti.eu/v1/edelivery"
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                                status="ERROR">
+                                status="ERROR"
+                                requestId="42">
                         </uilResponse>
                 """;
         final NotificationDto notificationDto = NotificationDto.builder()
@@ -405,7 +415,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns="http://efti.eu/v1/edelivery"
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                                status="COMPLETE">
+                                status="COMPLETE"
+                                requestId="42">
                            <uil>
                            </uil>
                         </uilQuery>
@@ -453,7 +464,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns="http://efti.eu/v1/edelivery"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="200">
+                        status="200"
+                        requestId="42">
                 </uilResponse>
                 """;
         this.uilRequestEntity.getControl().setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
@@ -483,7 +495,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns="http://efti.eu/v1/edelivery"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="200">
+                        status="200"
+                        requestId="42">
                 </uilResponse>
                 """;
         final NotificationDto notificationDto = NotificationDto.builder()
@@ -510,7 +523,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns="http://efti.eu/v1/edelivery"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="ERROR">
+                        status="ERROR"
+                        requestId="42">
                 </uilResponse>
                 """;
         final NotificationDto notificationDto = NotificationDto.builder()
@@ -546,7 +560,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns="http://efti.eu/v1/edelivery"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="COMPLETE">
+                        status="COMPLETE"
+                        requestId="42">
                 </uilResponse>
                 """;
 

@@ -2,6 +2,7 @@ package eu.efti.eftigate.service;
 
 import eu.efti.commons.constant.EftiGateConstants;
 import eu.efti.commons.dto.RequestDto;
+import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.exception.TechnicalException;
@@ -65,7 +66,9 @@ public class RabbitListenerService {
 
         try {
             final String edeliveryMessageId = this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto));
-            getRequestService(rabbitRequestDto.getRequestType()).updateSentRequestStatus(requestDto, edeliveryMessageId);
+            if (rabbitRequestDto.getError() != null && !ErrorCodesEnum.REQUESTID_MISSING.name().equals(rabbitRequestDto.getError().getErrorCode())) {
+                getRequestService(rabbitRequestDto.getRequestType()).updateSentRequestStatus(requestDto, edeliveryMessageId);
+            }
             hasBeenSent = true;
         } catch (final SendRequestException e) {
             log.error("error while sending request" + e);

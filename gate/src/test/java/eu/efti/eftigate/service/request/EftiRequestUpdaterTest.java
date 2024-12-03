@@ -53,18 +53,6 @@ class EftiRequestUpdaterTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldThrowIfMessageNotFound() {
-        final String messageId = "messageId";
-        final NotificationDto notificationDto = NotificationDto.builder()
-                .notificationType(NotificationType.SEND_FAILURE)
-                .content(NotificationContentDto.builder()
-                        .messageId(messageId)
-                        .build())
-                .build();
-        assertThrows(RequestNotFoundException.class, () -> eftiRequestUpdater.manageSendFailure(notificationDto, "test"));
-    }
-
-    @Test
     void shouldUpdateResponseSendFailure() {
         final String messageId = "messageId";
         requestEntity.setEdeliveryMessageId(messageId);

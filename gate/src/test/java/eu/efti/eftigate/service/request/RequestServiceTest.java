@@ -4,7 +4,11 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.RequestDto;
+import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.utils.MemoryAppender;
+import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
+import eu.efti.edeliveryapconnector.dto.NotificationDto;
+import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.service.RabbitSenderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +23,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -45,6 +50,21 @@ class RequestServiceTest {
         memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
         memoryAppender = MemoryAppender.createInitializedMemoryAppender(
                 Level.TRACE, memoryAppenderTestLogger);
+    }
+
+    @Test
+    void buildErrorRequestDtoTest() {
+        GateProperties gateProperties = GateProperties.builder().owner("owner").build();
+        RequestService requestService = Mockito.mock(RequestService.class, Mockito.CALLS_REAL_METHODS);
+        ReflectionTestUtils.setField(requestService, "gateProperties", gateProperties);
+
+        NotificationDto notificationDto = NotificationDto.builder()
+                .content(NotificationContentDto.builder().conversationId("je suis une conversation").fromPartyId("fromPartyId").build()).build();
+
+        RequestDto requestDto = requestService.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_UIL_SEARCH);
+
+        assertEquals("je suis une conversation", requestDto.getControl().getRequestId());
+        assertNotNull(requestDto.getError());
     }
 
     @Test

@@ -60,7 +60,8 @@ public class NotificationService {
                 .body(new String(Base64.getDecoder().decode(payloadDto.getValue()), StandardCharsets.UTF_8))
                 .contentType(payloadDto.getMimeType())
                 .fromPartyId(messagingDto.getUserMessage().getPartyInfo().getFrom().getPartyId().get(""))
-                .messageId(messagingDto.getUserMessage().getMessageInfo().getMessageId()).build();
+                .messageId(messagingDto.getUserMessage().getMessageInfo().getMessageId())
+                .conversationId(messagingDto.getUserMessage().getCollaborationInfo().getConversationId()).build();
         try {
             return Optional.of(NotificationDto.builder()
                     .messageId(messagingDto.getUserMessage().getMessageInfo().getMessageId())
