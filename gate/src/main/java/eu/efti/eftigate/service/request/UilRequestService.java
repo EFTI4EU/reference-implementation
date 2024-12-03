@@ -254,8 +254,20 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     private ErrorDto setErrorFromResponse(final UILResponse uilResponse) {
-        return StringUtils.isBlank(uilResponse.getDescription()) ?
-                ErrorDto.fromErrorCode(ErrorCodesEnum.DATA_NOT_FOUND) : ErrorDto.fromAnyError(uilResponse.getDescription());
+        String uilResponseDescription = uilResponse.getDescription();
+        if (StringUtils.isBlank(uilResponseDescription)) {
+            return ErrorDto.fromErrorCode(ErrorCodesEnum.DATA_NOT_FOUND);
+        }
+        return getErrorCodeFromDescription(uilResponseDescription);
+    }
+
+    private ErrorDto getErrorCodeFromDescription(String description) {
+        Optional<ErrorCodesEnum> errorCode = ErrorCodesEnum.fromMessage(description);
+        if (errorCode.isPresent()) {
+            return ErrorDto.fromErrorCode(errorCode.get());
+        } else {
+            return ErrorDto.fromAnyError(description);
+        }
     }
 
     public void updateStatus(final UilRequestDto uilRequestDto, final RequestStatusEnum status, final String eDeliveryMessageId) {
