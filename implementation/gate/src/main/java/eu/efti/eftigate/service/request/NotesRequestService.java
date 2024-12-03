@@ -20,7 +20,6 @@ import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
 import eu.efti.v1.edelivery.PostFollowUpRequest;
 import eu.efti.v1.edelivery.UIL;
-import eu.efti.v1.edelivery.UILResponse;
 import jakarta.xml.bind.JAXBElement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -39,6 +38,8 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     public static final String NOTE = "NOTE";
     private final NotesRequestRepository notesRequestRepository;
 
+    private final ValidationService validationService;
+
     public NotesRequestService(final NotesRequestRepository notesRequestRepository,
                                final MapperUtils mapperUtils,
                                final RabbitSenderService rabbitSenderService,
@@ -46,9 +47,11 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
                                final GateProperties gateProperties,
                                final RequestUpdaterService requestUpdaterService,
                                final SerializeUtils serializeUtils,
-                               final LogManager logManager) {
+                               final LogManager logManager,
+                               final ValidationService validationService) {
         super(mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
         this.notesRequestRepository = notesRequestRepository;
+        this.validationService = validationService;
     }
 
     @Override
@@ -81,7 +84,10 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
 
     public void manageMessageReceive(final NotificationDto notificationDto) {
         final PostFollowUpRequest messageBody = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
-
+        if (!validationService.isRequestValidator(messageBody)) {
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND));
+            return;
+        }
         getControlService().getByRequestId(messageBody.getRequestId()).ifPresent(controlEntity -> {
             final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(controlEntity);
             controlDto.setNotes(messageBody.getMessage());

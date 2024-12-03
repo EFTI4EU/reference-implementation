@@ -24,6 +24,7 @@ public enum ErrorCodesEnum {
     PLATFORM_ID_TOO_LONG("platformId max length is 255 characters."),
     PLATFORM_ID_INCORRECT_FORMAT("platformId format incorrect."),
 
+    REQUESTID_MISSING("Missing parameter requestId"),
 
     UIL_PLATFORM_MISSING("Missing parameter platformId"),
 

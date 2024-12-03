@@ -62,6 +62,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     private final UilRequestRepository uilRequestRepository;
     private final SerializeUtils serializeUtils;
     private final ObjectFactory objectFactory = new ObjectFactory();
+    private final ValidationService validationService;
 
 
     public UilRequestService(final UilRequestRepository uilRequestRepository, final MapperUtils mapperUtils,
@@ -70,10 +71,12 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                              final GateProperties gateProperties,
                              final RequestUpdaterService requestUpdaterService,
                              final SerializeUtils serializeUtils,
+                             final ValidationService validationService,
                              final LogManager logManager) {
         super(mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
         this.uilRequestRepository = uilRequestRepository;
         this.serializeUtils = serializeUtils;
+        this.validationService = validationService;
     }
 
 
@@ -87,6 +90,10 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
     public void manageQueryReceived(final NotificationDto notificationDto) {
         final UILQuery uilQuery = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
+        if (!validationService.isRequestValidator(uilQuery)) {
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH));
+            return;
+        }
         final ControlDto controlDto = this.getControlService().createUilControl(ControlUtils
                 .fromGateToGateQuery(uilQuery, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH,
                         notificationDto, getGateProperties().getOwner()));
@@ -96,11 +103,15 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
     public void manageResponseReceived(final NotificationDto notificationDto) {
         final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
+        if (!validationService.isResponseValidator(uilResponse)) {
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH));
+            return;
+        }
         final UilRequestDto uilRequestDto = this.findByRequestIdOrThrow(uilResponse.getRequestId());
         ControlDto controlDto;
         if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.getControl().getRequestType())) { //platform response
             controlDto = manageResponseFromPlatform(uilRequestDto, uilResponse, notificationDto.getMessageId());
-        } else { // gate response
+        } else { //gate response
             controlDto = manageResponseFromOtherGate(uilRequestDto, uilResponse);
         }
         //log efti022

@@ -59,6 +59,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     private final IdentifiersService identifiersService;
     private final IdentifiersRequestRepository identifiersRequestRepository;
     private final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService;
+    private final ValidationService validationService;
 
     public IdentifiersRequestService(final IdentifiersRequestRepository identifiersRequestRepository,
                                      final MapperUtils mapperUtils,
@@ -69,11 +70,13 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                                      final RequestUpdaterService requestUpdaterService,
                                      final SerializeUtils serializeUtils,
                                      final LogManager logManager,
-                                     final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService) {
+                                     final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService,
+                                     final ValidationService validationService) {
         super(mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
         this.identifiersService = identifiersService;
         this.identifiersRequestRepository = identifiersRequestRepository;
         this.identifiersControlUpdateDelegateService = identifiersControlUpdateDelegateService;
+        this.validationService = validationService;
     }
 
 
@@ -87,6 +90,10 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
 
     public void manageQueryReceived(final NotificationDto notificationDto) {
         final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
+        if (!validationService.isRequestValidator(identifierQuery)) {
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH));
+            return;
+        }
         final List<ConsignmentDto> identifiersDtoList = identifiersService.search(buildIdentifiersRequestDtoFrom(identifierQuery));
         final IdentifiersResultsDto identifiersResults = IdentifiersResultsDto.builder().consignments(identifiersDtoList).build();
         final ControlDto controlDto = getControlService().createControlFrom(identifierQuery, notificationDto.getContent().getFromPartyId(), identifiersResults);
@@ -97,6 +104,10 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
 
     public void manageResponseReceived(final NotificationDto notificationDto) {
         final IdentifierResponse response = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
+        if (!validationService.isResponseValidator(response)) {
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH));
+            return;
+        }
         if (getControlService().existsByCriteria(response.getRequestId())) {
             identifiersControlUpdateDelegateService.updateExistingControl(response, notificationDto.getContent().getFromPartyId());
             identifiersControlUpdateDelegateService.setControlNextStatus(response.getRequestId());
