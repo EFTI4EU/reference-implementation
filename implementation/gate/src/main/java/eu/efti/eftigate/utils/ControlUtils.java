@@ -34,7 +34,7 @@ public class ControlUtils {
         controlDto.setRequestId(uilQuery.getRequestId());
         controlDto.setRequestType(requestTypeEnum);
         controlDto.setStatus(StatusEnum.PENDING);
-        controlDto.setSubsetId(StringUtils.isNotBlank(uilQuery.getSubsetId()) ? uilQuery.getSubsetId() : SUBSET_ID);
+        controlDto.setSubsetId(!uilQuery.getSubsetId().isEmpty() ? uilQuery.getSubsetId().get(0) : SUBSET_ID);
         controlDto.setAuthority(null);
         return controlDto;
     }
