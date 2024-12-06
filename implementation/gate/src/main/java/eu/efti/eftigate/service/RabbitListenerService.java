@@ -66,7 +66,7 @@ public class RabbitListenerService {
 
         try {
             final String edeliveryMessageId = this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto));
-            if (rabbitRequestDto.getError() != null && !ErrorCodesEnum.REQUESTID_MISSING.name().equals(rabbitRequestDto.getError().getErrorCode())) {
+            if (rabbitRequestDto.getError() == null || !ErrorCodesEnum.REQUESTID_MISSING.name().equals(rabbitRequestDto.getError().getErrorCode())) {
                 getRequestService(rabbitRequestDto.getRequestType()).updateSentRequestStatus(requestDto, edeliveryMessageId);
             }
             hasBeenSent = true;
