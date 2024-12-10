@@ -1,70 +1,81 @@
 stages:
-  - prebuild
-  - build_and_deploy
-  - platform-gate-simulator
-  - afterbuild
+- prebuild
+- build_and_deploy
+- platform-gate-simulator
+- afterbuild
 
 variables:
   DEPLOY_ENVIRONMENT:
     value: "dev"
     options:
-      - "dev"
-      - "int"
-      - "qlf"
-      - "crt"
-      - "ppd"
-      - "prd"
+    - "dev"
+    - "int"
+    - "qlf"
+    - "crt"
+    - "ppd"
+    - "prd"
     description: "The deployment target. Set to 'dev' by default."
   COMPONENT:
     value: "NONE"
     options:
-      - "NONE"
-      - "gate"
-      - "platform-gate-simulator"
+    - "NONE"
+    - "gate"
+    - "platform-gate-simulator"
     description: "The component target. Set to 'none' by default."
   LABEL:
     value: "NONE"
     options:
-      - "NONE"
-      - "bo"
-      - "sy"
-      - "ttf"
-      - "massive"
-      - "acme"
-      - "roger"
+    - "NONE"
+    - "bo"
+    - "sy"
+    - "ttf"
+    - "massive"
+    - "acme"
+    - "roger"
     description: "The label of component. Set to 'NONE' for default gate."
   REBUILD_COMPONENT_IMAGE:
     value: "true"
     options:
-      - "true"
-      - "false"
+    - "true"
+    - "false"
     description: "Allow to rebuild or no the component Image. Set to 'true' by default."
 
 workflow:
   rules:
-    - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int") && $LABEL == "NONE"
-      variables:
-        NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti
-        SA: ${DEPLOY_ENVIRONMENT}-efti-sa
-        GL_RUNNER: k8s-devint
-    - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int") && ($LABEL != "NONE" || $LABEL != null)
-      variables:
-        NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti-mock
-        SA: ${DEPLOY_ENVIRONMENT}-efti-mock-sa
-        GL_RUNNER: k8s-devint
-    - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "qlf" && $LABEL == "NONE"
-      variables:
-        NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti
-        SA: ${DEPLOY_ENVIRONMENT}-efti-sa
-        GL_RUNNER: k8s-prod
-    - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "qlf" && ($LABEL != "NONE" || $LABEL != null)
-      variables:
-        NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti-mock
-        SA: ${DEPLOY_ENVIRONMENT}-efti-mock-sa
-        GL_RUNNER: k8s-prod
-    - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_REF_NAME !~ "develop"
-      when: never
-    - when: always
+  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int") && $LABEL == "NONE"
+    variables:
+      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti
+      SA: ${DEPLOY_ENVIRONMENT}-efti-sa
+      GL_RUNNER: k8s-devint
+  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int") && ($LABEL != "NONE" || $LABEL != null)
+    variables:
+      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti-mock
+      SA: ${DEPLOY_ENVIRONMENT}-efti-mock-sa
+      GL_RUNNER: k8s-devint
+  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "qlf" && $LABEL == "NONE"
+    variables:
+      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti
+      SA: ${DEPLOY_ENVIRONMENT}-efti-sa
+      GL_RUNNER: k8s-prod
+  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "qlf" && ($LABEL != "NONE" || $LABEL != null)
+    variables:
+      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti-mock
+      SA: ${DEPLOY_ENVIRONMENT}-efti-mock-sa
+      GL_RUNNER: k8s-prod
+  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "ppd" && $LABEL == "NONE"
+    variables:
+      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti
+      SA: ${DEPLOY_ENVIRONMENT}-efti-sa
+      GL_RUNNER: k8s-prod
+  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "ppd" && ($LABEL != "NONE" || $LABEL != null)
+    variables:
+      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti-mock
+      SA: ${DEPLOY_ENVIRONMENT}-efti-mock-sa
+      GL_RUNNER: k8s-prod
+
+  - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_REF_NAME !~ "develop"
+    when: never
+  - when: always
 
 default:
   tags:
@@ -86,10 +97,10 @@ include:
 prepare_env:
   stage: prebuild
   script:
-    - echo $CI_PROJECT_PATH
-    - export ROOT_PROJECT=$(echo "$CI_PROJECT_PATH" | cut -d'/' -f3)
-    - echo $ROOT_PROJECT
-    - echo "ROOT_PROJECT=$ROOT_PROJECT" >> build.env
+  - echo $CI_PROJECT_PATH
+  - export ROOT_PROJECT=$(echo "$CI_PROJECT_PATH" | cut -d'/' -f3)
+  - echo $ROOT_PROJECT
+  - echo "ROOT_PROJECT=$ROOT_PROJECT" >> build.env
   artifacts:
     reports:
       dotenv: build.env
