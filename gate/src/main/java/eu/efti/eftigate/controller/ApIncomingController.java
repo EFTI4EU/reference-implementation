@@ -37,6 +37,7 @@ public class ApIncomingController {
     @PostMapping("/notification")
     public ResponseEntity<String> incoming(final @RequestBody ReceivedNotificationDto receivedNotificationDto) {
         log.info("receive notification from domibus");
+        log.info("log pour scipio pour voir pourquoi y'a un soucis !!!!!!!!!");
         try {
             rabbitSenderService.sendMessageToRabbit(eftiReceiveMessageExchange, eftiKeySendMessage, receivedNotificationDto);
         } catch (final JsonProcessingException e) {
