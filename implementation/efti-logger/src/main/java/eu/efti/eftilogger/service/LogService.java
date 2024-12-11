@@ -7,8 +7,7 @@ public interface LogService<T> {
 
     Logger logger = LoggerFactory.getLogger(LogService.class);
 
-    String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    String TIMEOUT_COMPONENT_TYPE = "timeoutComponentType";
+    String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
     void log(final T data);
 }

@@ -17,6 +17,7 @@ import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
+import eu.efti.eftilogger.model.ComponentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -62,14 +63,11 @@ public class RabbitListenerService {
         final boolean isCurrentGate = gateProperties.isCurrentGate(rabbitRequestDto.getGateIdDest());
         final String receiver = isCurrentGate ? rabbitRequestDto.getControl().getPlatformId() : rabbitRequestDto.getGateIdDest();
         final RequestDto requestDto = mapperUtils.rabbitRequestDtoToRequestDto(rabbitRequestDto, EftiGateConstants.REQUEST_TYPE_CLASS_MAP.get(rabbitRequestDto.getRequestType()));
-        boolean hasBeenSent = false;
-
         try {
             final String edeliveryMessageId = this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto));
             if (rabbitRequestDto.getError() == null || !ErrorCodesEnum.REQUESTID_MISSING.name().equals(rabbitRequestDto.getError().getErrorCode())) {
                 getRequestService(rabbitRequestDto.getRequestType()).updateSentRequestStatus(requestDto, edeliveryMessageId);
             }
-            hasBeenSent = true;
         } catch (final SendRequestException e) {
             log.error("error while sending request" + e);
             throw new TechnicalException("Error when try to send message to domibus", e);
@@ -77,10 +75,10 @@ public class RabbitListenerService {
             final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
             if (RequestType.UIL.equals(requestDto.getRequestType())) {
                 //log fti020 and fti009
-                logManager.logSentMessage(requestDto.getControl(), body, receiver, isCurrentGate, hasBeenSent, LogManager.UIL_FTI_020_FTI_009);
+                logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, isCurrentGate ? ComponentType.PLATFORM : ComponentType.GATE, true, LogManager.FTI_009_FTI_020);
             } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
                 //log fti019
-                logManager.logRequestForIdentifiers(requestDto.getControl(), body, gateProperties.getOwner(), gateProperties.getCountry(), requestDto.getError() != null ? requestDto.getError().getErrorCode() : null, LogManager.IDENTIFIERS);
+                logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, ComponentType.GATE, true, LogManager.FTI_019);
             }
         }
     }

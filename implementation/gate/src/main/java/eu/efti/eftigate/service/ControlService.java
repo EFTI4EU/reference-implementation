@@ -4,18 +4,19 @@ import eu.efti.commons.constant.EftiGateConstants;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
-import eu.efti.commons.dto.IdentifiersResultsDto;
 import eu.efti.commons.dto.PostFollowUpRequestDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.dto.ValidableDto;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
+import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.NoteResponseDto;
 import eu.efti.eftigate.dto.RequestIdDto;
@@ -29,6 +30,7 @@ import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.utils.ControlUtils;
+import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.edelivery.IdentifierQuery;
 import jakarta.validation.ConstraintViolation;
@@ -76,6 +78,7 @@ public class ControlService {
     private final Function<List<String>, RequestTypeEnum> gateToRequestTypeFunction;
     private final EftiAsyncCallsProcessor eftiAsyncCallsProcessor;
     private final GateProperties gateProperties;
+    private final SerializeUtils serializeUtils;
     @Value("${efti.control.pending.timeout:60}")
     private Integer timeoutValue;
 
@@ -245,9 +248,10 @@ public class ControlService {
                 .errorDescription(ERROR_REQUEST_ID_NOT_FOUND).build();
     }
 
-    public ControlDto createControlFrom(final IdentifierQuery identifierQuery, final String fromGateId, final IdentifiersResultsDto identifiersResultsDto) {
-        final ControlDto controlDto = ControlUtils.fromExternalIdentifiersControl(identifierQuery, EXTERNAL_ASK_IDENTIFIERS_SEARCH, fromGateId, gateProperties.getOwner(), identifiersResultsDto);
+    public ControlDto createControlFrom(final IdentifierQuery identifierQuery, final String fromGateId) {
+        ControlDto controlDto = ControlUtils.fromExternalIdentifiersControl(identifierQuery, EXTERNAL_ASK_IDENTIFIERS_SEARCH, fromGateId, gateProperties.getOwner());
         return this.save(controlDto);
+        //should we save ?
     }
 
     public ControlDto save(final ControlDto controlDto) {
@@ -262,36 +266,32 @@ public class ControlService {
         this.validateControl(searchDto).ifPresentOrElse(
                 error -> createErrorControl(controlDto, error, true),
                 () -> createControlFromType(searchDto, controlDto));
-
-        logManager.logAppRequest(controlDto, searchDto, LogManager.FTI_008_FTI_014);
         return buildResponse(controlDto);
     }
 
-    public ControlDto createUilControl(final ControlDto controlDto) {
+    public void createUilControl(final ControlDto controlDto) {
         if (gateProperties.isCurrentGate(controlDto.getGateId()) && !checkOnLocalRegistry(controlDto)) {
             createErrorControl(controlDto, ErrorDto.fromErrorCode(ErrorCodesEnum.DATA_NOT_FOUND_ON_REGISTRY), false);
-            final ControlDto saveControl = this.save(controlDto);
+            final ControlDto savedControl = this.save(controlDto);
             //respond with the error
             if (controlDto.isExternalAsk()) {
-                getRequestService(controlDto.getRequestType()).createAndSendRequest(saveControl, controlDto.getFromGateId(), RequestStatusEnum.ERROR);
+                getRequestService(controlDto.getRequestType()).createAndSendRequest(savedControl, controlDto.getFromGateId(), RequestStatusEnum.ERROR);
             }
-            return saveControl;
         } else {
             final ControlDto saveControl = this.save(controlDto);
             getRequestService(controlDto.getRequestType()).createAndSendRequest(saveControl, null);
             log.info("Uil control with request uuid '{}' has been register", saveControl.getRequestId());
-            return saveControl;
         }
     }
 
     private boolean checkOnLocalRegistry(final ControlDto controlDto) {
         log.info("checking local registry for dataUuid {}", controlDto.getEftiDataUuid());
         //log fti015
-        logManager.logRequestRegistry(controlDto, null, LogManager.FTI_015);
-        final boolean result = this.identifiersService.existByUIL(controlDto.getEftiDataUuid(), controlDto.getGateId(), controlDto.getPlatformId());
+        logManager.logRequestRegistry(controlDto, null, ComponentType.GATE, ComponentType.REGISTRY, LogManager.FTI_015);
+        final ConsignmentDto consignmentDto = this.identifiersService.findByUIL(controlDto.getEftiDataUuid(), controlDto.getGateId(), controlDto.getPlatformId());
         //log fti016
-        logManager.logRequestRegistry(controlDto, String.valueOf(result), LogManager.FTI_016);
-        return result;
+        logManager.logRequestRegistry(controlDto, serializeUtils.mapObjectToBase64String(consignmentDto), ComponentType.REGISTRY, ComponentType.GATE, LogManager.FTI_016);
+        return consignmentDto != null;
     }
 
     private void createIdentifiersControl(final ControlDto controlDto, final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {
@@ -306,14 +306,13 @@ public class ControlService {
                 eftiAsyncCallsProcessor.checkLocalRepoAsync(searchWithIdentifiersRequestDto, saveControl);
             } else {
                 getRequestService(saveControl.getRequestType()).createAndSendRequest(saveControl, destinationUrl);
-                final boolean isCurrentGate = gateProperties.isCurrentGate(destinationUrl);
-                logManager.logFromIdentifiersRequestDto(controlDto, searchWithIdentifiersRequestDto, isCurrentGate, isCurrentGate ? controlDto.getPlatformId() : destinationUrl, true, false, LogManager.LOG_FROM_IDENTIFIERS_REQUEST_DTO);
             }
         });
         log.info("Identifier control with request uuid '{}' has been register", saveControl.getRequestId());
     }
 
-    private <T> void createControlFromType(final T searchDto, final ControlDto controlDto) {
+    private <T extends ValidableDto> void createControlFromType(final T searchDto, final ControlDto controlDto) {
+        logManager.logAppRequest(controlDto, searchDto, ComponentType.CA_APP, ComponentType.GATE, LogManager.FTI_008_FTI_014);
         if (searchDto instanceof UilDto) {
             createUilControl(controlDto);
         } else if (searchDto instanceof final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {
@@ -336,7 +335,7 @@ public class ControlService {
             result.setErrorCode(controlDto.getError().getErrorCode());
         }
         if (controlDto.getStatus() != PENDING) { // pending request are not logged
-            logManager.logAppResponse(controlDto, result, LogManager.FTI_017);
+            logManager.logAppResponse(controlDto, result, ComponentType.GATE, gateProperties.getOwner(), ComponentType.CA_APP, null, LogManager.FTI_011_FTI_017);
         }
         return result;
     }
@@ -364,7 +363,10 @@ public class ControlService {
             result.setErrorCode(controlDto.getError().getErrorCode());
         }
         //log fti017
-        logManager.logFromIdentifier(result, controlDto, LogManager.FTI_017);
+        if (StringUtils.isBlank(controlDto.getFromGateId())) {
+            //log fti017
+            logManager.logFromIdentifier(result, ComponentType.GATE, ComponentType.CA_APP, controlDto, LogManager.FTI_011_FTI_017);
+        }
         return result;
     }
 

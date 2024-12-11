@@ -162,6 +162,15 @@ public abstract class RequestService<T extends RequestEntity> {
         }
     }
 
+    protected <U extends RequestEntity> StatusEnum getStatusEnumOfRequest(U request) {
+        if (RequestStatusEnum.ERROR.equals(request.getStatus())) {
+            return StatusEnum.ERROR;
+        } else if (RequestStatusEnum.TIMEOUT.equals(request.getStatus())) {
+            return StatusEnum.TIMEOUT;
+        }
+        return StatusEnum.COMPLETE;
+    }
+
     private ApConfigDto createApConfig() {
         return ApConfigDto.builder()
                 .username(getGateProperties().getAp().getUsername())
