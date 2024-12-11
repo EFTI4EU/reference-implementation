@@ -11,6 +11,7 @@ import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.RequestRepository;
 import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
+import eu.efti.eftilogger.model.ComponentType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -39,7 +40,7 @@ public class EftiRequestUpdater {
         final Optional<RequestDto> requestDto = getRequestDtoFromMessageId(notificationDto.getMessageId());
         if (requestDto.isPresent()) {
             this.updateStatus(requestDto.get(), SEND_ERROR);
-            logManager.logAckMessage(requestDto.get().getControl(), false, name);
+            logManager.logAckMessage(requestDto.get().getControl(), null, null, false, name);
         }
     }
 
@@ -54,7 +55,7 @@ public class EftiRequestUpdater {
         } else {
             log.info(SENT_MESSAGE_SUCCESSFULLY, notificationDto.getMessageId());
         }
-        logManager.logAckMessage(requestDto.get().getControl(), true, name);
+        logManager.logAckMessage(requestDto.get().getControl(), ComponentType.GATE, null, true, name);
     }
 
     private RequestService<?> getRequestService(final String requestType) {

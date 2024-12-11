@@ -1,13 +1,14 @@
 package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.ControlDto;
+import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.UilDto;
+import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RequestIdDto;
-import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftilogger.dto.MessagePartiesDto;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.eftilogger.service.AuditRequestLogService;
@@ -19,9 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static eu.efti.eftilogger.model.ComponentType.CA_APP;
 import static eu.efti.eftilogger.model.ComponentType.GATE;
-import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
+import static eu.efti.eftilogger.model.ComponentType.REGISTRY;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,9 +35,6 @@ class LogManagerTest extends BaseServiceTest {
     @Mock
     private AuditRegistryLogService auditRegistryLogService;
 
-    @Mock
-    private MapperUtils mapperUtils;
-
     private ControlDto controlDto;
     private UilDto uilDto;
     private static final String BODY = "body";
@@ -46,7 +43,7 @@ class LogManagerTest extends BaseServiceTest {
     @BeforeEach
     public void setUp() {
         gateProperties = GateProperties.builder().owner("ownerId").country("ownerCountry").build();
-        logManager = new LogManager(gateProperties, eftiGateIdResolver, auditRequestLogService, auditRegistryLogService, serializeUtils, mapperUtils);
+        logManager = new LogManager(gateProperties, eftiGateIdResolver, auditRequestLogService, auditRegistryLogService, serializeUtils);
         controlDto = ControlDto.builder()
                 .requestType(RequestTypeEnum.LOCAL_UIL_SEARCH)
                 .platformId("platformId")
@@ -57,16 +54,15 @@ class LogManagerTest extends BaseServiceTest {
 
     @Test
     void testLogSentMessageError() {
-        when(eftiGateIdResolver.resolve("receiver")).thenReturn("receiverCountry");
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
                 .requestingComponentId("ownerId")
                 .requestingComponentType(GATE)
                 .requestingComponentCountry("ownerCountry")
                 .respondingComponentId("receiver")
-                .respondingComponentType(PLATFORM)
-                .respondingComponentCountry("receiverCountry").build();
+                .respondingComponentType(GATE)
+                .respondingComponentCountry("ownerCountry").build();
 
-        logManager.logSentMessage(controlDto, BODY, RECEIVER, true, false, "test");
+        logManager.logSentMessage(controlDto, BODY, RECEIVER, GATE, GATE, false, "test");
 
         final String bodyBase64 = serializeUtils.mapObjectToBase64String(BODY);
         verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", bodyBase64, StatusEnum.ERROR, false, "test");
@@ -74,16 +70,16 @@ class LogManagerTest extends BaseServiceTest {
 
     @Test
     void testLogSentMessageSuccess() {
-        when(eftiGateIdResolver.resolve("receiver")).thenReturn("receiverCountry");
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
                 .requestingComponentId("ownerId")
                 .requestingComponentType(GATE)
                 .requestingComponentCountry("ownerCountry")
                 .respondingComponentId("receiver")
                 .respondingComponentType(GATE)
-                .respondingComponentCountry("receiverCountry").build();
+                .respondingComponentCountry("ownerCountry").build();
 
-        logManager.logSentMessage(controlDto, BODY, RECEIVER, false, true, "test");
+        logManager.logSentMessage(controlDto, BODY, RECEIVER, GATE, GATE, true, "test");
+
         final String bodyBase64 = serializeUtils.mapObjectToBase64String(BODY);
 
         verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", bodyBase64, StatusEnum.COMPLETE, false, "test");
@@ -93,13 +89,13 @@ class LogManagerTest extends BaseServiceTest {
     void testLogAckMessageSuccess() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
                 .requestingComponentId("platformId")
-                .requestingComponentType(PLATFORM)
+                .requestingComponentType(null)
                 .requestingComponentCountry("ownerCountry")
                 .respondingComponentId("ownerId")
-                .respondingComponentType(GATE)
+                .respondingComponentType(null)
                 .respondingComponentCountry("ownerCountry").build();
 
-        logManager.logAckMessage(controlDto, false, "test");
+        logManager.logAckMessage(controlDto, null, null, false, "test");
 
         verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", "", StatusEnum.ERROR, true, "test");
     }
@@ -108,13 +104,13 @@ class LogManagerTest extends BaseServiceTest {
     void testLogAckMessageError() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
                 .requestingComponentId("platformId")
-                .requestingComponentType(PLATFORM)
+                .requestingComponentType(null)
                 .requestingComponentCountry("ownerCountry")
                 .respondingComponentId("ownerId")
-                .respondingComponentType(GATE)
+                .respondingComponentType(null)
                 .respondingComponentCountry("ownerCountry").build();
 
-        logManager.logAckMessage(controlDto, true, "test");
+        logManager.logAckMessage(controlDto, null, null, true, "test");
 
         verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", "", StatusEnum.COMPLETE, true, "test");
     }
@@ -122,6 +118,7 @@ class LogManagerTest extends BaseServiceTest {
     @Test
     void testLogReceivedMessage() {
         when(eftiGateIdResolver.resolve("sender")).thenReturn("senderCountry");
+        controlDto.setStatus(StatusEnum.COMPLETE);
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
                 .requestingComponentId("sender")
                 .requestingComponentType(GATE)
@@ -130,14 +127,14 @@ class LogManagerTest extends BaseServiceTest {
                 .respondingComponentType(GATE)
                 .respondingComponentCountry("ownerCountry").build();
 
-        logManager.logReceivedMessage(controlDto, BODY, "sender", "test");
+        logManager.logReceivedMessage(controlDto, GATE, GATE, BODY, "sender", StatusEnum.COMPLETE, "test");
 
         final String bodyBase64 = serializeUtils.mapObjectToBase64String(BODY);
         verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", bodyBase64, StatusEnum.COMPLETE, false, "test");
     }
 
     @Test
-    void testLogLocalRegistryMessage() {
+    void testLogLocalIdentifierMessage() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
                 .requestingComponentId("ownerId")
                 .requestingComponentType(GATE)
@@ -148,7 +145,7 @@ class LogManagerTest extends BaseServiceTest {
         final List<ConsignmentApiDto> consignmentDtos = List.of(ConsignmentApiDto.builder().build());
         final String body = serializeUtils.mapObjectToBase64String(consignmentDtos);
 
-        logManager.logLocalRegistryMessage(controlDto, consignmentDtos, "test");
+        logManager.logLocalIdentifierMessage(controlDto, consignmentDtos, GATE, GATE, "test");
 
         verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", body, StatusEnum.COMPLETE, false, "test");
     }
@@ -156,36 +153,69 @@ class LogManagerTest extends BaseServiceTest {
     @Test
     void testLogAppRequest() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
-                .requestingComponentId("")
-                .requestingComponentType(CA_APP)
+                .requestingComponentId(null)
+                .requestingComponentType(GATE)
                 .requestingComponentCountry("ownerCountry")
                 .respondingComponentId("ownerId")
                 .respondingComponentType(GATE)
                 .respondingComponentCountry("ownerCountry").build();
         final String body = serializeUtils.mapObjectToBase64String(uilDto);
 
-        logManager.logAppRequest(controlDto, uilDto, "test");
+        logManager.logAppRequest(controlDto, uilDto, GATE, GATE, "test");
 
         verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", body, StatusEnum.COMPLETE, false, "test");
     }
 
     @Test
-    void testLogAppResponse() {
+    void logAppResponseTest() {
+        RequestIdDto requestIdDto = RequestIdDto.builder().requestId("requestId").status(StatusEnum.COMPLETE).build();
+        controlDto.setStatus(StatusEnum.COMPLETE);
+        final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
+                .requestingComponentId("requestingComponentId")
+                .requestingComponentType(GATE)
+                .requestingComponentCountry("ownerCountry")
+                .respondingComponentId("respondingComponentId")
+                .respondingComponentType(GATE)
+                .respondingComponentCountry("ownerCountry").build();
+        final String body = serializeUtils.mapObjectToBase64String(requestIdDto);
+
+        logManager.logAppResponse(controlDto, requestIdDto, GATE, "requestingComponentId", GATE, "respondingComponentId", "test");
+
+        verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", body, StatusEnum.COMPLETE, false, "test");
+    }
+
+    @Test
+    void logRequestRegistryTest() {
+        logManager.logRequestRegistry(controlDto, "body", REGISTRY, GATE, "test");
+
+        verify(auditRegistryLogService).logByControlDto(controlDto, "ownerId", "ownerCountry", REGISTRY, GATE, "body", null, "test");
+    }
+
+    @Test
+    void logRegistryMetadataTest() {
+        final List<ConsignmentDto> consignmentDtoList = List.of(ConsignmentDto.builder().build());
+        final String body = serializeUtils.mapObjectToBase64String(consignmentDtoList);
+
+        logManager.logRegistryIdentifiers(controlDto, consignmentDtoList, GATE, REGISTRY, "test");
+
+        verify(auditRegistryLogService).logByControlDto(controlDto, "ownerId", "ownerCountry", GATE, REGISTRY, body, null, "test");
+    }
+
+    @Test
+    void logFromMetadataTest() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
                 .requestingComponentId("ownerId")
                 .requestingComponentType(GATE)
                 .requestingComponentCountry("ownerCountry")
-                .respondingComponentId("")
-                .respondingComponentType(CA_APP)
+                .respondingComponentId("ownerId")
+                .respondingComponentType(GATE)
                 .respondingComponentCountry("ownerCountry").build();
+        final List<ConsignmentApiDto> consignmentDtos = List.of(ConsignmentApiDto.builder().build());
 
-        RequestIdDto requestIdDto = RequestIdDto.builder()
-                .requestId(controlDto.getRequestId())
-                .status(controlDto.getStatus())
-                .data(controlDto.getEftiData()).build();
-        final String body = serializeUtils.mapObjectToBase64String(requestIdDto);
+        IdentifiersResponseDto identifiersResponseDto = IdentifiersResponseDto.builder().identifiers(consignmentDtos).build();
+        final String body = serializeUtils.mapObjectToBase64String(consignmentDtos);
 
-        logManager.logAppResponse(controlDto, requestIdDto, "test");
+        logManager.logFromIdentifier(identifiersResponseDto, GATE, GATE, controlDto, "test");
 
         verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", body, StatusEnum.COMPLETE, false, "test");
     }

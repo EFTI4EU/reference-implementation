@@ -151,7 +151,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
         notesRequestService.manageMessageReceive(notificationDto);
 
         //assert
-        verify(controlService, never()).createControlFrom(any(), any(), any());
+        verify(controlService, never()).createControlFrom(any(), any());
         verify(rabbitSenderService, times(1)).sendMessageToRabbit(any(), any(), any());
         verify(requestUpdaterService).setMarkedAsDownload(any(), any());
         verify(notesRequestRepository).save(noteRequestEntityArgumentCaptor.capture());

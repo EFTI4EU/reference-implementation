@@ -8,7 +8,6 @@ import eu.efti.edeliveryapconnector.service.NotificationService;
 import eu.efti.eftigate.service.request.EftiRequestUpdater;
 import eu.efti.eftigate.service.request.IdentifiersRequestService;
 import eu.efti.eftigate.service.request.NotesRequestService;
-import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,8 +32,6 @@ class ApIncomingServiceTest extends BaseServiceTest {
     @Mock
     private NotificationService notificationService;
     @Mock
-    private RequestServiceFactory requestServiceFactory;
-    @Mock
     private UilRequestService uilRequestService;
     @Mock
     private NotesRequestService notesRequestService;
@@ -42,7 +39,6 @@ class ApIncomingServiceTest extends BaseServiceTest {
     private IdentifiersRequestService identifiersRequestService;
     @Mock
     private EftiRequestUpdater eftiRequestUpdater;
-    private EDeliveryMessageRouter router;
 
     //todo change body
     private static final String XML_BODY = """
@@ -83,7 +79,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
     @Override
     @BeforeEach
     public void before() {
-        router = new EDeliveryMessageRouter(uilRequestService, identifiersRequestService, notesRequestService);
+        EDeliveryMessageRouter router = new EDeliveryMessageRouter(uilRequestService, identifiersRequestService, notesRequestService);
         service = new ApIncomingService(notificationService, eftiRequestUpdater, router);
     }
 
@@ -166,7 +162,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
         service.manageIncomingNotification(receivedNotificationDto);
 
         verify(notificationService).consume(receivedNotificationDto);
-        verify(eftiRequestUpdater, times(1)).manageSendSuccess(notificationDto, "fti root response sucess");
+        verify(eftiRequestUpdater, times(1)).manageSendSuccess(notificationDto, "send sucess to domibus");
     }
 
     @Test
@@ -187,7 +183,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
         service.manageIncomingNotification(receivedNotificationDto);
 
         verify(notificationService).consume(receivedNotificationDto);
-        verify(eftiRequestUpdater, times(1)).manageSendFailure(notificationDto, "fti send fail");
+        verify(eftiRequestUpdater, times(1)).manageSendFailure(notificationDto, "send fail to domibus");
     }
 
     @Test

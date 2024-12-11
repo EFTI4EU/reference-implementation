@@ -84,7 +84,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
 
     public void manageMessageReceive(final NotificationDto notificationDto) {
         final PostFollowUpRequest messageBody = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
-        if (!validationService.isRequestValidator(messageBody)) {
+        if (!validationService.isRequestValid(messageBody)) {
             this.sendRequest(this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND));
             return;
         }

@@ -1,11 +1,12 @@
 package eu.efti.identifiersregistry.service;
 
+import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.utils.SerializeUtils;
+import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.identifiersregistry.IdentifiersMapper;
-import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
@@ -23,11 +24,12 @@ import java.util.Optional;
 @Slf4j
 public class IdentifiersService {
 
+    public static final String FTI_005 = "fti005";
     public static final String FTI_004 = "fti004";
 
     private final IdentifiersRepository identifiersRepository;
     private final IdentifiersMapper mapper;
-    private final AuditRegistryLogService logService;
+    private final AuditRegistryLogService auditRegistryLogService;
     private final SerializeUtils serializeUtils;
 
     @Value("${gate.owner}")
@@ -37,6 +39,9 @@ public class IdentifiersService {
 
     public void createOrUpdate(final SaveIdentifiersRequestWrapper identifiersDto) {
         final String bodyBase64 = serializeUtils.mapObjectToBase64String(identifiersDto);
+
+        //log fti004
+        auditRegistryLogService.log(identifiersDto, gateOwner, gateCountry, ComponentType.PLATFORM, ComponentType.GATE, gateOwner, identifiersDto.getPlatformId(), bodyBase64, FTI_004);
         final SaveIdentifiersRequest identifiers = identifiersDto.getSaveIdentifiersRequest();
 
         final Optional<Consignment> entityOptional = identifiersRepository.findByUil(gateOwner,
@@ -54,11 +59,13 @@ public class IdentifiersService {
             log.info("creating new entry for dataset id {}", identifiers.getDatasetId());
         }
         identifiersRepository.save(consignment);
-        logService.log(identifiersDto, gateOwner, gateCountry, bodyBase64, FTI_004);
+        //log fti005
+        auditRegistryLogService.log(identifiersDto, gateOwner, gateCountry, ComponentType.GATE, ComponentType.GATE, null, gateOwner, bodyBase64, FTI_005);
     }
 
-    public boolean existByUIL(final String dataUuid, final String gate, final String platform) {
-        return this.identifiersRepository.findByUil(gate, dataUuid, platform).isPresent();
+    public ConsignmentDto findByUIL(final String dataUuid, final String gate, final String platform) {
+        Optional<Consignment> consignment = this.identifiersRepository.findByUil(gate, dataUuid, platform);
+        return consignment.map(mapper::entityToDto).orElse(null);
     }
 
     @Transactional("identifiersTransactionManager")

@@ -1,16 +1,11 @@
 package eu.efti.eftigate.service;
 
-import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.service.request.ValidationService;
 import eu.efti.v1.edelivery.Request;
 import eu.efti.v1.edelivery.Response;
-import jakarta.validation.constraints.AssertTrue;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -27,39 +22,39 @@ class ValidationServiceTest {
     }
 
     @Test
-    void isRequestValidatorValidTest() {
+    void isRequestValidTest() {
         Request request = new Request();
         request.setRequestId("42");
 
-        boolean result = this.validationService.isRequestValidator(request);
+        boolean result = this.validationService.isRequestValid(request);
 
         assertTrue(result);
     }
 
     @Test
-    void isRequestValidatorNotValidTest() {
+    void isRequestNotValidTest() {
         Request request = new Request();
 
-        boolean result = this.validationService.isRequestValidator(request);
+        boolean result = this.validationService.isRequestValid(request);
 
         assertFalse(result);
     }
 
     @Test
-    void isResponseValidorValidTest() {
+    void isResponseValidTest() {
         Response response = new Response();
         response.setRequestId("42");
 
-        boolean result = this.validationService.isResponseValidator(response);
+        boolean result = this.validationService.isResponseValid(response);
 
         assertTrue(result);
     }
 
     @Test
-    void isResponseValidorNotValidTest() {
+    void isResponseNotValidTest() {
         Response response = new Response();
 
-        boolean result = this.validationService.isResponseValidator(response);
+        boolean result = this.validationService.isResponseValid(response);
 
         assertFalse(result);
     }

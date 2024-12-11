@@ -79,7 +79,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         super.setEntityRequestCommonAttributes(secondUilRequestEntity);
         controlEntity.setRequests(List.of(uilRequestEntity, secondUilRequestEntity));
         uilRequestService = new UilRequestService(uilRequestRepository, mapperUtils, rabbitSenderService, controlService,
-                gateProperties, requestUpdaterService, serializeUtils, validationService,logManager);
+                gateProperties, requestUpdaterService, serializeUtils, validationService, logManager);
     }
 
     @Test
@@ -162,7 +162,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         uilRequestService.manageResponseReceived(notificationDto);
 
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
-        verify(logManager).logReceivedMessage(any(), any(), any(), any());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
         assertEquals(RequestStatusEnum.SUCCESS, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
 
@@ -172,14 +172,14 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                <uilResponse
-                        xmlns="http://efti.eu/v1/edelivery"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="200"
-                        requestId="42">
-                </uilResponse>
-        """;
+                        <uilResponse
+                                xmlns="http://efti.eu/v1/edelivery"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                                status="200"
+                                requestId="42">
+                        </uilResponse>
+                """;
 
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -193,28 +193,30 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
+        Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(controlDto);
 
         uilRequestService.manageResponseReceived(notificationDto);
 
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
-        verify(logManager).logReceivedMessage(any(), any(), any(), any());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
         assertEquals(RequestStatusEnum.SUCCESS, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
 
     @Test
     void manageResponseReceivedBadRequestCodeTest() {
+        controlEntityError.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
         final ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                <uilResponse
-                        xmlns="http://efti.eu/v1/edelivery"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="400"
-                        requestId="42">
-                </uilResponse>
-        """;
+                        <uilResponse
+                                xmlns="http://efti.eu/v1/edelivery"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                                status="400"
+                                requestId="42">
+                        </uilResponse>
+                """;
 
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -228,11 +230,12 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
+        Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(controlDto);
 
         uilRequestService.manageResponseReceived(notificationDto);
 
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
-        verify(logManager).logReceivedMessage(any(), any(), any(), any());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
         assertEquals(ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
 
@@ -242,14 +245,14 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                <uilResponse
-                        xmlns="http://efti.eu/v1/edelivery"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="504"
-                        requestId="42">
-                </uilResponse>
-        """;
+                        <uilResponse
+                                xmlns="http://efti.eu/v1/edelivery"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                                status="504"
+                                requestId="42">
+                        </uilResponse>
+                """;
 
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -263,11 +266,12 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
+        Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(controlDto);
 
         uilRequestService.manageResponseReceived(notificationDto);
 
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
-        verify(logManager).logReceivedMessage(any(), any(), any(), any());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
         assertEquals(TIMEOUT, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
 
@@ -278,14 +282,14 @@ class UilRequestServiceTest extends BaseServiceTest {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                <uilResponse
-                        xmlns="http://efti.eu/v1/edelivery"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="503"
-                        requestId="42">
-                </uilResponse>
-        """;
+                        <uilResponse
+                                xmlns="http://efti.eu/v1/edelivery"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                                status="503"
+                                requestId="42">
+                        </uilResponse>
+                """;
 
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -305,20 +309,21 @@ class UilRequestServiceTest extends BaseServiceTest {
                 "Expected doThing() to throw, but it didn't"
         );
     }
+
     @Test
     void manageResponseReceivedEmptyCodeTest() {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
-                <uilResponse
-                        xmlns="http://efti.eu/v1/edelivery"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-                        status="999"
-                        requestId="42">
-                </uilResponse>
-        """;
+                        <uilResponse
+                                xmlns="http://efti.eu/v1/edelivery"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                                status="999"
+                                requestId="42">
+                        </uilResponse>
+                """;
 
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -368,7 +373,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         uilRequestService.manageResponseReceived(notificationDto);
 
-        verify(logManager).logReceivedMessage(any(), any(), any(), any());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
         verify(uilRequestRepository, times(2)).save(uilRequestEntityArgumentCaptor.capture());
         assertEquals(RequestStatusEnum.ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
@@ -402,7 +407,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         uilRequestService.manageResponseReceived(notificationDto);
 
-        verify(logManager).logReceivedMessage(any(), any(), any(), any());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
         verify(uilRequestRepository, times(2)).save(uilRequestEntityArgumentCaptor.capture());
         assertEquals(RequestStatusEnum.ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
@@ -433,8 +438,6 @@ class UilRequestServiceTest extends BaseServiceTest {
         final ArgumentCaptor<ControlDto> argumentCaptorControlDto = ArgumentCaptor.forClass(ControlDto.class);
 
         uilRequestService.manageQueryReceived(notificationDto);
-
-        verify(logManager).logReceivedMessage(any(), anyString(), anyString(), anyString());
         verify(controlService).createUilControl(argumentCaptorControlDto.capture());
         assertEquals(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, argumentCaptorControlDto.getValue().getRequestType());
     }
