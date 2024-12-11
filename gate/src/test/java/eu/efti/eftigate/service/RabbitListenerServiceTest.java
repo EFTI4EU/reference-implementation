@@ -113,7 +113,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void listenSendMessageTest() {
+    void listenSendMessageUilTest() {
         when(requestServiceFactory.getRequestServiceByRequestType(any(String.class))).thenReturn(uilRequestService);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
 
@@ -121,7 +121,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
         rabbitListenerService.listenSendMessage(StringUtils.deleteWhitespace(requestJson));
 
-        verify(logManager).logSentMessage(any(), any(), anyString(), anyBoolean(), anyBoolean(), any());
+        verify(logManager).logSentMessage(any(), any(), anyString(), any(), any(), anyBoolean(), any());
         assertTrue(memoryAppender.containsFormattedLogMessage("receive message from rabbimq queue"));
         assertEquals(1, memoryAppender.countEventsForLogger(LOGGER_NAME, Level.INFO));
     }
@@ -142,7 +142,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
         when(requestSendingService.sendRequest(any())).thenThrow(SendRequestException.class);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
         final Exception exception = assertThrows(TechnicalException.class, () -> rabbitListenerService.listenSendMessage(message));
-        verify(logManager).logSentMessage(any(), any(), anyString(), anyBoolean(), anyBoolean(), any());
+        verify(logManager).logSentMessage(any(), any(), anyString(), any(), any(), anyBoolean(), any());
         assertEquals("Error when try to send message to domibus", exception.getMessage());
     }
 

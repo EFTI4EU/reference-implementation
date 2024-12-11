@@ -7,7 +7,6 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
-import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.RequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

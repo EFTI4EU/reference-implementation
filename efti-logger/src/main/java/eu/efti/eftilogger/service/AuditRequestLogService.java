@@ -25,9 +25,6 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
 
     private static final LogMarkerEnum MARKER = LogMarkerEnum.REQUEST;
 
-    public static final String OFFICER_ID = "officerId";
-    public static final String RESPONSE_ID = "responseId";
-
     private final SerializeUtils serializeUtils;
 
     public void log(final ControlDto control,
@@ -50,8 +47,6 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                 .respondingComponentId(messagePartiesDto.getRespondingComponentId())
                 .respondingComponentCountry(messagePartiesDto.getRespondingComponentCountry())
                 .requestId(control.getRequestId())
-                .officerId(OFFICER_ID)
-                .responseId(RESPONSE_ID)
                 .subsetId(control.getSubsetId())
                 .eftidataId(control.getEftiDataUuid())
                 .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
@@ -63,7 +58,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                 .requestType(getRequestTypeFromControl(control, isAck))
                 .errorCodeMessage(control.getError() != null ? control.getError().getErrorCode() : null)
                 .errorDescriptionMessage(control.getError() != null ? control.getError().getErrorDescription() : null)
-                .timeoutComponentType(TIMEOUT_COMPONENT_TYPE).build();
+                .build();
         this.log(logRequestDto);
 
 

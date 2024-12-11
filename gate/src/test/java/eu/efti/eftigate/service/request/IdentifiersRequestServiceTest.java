@@ -148,14 +148,14 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
         when(controlService.getControlByRequestId(anyString())).thenReturn(controlDto);
-        when(controlService.createControlFrom(any(), any(), any())).thenReturn(controlDto);
+        when(controlService.createControlFrom(any(), any())).thenReturn(controlDto);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
-        when(validationService.isRequestValidator(any())).thenReturn(true);
+        when(validationService.isRequestValid(any())).thenReturn(true);
         //Act
         identifiersRequestService.manageQueryReceived(notificationDto);
 
         //assert
-        verify(controlService).createControlFrom(any(), any(), any());
+        verify(controlService).createControlFrom(any(), any());
         verify(identifiersRequestRepository, times(2)).save(any());
         verify(identifiersService).search(any());
         verify(rabbitSenderService).sendMessageToRabbit(any(), any(), any());
@@ -176,7 +176,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         controlEntity.setRequests(List.of(identifiersRequestEntity));
 
         when(controlService.existsByCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(true);
-        when(validationService.isResponseValidator(any())).thenReturn(true);
+        when(validationService.isResponseValid(any())).thenReturn(true);
 
         //Act
         identifiersRequestService.manageResponseReceived(notificationDto);

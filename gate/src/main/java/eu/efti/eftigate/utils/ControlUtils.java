@@ -2,7 +2,6 @@ package eu.efti.eftigate.utils;
 
 import eu.efti.commons.dto.AuthorityDto;
 import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.IdentifiersResultsDto;
 import eu.efti.commons.dto.SearchParameter;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
@@ -67,7 +66,7 @@ public class ControlUtils {
         return controlDto;
     }
 
-    public static ControlDto fromExternalIdentifiersControl(final IdentifierQuery identifierQuery, final RequestTypeEnum requestTypeEnum, final String fromGateId, final String gateId, final IdentifiersResultsDto identifiersResultsDto) {
+    public static ControlDto fromExternalIdentifiersControl(final IdentifierQuery identifierQuery, final RequestTypeEnum requestTypeEnum, final String fromGateId, final String gateId) {
         final ControlDto controlDto = getControlFrom(requestTypeEnum, null, identifierQuery.getRequestId());
         controlDto.setGateId(gateId);
         controlDto.setFromGateId(fromGateId);
@@ -77,7 +76,6 @@ public class ControlUtils {
                 .registrationCountryCode(identifierQuery.getRegistrationCountryCode())
                 .dangerousGoodsIndicator(identifierQuery.isDangerousGoodsIndicator())
                 .build());
-        controlDto.setIdentifiersResults(identifiersResultsDto.getConsignments());
         return controlDto;
     }
 
