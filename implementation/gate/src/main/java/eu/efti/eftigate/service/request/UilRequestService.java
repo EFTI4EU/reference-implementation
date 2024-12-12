@@ -110,11 +110,15 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH));
             return;
         }
-        final UilRequestDto uilRequestDto = this.findByRequestIdOrThrow(uilResponse.getRequestId());
-        if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.getControl().getRequestType())) { //platform response
-            manageResponseFromPlatform(uilRequestDto, uilResponse, notificationDto);
-        } else { // gate response
-            manageResponseFromOtherGate(uilRequestDto, uilResponse, notificationDto.getContent());
+        final Optional<UilRequestDto> uilRequestDto = this.findByRequestId(uilResponse.getRequestId());
+        if (uilRequestDto.isPresent()) {
+            if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.get().getControl().getRequestType())) { //platform response
+                manageResponseFromPlatform(uilRequestDto.get(), uilResponse, notificationDto);
+            } else { // gate response
+                manageResponseFromOtherGate(uilRequestDto.get(), uilResponse, notificationDto.getContent());
+            }
+        } else {
+            log.error("uilRequestDto not find in DB");
         }
     }
 
@@ -319,10 +323,9 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         return uilRequestDto.getControl();
     }
 
-    private UilRequestDto findByRequestIdOrThrow(final String requestId) {
-        final UilRequestEntity entity = Optional.ofNullable(
-                        this.uilRequestRepository.findByControlRequestIdAndStatus(requestId, RequestStatusEnum.IN_PROGRESS))
-                .orElseThrow(() -> new RequestNotFoundException("couldn't find request for requestId: " + requestId));
-        return getMapperUtils().requestToRequestDto(entity, UilRequestDto.class);
+    private Optional<UilRequestDto> findByRequestId(final String requestId) {
+        final Optional<UilRequestEntity> entity = Optional.ofNullable(
+                        this.uilRequestRepository.findByControlRequestIdAndStatus(requestId, RequestStatusEnum.IN_PROGRESS));
+        return entity.map(uilRequestEntity -> getMapperUtils().requestToRequestDto(uilRequestEntity, UilRequestDto.class));
     }
 }
