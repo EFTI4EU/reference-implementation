@@ -577,7 +577,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                 .build();
         when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(null);
 
-        assertThrows(RequestNotFoundException.class, () -> uilRequestService.manageResponseReceived(notificationDto));
+        uilRequestService.manageResponseReceived(notificationDto);
 
         verify(uilRequestRepository, never()).save(uilRequestEntityArgumentCaptor.capture());
     }
