@@ -1,0 +1,157 @@
+<div>
+  <h5 class="text-center title mt-2 mb-4"> {{'identifiers-search.title' | translate }}</h5>
+  <div class="col-md-10 offset-md-1">
+    <div class="title-area text-center ">{{'identifiers-search.search' | translate }}</div>
+    <form [formGroup]="searchForm" class="p-3 search-area">
+      <div class="form row">
+        <div class="form-group col-md-6">
+          <label for="identifier" class="mb-2">{{'identifiers-search.identifier' | translate }}</label>
+          <input type="text" class="form-control" [ngClass]="{'is-invalid': hasFieldError('identifier')}" id="identifier" placeholder="vehicleID" formControlName="identifier" required>
+          <div class="invalid-feedback" *ngIf="hasFieldError('identifier')">
+            {{getFieldError('identifier')}}
+          </div>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="identifierType" class="mb-2">{{'identifiers-search.identifier-type' | translate }}</label>
+          <div>
+            <ng-multiselect-dropdown id="identifierType" class="form-control custom-select"
+                                     [settings]="dropdownSettings"
+                                     [data]="identifierTypes"
+                                     [(ngModel)]="selectedIdentifierType"
+                                     (onSelect)="onItemSelectIdentifierType($event)"
+                                     (onDeSelect)="onItemDeselectIdentifierType($event)"
+                                     (onSelectAll)="onSelectAllIdentifierType()"
+                                     (onDeSelectAll)="onDeselectAllIdentifierType()">
+            </ng-multiselect-dropdown>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row my-3">
+
+        <div class="form-group col-md-6">
+          <label for="registrationCountryCode" class="mb-2">{{'identifiers-search.registration-country-code' | translate }}</label>
+          <select class="form-control" id="registrationCountryCode" formControlName="registrationCountryCode">
+            <option></option>
+            <option *ngFor="let value of countries">
+              {{value}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="modeCode" class="mb-2">{{'identifiers-search.mode-code' | translate }}</label>
+          <select class="form-control" id="modeCode" formControlName="modeCode">
+            <option></option>
+            <option *ngFor="let mode of transportMode | enum" [value]="mode[0]">
+              {{mode[1]}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row my-3">
+        <div class="form-group col-md-6">
+          <label for="dangerousGoodsIndicator" class="mb-2">{{'identifiers-search.is-dangerous-good' | translate }}</label>
+          <div class="form-control" id="dangerousGoodsIndicator" [ngClass]="{'is-invalid': hasFieldError('dangerousGoodsIndicator')}">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="dangerousGoodsIndicator" id="inlineRadio1" value="YES" formControlName="dangerousGoodsIndicator">
+              <label class="form-check-label" for="inlineRadio1">{{'identifiers-search.yes' | translate }}</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="dangerousGoodsIndicator" id="inlineRadio2" value="NO" formControlName="dangerousGoodsIndicator">
+              <label class="form-check-label" for="inlineRadio2">{{'identifiers-search.no' | translate }}</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="dangerousGoodsIndicator" id="inlineRadio3" value="NA" formControlName="dangerousGoodsIndicator">
+              <label class="form-check-label" for="inlineRadio3">{{'identifiers-search.na' | translate }}</label>
+            </div>
+          </div>
+          <div class="invalid-feedback" *ngIf="hasFieldError('dangerousGoodsIndicator')">
+            {{getFieldError('dangerousGoodsIndicator')}}
+          </div>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="gateIndicator" class="mb-2">{{'identifiers-search.gate-indicator' | translate }}</label>
+          <div>
+            <ng-multiselect-dropdown id="gateIndicator" class="form-control custom-select"
+              [settings]="dropdownSettings"
+              [data]="countries"
+              [(ngModel)]="selectedGateIndicators"
+              (onSelect)="onItemSelectCountry($event)"
+              (onDeSelect)="onItemDeselectCountry($event)"
+              (onSelectAll)="onSelectAllCountry()"
+              (onDeSelectAll)="onDeselectAllCountry()">
+            </ng-multiselect-dropdown>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-100 text-end">
+        <button type="submit" (click)="reset()" class="btn btn-link mx-auto mt-3 me-3">{{'identifiers-search.reset' | translate }}</button>
+        <button id="search-btn" type="submit" (click)="submit()" class="btn btn-primary-in mx-auto mt-3">
+          <span class="fa-solid fa-magnifying-glass me-2"></span>{{'identifiers-search.send-search' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="mt-5 row" *ngIf="currentSearch.requestId != null">
+
+    <div class="title-area text-center"> {{'identifiers-search.result' | translate }} </div>
+
+    <div class="col-4 nopadding">
+      <highcharts-chart [Highcharts]="highcharts" [constructorType]="'mapChart'"
+                        [options]="chartOptions" [(update)]="updateFlag" class="map">
+      </highcharts-chart>
+    </div>
+
+    <div class="col-8 nopadding">
+      <div class="data-area p-4">
+        <div class="row align-items-center" style="height: 50px;">
+          <div class="col-md-7 key"> {{'identifiers-search.request-id' | translate }} <span class="ms-3 value">{{currentSearch.requestId}}</span></div>
+          <div class="col-md-3 key"> {{'identifiers-search.status' | translate }}
+            <span class="ms-3" [ngClass]="getClassFromStatus(currentSearch.status)">{{currentSearch.status}}
+              <span ngbPopover="{{currentSearch.errorCode}} {{currentSearch.errorDescription}}" triggers="mouseenter:mouseleave"
+                    popoverTitle="{{currentSearch.status}}" *ngIf="currentSearch.status == 'ERROR'" class="fa-solid fa-circle-info"></span></span>
+          </div>
+          <div class="col-md-2">
+            <button type="submit" (click)="pollResult()" class="btn btn-primary-in ms-3" id="update-btn" title="{{'identifiers-search.update-status' | translate }}">
+              <span class="fa-solid fa-arrows-rotate"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-4 table-responsive" *ngIf="result?.identifiers?.length! > 0">
+          <table class="table table-hover" aria-label="identifiers search table">
+            <thead>
+            <tr>
+              <th scope="col" class="key" (click)="sort('gateId')">{{'identifiers-search.gate-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+              <th scope="col" class="key" (click)="sort('datasetId')">{{'identifiers-search.dataset-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+              <th scope="col" class="key" (click)="sort('platformId')">{{'identifiers-search.platform-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+              <th scope="col" class="key" (click)="sort('countryStart')">{{'identifiers-search.acceptance-date' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+              <th scope="col" class="key" (click)="sort('journeyStart')">{{'identifiers-search.delivery-date' | translate }}<span class="fa fa-fw fa-sort"></span> </th>
+              <th scope="col" class="key">{{'identifiers-search.action' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let identifier of identifiers">
+              <td class="value">{{identifier.gateId}}</td>
+              <td class="value">{{identifier.datasetId}}</td>
+              <td class="value">{{identifier.platformId}}</td>
+              <td class="value">{{identifier.carrierAcceptanceDatetime | date:'dd/MM/yyyy hh:mm:ss' }}</td>
+              <td class="value">{{identifier.deliveryEventActualOccurrenceDatetime | date:'dd/MM/yyyy hh:mm:ss' }}</td>
+              <td class="value"><button id="open-btn" class="btn btn-primary-in" (click)="displayIdentifiers(identifier)" title="{{'identifiers-search.open' | translate }}">
+                <span class="fa-solid fa-arrow-up-right-from-square"></span>
+              </button></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

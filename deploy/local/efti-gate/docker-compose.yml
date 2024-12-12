@@ -160,6 +160,18 @@ services:
           - auth.gate.syldavia.eu
           - auth.gate.listenbourg.eu
 
+  # Apache
+  apache:
+    container_name: apache
+    image: bellackn/httpd_oidc
+    ports:
+      - 83:83
+    volumes:
+      - ./httpd/config/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./httpd/config/conf.d:/usr/local/apache2/conf.d
+    networks:
+      efti:
+
 networks:
   efti:
     name: efti-network

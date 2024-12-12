@@ -1,0 +1,84 @@
+@import 'ngx-toastr/toastr';
+
+.btn-primary-in {
+  background-color: #C6AA76;
+  color: white;
+}
+
+.btn-primary-in:active, .btn-primary-in:hover {
+  background-color: #ad9972;
+  color: white;
+}
+
+.data-area {
+  border-radius: 0 0 10px 10px;
+  border: 1px solid #c6aa76;
+  border-left: 0;
+  background-color: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px, rgba(0, 0, 0, 0.3) 0 1px 3px -1px;
+  font-family: Helvetica, serif;
+}
+
+.title-area {
+  background-color: #C6AA76;
+  color: white;
+  font-size: 1rem;
+  font-weight: normal;
+  font-family: Helvetica, serif;
+}
+
+.subtitle-area {
+  background-color: #C6AA76;
+  color: white;
+  font-size: 1rem;
+  font-weight: normal;
+  font-family: Helvetica, serif;
+}
+
+.key {
+  color: #c6aa76 !important;
+}
+
+.value {
+  color:#003088 !important;
+}
+
+bi {
+  height: 16px;
+  width: 16px;
+  float: left;
+  margin-right: 10px;
+}
+
+bi.arrow {
+  float: right;
+  margin-right: 0;
+}
+
+.table > tbody > tr > td {
+  vertical-align: middle;
+}
+
+.complete {
+  color: green !important;
+  font-weight: bolder;
+}
+
+.error {
+  color: red !important;
+  font-weight: bolder;
+}
+
+.pending {
+  color: #003088 !important;
+  font-weight: bolder;
+}
+
+.timeout {
+  color: #ff9900 !important;
+  font-weight: bolder;
+}
+
+.grey {
+  background-color: #efefef !important;
+}

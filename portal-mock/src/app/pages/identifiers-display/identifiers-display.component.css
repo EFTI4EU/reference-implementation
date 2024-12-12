@@ -1,0 +1,36 @@
+.vehicle-area {
+  min-height: 300px;
+}
+
+.title {
+  color: #003088;
+}
+
+.left-block-major {
+  width: 5px;
+  border-right: 1px solid #C6AA76;
+  background-color: #C6AA76 !important;
+}
+
+.left-block-minor {
+  border-right: 1px solid #C6AA76;
+  border-bottom: none;
+}
+
+.complete {
+  color: green;
+  font-weight: bold;
+}
+
+.hidden {
+  display: none;
+}
+
+.column-title {
+  color: white !important;
+  background-color: #C6AA76 !important;
+}
+
+.ico-big {
+  font-size: 18px;
+}

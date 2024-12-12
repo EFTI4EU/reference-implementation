@@ -1,0 +1,114 @@
+<div>
+  <h5 class="text-center title mt-2 mb-4"> {{'uil-search.title' | translate }}</h5>
+  <div class="col-md-10 offset-md-1">
+    <div class="title-area text-center ">{{'uil-search.search' | translate }}</div>
+    <form [formGroup]="searchForm" class="p-3 search-area">
+      <div class="form-group row pb-3">
+        <label for="id" class="col-sm-3 col-form-label">{{'uil-search.dataset-id' | translate }}</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" [ngClass]="{'is-invalid': hasFieldError('id')}" id="id" placeholder="Dataset id" formControlName="id" required>
+          <div class="invalid-feedback" *ngIf="hasFieldError('id')">
+            {{getFieldError('id')}}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row pb-3">
+        <label for="gate" class="col-sm-3 col-form-label">{{'uil-search.gate' | translate }}</label>
+        <div class="col-sm-9">
+          <input class="form-control" id="gate" formControlName="gate" list=gates>
+          <datalist id=gates>
+            <option *ngFor="let value of gates" [value]="value">
+              {{value}}
+            </option>
+          </datalist>
+        </div>
+      </div>
+
+      <div class="form-group row pb-3">
+        <label for="platform" class="col-sm-3 col-form-label">{{'uil-search.platform' | translate }}</label>
+        <div class="col-sm-9">
+          <input class="form-control" id="platform" formControlName="platform" list=platforms>
+          <datalist id=platforms>
+          <option *ngFor="let value of platforms" [value]="value.id">
+            {{value.label}}
+          </option>
+          </datalist>
+        </div>
+      </div>
+      <div class="w-100 text-end">
+        <button type="submit" (click)="reset()" class="btn btn-link mx-auto mt-3 me-3">{{'uil-search.reset' | translate }}</button>
+        <button id="search-btn" type="submit" (click)="submit()" class="btn btn-primary-in mx-auto mt-3">
+          <span class="fa-solid fa-magnifying-glass me-2"></span>{{'uil-search.send-search' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div  *ngIf="result.length > 0">
+    <div class="title-area text-center mt-5"> {{'identifiers-search.result' | translate }}</div>
+    <div class="table-responsive data-area p-4 pt-1">
+      <div class="w-100 text-end">
+        <button type="submit" (click)="clear()" class="btn btn-link me-5">{{'uil-search.clear' | translate }}</button>
+      </div>
+      <table class="table table-hover" aria-label="uil results table">
+        <thead>
+        <tr>
+          <th scope="col" class="key">{{'identifiers-search.request-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+          <th scope="col" class="key">{{'identifiers-search.gate-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+          <th scope="col" class="key">{{'identifiers-search.dataset-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+          <th scope="col" class="key">{{'identifiers-search.platform-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+          <th scope="col" class="key">{{'identifiers-search.status' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+          <th scope="col" class="key">{{'identifiers-search.action' | translate }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let res of result">
+          <td class="value my-auto">{{res.requestId}}</td>
+          <td class="value">{{res.gateId}}</td>
+          <td class="value">{{res.datasetId}}</td>
+          <td class="value">{{res.platformId}}</td>
+          <td [ngClass]="getClassFromStatus(res.status)">{{res.status}}
+            <span ngbPopover="{{res.errorCode}} {{res.errorDescription}}" triggers="mouseenter:mouseleave"
+                  popoverTitle="{{res.status}}" *ngIf="res.status == 'ERROR'" class="fa-solid fa-circle-info"></span>
+          </td>
+          <td class="value">
+
+            <button id="notes-btn" class="btn btn-primary-in" (click)="openModal(noteModal, res)" title="{{'uil-search.add-note' | translate }}">
+              <span class="fa-solid fa-comment"></span>
+            </button>
+            @if (res.status === 'COMPLETE') {
+              <button id="open-btn" class="btn btn-primary-in ms-2" (click)="open(res.requestId)" *ngIf="res.datasetId" title="{{'uil-search.open' | translate }}">
+                <span class="fa-solid fa-arrow-up-right-from-square"></span>
+              </button>
+              <button id="download-btn" class="btn btn-primary-in ms-2" (click)="download(res.requestId)" *ngIf="res.datasetId" title="{{'uil-search.download' | translate }}">
+                <span class="fa-solid fa-download"></span>
+              </button>
+            } @else if (res.status === 'PENDING') {
+              <button id="poll-btn" class="btn btn-primary-in ms-2" (click)="pollResult(res.requestId)" title="{{'uil-search.update' | translate }}">
+                <span class="fa-solid fa-arrows-rotate"></span>
+              </button>
+            }
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<ng-template #noteModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{'uil-search.add-note' | translate }}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <textarea class="form-control" id="textarea" [(ngModel)]="note" rows="3"></textarea>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">{{'uil-search.save' | translate }}</button>
+    <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss()">{{'uil-search.cancel' | translate }}</button>
+  </div>
+</ng-template>

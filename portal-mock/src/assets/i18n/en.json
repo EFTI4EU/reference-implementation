@@ -1,0 +1,86 @@
+{
+  "identifiers-display": {
+    "title": "Identifiers Display",
+    "identifiers": "Identifiers",
+    "gate-id": "Gate Id",
+    "dataset-id": "Dataset Id",
+    "platform-id": "Platform Id",
+    "delivery-date": "Delivery event actual occurrence date",
+    "acceptance-date": "Carrier acceptance date",
+    "transport-movement": "Main carriage transport movement",
+    "used-transport-equipment": "Used transport equipment",
+    "carried-transport-equipment": "Carried transport equipment",
+    "id": "Id",
+    "scheme-agency-id": "Scheme agency id",
+    "mode-code": "Mode code",
+    "registrationCountry": "Registration country",
+    "dangerous-goods-indicator": "Dangerous good indicator",
+    "sequence-number": "Sequence number",
+    "category-code": "Category code",
+    "registration-country": "Registration country",
+    "go-to-uil": "Go to request by UIL"
+  },
+  "identifiers-search": {
+    "title": "Identifiers Request",
+    "search": "Request",
+    "identifier": "Identifier",
+    "identifier-type": "Identifier type",
+    "registration-country-code": "Registration country code",
+    "mode-code": "Mode code",
+    "transport-mode": "Transport Mode",
+    "is-dangerous-good": "Is Dangerous Good ? *",
+    "yes": "Yes",
+    "no": "No",
+    "na": "N/A",
+    "reset": "Reset",
+    "send-search": "Send Request",
+    "result": "Result",
+    "request-id": "RequestId",
+    "status": "Status",
+    "update-status": "Update status",
+    "gate-id": "Gate Id",
+    "dataset-id": "Dataset Id",
+    "platform-id": "Platform Id",
+    "delivery-date": "Delivery event actual occurrence date",
+    "acceptance-date": "Carrier acceptance date",
+    "action": "Action",
+    "open": "Open",
+    "error": "An error occurred",
+    "request-saved": "Request saved",
+    "note-saved": "Request saved",
+    "request-updated": "Request updated",
+    "gate-indicator": "Gate Indicators"
+  },
+  "uil-search": {
+    "title": "UIL Request",
+    "search": "Request",
+    "dataset-id": "Dataset Id *",
+    "gate": "Gate Id *",
+    "platform": "Platform Id *",
+    "reset": "Reset",
+    "send-search": "Send Request",
+    "update": "Update",
+    "open": "Open",
+    "clear": "Clear",
+    "add-note": "Follow-up communication",
+    "download": "Download",
+    "save":  "Save",
+    "cancel": "Cancel"
+  },
+  "form": {
+    "error": {
+      "required": "this field is required",
+      "pattern": "this field doesnt match required format"
+    }
+  },
+  "loader": {
+    "text": "Loading"
+  },
+  "menu": {
+    "login": "Login",
+    "logout": "logout",
+    "home": "Home",
+    "search-by-uil": "Request By UIL",
+    "search-by-identifiers": "Request By Identifiers"
+  }
+}

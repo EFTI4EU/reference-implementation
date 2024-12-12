@@ -1,0 +1,14 @@
+.page {
+  min-height: 750px;
+}
+
+.content {
+  font-size: 90%;
+  background-color: rgb(248, 249, 253);
+}
+
+.content .btn {
+  font-size: 90% !important;
+}
+
+

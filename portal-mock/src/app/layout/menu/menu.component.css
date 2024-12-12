@@ -1,0 +1,60 @@
+#neubar {
+  background: #003088;
+  box-shadow: 4px 6px 12px rgba(0,0,0,0.4)
+}
+
+.nav-item .active {
+  border-radius: 6px;
+  background-color: #c6aa76;
+  color: #221b48;
+}
+
+#neubar .dropdown-menu a:hover {
+  color: #454545
+}
+
+#neubar .nav-item {
+  margin : auto 4px;
+}
+
+#neubar a {
+
+  padding-left:12px;
+  padding-right:12px;
+}
+
+#neubar .dropdown-menu {
+  background : #545454
+}
+
+a.navbar-brand {
+  color: #454545
+}
+
+.nav-link {
+  color: white;
+}
+
+.login-btn {
+  background-color: #C6AA76;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  padding: 7px 12px;
+  font-weight: bold;
+  box-shadow: 2px 3px 6px rgba(0,0,0,0.4)
+}
+
+.login-btn:hover {
+  background-color: #ad9972;
+}
+
+.header-title {
+  color: #003088;
+  font-size: x-large;
+  text-shadow: 1px 1px;
+}
+
+.navend-button {
+  margin-right: 90px;
+}
