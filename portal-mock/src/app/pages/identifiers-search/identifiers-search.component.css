@@ -1,0 +1,34 @@
+:root {
+  --btn-size: 14px;
+}
+
+.search-area {
+  border-radius: 0 0 10px 10px;
+  border: 1px solid #c6aa76;
+  background-color: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px, rgba(0, 0, 0, 0.3) 0 1px 3px -1px;
+}
+
+.title {
+  color: #003088;
+}
+
+/*
+override multiselect css
+*/
+/deep/ .dropdown-btn {
+  border: none !important;
+  padding: 0 !important;
+}
+
+.map {
+  max-height: 400px;
+  display: block;
+  border-radius: 0 0 10px 10px;
+  border: 1px solid #c6aa76;
+}
+
+.nopadding {
+  padding: 0 !important;
+  margin: 0 !important;
+}
