@@ -307,5 +307,13 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         );
     }
 
+    @Test
+    void shouldGetRequestForControlId() {
+        identifiersRequestService.findAllForControlId(1);
+        verify(identifiersRequestRepository).findByControlId(1);
+    }
+
+
+
 }
 

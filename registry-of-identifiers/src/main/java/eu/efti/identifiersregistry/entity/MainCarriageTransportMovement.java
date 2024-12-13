@@ -31,7 +31,7 @@ public class MainCarriageTransportMovement implements Serializable {
     private long id;
 
     @Column(name = "mode_code")
-    private short modeCode;
+    private String modeCode;
 
     @Column(name = "dangerous_goods_indicator")
     private boolean dangerousGoodsIndicator;

@@ -82,6 +82,11 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
         throw new UnsupportedOperationException("Operation not allowed for Note Request");
     }
 
+    @Override
+    public List<NoteRequestEntity> findAllForControlId(int controlId) {
+        throw new UnsupportedOperationException("Operation not allowed for Note Request");
+    }
+
     public void manageMessageReceive(final NotificationDto notificationDto) {
         final PostFollowUpRequest messageBody = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
         if (!validationService.isRequestValid(messageBody)) {

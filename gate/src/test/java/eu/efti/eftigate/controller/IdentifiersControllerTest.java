@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
+import eu.efti.commons.dto.identifiers.api.IdentifierRequestResultDto;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.service.ControlService;
@@ -55,7 +56,8 @@ class IdentifiersControllerTest {
         consignmentDto.setPlatformId("acme");
         consignmentDto.setDatasetId("datasetId");
         consignmentDto.setGateId("gateId");
-        identifiersResponseDto.setIdentifiers(List.of(consignmentDto));
+        identifiersResponseDto.setIdentifiers(List.of(IdentifierRequestResultDto.builder()
+                .consignments(List.of(consignmentDto)).build()));
     }
 
     @Test
@@ -95,7 +97,7 @@ class IdentifiersControllerTest {
                 .assertThat("$.requestId", is("requestId"))
                 .assertThat("$.status", is("COMPLETE"))
                 .assertThat("$.identifiers", is(not(emptyCollection())))
-                .assertThat("$.identifiers[0].platformId", is("acme"));
+                .assertThat("$.identifiers[0].consignments[0].platformId", is("acme"));
     }
 
     @Test

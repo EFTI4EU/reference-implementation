@@ -76,6 +76,8 @@ public abstract class RequestService<T extends RequestEntity> {
 
     protected abstract T findRequestByMessageIdOrThrow(final String eDeliveryMessageId);
 
+    public abstract List<T> findAllForControlId(final int controlId);
+
     public void createAndSendRequest(final ControlDto controlDto, final String destinationUrl) {
         this.createAndSendRequest(controlDto, destinationUrl, RequestStatusEnum.RECEIVED);
     }
@@ -196,4 +198,5 @@ public abstract class RequestService<T extends RequestEntity> {
         requestDto.setGateIdDest(requestDto.getControl().getFromGateId());
         sendRequest(requestDto);
     }
+
 }

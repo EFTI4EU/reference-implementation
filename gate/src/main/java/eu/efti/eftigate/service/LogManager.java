@@ -4,7 +4,6 @@ import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.ValidableDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
-import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -66,7 +65,7 @@ public class LogManager {
     }
 
     public void logFromIdentifier(final IdentifiersResponseDto identifiersResponseDto, final ComponentType requestingComponentType, final ComponentType respondingComponentType, final ControlDto controlDto, final String name) {
-        this.logLocalIdentifierMessage(controlDto, identifiersResponseDto.getIdentifiers(), requestingComponentType, respondingComponentType, name);
+        this.logLocalIdentifierMessage(controlDto, identifiersResponseDto, requestingComponentType, respondingComponentType, name);
     }
 
     public void logAckMessage(final ControlDto control,
@@ -118,10 +117,10 @@ public class LogManager {
     }
 
     public void logLocalIdentifierMessage(final ControlDto control,
-                                          final List<ConsignmentApiDto> consignmentDtos,
+                                          final IdentifiersResponseDto identifierRequestResultDtos,
                                           ComponentType requestingComponentType, ComponentType respondingComponentType, final String name) {
         final MessagePartiesDto messagePartiesDto = getMessagePartiesDto(requestingComponentType, respondingComponentType);
-        final String body = serializeUtils.mapObjectToBase64String(consignmentDtos);
+        final String body = serializeUtils.mapObjectToBase64String(identifierRequestResultDtos);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, StatusEnum.COMPLETE, false, name);
     }
 

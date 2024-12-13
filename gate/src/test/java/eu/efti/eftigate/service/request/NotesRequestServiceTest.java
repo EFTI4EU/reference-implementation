@@ -228,5 +228,10 @@ class NotesRequestServiceTest extends BaseServiceTest {
                 Arguments.of(RequestTypeEnum.LOCAL_UIL_SEARCH, false)
         );
     }
+
+    @Test
+    void findAllForControlId_notSupported() {
+        assertThrows(UnsupportedOperationException.class, () -> notesRequestService.findAllForControlId(1));
+    }
 }
 
