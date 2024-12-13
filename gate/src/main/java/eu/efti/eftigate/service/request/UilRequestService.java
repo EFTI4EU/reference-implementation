@@ -222,6 +222,11 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 .orElseThrow(() -> new RequestNotFoundException("couldn't find Uil request for messageId: " + eDeliveryMessageId));
     }
 
+    @Override
+    public List<UilRequestEntity> findAllForControlId(int controlId) {
+        throw new UnsupportedOperationException("Operation not allowed for UIL Request");
+    }
+
     private void manageResponseFromPlatform(final UilRequestDto uilRequestDto, final UILResponse uilResponse, final NotificationDto notificationDto) {
         String messageId = notificationDto.getMessageId();
         if (uilResponse.getStatus().equals(EDeliveryStatus.OK.getCode())) {

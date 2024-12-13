@@ -17,4 +17,7 @@ public interface RequestRepository<T extends RequestEntity> extends JpaRepositor
     @Transactional("controlTransactionManager")
     List<T> findByControlRequestId(final String controlRequestId);
 
+    @Transactional("controlTransactionManager")
+    List<T> findByControlId(final int controlId);
+
 }

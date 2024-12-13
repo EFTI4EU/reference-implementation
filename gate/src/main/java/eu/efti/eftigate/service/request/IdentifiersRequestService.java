@@ -61,6 +61,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     private final IdentifiersRequestRepository identifiersRequestRepository;
     private final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService;
     private final ValidationService validationService;
+    private final GateProperties gateProperties;
 
     public IdentifiersRequestService(final IdentifiersRequestRepository identifiersRequestRepository,
                                      final MapperUtils mapperUtils,
@@ -78,6 +79,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         this.identifiersRequestRepository = identifiersRequestRepository;
         this.identifiersControlUpdateDelegateService = identifiersControlUpdateDelegateService;
         this.validationService = validationService;
+        this.gateProperties = gateProperties;
     }
 
 
@@ -191,6 +193,11 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         this.updateStatus(requestDto, isExternalRequest(requestDto) ? RESPONSE_IN_PROGRESS : RequestStatusEnum.IN_PROGRESS);
     }
 
+    @Override
+    public List<IdentifiersRequestEntity> findAllForControlId(final int controlId) {
+        return identifiersRequestRepository.findByControlId(controlId);
+    }
+
     public void createOrUpdate(final NotificationDto notificationDto) {
         this.identifiersService.createOrUpdate(new SaveIdentifiersRequestWrapper(notificationDto.getContent().getFromPartyId(),
                 getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody())));
@@ -218,7 +225,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 .control(controlDto)
                 .status(status)
                 .identifiersResults(IdentifiersResultsDto.builder().consignments(identifiersDtoList).build())
-                .gateIdDest(controlDto.getFromGateId())
+                .gateIdDest(controlDto.getFromGateId() != null ? controlDto.getFromGateId() : gateProperties.getOwner())
                 .requestType(RequestType.IDENTIFIER)
                 .build();
     }

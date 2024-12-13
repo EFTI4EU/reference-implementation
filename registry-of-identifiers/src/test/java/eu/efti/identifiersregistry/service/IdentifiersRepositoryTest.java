@@ -60,7 +60,7 @@ class IdentifiersRepositoryTest {
                 .build();
         MainCarriageTransportMovement firstMainCarriageTransportMovement = MainCarriageTransportMovement.builder()
                 .dangerousGoodsIndicator(false)
-                .modeCode((short) 3)
+                .modeCode("3")
                 .usedTransportMeansId("FMC888")
                 .usedTransportMeansRegistrationCountry("FR")
                 .schemeAgencyId("UN")
@@ -88,7 +88,7 @@ class IdentifiersRepositoryTest {
                 .build();
         MainCarriageTransportMovement secondMainCarriageTransportMovement = MainCarriageTransportMovement.builder()
                 .dangerousGoodsIndicator(false)
-                .modeCode((short) 3)
+                .modeCode("3")
                 .usedTransportMeansId("FMC888")
                 .usedTransportMeansRegistrationCountry("FR")
                 .schemeAgencyId("UN")
@@ -117,7 +117,7 @@ class IdentifiersRepositoryTest {
                 .build();
         MainCarriageTransportMovement thirdMainCarriageTransportMovement = MainCarriageTransportMovement.builder()
                 .dangerousGoodsIndicator(false)
-                .modeCode((short) 3)
+                .modeCode("3")
                 .usedTransportMeansId("FMC888")
                 .usedTransportMeansRegistrationCountry("IT")
                 .schemeAgencyId("UN")
@@ -145,7 +145,7 @@ class IdentifiersRepositoryTest {
                 .build();
         MainCarriageTransportMovement fourthMainCarriageTransportMovement = MainCarriageTransportMovement.builder()
                 .dangerousGoodsIndicator(false)
-                .modeCode((short) 3)
+                .modeCode("3")
                 .usedTransportMeansId("ASB-123")
                 .usedTransportMeansRegistrationCountry("FI")
                 .schemeAgencyId("UN")
@@ -174,7 +174,7 @@ class IdentifiersRepositoryTest {
         fifthCarriedTransportEquipment.setUsedTransportEquipment(fifthUsedTransportEquipment);
         MainCarriageTransportMovement fifthMainCarriageTransportMovement = MainCarriageTransportMovement.builder()
                 .dangerousGoodsIndicator(false)
-                .modeCode((short) 3)
+                .modeCode("3")
                 .usedTransportMeansId("ASB-123")
                 .usedTransportMeansRegistrationCountry("DE")
                 .schemeAgencyId("UN")
@@ -202,7 +202,7 @@ class IdentifiersRepositoryTest {
                 .build();
         MainCarriageTransportMovement sixthMainCarriageTransportMovement = MainCarriageTransportMovement.builder()
                 .dangerousGoodsIndicator(false)
-                .modeCode((short) 3)
+                .modeCode("3")
                 .usedTransportMeansId("BBB-345")
                 .usedTransportMeansRegistrationCountry("DE")
                 .schemeAgencyId("UN")

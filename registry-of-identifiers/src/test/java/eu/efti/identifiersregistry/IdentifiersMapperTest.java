@@ -79,7 +79,7 @@ class IdentifiersMapperTest {
         test.setUsedTransportEquipments(List.of(usedTransportEquipment));
         test.setMainCarriageTransportMovements(List.of(MainCarriageTransportMovement.builder()
                 .id(1).consignment(new Consignment()).dangerousGoodsIndicator(false)
-                .modeCode((short) 1)
+                .modeCode("1")
                 .usedTransportMeansId("usedTransportMeansId")
                 .usedTransportMeansRegistrationCountry("FR")
                 .build()));
@@ -171,7 +171,7 @@ class IdentifiersMapperTest {
         assertEquals(OffsetDateTime.of(2021, 7, 23, 0, 0, 0, 0, ZoneOffset.UTC), internalConsignment.getDeliveryEventActualOccurrenceDatetime());
 
         assertEquals(1, internalConsignment.getMainCarriageTransportMovements().size());
-        assertEquals(1, internalConsignment.getMainCarriageTransportMovements().get(0).getModeCode());
+        assertEquals("1", internalConsignment.getMainCarriageTransportMovements().get(0).getModeCode());
         assertTrue(internalConsignment.getMainCarriageTransportMovements().get(0).isDangerousGoodsIndicator());
         assertEquals("123", internalConsignment.getMainCarriageTransportMovements().get(0).getUsedTransportMeansId());
         assertEquals("AE", internalConsignment.getMainCarriageTransportMovements().get(0).getUsedTransportMeansRegistrationCountry());
@@ -220,7 +220,7 @@ class IdentifiersMapperTest {
 
         MainCarriageTransportMovement movement = new MainCarriageTransportMovement();
         movement.setDangerousGoodsIndicator(true);
-        movement.setModeCode((short) 1);
+        movement.setModeCode("1");
         movement.setUsedTransportMeansId("123");
         movement.setUsedTransportMeansRegistrationCountry("AE");
         internalConsignment.getMainCarriageTransportMovements().add(movement);

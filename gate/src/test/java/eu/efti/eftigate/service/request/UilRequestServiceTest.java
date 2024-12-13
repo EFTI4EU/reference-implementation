@@ -678,4 +678,9 @@ class UilRequestServiceTest extends BaseServiceTest {
                 Arguments.of(RequestTypeEnum.LOCAL_UIL_SEARCH, true)
         );
     }
+
+    @Test
+    void findAllForControlId_notSupported() {
+        assertThrows(UnsupportedOperationException.class, () -> uilRequestService.findAllForControlId(1));
+    }
 }
