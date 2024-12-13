@@ -3,6 +3,7 @@ package eu.efti.eftigate.service;
 import eu.efti.commons.constant.EftiGateConstants;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
+import eu.efti.commons.dto.IdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.PostFollowUpRequestDto;
 import eu.efti.commons.dto.RequestDto;
@@ -10,7 +11,7 @@ import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.dto.ValidableDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
-import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
+import eu.efti.commons.dto.identifiers.api.IdentifierRequestResultDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
@@ -22,6 +23,7 @@ import eu.efti.eftigate.dto.NoteResponseDto;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.ErrorEntity;
+import eu.efti.eftigate.entity.IdentifiersRequestEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.exception.AmbiguousIdentifierException;
 import eu.efti.eftigate.mapper.MapperUtils;
@@ -50,6 +52,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -59,7 +63,6 @@ import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH;
 import static eu.efti.commons.enums.StatusEnum.PENDING;
 import static java.lang.String.format;
-import static java.util.Collections.emptyList;
 
 
 @Service
@@ -198,19 +201,23 @@ public class ControlService {
     private ControlDto handleExistingControlWithoutData(final ControlEntity controlEntity) {
         if (hasRequestInError(controlEntity)) {
             controlEntity.setStatus(StatusEnum.ERROR);
-        } else if (getSecondsSinceCreation(controlEntity) > timeoutValue &&
-                CollectionUtils.emptyIfNull(controlEntity.getRequests())
-                        .stream()
-                        .anyMatch(request -> EftiGateConstants.IN_PROGRESS_STATUS.contains(request.getStatus()))) {
+        } else if (shouldSetTimeoutTo(controlEntity)) {
             controlEntity.setStatus(StatusEnum.TIMEOUT);
-            updateControlRequests(controlEntity);
+            updateControlRequestsWithTimeoutStatus(controlEntity);
         } else if (PENDING.equals(controlEntity.getStatus())) {
             controlEntity.setStatus(StatusEnum.COMPLETE);
         }
         return mapperUtils.controlEntityToControlDto(controlRepository.save(controlEntity));
     }
 
-    private void updateControlRequests(final ControlEntity controlEntity) {
+    private boolean shouldSetTimeoutTo(ControlEntity controlEntity) {
+        return getSecondsSinceCreation(controlEntity) > timeoutValue &&
+                CollectionUtils.emptyIfNull(controlEntity.getRequests())
+                        .stream()
+                        .anyMatch(request -> EftiGateConstants.IN_PROGRESS_STATUS.contains(request.getStatus()));
+    }
+
+    private void updateControlRequestsWithTimeoutStatus(final ControlEntity controlEntity) {
         controlEntity.getRequests().stream()
                 .filter(request -> RequestStatusEnum.IN_PROGRESS.equals(request.getStatus()))
                 .toList()
@@ -348,21 +355,23 @@ public class ControlService {
 
     public IdentifiersResponseDto getIdentifiersResponse(final String requestId) {
         final ControlDto controlDto = getControlByRequestId(requestId);
-        return buildIdentifiersResponse(controlDto);
+        final List<IdentifiersRequestEntity> requestEntities = requestServiceFactory.getRequestServiceByRequestType(RequestType.IDENTIFIER.name()).findAllForControlId(controlDto.getId());
+        final List<IdentifiersRequestDto> requestDtos = requestEntities.stream().map(r -> mapperUtils.requestToRequestDto(r, IdentifiersRequestDto.class)).toList();
+        return buildIdentifiersResponse(controlDto, requestDtos);
     }
 
-    public IdentifiersResponseDto buildIdentifiersResponse(final ControlDto controlDto) {
+    private IdentifiersResponseDto buildIdentifiersResponse(final ControlDto controlDto, final List<IdentifiersRequestDto> requestDtos) {
         final IdentifiersResponseDto result = IdentifiersResponseDto.builder()
                 .requestId(controlDto.getRequestId())
                 .status(controlDto.getStatus())
-                .identifiers(getIdentifiersResultDtos(controlDto))
+                .identifiers(getIdentifiersResultDtos(requestDtos))
                 .build();
         if (controlDto.isError() && controlDto.getError() != null) {
             result.setRequestId(null);
             result.setErrorDescription(controlDto.getError().getErrorDescription());
             result.setErrorCode(controlDto.getError().getErrorCode());
         }
-        //log fti017
+
         if (StringUtils.isBlank(controlDto.getFromGateId())) {
             //log fti017
             logManager.logFromIdentifier(result, ComponentType.GATE, ComponentType.CA_APP, controlDto, LogManager.FTI_011_FTI_017);
@@ -370,11 +379,18 @@ public class ControlService {
         return result;
     }
 
-    private List<ConsignmentApiDto> getIdentifiersResultDtos(final ControlDto controlDto) {
-        if (controlDto.getIdentifiersResults() != null) {
-            return mapperUtils.consignmentDtoToApiDto(controlDto.getIdentifiersResults());
-        }
-        return emptyList();
+    private List<IdentifierRequestResultDto> getIdentifiersResultDtos(final List<IdentifiersRequestDto> requestDtos) {
+        final List<IdentifierRequestResultDto> identifierResultDtos = new LinkedList<>();
+        requestDtos.forEach(requestDto -> identifierResultDtos.add(
+                IdentifierRequestResultDto.builder()
+                        .consignments(requestDto.getIdentifiersResults() != null ? mapperUtils.consignmentDtoToApiDto(requestDto.getIdentifiersResults().getConsignments()): Collections.emptyList())
+                        .errorCode(requestDto.getError() != null? requestDto.getError().getErrorCode() : null)
+                        .errorDescription(requestDto.getError() != null? requestDto.getError().getErrorDescription() : null)
+                        .gateIndicator(eftiGateIdResolver.resolve(requestDto.getGateIdDest()))
+                        .status(requestDto.getStatus().name())
+                        .build())
+        );
+        return identifierResultDtos;
     }
 
     public void setError(final ControlDto controlDto, final ErrorDto errorDto) {

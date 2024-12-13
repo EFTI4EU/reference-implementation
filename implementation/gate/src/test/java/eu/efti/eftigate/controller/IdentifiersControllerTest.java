@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
+import eu.efti.commons.dto.identifiers.api.IdentifierRequestResultDto;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.service.ControlService;
@@ -22,7 +23,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static com.jayway.jsonassert.JsonAssert.emptyCollection;
 import static com.jayway.jsonassert.JsonAssert.with;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -53,7 +56,8 @@ class IdentifiersControllerTest {
         consignmentDto.setPlatformId("acme");
         consignmentDto.setDatasetId("datasetId");
         consignmentDto.setGateId("gateId");
-        identifiersResponseDto.setIdentifiers(List.of(consignmentDto));
+        identifiersResponseDto.setIdentifiers(List.of(IdentifierRequestResultDto.builder()
+                .consignments(List.of(consignmentDto)).build()));
     }
 
     @Test
@@ -91,7 +95,9 @@ class IdentifiersControllerTest {
 
         with(result)
                 .assertThat("$.requestId", is("requestId"))
-                .assertThat("$.status", is("COMPLETE"));
+                .assertThat("$.status", is("COMPLETE"))
+                .assertThat("$.identifiers", is(not(emptyCollection())))
+                .assertThat("$.identifiers[0].consignments[0].platformId", is("acme"));
     }
 
     @Test

@@ -5,4 +5,5 @@
     <include file="/db.changelog/db.identifiers.changelog-1-initial.sql"/>
     <include file="/db.changelog/db.identifiers.changelog-2-categorycode.sql"/>
     <include file="/db.changelog/db.identifiers.changelog-3-maincarriageschemeagency.sql"/>
+    <include file="/db.changelog/db.identifiers.changelog-4-modecodestring.xml"/>
 </databaseChangeLog>
