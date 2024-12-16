@@ -33,6 +33,7 @@ import org.xmlunit.matchers.CompareMatcher;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
@@ -147,7 +148,6 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                         .body(testFile("/xml/FTI019.xml"))
                         .build())
                 .build();
-        when(controlService.getControlByRequestId(anyString())).thenReturn(controlDto);
         when(controlService.createControlFrom(any(), any())).thenReturn(controlDto);
         when(controlService.updateControl(any())).thenReturn(controlDto);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
@@ -176,7 +176,6 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         identifiersRequestEntity.setStatus(IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
 
-        when(controlService.existsByCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(true);
         when(validationService.isResponseValid(any())).thenReturn(true);
         when(controlService.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
         when(identifiersRequestRepository.findByControlRequestIdAndGateIdDest(any(), any())).thenReturn(identifiersRequestEntity);
@@ -315,7 +314,6 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         identifiersRequestService.findAllForControlId(1);
         verify(identifiersRequestRepository).findByControlId(1);
     }
-
 
 
 }

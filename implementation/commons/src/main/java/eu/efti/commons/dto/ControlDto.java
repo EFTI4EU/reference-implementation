@@ -56,6 +56,11 @@ public class ControlDto {
     }
 
     @JsonIgnore
+    public boolean isLocalAsk() {
+        return this.getRequestType() != null && this.getRequestType().isLocalAsk();
+    }
+
+    @JsonIgnore
     public boolean isFound() {
         return !(isError() && ID_NOT_FOUND.name().equals(this.getError().getErrorCode()));
     }

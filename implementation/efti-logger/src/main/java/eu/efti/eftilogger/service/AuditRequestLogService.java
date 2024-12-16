@@ -37,9 +37,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                     final String name) {
 
         final LogRequestDto logRequestDto = LogRequestDto.builder()
-                .authorityName(control.getAuthority() != null ? control.getAuthority().getName() : null)
                 .name(name)
-                .authorityNationalUniqueIdentifier(control.getAuthority() != null ? control.getAuthority().getNationalUniqueIdentifier() : null)
                 .requestingComponentType(messagePartiesDto.getRequestingComponentType())
                 .requestingComponentId(messagePartiesDto.getRequestingComponentId())
                 .requestingComponentCountry(messagePartiesDto.getRequestingComponentCountry())

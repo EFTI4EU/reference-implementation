@@ -127,6 +127,11 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     }
 
     @Override
+    public void saveRequest(RequestDto requestDto) {
+        notesRequestRepository.save(getMapperUtils().requestDtoToRequestEntity(requestDto, NoteRequestEntity.class));
+    }
+
+    @Override
     protected void updateStatus(final NoteRequestEntity noteRequestEntity, final RequestStatusEnum status) {
         noteRequestEntity.setStatus(status);
         notesRequestRepository.save(noteRequestEntity);

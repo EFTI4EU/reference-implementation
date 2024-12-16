@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AuditRegistryLogServiceTest extends AbstractTestService {
 
     private AuditRegistryLogService auditRegistryLogService;
+
     private ListAppender<ILoggingEvent> logWatcher;
 
     private ControlDto controlDto;

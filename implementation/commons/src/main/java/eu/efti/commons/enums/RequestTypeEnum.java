@@ -13,5 +13,9 @@ public enum RequestTypeEnum {
     public boolean isExternalAsk() {
         return this == EXTERNAL_ASK_UIL_SEARCH || this == EXTERNAL_ASK_IDENTIFIERS_SEARCH;
     }
+
+    public boolean isLocalAsk() {
+        return this == LOCAL_UIL_SEARCH || this == LOCAL_IDENTIFIERS_SEARCH;
+    }
 }
 

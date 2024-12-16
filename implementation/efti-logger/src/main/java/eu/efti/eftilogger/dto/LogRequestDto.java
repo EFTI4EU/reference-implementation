@@ -11,8 +11,6 @@ public class LogRequestDto extends LogCommonDto {
     public final String requestId;
     @JsonProperty("eFTIDataId")
     public final String eftidataId;
-    public final String authorityNationalUniqueIdentifier;
-    public final String authorityName;
     public final String subsetId;
     public final String requestType;
 }
