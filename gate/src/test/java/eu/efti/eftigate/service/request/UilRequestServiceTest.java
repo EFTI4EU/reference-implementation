@@ -10,6 +10,7 @@ import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
+import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.exception.TechnicalException;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
@@ -180,6 +181,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 requestId="42">
                         </uilResponse>
                 """;
+        savedControlDto.setStatus(COMPLETE);
+
 
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
@@ -193,7 +196,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
-        Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(controlDto);
+        Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
 
         uilRequestService.manageResponseReceived(notificationDto);
 
@@ -205,6 +208,7 @@ class UilRequestServiceTest extends BaseServiceTest {
     @Test
     void manageResponseReceivedBadRequestCodeTest() {
         controlEntityError.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
+        savedControlDto.setStatus(StatusEnum.ERROR);
         final ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
@@ -230,7 +234,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
-        Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(controlDto);
+        Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
 
         uilRequestService.manageResponseReceived(notificationDto);
 
@@ -242,6 +246,7 @@ class UilRequestServiceTest extends BaseServiceTest {
     @Test
     void manageResponseReceivedGatewayTimetoutCodeTest() {
         final ObjectMapper mapper = new ObjectMapper();
+        savedControlDto.setStatus(StatusEnum.TIMEOUT);
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
         final String content = """
@@ -266,7 +271,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
-        Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(controlDto);
+        Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
 
         uilRequestService.manageResponseReceived(notificationDto);
 

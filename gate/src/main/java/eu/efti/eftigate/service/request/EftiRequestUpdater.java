@@ -77,7 +77,7 @@ public class EftiRequestUpdater {
         if (requestEntity.isPresent()) {
             return requestEntity;
         } else {
-            log.error(COULDN_T_FIND_REQUEST_FOR_MESSAGE_ID + messageId);
+            log.error(COULDN_T_FIND_REQUEST_FOR_MESSAGE_ID + "{}", messageId);
             return Optional.empty();
         }
     }

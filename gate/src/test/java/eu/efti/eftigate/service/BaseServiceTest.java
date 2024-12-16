@@ -48,6 +48,8 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
 
     protected final UilDto uilDto = new UilDto();
     protected final ControlDto controlDto = new ControlDto();
+    protected final ControlDto savedControlDto = new ControlDto();
+
     protected final ControlEntity controlEntityError = new ControlEntity();
     protected final ControlEntity controlEntity = new ControlEntity();
 
@@ -82,6 +84,15 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlDto.setSubsetId("oki");
         this.controlDto.setCreatedDate(localDateTime);
         this.controlDto.setLastModifiedDate(localDateTime);
+
+        savedControlDto.setEftiDataUuid(uilDto.getDatasetId());
+        savedControlDto.setGateId(uilDto.getGateId());
+        savedControlDto.setPlatformId(uilDto.getPlatformId());
+        savedControlDto.setRequestId("42");
+        savedControlDto.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
+        savedControlDto.setSubsetId("oki");
+        savedControlDto.setCreatedDate(LocalDateTime.now());
+        savedControlDto.setLastModifiedDate(LocalDateTime.now());
 
         this.controlEntityError.setRequestId(requestId);
         this.controlEntityError.setRequestType(RequestTypeEnum.NOTE_SEND);

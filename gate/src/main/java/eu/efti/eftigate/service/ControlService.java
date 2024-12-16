@@ -24,7 +24,6 @@ import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.ErrorEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
-import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.exception.AmbiguousIdentifierException;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.ControlRepository;
@@ -157,7 +156,7 @@ public class ControlService {
         log.info("get ControlEntity with request id : {}", requestId);
         final Optional<ControlEntity> optionalControlEntity = getByRequestId(requestId);
         if (optionalControlEntity.isPresent()) {
-            return updateExistingControl(optionalControlEntity.get());
+            return mapperUtils.controlEntityToControlDto(optionalControlEntity.get());
         } else {
             return buildNotFoundControlEntity();
         }
@@ -167,11 +166,13 @@ public class ControlService {
         return controlRepository.findByRequestId(requestId);
     }
 
-    private ControlDto updateExistingControl(final ControlEntity controlEntity) {
-        if (PENDING == controlEntity.getStatus()) {
-            return updatePendingControl(controlEntity);
+    public ControlDto updateControl(final String requestId) {
+        log.info("get ControlEntity with request id : {}", requestId);
+        final Optional<ControlEntity> optionalControlEntity = getByRequestId(requestId);
+        if (optionalControlEntity.isPresent()) {
+            return updatePendingControl(optionalControlEntity.get());
         } else {
-            return mapperUtils.controlEntityToControlDto(controlEntity);
+            return buildNotFoundControlEntity();
         }
     }
 
@@ -399,6 +400,11 @@ public class ControlService {
         this.save(controlDto);
     }
 
+    public ControlDto updateControlStatus(final ControlDto controlDto, final StatusEnum status) {
+        controlDto.setStatus(status);
+        return this.save(controlDto);
+    }
+
     public ControlEntity getControlForCriteria(final String requestId, final RequestStatusEnum requestStatus) {
         Preconditions.checkArgument(requestId != null, "Request Uuid must not be null");
         final List<ControlEntity> controls = controlRepository.findByCriteria(requestId, requestStatus);
@@ -410,29 +416,6 @@ public class ControlService {
             }
         }
         return null;
-    }
-
-    public StatusEnum getControlNextStatus(final ControlEntity existingControl) {
-        final List<RequestEntity> requests = existingControl.getRequests();
-        if (requests.stream().allMatch(requestEntity -> RequestStatusEnum.SUCCESS == requestEntity.getStatus())) {
-            return StatusEnum.COMPLETE;
-        } else if (shouldBeTimeout(existingControl)) {
-            return StatusEnum.TIMEOUT;
-        } else if (requests.stream().anyMatch(requestEntity -> RequestStatusEnum.ERROR == requestEntity.getStatus())) {
-            return StatusEnum.ERROR;
-        }
-        return existingControl.getStatus();
-    }
-
-
-    private boolean shouldBeTimeout(final ControlEntity controlEntity) {
-        final Collection<RequestEntity> requests = CollectionUtils.emptyIfNull(controlEntity.getRequests());
-        return requests.stream().anyMatch(requestEntity -> RequestStatusEnum.TIMEOUT == requestEntity.getStatus())
-                && requests.stream().noneMatch(requestEntity -> RequestStatusEnum.ERROR == requestEntity.getStatus());
-    }
-
-    public boolean existsByCriteria(final String requestId) {
-        return controlRepository.existsByRequestId(requestId);
     }
 
     public Optional<ControlEntity> findByRequestId(final String controlRequestId) {

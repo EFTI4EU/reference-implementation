@@ -114,7 +114,6 @@ class ControlServiceTest extends AbstractServiceTest {
     private final ControlEntity controlEntity = ControlEntity.builder().requestType(RequestTypeEnum.LOCAL_UIL_SEARCH).build();
     private final UilRequestEntity uilRequestEntity = new UilRequestEntity();
     private final IdentifiersRequestEntity identifiersRequestEntity = new IdentifiersRequestEntity();
-    private final IdentifiersRequestEntity secondIdentifiersRequestEntity = new IdentifiersRequestEntity();
 
     final ConsignmentDto identifiersResult = new ConsignmentDto();
     final IdentifiersResults identifiersResults = new IdentifiersResults();
@@ -369,10 +368,9 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void getControlEntitySuccessTest() {
         uilRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
+        controlEntity.setStatus(StatusEnum.COMPLETE);
         controlEntity.setRequests(Collections.singletonList(uilRequestEntity));
         when(controlRepository.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
-        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
-        when(controlRepository.save(any())).thenReturn(controlEntity);
 
         final RequestIdDto requestIdDtoResult = controlService.getControlEntity(requestId);
 
@@ -395,57 +393,6 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(logManager).logAppResponse(any(), any(), any(), any(), any(), any(), any());
         assertNotNull(requestIdDtoResult);
         assertEquals(requestIdDtoResult.getRequestId(), controlEntity.getRequestId());
-    }
-
-    @Test
-    void shouldUpdatePendingControl_whenIdentifiersSearchAndRequestsContainsData() {
-        //Arrange
-        controlEntity.setRequestType(RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH);
-        controlEntity.setRequests(Collections.singletonList(identifiersRequestEntity));
-        identifiersRequestEntity.setIdentifiersResults(identifiersResults);
-        identifiersRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
-
-        when(controlRepository.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
-        when(identifiersRequestService.allRequestsContainsData(any())).thenReturn(true);
-        when(controlRepository.save(controlEntity)).thenReturn(controlEntity);
-        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
-
-        //Act
-        controlService.getControlEntity(requestId);
-
-        assertEquals(StatusEnum.COMPLETE, controlEntity.getStatus());
-
-        verify(controlRepository, times(1)).save(controlEntity);
-        verify(controlRepository, times(1)).findByRequestId(any());
-        verify(identifiersRequestService, times(1)).allRequestsContainsData(controlEntity.getRequests());
-        verify(uilRequestService, never()).allRequestsContainsData(any());
-    }
-
-    @Test
-    void shouldUpdatePendingControl_whenUilSearchAndRequestsContainsData() {
-        //Arrange
-        controlEntity.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
-        controlEntity.setRequests(Collections.singletonList(uilRequestEntity));
-
-        final byte[] data = {10, 20, 30, 40};
-        uilRequestEntity.setReponseData(data);
-        uilRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
-
-        when(controlRepository.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
-        when(uilRequestService.allRequestsContainsData(any())).thenReturn(true);
-        when(controlRepository.save(controlEntity)).thenReturn(controlEntity);
-        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
-
-        //Act
-        controlService.getControlEntity(requestId);
-
-        //Assert
-        assertEquals(StatusEnum.COMPLETE, controlEntity.getStatus());
-
-        verify(controlRepository, times(1)).save(controlEntity);
-        verify(controlRepository, times(1)).findByRequestId(any());
-        verify(uilRequestService, times(1)).allRequestsContainsData(controlEntity.getRequests());
-        verify(identifiersRequestService, never()).allRequestsContainsData(any());
     }
 
     @Test
@@ -681,7 +628,7 @@ class ControlServiceTest extends AbstractServiceTest {
         final IdentifiersResponseDto expectedIdentifiersResponse = IdentifiersResponseDto.builder()
                 .status(StatusEnum.COMPLETE)
                 .identifiers(List.of(IdentifierRequestResultDto.builder()
-                                .status(RequestStatusEnum.SUCCESS.name())
+                        .status(RequestStatusEnum.SUCCESS.name())
                         .consignments(List.of(identifiersApiResultDto)).build()))
                 .build();
         //Act
@@ -898,8 +845,8 @@ class ControlServiceTest extends AbstractServiceTest {
     void shouldCreateNoteRequestForExistingControl() {
         notesDto.setRequestId("requestId");
         notesDto.setMessage("oki");
+        controlEntity.setStatus(StatusEnum.COMPLETE);
 
-        when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(notesRequestService);
         when(controlRepository.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
 
@@ -907,7 +854,6 @@ class ControlServiceTest extends AbstractServiceTest {
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
 
         verify(notesRequestService, times(1)).createAndSendRequest(any(), any());
-        verify(controlRepository, times(1)).save(any());
         assertNotNull(noteResponseDto);
         assertEquals("Note sent", noteResponseDto.getMessage());
         assertNull(noteResponseDto.getErrorCode());
@@ -933,9 +879,8 @@ class ControlServiceTest extends AbstractServiceTest {
     void shouldNotCreateNoteRequestForExistingControl_whenNoteHasMoreThan255Characters() {
         notesDto.setRequestId("requestId");
         notesDto.setMessage(RandomStringUtils.randomAlphabetic(256));
+        controlEntity.setStatus(StatusEnum.COMPLETE);
 
-        when(controlRepository.save(any())).thenReturn(controlEntity);
-        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(notesRequestService);
         when(controlRepository.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
 
 
@@ -979,87 +924,6 @@ class ControlServiceTest extends AbstractServiceTest {
         verify(identifiersService, times(1)).findByUIL(any(), any(), any());
     }
 
-    @Test
-    void shouldGetCompleteAsControlNextStatus_whenAllRequestsAreSuccessFull() {
-        //Arrange
-        identifiersRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
-        controlEntity.setRequests(Collections.singletonList(identifiersRequestEntity));
-
-        //Act
-        StatusEnum nextStatus = controlService.getControlNextStatus(controlEntity);
-
-        //Assert
-        assertEquals(StatusEnum.COMPLETE, nextStatus);
-    }
-
-    @Test
-    void shouldGetErrorAsControlNextStatus_whenOneOfRequestsIsError() {
-        //Arrange
-        identifiersRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
-        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
-        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-
-        //Act
-        StatusEnum nextStatus = controlService.getControlNextStatus(controlEntity);
-
-        //Assert
-        assertEquals(StatusEnum.ERROR, nextStatus);
-    }
-
-    @Test
-    void shouldGetErrorAsControlNextStatus_whenOneOfRequestsIsErrorAndOtherIsTimeout() {
-        //Arrange
-        identifiersRequestEntity.setStatus(RequestStatusEnum.TIMEOUT);
-        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
-        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-
-        //Act
-        StatusEnum nextStatus = controlService.getControlNextStatus(controlEntity);
-
-        //Assert
-        assertEquals(StatusEnum.ERROR, nextStatus);
-    }
-
-    @Test
-    void shouldGetTimeoutAsControlNextStatus_whenOneOfRequestsIsTimeoutAndNoneIsError() {
-        //Arrange
-        identifiersRequestEntity.setStatus(RequestStatusEnum.TIMEOUT);
-        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
-        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-
-        //Act
-        StatusEnum nextStatus = controlService.getControlNextStatus(controlEntity);
-
-        //Assert
-        assertEquals(StatusEnum.TIMEOUT, nextStatus);
-    }
-
-    @Test
-    void shouldGetPendingAsControlNextStatus_whenAllRequestsAreInProgress() {
-        //Arrange
-        identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
-        secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.RESPONSE_IN_PROGRESS);
-        controlEntity.setRequests(List.of(identifiersRequestEntity, secondIdentifiersRequestEntity));
-
-        //Act
-        StatusEnum nextStatus = controlService.getControlNextStatus(controlEntity);
-
-        //Assert
-        assertEquals(StatusEnum.PENDING, nextStatus);
-    }
-
-    @Test
-    void shouldGetTrue_whenControlExistsByRequesId() {
-        //Arrange
-        when(controlRepository.existsByRequestId(requestId)).thenReturn(true);
-
-        //Act
-        boolean result = controlService.existsByCriteria(requestId);
-
-        //Assert
-        assertTrue(result);
-        verify(controlRepository, times(1)).existsByRequestId(requestId);
-    }
 
     @Test
     void shouldFindControlByRequestId() {

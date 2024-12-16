@@ -32,5 +32,8 @@ public class EftiAsyncCallsProcessor {
         //logfti016
         logManager.logRegistryIdentifiers(savedControl, metadataDtoList, REGISTRY, GATE, LogManager.FTI_016);
         identifiersRequestService.createRequest(savedControl, RequestStatusEnum.SUCCESS, metadataDtoList);
+        if (savedControl.isLocalAsk()) {
+            identifiersRequestService.updateControl(savedControl);
+        }
     }
 }
