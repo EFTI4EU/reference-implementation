@@ -130,7 +130,7 @@ public class LogManager {
                 .requestingComponentId(gateProperties.getOwner())
                 .requestingComponentCountry(gateProperties.getCountry())
                 .respondingComponentType(respondingComponentType)
-                .respondingComponentId(gateProperties.getOwner())
+                .respondingComponentId(!ComponentType.CA_APP.equals(respondingComponentType) ? gateProperties.getOwner() : StringUtils.EMPTY)
                 .respondingComponentCountry(gateProperties.getCountry()).build();
     }
 
