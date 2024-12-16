@@ -18,8 +18,6 @@ public interface ControlRepository extends JpaRepository<ControlEntity, Long>, J
     @Transactional("controlTransactionManager")
     Optional<ControlEntity> findByRequestId(String requestId);
 
-    boolean existsByRequestId(String requestId);
-
     default List<ControlEntity> findByCriteria(final StatusEnum status, final Integer timeoutValue) {
         return this.findAll((root, query, cb) -> {
             final List<Predicate> predicates = new ArrayList<>();

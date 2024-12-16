@@ -68,7 +68,6 @@ class ReaderServiceTest {
                 "text/plain",
                 "content".getBytes(StandardCharsets.UTF_8));
 
-        //todo passing test
         assertThrows(UploadException.class, () -> readerService.uploadFile(mockMultipartFile));
     }
 

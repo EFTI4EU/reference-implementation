@@ -1,5 +1,7 @@
 package eu.efti.commons.constant;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import eu.efti.commons.dto.IdentifiersRequestDto;
 import eu.efti.commons.dto.NotesRequestDto;
 import eu.efti.commons.dto.RequestDto;
@@ -7,9 +9,9 @@ import eu.efti.commons.dto.UilRequestDto;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
+import eu.efti.commons.enums.StatusEnum;
 import lombok.experimental.UtilityClass;
 
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,10 +32,22 @@ public final class EftiGateConstants {
     public static final List<RequestTypeEnum> EXTERNAL_REQUESTS_TYPES = List.of(EXTERNAL_ASK_UIL_SEARCH, EXTERNAL_ASK_IDENTIFIERS_SEARCH);
     public static final List<RequestStatusEnum> IN_PROGRESS_STATUS = List.of(RequestStatusEnum.IN_PROGRESS, RequestStatusEnum.RESPONSE_IN_PROGRESS, RequestStatusEnum.RECEIVED);
 
-    public static final Map<RequestType, Class<? extends RequestDto>> REQUEST_TYPE_CLASS_MAP = new EnumMap<>(Map.of(
-            RequestType.UIL, UilRequestDto.class,
-            RequestType.IDENTIFIER, IdentifiersRequestDto.class,
-            RequestType.NOTE, NotesRequestDto.class
-    ));
+
+    public static final Map<RequestType, Class<? extends RequestDto>> REQUEST_TYPE_CLASS_MAP = Maps.immutableEnumMap(
+            ImmutableMap.of(
+                    RequestType.UIL, UilRequestDto.class,
+                    RequestType.IDENTIFIER, IdentifiersRequestDto.class,
+                    RequestType.NOTE, NotesRequestDto.class
+            )
+    );
+
+    public static final Map<RequestStatusEnum, StatusEnum> REQUEST_STATUS_ENUM_STATUS_ENUM_MAP = Maps.immutableEnumMap(
+            ImmutableMap.of(
+                    RequestStatusEnum.SUCCESS, StatusEnum.COMPLETE,
+                    RequestStatusEnum.ERROR, StatusEnum.ERROR,
+                    RequestStatusEnum.TIMEOUT, StatusEnum.TIMEOUT,
+                    RequestStatusEnum.SEND_ERROR, StatusEnum.ERROR
+            )
+    );
 
 }

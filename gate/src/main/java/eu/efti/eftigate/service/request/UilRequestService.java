@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static eu.efti.commons.constant.EftiGateConstants.REQUEST_STATUS_ENUM_STATUS_ENUM_MAP;
 import static eu.efti.commons.constant.EftiGateConstants.UIL_TYPES;
 import static eu.efti.commons.enums.ErrorCodesEnum.DATA_NOT_FOUND_ON_REGISTRY;
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
@@ -65,7 +66,6 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     private final SerializeUtils serializeUtils;
     private final ObjectFactory objectFactory = new ObjectFactory();
     private final ValidationService validationService;
-
 
     public UilRequestService(final UilRequestRepository uilRequestRepository, final MapperUtils mapperUtils,
                              final RabbitSenderService rabbitSenderService,
@@ -210,6 +210,12 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     @Override
+    public void saveRequest(RequestDto requestDto) {
+        uilRequestRepository.save(
+                getMapperUtils().requestDtoToRequestEntity(requestDto, UilRequestEntity.class));
+    }
+
+    @Override
     protected void updateStatus(final UilRequestEntity uilRequestEntity, final RequestStatusEnum status) {
         uilRequestEntity.setStatus(status);
         getControlService().save(uilRequestEntity.getControl());
@@ -234,16 +240,17 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             String responseData = serializeUtils.mapJaxbObjectToXmlString(consignment, SupplyChainConsignment.class);
             uilRequestDto.setReponseData(responseData.getBytes(Charset.defaultCharset()));
             this.updateStatus(uilRequestDto, RequestStatusEnum.SUCCESS, messageId);
+            getControlService().updateControlStatus(uilRequestDto.getControl(), COMPLETE);
         } else {
             this.updateStatus(uilRequestDto, ERROR, messageId);
             manageErrorReceived(uilRequestDto, uilResponse.getStatus(), uilResponse.getDescription());
         }
-
-        ControlDto controlDto = responseToOtherGateIfNecessary(uilRequestDto);
+        if (uilRequestDto.getControl().isExternalAsk()) {
+            respondToOtherGate(uilRequestDto);
+        }
         //log fti010
-        RequestEntity requestEntity = uilRequestRepository.findByEdeliveryMessageId(messageId);
         NotificationContentDto content = notificationDto.getContent();
-        getLogManager().logReceivedMessage(controlDto, ComponentType.PLATFORM, ComponentType.GATE, content.getBody(), content.getFromPartyId(), requestEntity != null ? getStatusEnumOfRequest(requestEntity) : StatusEnum.COMPLETE, LogManager.FTI_010);
+        getLogManager().logReceivedMessage(uilRequestDto.getControl(), ComponentType.PLATFORM, ComponentType.GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
     }
 
     private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, NotificationContentDto content) {
@@ -255,15 +262,14 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         switch (responseStatus.get()) {
             case GATEWAY_TIMEOUT -> {
                 requestDto.setStatus(TIMEOUT);
-                //todo avoid mapping
-                final StatusEnum controlStatus = getControlService().getControlNextStatus(getMapperUtils().controlDtoToControlEntity(controlDto));
-                controlDto.setStatus(controlStatus);
+                controlDto.setStatus(StatusEnum.TIMEOUT);
             }
             case OK -> {
                 JAXBElement<SupplyChainConsignment> consignment = objectFactory.createConsignment(uilResponse.getConsignment());
                 String responseData = serializeUtils.mapJaxbObjectToXmlString(consignment, SupplyChainConsignment.class);
                 requestDto.setReponseData(responseData.getBytes(StandardCharsets.UTF_8));
                 requestDto.setStatus(RequestStatusEnum.SUCCESS);
+                controlDto.setStatus(COMPLETE);
             }
             case BAD_REQUEST, NOT_FOUND -> {
                 requestDto.setStatus(ERROR);
@@ -277,7 +283,9 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         }
         this.save(requestDto);
         ControlDto savedControl = getControlService().save(controlDto);
-        getLogManager().logReceivedMessage(controlDto, ComponentType.GATE, ComponentType.GATE, content.getBody(), content.getFromPartyId(), savedControl.getStatus() != StatusEnum.PENDING ? savedControl.getStatus() : StatusEnum.COMPLETE, LogManager.FTI_022);
+        if (!StatusEnum.PENDING.equals(savedControl.getStatus())) {
+            getLogManager().logReceivedMessage(controlDto, ComponentType.GATE, ComponentType.GATE, content.getBody(), content.getFromPartyId(), savedControl.getStatus(), LogManager.FTI_022);
+        }
     }
 
     private ErrorDto setErrorFromResponse(final UILResponse uilResponse) {
@@ -319,16 +327,12 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         getControlService().save(controlDto);
     }
 
-    private ControlDto responseToOtherGateIfNecessary(final UilRequestDto uilRequestDto) {
-        if (!uilRequestDto.getControl().isExternalAsk()) {
-            return uilRequestDto.getControl();
-        }
+    private void respondToOtherGate(final UilRequestDto uilRequestDto) {
         this.updateStatus(uilRequestDto, RESPONSE_IN_PROGRESS);
         uilRequestDto.setGateIdDest(uilRequestDto.getControl().getFromGateId());
         final RequestDto savedUilRequestDto = this.save(uilRequestDto);
         savedUilRequestDto.setRequestType(RequestType.UIL);
         this.sendRequest(savedUilRequestDto);
-        return uilRequestDto.getControl();
     }
 
     private Optional<UilRequestDto> findByRequestId(final String requestId) {
