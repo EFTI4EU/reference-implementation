@@ -26,6 +26,8 @@ import java.util.List;
 import static com.jayway.jsonassert.JsonAssert.emptyCollection;
 import static com.jayway.jsonassert.JsonAssert.with;
 import static org.hamcrest.CoreMatchers.not;
+import static org.apache.commons.collections4.CollectionUtils.emptyCollection;
+import static org.assertj.core.api.AssertionsForClassTypes.not;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

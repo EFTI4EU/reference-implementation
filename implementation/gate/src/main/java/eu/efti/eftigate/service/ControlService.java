@@ -60,10 +60,15 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
+import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
+import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
+import static eu.efti.commons.enums.RequestStatusEnum.RECEIVED;
+import static eu.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
+import static eu.efti.commons.enums.RequestStatusEnum.SEND_ERROR;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH;
+import static eu.efti.commons.enums.StatusEnum.COMPLETE;
 import static eu.efti.commons.enums.StatusEnum.PENDING;
 import static java.lang.String.format;
-
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
@@ -219,7 +224,7 @@ public class ControlService {
 
     private void updateControlRequestsWithTimeoutStatus(final ControlEntity controlEntity) {
         controlEntity.getRequests().stream()
-                .filter(request -> RequestStatusEnum.IN_PROGRESS.equals(request.getStatus()))
+                .filter(request -> IN_PROGRESS.equals(request.getStatus()))
                 .toList()
                 .forEach(request -> {
                     request.setStatus(RequestStatusEnum.TIMEOUT);
@@ -387,7 +392,7 @@ public class ControlService {
                         .errorCode(requestDto.getError() != null? requestDto.getError().getErrorCode() : null)
                         .errorDescription(requestDto.getError() != null? requestDto.getError().getErrorDescription() : null)
                         .gateIndicator(eftiGateIdResolver.resolve(requestDto.getGateIdDest()))
-                        .status(requestDto.getStatus().name())
+                        .status(mapRequestStatus(requestDto.getStatus()))
                         .build())
         );
         return identifierResultDtos;
@@ -437,5 +442,16 @@ public class ControlService {
 
     public Optional<ControlEntity> findByRequestId(final String controlRequestId) {
         return controlRepository.findByRequestId(controlRequestId);
+    }
+
+    private String mapRequestStatus(final RequestStatusEnum requestStatus) {
+        if( List.of(RECEIVED, IN_PROGRESS, RESPONSE_IN_PROGRESS).contains(requestStatus) ) {
+            return PENDING.name();
+        } else if ( RequestStatusEnum.SUCCESS.equals(requestStatus)) {
+            return COMPLETE.name();
+        } else if ( List.of(SEND_ERROR, ERROR).contains(requestStatus)) {
+            return StatusEnum.ERROR.name();
+        }
+        return requestStatus.name();
     }
 }
