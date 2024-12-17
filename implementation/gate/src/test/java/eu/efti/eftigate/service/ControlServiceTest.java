@@ -14,6 +14,7 @@ import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
+import eu.efti.commons.dto.identifiers.api.IdentifierRequestResultDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
@@ -674,10 +675,17 @@ class ControlServiceTest extends AbstractServiceTest {
                 .identifiersResults(identifiersResultsDto.getConsignments())
                 .build();
         when(controlService.getControlByRequestId(requestId)).thenReturn(expectedControl);
+        when(requestServiceFactory.getRequestServiceByRequestType(anyString())).thenReturn(identifiersRequestService);
+
+        identifiersRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
+        identifiersRequestEntity.setIdentifiersResults(identifiersResults);
+        when(identifiersRequestService.findAllForControlId(anyInt())).thenReturn(List.of(identifiersRequestEntity));
 
         final IdentifiersResponseDto expectedIdentifiersResponse = IdentifiersResponseDto.builder()
                 .status(StatusEnum.COMPLETE)
-                .identifiers(List.of(identifiersApiResultDto))
+                .identifiers(List.of(IdentifierRequestResultDto.builder()
+                                .status(StatusEnum.COMPLETE.name())
+                        .consignments(List.of(identifiersApiResultDto)).build()))
                 .build();
         //Act
         final IdentifiersResponseDto identifiersResponseDto = controlService.getIdentifiersResponse(requestId);
@@ -694,6 +702,8 @@ class ControlServiceTest extends AbstractServiceTest {
                 .error(ErrorDto.builder().errorCode(" Id not found.").errorDescription("Error requestId not found.").build())
                 .build();
         when(controlService.getControlByRequestId(requestId)).thenReturn(expectedControl);
+        when(requestServiceFactory.getRequestServiceByRequestType(anyString())).thenReturn(identifiersRequestService);
+
         final IdentifiersResponseDto expectedIdentifiersResponse = IdentifiersResponseDto.builder()
                 .status(StatusEnum.ERROR)
                 .errorDescription("Error requestId not found.")

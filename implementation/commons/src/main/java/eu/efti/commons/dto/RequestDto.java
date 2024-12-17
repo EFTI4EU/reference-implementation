@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -37,13 +36,6 @@ public class RequestDto {
     protected RequestDto(final ControlDto controlDto) {
         this.retry = 0;
         this.gateIdDest = controlDto.getGateId();
-        this.control = controlDto;
-    }
-
-    public RequestDto(final ControlDto controlDto, final String destinationUrl) {
-        this.status = RequestStatusEnum.RECEIVED;
-        this.retry = 0;
-        this.gateIdDest = StringUtils.isEmpty(destinationUrl) ? controlDto.getGateId() : destinationUrl;
         this.control = controlDto;
     }
 }

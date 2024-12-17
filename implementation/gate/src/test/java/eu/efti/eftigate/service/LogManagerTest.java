@@ -1,8 +1,10 @@
 package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.ControlDto;
+import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
+import eu.efti.commons.dto.identifiers.api.IdentifierRequestResultDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.config.GateProperties;
@@ -146,9 +148,12 @@ class LogManagerTest extends BaseServiceTest {
                 .respondingComponentType(GATE)
                 .respondingComponentCountry("ownerCountry").build();
         final List<ConsignmentApiDto> consignmentDtos = List.of(ConsignmentApiDto.builder().build());
-        final String body = serializeUtils.mapObjectToBase64String(consignmentDtos);
+        final IdentifiersResponseDto identifiersResponseDto = IdentifiersResponseDto.builder()
+                .identifiers(List.of(IdentifierRequestResultDto.builder()
+                        .consignments(consignmentDtos).build())).build();
+        final String body = serializeUtils.mapObjectToBase64String(identifiersResponseDto);
 
-        logManager.logLocalRegistryMessage(controlDto, consignmentDtos, "test");
+        logManager.logLocalRegistryMessage(controlDto, identifiersResponseDto, "test");
 
         verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", body, StatusEnum.COMPLETE, false, "test");
     }

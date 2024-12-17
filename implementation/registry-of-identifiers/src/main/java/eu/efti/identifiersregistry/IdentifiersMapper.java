@@ -95,7 +95,7 @@ public class IdentifiersMapper {
         consignment.getMainCarriageTransportMovements().addAll(sourceConsignment.getMainCarriageTransportMovement().stream().map(movement -> {
             MainCarriageTransportMovement mainCarriageTransportMovement = new MainCarriageTransportMovement();
             mainCarriageTransportMovement.setDangerousGoodsIndicator(movement.isDangerousGoodsIndicator());
-            mainCarriageTransportMovement.setModeCode(Short.parseShort(movement.getModeCode()));
+            mainCarriageTransportMovement.setModeCode(movement.getModeCode());
             LogisticsTransportMeans usedTransportMeans = movement.getUsedTransportMeans();
             if (usedTransportMeans != null) {
                 Identifier17 usedTransportMeansId = usedTransportMeans.getId();
