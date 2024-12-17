@@ -628,7 +628,7 @@ class ControlServiceTest extends AbstractServiceTest {
         final IdentifiersResponseDto expectedIdentifiersResponse = IdentifiersResponseDto.builder()
                 .status(StatusEnum.COMPLETE)
                 .identifiers(List.of(IdentifierRequestResultDto.builder()
-                        .status(RequestStatusEnum.SUCCESS.name())
+                        .status(StatusEnum.COMPLETE.name())
                         .consignments(List.of(identifiersApiResultDto)).build()))
                 .build();
         //Act
