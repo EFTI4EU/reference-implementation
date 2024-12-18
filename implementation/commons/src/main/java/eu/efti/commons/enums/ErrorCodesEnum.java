@@ -76,9 +76,9 @@ public enum ErrorCodesEnum {
 
     private final String message;
 
-    public static Optional<ErrorCodesEnum> fromEdeliveryStatus(final String eDeliveryStatus) {
+    public static Optional<ErrorCodesEnum> fromMessage(final String errorMessage) {
         for (ErrorCodesEnum e : ErrorCodesEnum.values()) {
-            if (e.name().equalsIgnoreCase(eDeliveryStatus)) {
+            if (e.getMessage().equalsIgnoreCase(errorMessage)) {
                 return Optional.of(e);
             }
         }
