@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<postFollowUpRequest requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c" xmlns="http://efti.eu/v1/edelivery"
+                     xmlns:ns2="http://efti.eu/v1/consignment/identifier">
+    <uil>
+        <gateId>gate</gateId>
+        <platformId>acme</platformId>
+        <datasetId>uuid</datasetId>
+    </uil>
+    <message>The inspection did not reveal any anomalies. We recommend that you replace the tires as they are on the verge of wear</message>
+</postFollowUpRequest>

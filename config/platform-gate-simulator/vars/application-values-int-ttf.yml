@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: efti-platform-ttf
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer_uri: https://keycloak.efti.int.k8s.groupein.local/realms/eFTI_FR
+
+server:
+  port: 8072
+
+gate:
+  minSleep: 1000
+  maxSleep: 2000
+  owner: ttf
+  cda_path: file:/opt/javapp/config/cda
+  gate: france
+  ap:
+    url: http://ileftimicr02in.service.groupein.local:8080/domibus/services/wsplugin
+    username: ttf_service_account
+    password: Azerty59*1234567
+

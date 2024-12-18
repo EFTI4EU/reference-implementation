@@ -1,0 +1,8 @@
+<uilResponse
+    xmlns="http://efti.eu/v1/edelivery"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+    status="404">
+
+  <description>Consignment FI-AA-31232 does not exist</description>
+</uilResponse>

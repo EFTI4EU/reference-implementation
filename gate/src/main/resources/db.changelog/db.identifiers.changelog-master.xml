@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+    <include file="/db.changelog/db.identifiers.changelog-1-initial.sql"/>
+    <include file="/db.changelog/db.identifiers.changelog-2-categorycode.sql"/>
+    <include file="/db.changelog/db.identifiers.changelog-3-maincarriageschemeagency.sql"/>
+    <include file="/db.changelog/db.identifiers.changelog-4-modecodestring.xml"/>
+</databaseChangeLog>

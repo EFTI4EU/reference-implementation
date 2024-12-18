@@ -1,0 +1,102 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:efti-id="http://efti.eu/v1/consignment/identifier"
+            xmlns:efti-ed="http://efti.eu/v1/edelivery"
+            targetNamespace="http://efti.eu/v1/edelivery"
+            elementFormDefault="qualified">
+
+  <xsd:import namespace="http://efti.eu/v1/consignment/identifier" schemaLocation="../consignment-identifier.xsd"/>
+  <xsd:import namespace="http://efti.eu/v1/consignment/common" schemaLocation="../consignment-common.xsd"/>
+  <xsd:include schemaLocation="platform.xsd"/>
+
+  <xsd:element name="identifierQuery" type="efti-ed:IdentifierQuery"/>
+  <xsd:element name="identifierResponse" type="efti-ed:IdentifierResponse"/>
+
+  <xsd:simpleType name="IdentifierType">
+    <xsd:annotation>
+      <xsd:documentation>
+        Identifier types used in the identifier query
+        - means: eFTI618 - transport means identifier
+        - equipment: eFTI374 - transport equipment identifier
+        - carried: eFTI448 - carried transport equipment identifier
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="means"/>
+      <xsd:enumeration value="equipment"/>
+      <xsd:enumeration value="carried"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="Identifier">
+    <xsd:annotation>
+      <xsd:documentation>
+        An identifier in an identifier query.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:token">
+        <xsd:attribute name="type">
+          <xsd:simpleType>
+            <xsd:list itemType='efti-ed:IdentifierType'/>
+          </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="schemeAgencyId" type="xsd:token"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="IdentifierQuery">
+    <xsd:annotation>
+      <xsd:documentation>
+        Query request message to find consignments matching the given identifier.
+        Required identifier parameter can match to fields (eFTI618, eFTI374, eFTI448) in the identifier subset.
+        Optional parameters can be used to further filter out possible duplicate identifiers:
+        - registrationCountryCode - eFTI578/eFTI620 registration country of the identifier
+        - modeCode - eFTI581 main carriage transport movement mode code
+        - dangerousGoodsIndicator - eFTI1451 main carriage transport movement dangerous goods indicator
+        Returns consignments in identifier subset with UIL.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="efti-ed:Request">
+        <xsd:sequence>
+          <xsd:element name="identifier" type="efti-ed:Identifier"/>
+          <xsd:element name="registrationCountryCode" type="xsd:token" minOccurs="0"/>
+          <xsd:element name="modeCode" type="xsd:token" minOccurs="0"/>
+          <xsd:element name="dangerousGoodsIndicator" type="xsd:boolean" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="Consignment">
+    <xsd:annotation>
+      <xsd:documentation>
+        Consignment in identifier subset including UIL
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="efti-id:SupplyChainConsignment">
+        <xsd:sequence>
+          <xsd:element name="uil" type="efti-ed:UIL"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="IdentifierResponse">
+    <xsd:annotation>
+      <xsd:documentation>
+        Response payload to the identifier request. Returns consignments in identifier subset.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="efti-ed:Response">
+        <xsd:sequence>
+          <xsd:element name="consignment" type="efti-ed:Consignment" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>
+

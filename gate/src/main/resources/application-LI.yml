@@ -1,0 +1,30 @@
+spring:
+  rabbitmq:
+    password: li
+    username: li
+    virtual-host: li
+  datasource:
+    control:
+      liquibase:
+        default-schema: eftili
+    identifiers:
+      liquibase:
+        default-schema: eftili
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth.gate.listenbourg.eu:8080/realms/eFTI_LI
+  jpa:
+    properties:
+      hibernate:
+        control_schema: "eftili"
+        identifiers_schema: "eftili"
+
+gate:
+  country: LI
+  owner: listenbourg
+  ap:
+    url: http://efti.gate.listenbourg.eu:81/domibus/services/wsplugin
+    username: listenbourg_service_account
+    password: Azerty59*1234567

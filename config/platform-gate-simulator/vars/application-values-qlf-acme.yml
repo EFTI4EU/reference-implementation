@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: efti-platform-bo
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer_uri: https://auth.qualif.efti-ingroupe.com/realms/eFTI_BO
+
+server:
+  port: 8072
+
+gate:
+  minSleep: 1000
+  maxSleep: 2000
+  owner: acme
+  cda_path: file:/opt/javapp/config/cda
+  gate: borduria
+  ap:
+    url: https://edelivery-bo.qlf.efti.service.groupein.local/ap-mock/domibus/services/wsplugin
+    username: borduria_service_account
+    password: tq9tQ6ykymK60zjBsDSO+
+

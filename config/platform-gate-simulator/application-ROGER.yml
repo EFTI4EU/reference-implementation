@@ -1,0 +1,21 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth.gate.listenbourg.eu:8080/realms/eFTI_FR
+
+server:
+  port: 8072
+
+gate:
+  minSleep: 1000
+  maxSleep: 2000
+  owner: roger
+  cda_path: classpath:cda/
+  gate: france
+  ap:
+    url: http://efti.platform.roger.com:81/domibus/services/wsplugin
+    username: roger_service_account
+    password: Azerty59*1234567
+

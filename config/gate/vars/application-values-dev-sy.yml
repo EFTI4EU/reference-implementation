@@ -1,0 +1,46 @@
+spring:
+  rabbitmq:
+    password: syldavia
+    username: syldavia
+    virtual_host: syldavia
+    host: svc-efti-rabbitmq.app-dev-efti
+  application:
+    name: efti-gate-sy
+  datasource:
+    url: jdbc:postgresql://dleftidbpg01in.service.groupein.local:5432/efti
+    username: efti
+    password: 64BEt8d1Us4REq43A0z
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer_uri: https://keycloak.efti.dev.k8s.groupein.local/realms/eFTI_SY
+  jpa:
+    properties:
+      hibernate:
+        control_schema: "eftisy"
+        identifiers_schema: "metadatasy"
+
+gate:
+  owner: syldavia
+  country: SY
+  ap:
+    url: http://172.16.201.146:8080/domibus/services/wsplugin
+    username: syldavia_service_account
+    password: Azerty59*1234567
+
+batch:
+  retry:
+    cron: "*/20 * * * * *"
+    time: 20, 120, 300
+    size: 10
+
+springdoc:
+  swagger_ui:
+    enabled: true
+  api_docs:
+    enabled: true
+efti:
+  control:
+    pending:
+      timeout: 300

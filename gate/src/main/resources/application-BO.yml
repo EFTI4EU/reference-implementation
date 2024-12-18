@@ -1,0 +1,30 @@
+spring:
+  rabbitmq:
+    password: bo
+    username: bo
+    virtual-host: bo
+  datasource:
+    control:
+      liquibase:
+        default-schema: eftibo
+    identifiers:
+      liquibase:
+        default-schema: eftibo
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth.gate.borduria.eu:8080/realms/eFTI_BO
+  jpa:
+    properties:
+      hibernate:
+        control_schema: "eftibo"
+        identifiers_schema: "eftibo"
+
+gate:
+  country: BO
+  owner: borduria
+  ap:
+    url: http://efti.gate.borduria.eu:81/domibus/services/wsplugin
+    username: borduria_service_account
+    password: Azerty59*1234567

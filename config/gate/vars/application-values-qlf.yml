@@ -1,0 +1,42 @@
+spring:
+  rabbitmq:
+    password: france
+    username: france
+    virtual_host: france
+    host: svc-efti-rabbitmq
+  application:
+    name: efti-gate
+  datasource:
+    url: jdbc:postgresql://qleftidbpg01in.service.groupein.local:5432/efti_qua
+    username: efti
+    password: G2fh9sF5sUrTZ5fgA0z
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer_uri: https://auth.qualif.efti-ingroupe.com/realms/eFTI_FR
+  jpa:
+    properties:
+      hibernate:
+        control_schema: "eftifr"
+        identifiers_schema: "metadatafr"
+
+gate:
+  owner: france
+  country: FR
+  ap:
+    url: https://edelivery-fr.qlf.efti.service.groupein.local/ap-gate/domibus/services/wsplugin
+    username: france_service_account
+    password: tq9tQ6ykymK60zjBsDSO+
+
+batch:
+  retry:
+    cron: "*/20 * * * * *"
+    time: 20, 120, 300
+    size: 10
+
+springdoc:
+  swagger_ui:
+    enabled: true
+  api_docs:
+    enabled: true

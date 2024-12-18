@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: efti-platform-sy
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer_uri: https://keycloak.efti.int.k8s.groupein.local/realms/eFTI_SY
+
+server:
+  port: 8080
+
+gate:
+  minSleep: 1000
+  maxSleep: 2000
+  owner: massivedynamic
+  cda_path: file:/opt/javapp/config/cda
+  gate: syldavia
+  ap:
+    url: http://ileftimicr02in.service.groupein.local:8080/domibus/services/wsplugin
+    username: massivedynamic_service_account
+    password: Azerty59*1234567
+
+

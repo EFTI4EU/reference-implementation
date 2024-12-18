@@ -1,0 +1,27 @@
+<jaxb:bindings xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+               xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+               jaxb:version="3.0">
+    <jaxb:bindings schemaLocation="../../../../schema/xsd/codes/UNECE_TransportEquipmentCategoryCode_D23A.xsd">
+        <jaxb:bindings node="xsd:simpleType[@name='TransportEquipmentCategoryCode']">
+            <jaxb:typesafeEnumClass name="TransportEquipmentCategoryCode">
+                <jaxb:typesafeEnumMember value="T1" name="T1"/>
+                <jaxb:typesafeEnumMember value="T2" name="T2"/>
+                <jaxb:typesafeEnumMember value="T3" name="T3"/>
+                <jaxb:typesafeEnumMember value="T4" name="T4"/>
+                <jaxb:typesafeEnumMember value="T5" name="T5"/>
+                <jaxb:typesafeEnumMember value="T6" name="T6"/>
+                <jaxb:typesafeEnumMember value="T7" name="T7"/>
+                <jaxb:typesafeEnumMember value="T8" name="T8"/>
+                <jaxb:typesafeEnumMember value="T9" name="T9"/>
+                <jaxb:typesafeEnumMember value="T10" name="T10"/>
+                <jaxb:typesafeEnumMember value="T11" name="T11"/>
+                <jaxb:typesafeEnumMember value="T12" name="T12"/>
+                <jaxb:typesafeEnumMember value="T13" name="T13"/>
+                <jaxb:typesafeEnumMember value="T14" name="T14"/>
+            </jaxb:typesafeEnumClass>
+        </jaxb:bindings>
+    </jaxb:bindings>
+    <jaxb:bindings>
+        <jaxb:globalBindings typesafeEnumMaxMembers="1000"/>
+    </jaxb:bindings>
+</jaxb:bindings>

@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: efti-platform-sy
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer_uri: https://auth.qualif.efti-ingroupe.com/realms/eFTI_SY
+
+server:
+  port: 8072
+
+gate:
+  minSleep: 1000
+  maxSleep: 2000
+  owner: massivedynamic
+  cda_path: file:/opt/javapp/config/cda
+  gate: syldavia
+  ap:
+    url: https://edelivery-sy.qlf.efti.service.groupein.local/ap-mock/domibus/services/wsplugin
+    username: syldavia_service_account
+    password: tq9tQ6ykymK60zjBsDSO+
+

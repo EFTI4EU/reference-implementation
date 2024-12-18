@@ -1,0 +1,26 @@
+<identifierResponse xmlns="http://efti.eu/v1/edelivery" xmlns:ns2="http://efti.eu/v1/consignment/identifier"
+                    requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c"
+                    status="200">
+    <consignment>
+        <ns2:deliveryEvent/>
+        <ns2:usedTransportEquipment>
+            <ns2:categoryCode>BPQ</ns2:categoryCode>
+            <ns2:id>abc123</ns2:id>
+            <ns2:registrationCountry>
+                <ns2:code>FR</ns2:code>
+            </ns2:registrationCountry>
+            <ns2:sequenceNumber>0</ns2:sequenceNumber>
+        </ns2:usedTransportEquipment>
+        <ns2:usedTransportEquipment>
+            <ns2:id>abc124</ns2:id>
+            <ns2:registrationCountry>
+                <ns2:code>BE</ns2:code>
+            </ns2:registrationCountry>
+            <ns2:sequenceNumber>0</ns2:sequenceNumber>
+        </ns2:usedTransportEquipment>
+        <uil>
+            <platformId>ttf</platformId>
+            <datasetId>12345678-ab12-4ab6-8999-123456789abc</datasetId>
+        </uil>
+    </consignment>
+</identifierResponse>

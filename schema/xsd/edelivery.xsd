@@ -1,0 +1,178 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:efti="http://efti.eu/v1/consignment/common"
+            xmlns:efti-ed="http://efti.eu/v1/edelivery"
+            targetNamespace="http://efti.eu/v1/edelivery"
+            elementFormDefault="qualified">
+
+  <xsd:import namespace="http://efti.eu/v1/consignment/common" schemaLocation="consignment-common.xsd"/>
+
+  <xsd:complexType name="UIL">
+    <xsd:sequence>
+      <xsd:element name="gateId" type="xsd:token"/>
+      <xsd:element name="platformId" type="xsd:token"/>
+      <xsd:element name="datasetId" type="xsd:token"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:simpleType name="ResponseStatus">
+    <xsd:annotation>
+      <xsd:documentation>
+        Duration units used in Efti from UNECE Recommendation 20 (UNECE (UN/EDIFACT) codes 6411)
+        See https://unece.org/trade/uncefact/cl-recommendations
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="200">
+        <xsd:annotation>
+          <xsd:documentation>
+            OK - Standard response for successful requests
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="400">
+        <xsd:annotation>
+          <xsd:documentation>
+            Bad Request - The gate cannot or will not process the request due to an apparent client error
+            (e.g., malformed request syntax, size too large).
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="404">
+        <xsd:annotation>
+          <xsd:documentation>
+            Not Found - The requested resource e.g. consignment does not exist.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="500">
+        <xsd:annotation>
+          <xsd:documentation>
+            Internal Server Error - Any internal error in the gate.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="501">
+        <xsd:annotation>
+          <xsd:documentation>
+            Not Implemented - Gate does not support this version of the service.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="502">
+        <xsd:annotation>
+          <xsd:documentation>
+            Bad Gateway - Gate received an invalid response from the platform
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="503">
+        <xsd:annotation>
+          <xsd:documentation>
+            Service Unavailable - The server cannot handle the request (because it is overloaded or down for maintenance).
+            Generally, this is a temporary state.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="504">
+        <xsd:annotation>
+          <xsd:documentation>
+            Gateway Timeout - The gate did not receive a timely response from the platform
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="Response">
+    <xsd:annotation>
+      <xsd:documentation>
+        Any edelivery payload response
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="description" type="xsd:string" minOccurs="0"/>
+    </xsd:sequence>
+    <xsd:attribute name="status" type="efti-ed:ResponseStatus" use="required"/>
+    <xsd:attribute name="requestId" type="xsd:token">
+      <xsd:annotation>
+        <xsd:documentation>
+          This is a response to a request, which is referred by this request id
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="Request">
+    <xsd:annotation>
+      <xsd:documentation>
+        Any edelivery payload request
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="requestId" type="xsd:token">
+      <xsd:annotation>
+        <xsd:documentation>
+          Client can define request id which is returned in the response.
+          Basically same as the conversation id in edelivery communication.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="UILQuery">
+    <xsd:annotation>
+      <xsd:documentation>
+        Query request message to find a consignment using UIL - (any efti subset).
+        Returns the identified consignment in the requested subset.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="efti-ed:Request">
+        <xsd:sequence>
+          <!-- uil of the consignment -->
+          <xsd:element name="uil" type="efti-ed:UIL"/>
+          <!-- subset id of the consignment e.g. identifier, EU1, FI or FI01 -->
+          <xsd:element name="subsetId" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="UILResponse">
+    <xsd:annotation>
+      <xsd:documentation>
+        Response payload to uil request. Returns consignment in requested subset.
+        If consignment does not exist return empty response.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="efti-ed:Response">
+        <xsd:sequence>
+          <xsd:element ref="efti:consignment" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:element name="uilQuery" type="efti-ed:UILQuery"/>
+  <xsd:element name="uilResponse" type="efti-ed:UILResponse"/>
+
+  <xsd:complexType name="PostFollowUpRequest">
+    <xsd:annotation>
+      <xsd:documentation>
+        Save follow-up message to some specific data set identified by UIL.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="efti-ed:Request">
+        <xsd:sequence>
+          <xsd:element name="uil" type="efti-ed:UIL"/>
+          <xsd:element name="message" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:element name="postFollowUpRequest" type="efti-ed:PostFollowUpRequest"/>
+  <xsd:element name="postFollowUpResponse" type="efti-ed:Response"/>
+</xsd:schema>
+
