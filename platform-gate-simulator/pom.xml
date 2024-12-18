@@ -75,13 +75,13 @@
         <dependency>
             <groupId>eu.efti</groupId>
             <artifactId>edelivery-ap-connector</artifactId>
-            <version>0.4.3-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>eu.efti</groupId>
             <artifactId>commons</artifactId>
-            <version>0.4.3-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <!-- Logback -->
