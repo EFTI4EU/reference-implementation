@@ -23,7 +23,7 @@ import java.io.Serializable;
 })
 public class MainCarriageTransportMovementApiDto implements Serializable {
     private String id;
-    private short modeCode;
+    private String modeCode;
     private String schemeAgencyId;
     private boolean dangerousGoodsIndicator;
     private String registrationCountryCode;

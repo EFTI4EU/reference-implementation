@@ -204,6 +204,11 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 .orElseThrow(() -> new RequestNotFoundException("couldn't find Uil request for messageId: " + eDeliveryMessageId));
     }
 
+    @Override
+    public List<UilRequestEntity> findAllForControlId(int controlId) {
+        throw new UnsupportedOperationException("Operation not allowed for UIL Request");
+    }
+
     private ControlDto manageResponseFromPlatform(final UilRequestDto uilRequestDto, final UILResponse uilResponse, final String messageId) {
         if (uilResponse.getStatus().equals(EDeliveryStatus.OK.getCode())) {
             JAXBElement<SupplyChainConsignment> consignment = objectFactory.createConsignment(uilResponse.getConsignment());

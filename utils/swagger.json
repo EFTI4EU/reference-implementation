@@ -55,14 +55,14 @@
               }
             }
           },
-          "500": {
-            "description": "Internal server error"
+          "401": {
+            "description": "Unauthorized"
           },
           "403": {
             "description": "Forbidden"
           },
-          "401": {
-            "description": "Unauthorized"
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -84,12 +84,6 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Internal server error"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
           "202": {
             "description": "OK",
             "content": {
@@ -102,6 +96,12 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -125,26 +125,6 @@
           "required": true
         },
         "responses": {
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/NoteResponseDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/NoteResponseDto"
-                }
-              }
-            }
-          },
           "202": {
             "description": "Accepted",
             "content": {
@@ -167,6 +147,26 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": {
@@ -207,14 +207,14 @@
               }
             }
           },
-          "500": {
-            "description": "Internal server error"
+          "401": {
+            "description": "Unauthorized"
           },
           "403": {
             "description": "Forbidden"
           },
-          "401": {
-            "description": "Unauthorized"
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -246,14 +246,14 @@
               }
             }
           },
-          "500": {
-            "description": "Internal server error"
+          "401": {
+            "description": "Unauthorized"
           },
           "403": {
             "description": "Forbidden"
           },
-          "401": {
-            "description": "Unauthorized"
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -284,17 +284,14 @@
             "example": "regex = ^[-@./#&+\\w\\s]*$"
           },
           "subsetId": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+            "type": "string"
           },
           "datasetId": {
             "maxLength": 36,
             "minLength": 0,
             "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
             "type": "string",
-            "example": "regex = [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+            "example": "regex = [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
           }
         }
       },
@@ -529,6 +526,29 @@
           }
         }
       },
+      "IdentifierRequestResultDto": {
+        "type": "object",
+        "properties": {
+          "gateIndicator": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": "string"
+          },
+          "errorDescription": {
+            "type": "string"
+          },
+          "consignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConsignmentApiDto"
+            }
+          }
+        }
+      },
       "IdentifiersResponseDto": {
         "type": "object",
         "properties": {
@@ -588,7 +608,7 @@
           "identifiers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ConsignmentApiDto"
+              "$ref": "#/components/schemas/IdentifierRequestResultDto"
             }
           }
         },
@@ -606,8 +626,7 @@
             "type": "string"
           },
           "modeCode": {
-            "type": "integer",
-            "format": "int32"
+            "type": "string"
           },
           "dangerousGoodsIndicator": {
             "type": "boolean"
@@ -630,7 +649,7 @@
           "schemeAgencyId": {
             "type": "string"
           },
-          "registrationCountry": {
+          "registrationCountryCode": {
             "type": "string"
           },
           "categoryCode": {

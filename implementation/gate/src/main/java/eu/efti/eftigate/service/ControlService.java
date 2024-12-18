@@ -3,6 +3,7 @@ package eu.efti.eftigate.service;
 import eu.efti.commons.constant.EftiGateConstants;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
+import eu.efti.commons.dto.IdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.IdentifiersResultsDto;
 import eu.efti.commons.dto.PostFollowUpRequestDto;
@@ -10,7 +11,7 @@ import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.dto.ValidableDto;
-import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
+import eu.efti.commons.dto.identifiers.api.IdentifierRequestResultDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
@@ -21,6 +22,7 @@ import eu.efti.eftigate.dto.NoteResponseDto;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.ErrorEntity;
+import eu.efti.eftigate.entity.IdentifiersRequestEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.exception.AmbiguousIdentifierException;
 import eu.efti.eftigate.mapper.MapperUtils;
@@ -48,16 +50,23 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
 import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
+import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
+import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
+import static eu.efti.commons.enums.RequestStatusEnum.RECEIVED;
+import static eu.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
+import static eu.efti.commons.enums.RequestStatusEnum.SEND_ERROR;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH;
+import static eu.efti.commons.enums.StatusEnum.COMPLETE;
 import static eu.efti.commons.enums.StatusEnum.PENDING;
 import static java.lang.String.format;
-import static java.util.Collections.emptyList;
 
 
 @Service
@@ -209,7 +218,7 @@ public class ControlService {
 
     private void updateControlRequests(final ControlEntity controlEntity) {
         controlEntity.getRequests().stream()
-                .filter(request -> RequestStatusEnum.IN_PROGRESS.equals(request.getStatus()))
+                .filter(request -> IN_PROGRESS.equals(request.getStatus()))
                 .toList()
                 .forEach(request -> {
                     request.setStatus(RequestStatusEnum.TIMEOUT);
@@ -349,30 +358,42 @@ public class ControlService {
 
     public IdentifiersResponseDto getIdentifiersResponse(final String requestId) {
         final ControlDto controlDto = getControlByRequestId(requestId);
-        return buildIdentifiersResponse(controlDto);
+        final List<IdentifiersRequestEntity> requestEntities = requestServiceFactory.getRequestServiceByRequestType(RequestType.IDENTIFIER.name()).findAllForControlId(controlDto.getId());
+        final List<IdentifiersRequestDto> requestDtos = requestEntities.stream().map(r -> mapperUtils.requestToRequestDto(r, IdentifiersRequestDto.class)).toList();
+        return buildIdentifiersResponse(controlDto, requestDtos);
     }
 
-    public IdentifiersResponseDto buildIdentifiersResponse(final ControlDto controlDto) {
+    public IdentifiersResponseDto buildIdentifiersResponse(final ControlDto controlDto, final List<IdentifiersRequestDto> requestDtos) {
         final IdentifiersResponseDto result = IdentifiersResponseDto.builder()
                 .requestId(controlDto.getRequestId())
                 .status(controlDto.getStatus())
-                .identifiers(getIdentifiersResultDtos(controlDto))
+                .identifiers(getIdentifiersResultDtos(requestDtos))
                 .build();
         if (controlDto.isError() && controlDto.getError() != null) {
             result.setRequestId(null);
             result.setErrorDescription(controlDto.getError().getErrorDescription());
             result.setErrorCode(controlDto.getError().getErrorCode());
         }
-        //log fti017
-        logManager.logFromIdentifier(result, controlDto, LogManager.FTI_017);
+
+        if (StringUtils.isBlank(controlDto.getFromGateId())) {
+            //log fti017
+            logManager.logFromIdentifier(result, controlDto, LogManager.FTI_017);
+        }
         return result;
     }
 
-    private List<ConsignmentApiDto> getIdentifiersResultDtos(final ControlDto controlDto) {
-        if (controlDto.getIdentifiersResults() != null) {
-            return mapperUtils.consignmentDtoToApiDto(controlDto.getIdentifiersResults());
-        }
-        return emptyList();
+    private List<IdentifierRequestResultDto> getIdentifiersResultDtos(final List<IdentifiersRequestDto> requestDtos) {
+        final List<IdentifierRequestResultDto> identifierResultDtos = new LinkedList<>();
+        requestDtos.forEach(requestDto -> identifierResultDtos.add(
+                IdentifierRequestResultDto.builder()
+                        .consignments(requestDto.getIdentifiersResults() != null ? mapperUtils.consignmentDtoToApiDto(requestDto.getIdentifiersResults().getConsignments()): Collections.emptyList())
+                        .errorCode(requestDto.getError() != null? requestDto.getError().getErrorCode() : null)
+                        .errorDescription(requestDto.getError() != null? requestDto.getError().getErrorDescription() : null)
+                        .gateIndicator(eftiGateIdResolver.resolve(requestDto.getGateIdDest()))
+                        .status(mapRequestStatus(requestDto.getStatus()))
+                        .build())
+        );
+        return identifierResultDtos;
     }
 
     public void setError(final ControlDto controlDto, final ErrorDto errorDto) {
@@ -419,5 +440,16 @@ public class ControlService {
 
     public Optional<ControlEntity> findByRequestId(final String controlRequestId) {
         return controlRepository.findByRequestId(controlRequestId);
+    }
+
+    private String mapRequestStatus(final RequestStatusEnum requestStatus) {
+        if( List.of(RECEIVED, IN_PROGRESS, RESPONSE_IN_PROGRESS).contains(requestStatus) ) {
+            return PENDING.name();
+        } else if ( RequestStatusEnum.SUCCESS.equals(requestStatus)) {
+            return COMPLETE.name();
+        } else if ( List.of(SEND_ERROR, ERROR).contains(requestStatus)) {
+            return StatusEnum.ERROR.name();
+        }
+        return requestStatus.name();
     }
 }

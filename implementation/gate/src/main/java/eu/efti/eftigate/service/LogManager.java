@@ -5,7 +5,6 @@ import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.ValidableDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
-import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -72,7 +71,7 @@ public class LogManager {
     }
 
     public void logFromIdentifier(IdentifiersResponseDto identifiersResponseDto, ControlDto controlDto, final String name) {
-        this.logLocalRegistryMessage(controlDto, identifiersResponseDto.getIdentifiers(), name);
+        this.logLocalRegistryMessage(controlDto, identifiersResponseDto, name);
     }
 
     public void logFromIdentifiersRequestDto(ControlDto controlDto, SearchWithIdentifiersRequestDto identifiersRequestDto, final boolean isCurrentGate, final String receiver, final boolean isSucess, final boolean isAck, final String name) {
@@ -131,10 +130,10 @@ public class LogManager {
     }
 
     public void logLocalRegistryMessage(final ControlDto control,
-                                        final List<ConsignmentApiDto> consignmentDtos,
+                                        final IdentifiersResponseDto identifierRequestResultDtos,
                                         final String name) {
         final MessagePartiesDto messagePartiesDto = getMessagePartiesDto();
-        final String body = serializeUtils.mapObjectToBase64String(consignmentDtos);
+        final String body = serializeUtils.mapObjectToBase64String(identifierRequestResultDtos);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, StatusEnum.COMPLETE, false, name);
     }
 
