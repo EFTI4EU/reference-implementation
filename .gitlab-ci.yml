@@ -5,6 +5,8 @@ stages:
 - afterbuild
 
 variables:
+  GL_RUNNER: k8s-devint
+  CI_PROJECT_NAME: $COMPONENT
   DEPLOY_ENVIRONMENT:
     value: "dev"
     options:
@@ -42,40 +44,10 @@ variables:
 
 workflow:
   rules:
-  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int") && $LABEL == "NONE"
-    variables:
-      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti
-      SA: ${DEPLOY_ENVIRONMENT}-efti-sa
-      GL_RUNNER: k8s-devint
-  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int") && ($LABEL != "NONE" || $LABEL != null)
-    variables:
-      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti-mock
-      SA: ${DEPLOY_ENVIRONMENT}-efti-mock-sa
-      GL_RUNNER: k8s-devint
-  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "qlf" && $LABEL == "NONE"
-    variables:
-      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti
-      SA: ${DEPLOY_ENVIRONMENT}-efti-sa
-      GL_RUNNER: k8s-prod
-  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "qlf" && ($LABEL != "NONE" || $LABEL != null)
-    variables:
-      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti-mock
-      SA: ${DEPLOY_ENVIRONMENT}-efti-mock-sa
-      GL_RUNNER: k8s-prod
-  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "ppd" && $LABEL == "NONE"
-    variables:
-      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti
-      SA: ${DEPLOY_ENVIRONMENT}-efti-sa
-      GL_RUNNER: k8s-prod
-  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "ppd" && ($LABEL != "NONE" || $LABEL != null)
-    variables:
-      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti-mock
-      SA: ${DEPLOY_ENVIRONMENT}-efti-mock-sa
-      GL_RUNNER: k8s-prod
-
-  - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_REF_NAME !~ "develop"
-    when: never
-  - when: always
+    - if: $CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_REF_NAME !~ "develop"
+      when: never
 
 default:
   tags:
