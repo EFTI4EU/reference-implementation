@@ -10,6 +10,7 @@ import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
+import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.entity.ControlEntity;
@@ -39,6 +40,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
     protected RequestUpdaterService requestUpdaterService;
     @Mock
     protected GateProperties gateProperties;
+    protected MemoryAppender memoryAppender;
     @Mock
     protected LogManager logManager;
     @Mock
@@ -46,6 +48,9 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
 
     protected final UilDto uilDto = new UilDto();
     protected final ControlDto controlDto = new ControlDto();
+    protected final ControlDto savedControlDto = new ControlDto();
+
+    protected final ControlEntity controlEntityError = new ControlEntity();
     protected final ControlEntity controlEntity = new ControlEntity();
 
     protected final RequestDto requestDto = new RequestDto();
@@ -69,7 +74,6 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         searchParameter.setIdentifier("AA123VV");
         searchParameter.setRegistrationCountryCode(CountryIndicator.BE.toString());
         searchParameter.setModeCode("1");
-        searchParameter.setDangerousGoodsIndicator(false);
 
         this.controlDto.setEftiDataUuid(uilDto.getDatasetId());
         this.controlDto.setGateId(uilDto.getGateId());
@@ -80,6 +84,22 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlDto.setSubsetId("oki");
         this.controlDto.setCreatedDate(localDateTime);
         this.controlDto.setLastModifiedDate(localDateTime);
+
+        savedControlDto.setEftiDataUuid(uilDto.getDatasetId());
+        savedControlDto.setGateId(uilDto.getGateId());
+        savedControlDto.setPlatformId(uilDto.getPlatformId());
+        savedControlDto.setRequestId("42");
+        savedControlDto.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
+        savedControlDto.setSubsetId("oki");
+        savedControlDto.setCreatedDate(LocalDateTime.now());
+        savedControlDto.setLastModifiedDate(LocalDateTime.now());
+
+        this.controlEntityError.setRequestId(requestId);
+        this.controlEntityError.setRequestType(RequestTypeEnum.NOTE_SEND);
+        this.controlEntityError.setStatus(StatusEnum.PENDING);
+        this.controlDto.setSubsetId("oki");
+        this.controlEntityError.setCreatedDate(localDateTime);
+        this.controlEntityError.setLastModifiedDate(localDateTime);
 
         this.controlEntity.setEftiDataUuid(controlDto.getEftiDataUuid());
         this.controlEntity.setRequestId(controlDto.getRequestId());
@@ -114,6 +134,13 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         requestEntity.setCreatedDate(LocalDateTime.now());
         requestEntity.setGateIdDest(this.requestDto.getGateIdDest());
         requestEntity.setControl(controlEntity);
+    }
+
+    protected <T extends RequestEntity> void setEntityRequestCommonAttributesError(final T requestEntity) {
+        requestEntity.setStatus(this.requestDto.getStatus());
+        requestEntity.setRetry(this.requestDto.getRetry());
+        requestEntity.setCreatedDate(LocalDateTime.now());
+        requestEntity.setControl(controlEntityError);
     }
 
     protected <T extends RequestDto> void setDtoRequestCommonAttributes(final T requestDto) {

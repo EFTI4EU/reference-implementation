@@ -67,7 +67,6 @@ class ReaderServiceTest {
                 "text/plain",
                 "content".getBytes());
 
-        //todo passing test
         assertThrows(UploadException.class, () -> readerService.uploadFile(mockMultipartFile));
     }
 

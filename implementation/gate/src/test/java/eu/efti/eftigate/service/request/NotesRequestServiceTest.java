@@ -1,5 +1,6 @@
 package eu.efti.eftigate.service.request;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.commons.dto.ControlDto;
@@ -8,6 +9,7 @@ import eu.efti.commons.dto.NotesRequestDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
+import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
@@ -48,6 +50,7 @@ import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
@@ -66,6 +69,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
     private final NoteRequestEntity noteRequestEntity = new NoteRequestEntity();
     private final UilRequestEntity uilRequestEntity = new UilRequestEntity();
     private final NotesRequestDto notesRequestDto = new NotesRequestDto();
+    private final ValidationService validationService = new ValidationService();
 
     @Override
     @BeforeEach
@@ -76,8 +80,9 @@ class NotesRequestServiceTest extends BaseServiceTest {
         super.setEntityRequestCommonAttributes(uilRequestEntity);
 
         controlEntity.setRequests(List.of(uilRequestEntity, noteRequestEntity));
-        notesRequestService = new NotesRequestService(notesRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
+        notesRequestService = new NotesRequestService(notesRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager, validationService);
         final Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(NotesRequestService.class);
+        memoryAppender = MemoryAppender.createInitializedMemoryAppender(Level.INFO, memoryAppenderTestLogger);
     }
 
     @Test
@@ -113,7 +118,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
         when(notesRequestRepository.save(any())).thenReturn(noteRequestEntity);
         notesRequestService.updateStatus(noteRequestEntity, ERROR);
         verify(notesRequestRepository).save(noteRequestEntityArgumentCaptor.capture());
-        verify(notesRequestRepository,  Mockito.times(1)).save(any(NoteRequestEntity.class));
+        verify(notesRequestRepository, Mockito.times(1)).save(any(NoteRequestEntity.class));
         assertEquals(ERROR, noteRequestEntityArgumentCaptor.getValue().getStatus());
     }
 
@@ -146,7 +151,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
         notesRequestService.manageMessageReceive(notificationDto);
 
         //assert
-        verify(controlService, never()).createControlFrom(any(), any(), any());
+        verify(controlService, never()).createControlFrom(any(), any());
         verify(rabbitSenderService, times(1)).sendMessageToRabbit(any(), any(), any());
         verify(requestUpdaterService).setMarkedAsDownload(any(), any());
         verify(notesRequestRepository).save(noteRequestEntityArgumentCaptor.capture());
@@ -162,7 +167,9 @@ class NotesRequestServiceTest extends BaseServiceTest {
 
         verify(notesRequestRepository).save(noteRequestEntityArgumentCaptor.capture());
         assertEquals(SUCCESS, noteRequestEntityArgumentCaptor.getValue().getStatus());
-   }
+        assertTrue(memoryAppender.containsFormattedLogMessage("sent note message messageId successfully"));
+        assertEquals(1, memoryAppender.countEventsForLogger(NotesRequestService.class.getName(), Level.INFO));
+    }
 
     @Test
     void shouldThrowException_whenRequestSentSuccessfullyAndNoteInProgressNotFound() {
@@ -170,7 +177,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldBuildResponseBody_whenRequestReceived(){
+    void shouldBuildResponseBody_whenRequestReceived() {
         controlDto.setRequestType(RequestTypeEnum.NOTE_SEND);
         controlDto.setPlatformId("acme");
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
@@ -190,7 +197,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldFindRequestByMessageId_whenRequestExists(){
+    void shouldFindRequestByMessageId_whenRequestExists() {
         when(notesRequestRepository.findByEdeliveryMessageId(anyString())).thenReturn(noteRequestEntity);
         final NoteRequestEntity requestByMessageId = notesRequestService.findRequestByMessageIdOrThrow(MESSAGE_ID);
         assertNotNull(requestByMessageId);
@@ -220,6 +227,11 @@ class NotesRequestServiceTest extends BaseServiceTest {
                 Arguments.of(RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH, false),
                 Arguments.of(RequestTypeEnum.LOCAL_UIL_SEARCH, false)
         );
+    }
+
+    @Test
+    void findAllForControlId_notSupported() {
+        assertThrows(UnsupportedOperationException.class, () -> notesRequestService.findAllForControlId(1));
     }
 }
 

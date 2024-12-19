@@ -19,9 +19,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -87,7 +88,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
+        verify(auditRegistryLogService, times(2)).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any(), any(), any(), any(), any());
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_ID, argumentCaptor.getValue().getPlatformId());
         assertEquals(GATE_ID, argumentCaptor.getValue().getGateId());
@@ -102,7 +103,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
+        verify(auditRegistryLogService, times(2)).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any(), any(), any(), any(), any());
         assertEquals("wrong value", argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_ID, argumentCaptor.getValue().getPlatformId());
         assertEquals(GATE_ID, argumentCaptor.getValue().getGateId());
@@ -117,7 +118,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
+        verify(auditRegistryLogService, times(2)).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any(), any(), any(), any(), any());
         verify(repository).findByUil(GATE_ID, DATA_UUID, PLATFORM_ID);
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_ID, argumentCaptor.getValue().getPlatformId());
@@ -125,17 +126,17 @@ class IdentifiersServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void shouldExistByUil() {
+    void shouldFindByUil() {
         when(repository.findByUil(GATE_ID, DATA_UUID, PLATFORM_ID)).thenReturn(Optional.of(new Consignment()));
 
-        assertTrue(service.existByUIL(DATA_UUID, GATE_ID, PLATFORM_ID));
+        assertNotNull(service.findByUIL(DATA_UUID, GATE_ID, PLATFORM_ID));
     }
 
     @Test
-    void shouldNotExistByUil() {
+    void shouldNotFindByUil() {
         when(repository.findByUil(GATE_ID, DATA_UUID, PLATFORM_ID)).thenReturn(Optional.empty());
 
-        assertFalse(service.existByUIL(DATA_UUID, GATE_ID, PLATFORM_ID));
+        assertNull(service.findByUIL(DATA_UUID, GATE_ID, PLATFORM_ID));
     }
 
     @Test
@@ -147,7 +148,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         service.createOrUpdate(saveIdentifiersRequestWrapper);
 
         verify(repository).save(argumentCaptor.capture());
-        verify(auditRegistryLogService).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any());
+        verify(auditRegistryLogService, times(2)).log(any(SaveIdentifiersRequestWrapper.class), any(), any(), any(), any(), any(), any(), any(), any());
         verify(repository).findByUil(GATE_ID, DATA_UUID, PLATFORM_ID);
         assertEquals(DATA_UUID, argumentCaptor.getValue().getDatasetId());
         assertEquals(PLATFORM_ID, argumentCaptor.getValue().getPlatformId());

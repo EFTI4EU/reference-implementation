@@ -14,4 +14,5 @@ public class NotificationContentDto {
     private String contentType;
     private String fromPartyId;
     private String body;
+    private String conversationId;
 }

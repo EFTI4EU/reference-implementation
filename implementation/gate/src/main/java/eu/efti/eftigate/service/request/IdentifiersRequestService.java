@@ -48,6 +48,8 @@ import static eu.efti.commons.enums.RequestStatusEnum.RECEIVED;
 import static eu.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH;
+import static eu.efti.eftilogger.model.ComponentType.GATE;
+import static eu.efti.eftilogger.model.ComponentType.REGISTRY;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Slf4j
@@ -59,6 +61,8 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     private final IdentifiersService identifiersService;
     private final IdentifiersRequestRepository identifiersRequestRepository;
     private final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService;
+    private final ValidationService validationService;
+    private final GateProperties gateProperties;
 
     public IdentifiersRequestService(final IdentifiersRequestRepository identifiersRequestRepository,
                                      final MapperUtils mapperUtils,
@@ -69,11 +73,14 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                                      final RequestUpdaterService requestUpdaterService,
                                      final SerializeUtils serializeUtils,
                                      final LogManager logManager,
-                                     final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService) {
+                                     final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService,
+                                     final ValidationService validationService) {
         super(mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
         this.identifiersService = identifiersService;
         this.identifiersRequestRepository = identifiersRequestRepository;
         this.identifiersControlUpdateDelegateService = identifiersControlUpdateDelegateService;
+        this.validationService = validationService;
+        this.gateProperties = gateProperties;
     }
 
 
@@ -87,19 +94,40 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
 
     public void manageQueryReceived(final NotificationDto notificationDto) {
         final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
+        if (!validationService.isRequestValid(identifierQuery)) {
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH));
+            return;
+        }
+        final ControlDto controlDto = getControlService().createControlFrom(identifierQuery, notificationDto.getContent().getFromPartyId());
+        //log fti015
+        getLogManager().logRequestRegistry(controlDto, null, GATE, REGISTRY, LogManager.FTI_015);
         final List<ConsignmentDto> identifiersDtoList = identifiersService.search(buildIdentifiersRequestDtoFrom(identifierQuery));
-        final IdentifiersResultsDto identifiersResults = IdentifiersResultsDto.builder().consignments(identifiersDtoList).build();
-        final ControlDto controlDto = getControlService().createControlFrom(identifierQuery, notificationDto.getContent().getFromPartyId(), identifiersResults);
+        controlDto.setIdentifiersResults(identifiersDtoList);
+        getControlService().save(controlDto);
+        //log fti016
+        getLogManager().logRequestRegistry(controlDto, getSerializeUtils().mapObjectToBase64String(identifiersDtoList), REGISTRY, GATE, LogManager.FTI_016);
         final RequestDto request = createReceivedRequest(controlDto, identifiersDtoList);
         final RequestDto updatedRequest = this.updateStatus(request, RESPONSE_IN_PROGRESS);
         super.sendRequest(updatedRequest);
     }
 
     public void manageResponseReceived(final NotificationDto notificationDto) {
-        final IdentifierResponse response = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
-        if (getControlService().existsByCriteria(response.getRequestId())) {
+        String body = notificationDto.getContent().getBody();
+        final IdentifierResponse response = getSerializeUtils().mapXmlStringToJaxbObject(body);
+        if (!validationService.isResponseValid(response)) {
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH));
+            return;
+        }
+        String requestId = response.getRequestId();
+        if (getControlService().existsByCriteria(requestId)) {
+            ControlDto controlDto = getControlService().getControlByRequestId(requestId);
             identifiersControlUpdateDelegateService.updateExistingControl(response, notificationDto.getContent().getFromPartyId());
-            identifiersControlUpdateDelegateService.setControlNextStatus(response.getRequestId());
+            identifiersControlUpdateDelegateService.setControlNextStatus(requestId);
+            IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByEdeliveryMessageId(notificationDto.getMessageId());
+
+            //log fti021
+            getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, notificationDto.getContent().getFromPartyId(),
+                    identifiersRequestEntity != null ? getStatusEnumOfRequest(identifiersRequestEntity) : StatusEnum.COMPLETE, LogManager.FTI_021);
         }
     }
 
@@ -166,6 +194,11 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         this.updateStatus(requestDto, isExternalRequest(requestDto) ? RESPONSE_IN_PROGRESS : RequestStatusEnum.IN_PROGRESS);
     }
 
+    @Override
+    public List<IdentifiersRequestEntity> findAllForControlId(final int controlId) {
+        return identifiersRequestRepository.findByControlId(controlId);
+    }
+
     public void createOrUpdate(final NotificationDto notificationDto) {
         this.identifiersService.createOrUpdate(new SaveIdentifiersRequestWrapper(notificationDto.getContent().getFromPartyId(),
                 getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody())));
@@ -193,7 +226,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 .control(controlDto)
                 .status(status)
                 .identifiersResults(IdentifiersResultsDto.builder().consignments(identifiersDtoList).build())
-                .gateIdDest(controlDto.getFromGateId())
+                .gateIdDest(controlDto.getFromGateId() != null ? controlDto.getFromGateId() : gateProperties.getOwner())
                 .requestType(RequestType.IDENTIFIER)
                 .build();
     }

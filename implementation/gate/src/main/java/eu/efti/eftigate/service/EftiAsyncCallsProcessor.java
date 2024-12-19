@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static eu.efti.eftilogger.model.ComponentType.GATE;
+import static eu.efti.eftilogger.model.ComponentType.REGISTRY;
+
 @Component
 @RequiredArgsConstructor()
 @Slf4j
@@ -24,10 +27,10 @@ public class EftiAsyncCallsProcessor {
     @Async
     public void checkLocalRepoAsync(final SearchWithIdentifiersRequestDto identifiersRequestDto, final ControlDto savedControl) {
         //log fti015
-        logManager.logRegistryIdentifiers(savedControl, null, LogManager.FTI_015);
+        logManager.logRegistryIdentifiers(savedControl, null, GATE, REGISTRY, LogManager.FTI_015);
         final List<ConsignmentDto> metadataDtoList = identifiersService.search(identifiersRequestDto);
         //logfti016
-        logManager.logRegistryIdentifiers(savedControl, metadataDtoList, LogManager.FTI_016);
+        logManager.logRegistryIdentifiers(savedControl, metadataDtoList, REGISTRY, GATE, LogManager.FTI_016);
         identifiersRequestService.createRequest(savedControl, RequestStatusEnum.SUCCESS, metadataDtoList);
     }
 }

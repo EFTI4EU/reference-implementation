@@ -116,7 +116,7 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
             predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(IS_DANGEROUS_GOODS), request.getDangerousGoodsIndicator())));
         }
         if (StringUtils.isNotBlank(request.getModeCode())) {
-            predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(TRANSPORT_MODE), Short.valueOf(request.getModeCode()))));
+            predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(TRANSPORT_MODE), request.getModeCode())));
         }
     }
 }

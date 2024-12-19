@@ -23,5 +23,4 @@ public class LogCommonDto {
     private String statusMessage;
     private String errorCodeMessage;
     private String errorDescriptionMessage;
-    private String timeoutComponentType;
 }

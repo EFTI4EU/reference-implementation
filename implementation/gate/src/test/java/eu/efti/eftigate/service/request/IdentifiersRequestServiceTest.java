@@ -75,6 +75,9 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     private final IdentifiersRequestEntity secondIdentifiersRequestEntity = new IdentifiersRequestEntity();
     private final IdentifiersRequestDto identifiersRequestDto = new IdentifiersRequestDto();
 
+    @Mock
+    private final ValidationService validationService = new ValidationService();
+
 
     @Override
     @BeforeEach
@@ -97,7 +100,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                 .build();
 
         identifiersRequestService = new IdentifiersRequestService(identifiersRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties,
-                identifiersService, requestUpdaterService, serializeUtils, logManager, identifiersControlUpdateDelegateService);
+                identifiersService, requestUpdaterService, serializeUtils, logManager, identifiersControlUpdateDelegateService, validationService);
     }
 
     @Test
@@ -145,13 +148,14 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
         when(controlService.getControlByRequestId(anyString())).thenReturn(controlDto);
-        when(controlService.createControlFrom(any(), any(), any())).thenReturn(controlDto);
+        when(controlService.createControlFrom(any(), any())).thenReturn(controlDto);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
+        when(validationService.isRequestValid(any())).thenReturn(true);
         //Act
         identifiersRequestService.manageQueryReceived(notificationDto);
 
         //assert
-        verify(controlService).createControlFrom(any(), any(), any());
+        verify(controlService).createControlFrom(any(), any());
         verify(identifiersRequestRepository, times(2)).save(any());
         verify(identifiersService).search(any());
         verify(rabbitSenderService).sendMessageToRabbit(any(), any(), any());
@@ -170,7 +174,9 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         identifiersRequestEntity.setStatus(IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
+
         when(controlService.existsByCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(true);
+        when(validationService.isResponseValid(any())).thenReturn(true);
 
         //Act
         identifiersRequestService.manageResponseReceived(notificationDto);
@@ -300,6 +306,14 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                 Arguments.of(RequestTypeEnum.LOCAL_UIL_SEARCH, false)
         );
     }
+
+    @Test
+    void shouldGetRequestForControlId() {
+        identifiersRequestService.findAllForControlId(1);
+        verify(identifiersRequestRepository).findByControlId(1);
+    }
+
+
 
 }
 

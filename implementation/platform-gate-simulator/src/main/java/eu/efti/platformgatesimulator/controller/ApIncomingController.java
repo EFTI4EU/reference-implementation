@@ -18,7 +18,7 @@ import java.io.IOException;
 @Slf4j
 public class ApIncomingController {
 
-    private final String SOAP_RESULT = """
+    private static final String SOAP_RESULT = """
             <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
                <Body> domibus ws plugin require a response when it call our endpoint </Body>
             </Envelope>

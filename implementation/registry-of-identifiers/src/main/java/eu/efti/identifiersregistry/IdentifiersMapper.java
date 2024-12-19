@@ -53,7 +53,7 @@ public class IdentifiersMapper {
                 yield localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
             }
             case "205" -> OffsetDateTime.parse(dateTime.getValue(), DateTimeFormatter.ofPattern("yyyyMMddHHmmZ"));
-            default -> throw new RuntimeException("Unsupported formatId: " + dateTime.getFormatId());
+            default -> throw new UnsupportedOperationException("Unsupported formatId: " + dateTime.getFormatId());
         };
     }
 
@@ -95,7 +95,7 @@ public class IdentifiersMapper {
         consignment.getMainCarriageTransportMovements().addAll(sourceConsignment.getMainCarriageTransportMovement().stream().map(movement -> {
             MainCarriageTransportMovement mainCarriageTransportMovement = new MainCarriageTransportMovement();
             mainCarriageTransportMovement.setDangerousGoodsIndicator(movement.isDangerousGoodsIndicator());
-            mainCarriageTransportMovement.setModeCode(Short.parseShort(movement.getModeCode()));
+            mainCarriageTransportMovement.setModeCode(movement.getModeCode());
             LogisticsTransportMeans usedTransportMeans = movement.getUsedTransportMeans();
             if (usedTransportMeans != null) {
                 Identifier17 usedTransportMeansId = usedTransportMeans.getId();

@@ -40,7 +40,7 @@ import static org.springframework.util.MimeTypeUtils.TEXT_XML_VALUE;
 @RequiredArgsConstructor
 public class RequestSendingService extends AbstractApService {
 
-    private final String action = "eftiGateAction";
+    private static final String ACTION = "eftiGateAction";
 
     public String sendRequest(final ApRequestDto requestDto) throws SendRequestException {
         final Messaging messaging = createMessaging(requestDto);
@@ -127,7 +127,7 @@ public class RequestSendingService extends AbstractApService {
         final Service service = new Service();
         service.setType(ApConstant.SERVICE_TYPE);
         service.setValue(ApConstant.SERVICE_VALUE);
-        collaborationInfo.setAction(action);
+        collaborationInfo.setAction(ACTION);
         collaborationInfo.setService(service);
         collaborationInfo.setConversationId(conversationId);
 

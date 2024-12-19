@@ -64,6 +64,9 @@ public class MessagingDto {
     public static class CollaborationInfo {
         @JsonProperty("Action")
         private String action;
+
+        @JsonProperty("ConversationId")
+        private String conversationId;
     }
 
     @Data

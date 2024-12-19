@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.exception.TechnicalException;
+import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.eftigate.config.GateProperties;
@@ -11,15 +12,18 @@ import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.LoggerFactory;
 
 import static eu.efti.eftigate.EftiTestUtils.testFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -47,6 +51,12 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
     private RabbitListenerService rabbitListenerService;
 
+    private MemoryAppender memoryAppender;
+
+    private Logger memoryAppenderTestLogger;
+
+    private static final String LOGGER_NAME = RabbitListenerService.class.getName();
+
     @Override
     @BeforeEach
     public void before() {
@@ -60,6 +70,14 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
         rabbitListenerService = new RabbitListenerService(gateProperties, serializeUtils, requestSendingService,
                 requestServiceFactory, apIncomingService, mapperUtils, logManager);
+        memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
+        memoryAppender = MemoryAppender.createInitializedMemoryAppender(
+                Level.TRACE, memoryAppenderTestLogger);
+    }
+
+    @AfterEach
+    public void cleanupLogAppenderForTest() {
+        MemoryAppender.shutdownMemoryAppender(memoryAppender, memoryAppenderTestLogger);
     }
 
 
@@ -68,6 +86,9 @@ class RabbitListenerServiceTest extends BaseServiceTest {
         final String message = "oki";
 
         rabbitListenerService.listenMessageReceiveDeadQueue(message);
+
+        assertTrue(memoryAppender.containsFormattedLogMessage(message));
+        assertEquals(1, memoryAppender.countEventsForLogger(LOGGER_NAME, Level.ERROR));
     }
 
     @Test
@@ -75,6 +96,9 @@ class RabbitListenerServiceTest extends BaseServiceTest {
         final String message = "{\"id\":0,\"journeyStart\":\"2024-01-26T10:54:51+01:00\",\"countryStart\":\"FR\",\"journeyEnd\":\"2024-01-27T10:54:51+01:00\",\"countryEnd\":\"FR\",\"metadataUUID\":\"032ad16a-ce1b-4ed2-a943-3b3975be9148\",\"transportVehicles\":[{\"id\":0,\"transportMode\":\"ROAD\",\"sequence\":1,\"vehicleID\":null,\"vehicleCountry\":\"FR\",\"journeyStart\":\"2024-01-26T10:54:51+01:00\",\"countryStart\":\"FR\",\"journeyEnd\":\"2024-01-27T10:54:51+01:00\",\"countryEnd\":\"FRANCE\"}],\"isDangerousGoods\":false,\"disabled\":false,\"gateId\":null,\"eFTIDataUuid\":\"032ad16a-ce1b-4ed2-a943-3b3975be9169\",\"platformId\":\"acme\"}";
 
         rabbitListenerService.listenReceiveMessage(message);
+
+        assertTrue(memoryAppender.containsFormattedLogMessage(message));
+        assertEquals(1, memoryAppender.countEventsForLogger(LOGGER_NAME, Level.DEBUG));
     }
 
     @Test
@@ -89,7 +113,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void listenSendMessageTest() {
+    void listenSendMessageUilTest() {
         when(requestServiceFactory.getRequestServiceByRequestType(any(String.class))).thenReturn(uilRequestService);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
 
@@ -97,7 +121,9 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
         rabbitListenerService.listenSendMessage(StringUtils.deleteWhitespace(requestJson));
 
-        verify(logManager).logSentMessage(any(), any(), anyString(), anyBoolean(), anyBoolean(), any());
+        verify(logManager).logSentMessage(any(), any(), anyString(), any(), any(), anyBoolean(), any());
+        assertTrue(memoryAppender.containsFormattedLogMessage("receive message from rabbimq queue"));
+        assertEquals(1, memoryAppender.countEventsForLogger(LOGGER_NAME, Level.INFO));
     }
 
     @Test()
@@ -116,7 +142,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
         when(requestSendingService.sendRequest(any())).thenThrow(SendRequestException.class);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
         final Exception exception = assertThrows(TechnicalException.class, () -> rabbitListenerService.listenSendMessage(message));
-        verify(logManager).logSentMessage(any(), any(), anyString(), anyBoolean(), anyBoolean(), any());
+        verify(logManager).logSentMessage(any(), any(), anyString(), any(), any(), anyBoolean(), any());
         assertEquals("Error when try to send message to domibus", exception.getMessage());
     }
 
@@ -126,6 +152,9 @@ class RabbitListenerServiceTest extends BaseServiceTest {
         final String message = "{\"id\":151,\"status\":\"RECEIVED\",\"edeliveryMessageId\":null,\"retry\":0,\"reponseData\":null,\"nextRetryDate\":null,\"createdDate\":[2024,3,5,15,6,52,135892300],\"lastModifiedDate\":null,\"gateIdDest\":\"borduria\",\"control\":{\"id\":102,\"eftiDataUuid\":\"12345678-ab12-4ab6-8999-123456789abe\",\"requestId\":\"c5ed0840-bf60-4052-8172-35530d423672\",\"requestType\":\"LOCAL_UIL_SEARCH\",\"status\":\"PENDING\",\"platformId\":\"acme\",\"gateId\":\"borduria\",\"subsetId\":\"full\",\"createdDate\":[2024,3,5,15,6,51,987861600],\"lastModifiedDate\":[2024,3,5,15,6,51,987861600],\"eftiData\":null,\"transportMetaData\":null,\"fromGateId\":null,\"requests\":null,\"authority\":{\"id\":99,\"country\":\"SY\",\"legalContact\":{\"id\":197,\"email\":\"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.A@63ccccccccccccccccccccccccccccccccccccccccccccccccccccccccgmail.63ccccccccccccccccccccccccccccccccccccccccccccccccccccccccgmail.commmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\",\"streetName\":\"rue des rossignols\",\"buildingNumber\":\"12\",\"city\":\"Acheville\",\"additionalLine\":null,\"postalCode\":\"62320\"},\"workingContact\":{\"id\":198,\"email\":\"toto@gmail.com\",\"streetName\":\"rue des cafés\",\"buildingNumber\":\"14\",\"city\":\"Lille\",\"additionalLine\":\"osef\",\"postalCode\":\"59000\"},\"isEmergencyService\":null,\"name\":\"aaaa\",\"nationalUniqueIdentifier\":\"aaa\"},\"error\":null,\"metadataResults\":null},\"error\":null}";
 
         rabbitListenerService.listenSendMessageDeadLetter(message);
+
+        assertTrue(memoryAppender.containsFormattedLogMessage("Receive message for dead queue"));
+        assertEquals(1, memoryAppender.countEventsForLogger(LOGGER_NAME, Level.ERROR));
     }
 }
 
