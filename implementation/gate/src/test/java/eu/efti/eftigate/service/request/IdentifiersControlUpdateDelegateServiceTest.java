@@ -1,8 +1,11 @@
 package eu.efti.eftigate.service.request;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
+import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
@@ -18,6 +21,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +53,11 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
         super.setEntityRequestCommonAttributes(identifiersRequestEntity);
         super.setEntityRequestCommonAttributes(secondIdentifiersRequestEntity);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
-        identifiersControlUpdateDelegateService = new IdentifiersControlUpdateDelegateService(identifiersRequestRepository, serializeUtils, controlService, mapperUtils);
+        identifiersControlUpdateDelegateService = new IdentifiersControlUpdateDelegateService(identifiersRequestRepository, controlService, mapperUtils);
+
+
+        final Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(IdentifiersRequestService.class);
+        memoryAppender = MemoryAppender.createInitializedMemoryAppender(Level.INFO, memoryAppenderTestLogger);
     }
 
     @Test
@@ -125,7 +133,7 @@ class IdentifiersControlUpdateDelegateServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void  shouldGetErrorAsControlNextStatusOverTimeout_whenAtLeastOneRequestIsInErrorStatus() {
+    void shouldGetErrorAsControlNextStatusOverTimeout_whenAtLeastOneRequestIsInErrorStatus() {
         secondIdentifiersRequestEntity.setStatus(RequestStatusEnum.TIMEOUT);
         identifiersRequestEntity.setStatus(RequestStatusEnum.ERROR);
         controlEntity.setStatus(StatusEnum.PENDING);
