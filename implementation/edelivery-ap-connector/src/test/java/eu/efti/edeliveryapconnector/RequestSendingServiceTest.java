@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class RequestSendingServiceTest {
 
     private RequestSendingService service;
-    private final static String FOLDER = "src/test/resources/wiremock";
+    private static final String FOLDER = "src/test/resources/wiremock";
     private WireMockServer wireMockServer;
     private final String requestId = UUID.randomUUID().toString();
 

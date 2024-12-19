@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -11,7 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "main_carriage_transport_movement")
-public class MainCarriageTransportMovement {
+public class MainCarriageTransportMovement implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

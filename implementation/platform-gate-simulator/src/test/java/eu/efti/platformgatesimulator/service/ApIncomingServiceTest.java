@@ -35,8 +35,6 @@ class ApIncomingServiceTest extends AbstractTest {
 
     @Mock
     private NotificationService notificationService;
-    @Mock
-    private GateProperties gateProperties;
 
     @Mock
     private ReaderService readerService;

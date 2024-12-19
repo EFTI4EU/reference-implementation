@@ -24,7 +24,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 class RequestUpdaterServiceTest {
 
     private RequestUpdaterService service;
-    private final static String FOLDER = "src/test/resources/wiremock";
+    private static final String FOLDER = "src/test/resources/wiremock";
     private WireMockServer wireMockServer;
 
     @BeforeEach
@@ -38,7 +38,7 @@ class RequestUpdaterServiceTest {
     }
 
     @Test
-    void setMarkedAsDownloadTest() throws MalformedURLException, MarkMessageAsDownloadedFault {
+    void setMarkedAsDownloadTest() throws MalformedURLException {
         wireMockServer.stubFor(get(urlEqualTo("/domibus/services/wsplugin?wsdl"))
                 .willReturn(aResponse().withBodyFile("WebServicePlugin.wsdl")));
         wireMockServer.stubFor(post(urlEqualTo("/domibus/services/wsplugin?wsdl"))

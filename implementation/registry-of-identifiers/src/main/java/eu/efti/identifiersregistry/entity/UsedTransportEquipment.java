@@ -10,6 +10,7 @@ import lombok.ToString;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import java.util.List;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "used_transport_equipment")
-public class UsedTransportEquipment {
+public class UsedTransportEquipment implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
