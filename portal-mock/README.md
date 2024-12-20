@@ -20,7 +20,7 @@ Open your host file (for windows C:\Windows\System32\drivers\etc\hosts) and add 
 move to the root of this project and run
 
 ```
-npm install
+npm ci
 npm start
 ```
 

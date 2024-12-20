@@ -165,7 +165,7 @@ services:
     container_name: apache
     image: bellackn/httpd_oidc
     ports:
-      - 83:83
+      - 127.0.0.1:83:83
     volumes:
       - ./httpd/config/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./httpd/config/conf.d:/usr/local/apache2/conf.d
