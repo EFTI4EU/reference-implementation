@@ -274,7 +274,8 @@
                                 <useBeanValidation>false</useBeanValidation>
                                 <openApiNullable>false</openApiNullable>
                                 <useSpringBoot3>true</useSpringBoot3>
-                                <sourceFolder>${project.build.directory}/generated-sources/src/main/java</sourceFolder>
+                                // Using ${project.build.directory} breaks the build on Windows
+                                <sourceFolder>build/generated-sources/src/main/java</sourceFolder>
                                 <withXml>true</withXml>
                                 <skipDefaultInterface>true</skipDefaultInterface>
                             </configOptions>
