@@ -23,9 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static com.jayway.jsonassert.JsonAssert.emptyCollection;
 import static com.jayway.jsonassert.JsonAssert.with;
-import static org.hamcrest.CoreMatchers.not;
 import static org.apache.commons.collections4.CollectionUtils.emptyCollection;
 import static org.assertj.core.api.AssertionsForClassTypes.not;
 import static org.hamcrest.core.Is.is;
@@ -98,7 +96,6 @@ class IdentifiersControllerTest {
         with(result)
                 .assertThat("$.requestId", is("requestId"))
                 .assertThat("$.status", is("COMPLETE"))
-                .assertThat("$.identifiers", is(not(emptyCollection())))
                 .assertThat("$.identifiers[0].consignments[0].platformId", is("acme"));
     }
 
