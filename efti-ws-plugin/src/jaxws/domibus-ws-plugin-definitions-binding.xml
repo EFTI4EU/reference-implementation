@@ -1,0 +1,9 @@
+<jaxws:bindings xmlns:jaxws="https://jakarta.ee/xml/ns/jaxws"
+                xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                wsdlLocation="../main/resources/schemas/WebServicePlugin.wsdl">
+
+    <jaxws:bindings node="wsdl:definitions">
+        <jaxws:package name="eu.efti.plugin.ws.generated"/>
+    </jaxws:bindings>
+
+</jaxws:bindings>

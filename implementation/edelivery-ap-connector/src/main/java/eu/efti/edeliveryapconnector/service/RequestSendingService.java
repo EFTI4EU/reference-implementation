@@ -1,37 +1,35 @@
 package eu.efti.edeliveryapconnector.service;
 
+import eu.efti.edeliveryapconnector.constant.ApConstant;
 import eu.efti.edeliveryapconnector.dto.ApRequestDto;
 import eu.efti.edeliveryapconnector.exception.SendRequestException;
-import com.sun.xml.ws.client.ClientTransportException;
-import com.sun.xml.ws.wsdl.parser.InaccessibleWSDLException;
-import eu.domibus.plugin.ws.generated.SubmitMessageFault;
-import eu.domibus.plugin.ws.generated.body.LargePayloadType;
-import eu.domibus.plugin.ws.generated.body.SubmitRequest;
-import eu.domibus.plugin.ws.generated.body.SubmitResponse;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartProperties;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyInfo;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PayloadInfo;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.ProcessingType;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Service;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
-import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
-import eu.efti.edeliveryapconnector.constant.ApConstant;
+import eu.efti.plugin.ws.generated.SubmitMessageFault;
+import eu.efti.plugin.ws.generated.body.LargePayloadType;
+import eu.efti.plugin.ws.generated.body.SubmitRequest;
+import eu.efti.plugin.ws.generated.body.SubmitResponse;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartProperties;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyInfo;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PayloadInfo;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.ProcessingType;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Service;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.mail.util.ByteArrayDataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.util.ByteArrayDataSource;
-import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 
 import static org.springframework.util.MimeTypeUtils.TEXT_XML_VALUE;
 
@@ -48,7 +46,7 @@ public class RequestSendingService extends AbstractApService {
 
         final SubmitResponse submitResponse = sendRequestToAPOrThrow(requestDto, submitRequest, messaging);
 
-        if(submitResponse.getMessageID().isEmpty()) {
+        if (submitResponse.getMessageID().isEmpty()) {
             log.error("no messageId for request {}", requestDto.getRequestId());
             throw new SendRequestException("no messageId for request " + requestDto.getRequestId());
         }
@@ -58,7 +56,7 @@ public class RequestSendingService extends AbstractApService {
     private SubmitResponse sendRequestToAPOrThrow(final ApRequestDto requestDto, final SubmitRequest submitRequest, final Messaging messaging) throws SendRequestException {
         try {
             return initApWebService(requestDto.getApConfig()).submitMessage(submitRequest, messaging);
-        } catch (final SubmitMessageFault | MalformedURLException | InaccessibleWSDLException | ClientTransportException e ) {
+        } catch (SubmitMessageFault | MalformedURLException e) {
             throw new SendRequestException("error while sending request", e);
         }
     }
@@ -69,12 +67,9 @@ public class RequestSendingService extends AbstractApService {
 
         largePayloadType.setContentType(TEXT_XML_VALUE);
         largePayloadType.setPayloadId(ApConstant.PAYLOAD_HREF);
-        final DataSource ds;
-        try {
-            ds = new ByteArrayDataSource(requestDto.getBody(), ApConstant.TEXT_PLAIN);
-        } catch (final IOException e) {
-            throw new SendRequestException("error while building request body for request " + requestDto.getRequestId(), e);
-        }
+
+        final DataSource ds = new ByteArrayDataSource(requestDto.getBody().getBytes(StandardCharsets.UTF_8), ApConstant.TEXT_PLAIN);
+
         largePayloadType.setValue(new DataHandler(ds));
 
         submitRequest.getPayload().add(largePayloadType);

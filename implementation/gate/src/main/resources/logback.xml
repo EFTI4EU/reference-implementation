@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <property name="APPLICATION_NAME" value="efti-gate" />
+    <property name="APPLICATION_NAME" value="efti-gate"/>
 
-    <property name="LOG_FILE_NAME" value="${APPLICATION_NAME}" />
+    <property name="LOG_FILE_NAME" value="${APPLICATION_NAME}"/>
 
-    <property name="LOG_PATH" value="/var/log/javapp" />
+    <property name="LOG_PATH" value="/var/log/javapp"/>
 
-    <property name="LOG_MAX_FILE_SIZE" value="10MB" />
+    <property name="LOG_MAX_FILE_SIZE" value="10MB"/>
 
-    <property name="LOG_MAX_HISTORY" value="30" />
+    <property name="LOG_MAX_HISTORY" value="30"/>
 
-    <property name="LOG_TOTAL_SIZE" value="100MB" />
+    <property name="LOG_TOTAL_SIZE" value="100MB"/>
 
     <!-- ================================================ -->
     <!-- Internal properties -->
     <!-- ================================================ -->
-    <property name="LOG_ARCHIVE" value="${LOG_PATH}/archive" />
+    <property name="LOG_ARCHIVE" value="${LOG_PATH}/archive"/>
 
-    <property name="LOG_STATS_NAME" value="${HOSTNAME}-stats" />
-    <property name="LOG_REQUEST_NAME" value="${HOSTNAME}-request" />
-    <property name="LOG_REGISTRY_NAME" value="${HOSTNAME}-registry" />
+    <property name="LOG_STATS_NAME" value="${HOSTNAME}-stats"/>
+    <property name="LOG_REQUEST_NAME" value="${HOSTNAME}-request"/>
+    <property name="LOG_REGISTRY_NAME" value="${HOSTNAME}-registry"/>
 
 
     <appender name="RollingFile-Appender"
@@ -115,31 +115,19 @@
         </layout>
     </appender>
 
-    <!-- pattern definition -->
-    <conversionRule conversionWord="domibusLine" converterClass="eu.domibus.logging.DomibusLineOfCallerConverter"/>
-    <property name="encoderPattern"
-              value="%d{ISO8601} [%X{d_user}] [%X{d_domain}] [%X{d_messageId}] [%X{d_messageEntityId}] [%thread] %5p %c{1}:%domibusLine - %m%n"
-              scope="global"/>
-    <property name="encoderPatternColor"
-              value="%d{HH:mm:ss.SSS} [%5.-5X{thread}] %highlight([%5.5X{d_user}] [%8.-8X{d_messageId}] [%8.-8X{d_messageEntityId}] %5p) %50.-50(.\(%c{1}:%domibusLine\\)) - %m%n"
-              scope="global"/>
-
-    <logger name="eu.domibus.plugin.ws" level="INFO"/>
-
-    <appender name="Async-Appender"  class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="RollingFile-Appender" />
-        <appender-ref ref="RollingFile-Stats-Appender" />
-        <appender-ref ref="RollingFile-Request-Appender" />
-        <appender-ref ref="RollingFile-Registry-Appender" />
+    <appender name="Async-Appender" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="RollingFile-Appender"/>
+        <appender-ref ref="RollingFile-Stats-Appender"/>
+        <appender-ref ref="RollingFile-Request-Appender"/>
+        <appender-ref ref="RollingFile-Registry-Appender"/>
     </appender>
 
 
     <root level="INFO" additivity="false">
-        <!--<appender-ref ref="RollingFile-Appender" />-->
-        <appender-ref ref="RollingFile-Stats-Appender" />
-        <appender-ref ref="RollingFile-Request-Appender" />
-        <appender-ref ref="RollingFile-Registry-Appender" />
-        <appender-ref ref="Console-Appender" />
+        <appender-ref ref="RollingFile-Stats-Appender"/>
+        <appender-ref ref="RollingFile-Request-Appender"/>
+        <appender-ref ref="RollingFile-Registry-Appender"/>
+        <appender-ref ref="Console-Appender"/>
     </root>
 
 </configuration>
