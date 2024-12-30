@@ -1,6 +1,6 @@
 <h1>Local environment sample for Domibus</h1>
 
-The aim of this project is to provide a simple environment to make multiple domibus access points communicate together. Each domibus is multi tenant and/or multi instance
+The aim of this project is to provide a simple environment to make multiple Domibus access points communicate together. Each Domibus is multi tenant and/or multi instance
 
 In order to demonstrate this, we create a fictional ecosystem of 3 gates and 3 platforms.
 <ul>
@@ -9,9 +9,9 @@ In order to demonstrate this, we create a fictional ecosystem of 3 gates and 3 p
 <li>Listenbourg (platform: umbrellacorporation)</li>
 </ul>
 <br>
-Each gate can communicate with its related platform as well as any other gate. Syldavia and Borduria share the same domibus (named <b>sybo</b> below), Listenbourg has its own domibus (named <b>li</b>) , and the 3 platforms share the same domibus.
+Each gate can communicate with its related platform as well as any other gate. Syldavia and Borduria share the same Domibus (named <b>sybo</b> below), Listenbourg has its own Domibus (named <b>li</b>) , and the 3 platforms share the same Domibus.
 
-This sample is based on domibus quick start guide and domibus test guide, for more detail see https://ec.europa.eu/digital-building-blocks/wikis/display/DIGITAL/Domibus
+This sample is based on Domibus quick start guide and Domibus test guide, for more detail see https://ec.europa.eu/digital-building-blocks/wikis/display/DIGITAL/Domibus
 
 <h3> Prerequisites </h3>
 
@@ -30,7 +30,7 @@ docker network create efti-network
 
 <h3> Run the project </h3>
 
-This project uses the Domibus docker image maintained by the efti4eu project. The project ensures that all the MariaDB databases and the related scripts were successfully done before starting Domibus instances.
+This project uses the Domibus docker image maintained by the eFTI4EU project. The project ensures that all the MariaDB databases and the related scripts were successfully done before starting Domibus instances.
 To run the project, use the following command:
 
 ```
@@ -45,22 +45,22 @@ this will launch 12 containers:
   <li>mariadb-li</li>
   <li>mariadb-sybo</li>
   <li>mariadb-platform</li>
-  <li>domibus-li-1</li>
-  <li>domibus-li-2</li>
+  <li>Domibus-li-1</li>
+  <li>Domibus-li-2</li>
   <li>dominus-sybo-1</li>
   <li>dominus-sybo-2</li>
   <li>dominus-platform</li>
   <li>nginx</li>
 </ul>
 
-Once everything has correctly started, you should be able to access each domibus login page: (open them in different browsers)
+Once everything has correctly started, you should be able to access each Domibus login page: (open them in different browsers)
 <ul>
-  <li>domibus sybo : http://localhost:8081/domibus/ </li>
-  <li>domibus li : http://localhost:8090/domibus/ </li>
-  <li>domibus platform : http://localhost:8100/domibus/ </li>
+  <li>Domibus sybo : http://localhost:8081/Domibus/ </li>
+  <li>Domibus li : http://localhost:8090/Domibus/ </li>
+  <li>Domibus platform : http://localhost:8100/Domibus/ </li>
 </ul>
 
-You can now login to each domibus. The login is <b>super</b>, and the password is generated each time, so look in the log for something like this:
+You can now login to each Domibus. The login is <b>super</b>, and the password is generated each time, so look in the log for something like this:
 
 ```
 > 2023-10-27T09:44:18.840284175Z 2023-10-27 09:44:18,838 [edelivery@172.19.0.4] [] [] [] [main]  INFO e.d.c.u.u.UserManagementServiceImpl:335 - Default password for user [super] is [eba6db02-1648-4683-aef6-52652b460226].
@@ -96,10 +96,10 @@ Finally, open your host file (for windows C:\Windows\System32\drivers\etc\hosts)
 
 <h3>Send a message</h3>
 
-Now that domibus is ready, it is time to open Postman
+Now that Domibus is ready, it is time to open Postman
 
 First, import the postman collections from `utils/postman` by using the "file > import" function
 
-If you followed the naming convention for service account, you should not need to change anything. Otherwise, go to Authorization tab of each request and update user password
+If you followed the naming convention for the service account, you should not need to change anything. Otherwise, go to Authorization tab of each request and update the user password
 
-You can see a pre-configured sample message for each allowed flow between gate and gate, and gate and platform. Click "send" and you should see it in sender's and recipient's domibus
+You can see a pre-configured sample message for each allowed flow between gate and gate, and gate and platform. Click "send" and you should see it in sender's and recipient's Domibus

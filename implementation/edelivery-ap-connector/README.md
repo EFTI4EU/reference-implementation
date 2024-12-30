@@ -1,3 +1,3 @@
 # eDelivery Access Point Connector
 
-This library provides and abstract layer to communicate with Domibus access point.
+This library provides an abstraction layer to communicate with Domibus access point.
