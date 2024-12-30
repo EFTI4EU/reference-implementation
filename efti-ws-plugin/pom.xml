@@ -79,11 +79,17 @@
             <version>3.0.4</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.wiremock/wiremock-standalone -->
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock-standalone</artifactId>
             <version>3.5.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmockit</groupId>
+            <artifactId>jmockit</artifactId>
+            <version>1.49</version>
             <scope>test</scope>
         </dependency>
 
