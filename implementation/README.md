@@ -100,10 +100,10 @@ sequenceDiagram
 
     app->>+gate: searchById
     gate->>db: insert(localSearch)
-    gate->>mq: addMassage(localSearch)
+    gate->>mq: addMessage(localSearch)
     loop nextGate
         gate->>db: insert(remoteSearch)
-        gate->>mq: addMassage(remoteSearch)
+        gate->>mq: addMessage(remoteSearch)
     end
     gate->>-app: reqestID
 
@@ -131,7 +131,7 @@ sequenceDiagram
 
     app->>+gate: requestDataSet
     gate->>db: insertRequest
-    gate->>mq: addMassage
+    gate->>mq: addMessage
     gate->>-app: reqestID
 
     loop statusPending
