@@ -1,1 +1,3 @@
-contains postman collections used for efti project
+# Utils
+
+This section contains postman collections to help for functional testing.

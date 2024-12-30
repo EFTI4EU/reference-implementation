@@ -1,3 +1,3 @@
 # Commons library
 
-This library provide a set of useful utilities used by the other components.
+This library provides a set of useful utilities used by the other components.

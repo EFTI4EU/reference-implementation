@@ -64,4 +64,4 @@ First, import the postman collections from `utils/postman` by using the "file > 
 
 If you followed the naming convention for service account, you should not need to change anything. Otherwise, go to Authorization tab of each request and update user password
 
-You can see a pre-configured sample message for each allowed flow between gate and gate, and gate and platform. Clic "send" and you should see it in sender's and recipient's domibus
+You can see a pre-configured sample message for each allowed flow between gate and gate, and gate and platform. Click "send" and you should see it in sender's and recipient's domibus
