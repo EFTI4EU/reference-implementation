@@ -8,7 +8,7 @@ In addition to gate components, a simulator was developed as a mockup of externa
 
 Here is a summary of developed components. A more detailed description can be found inside each component.
 
-![Components diagram](./components.png "Component diagram of the gate and its dependencies")
+![Components diagram](./components.svg "Component diagram of the gate and its dependencies")
 
 ## Gate components
 
