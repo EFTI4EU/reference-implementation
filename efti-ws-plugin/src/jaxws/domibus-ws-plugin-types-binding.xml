@@ -1,0 +1,45 @@
+<jaxb:bindings version="3.0"
+               xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+               xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+               xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+               jaxb:extensionBindingPrefixes="xjc">
+
+    <jaxb:globalBindings optionalProperty="primitive" generateIsSetMethod="false">
+        <jaxb:serializable/>
+        <xjc:javaType name="java.time.LocalDateTime" xmlType="xs:dateTime"
+                      adapter="eu.efti.plugin.ws.jaxb.DateTimeAdapter"/>
+        <xjc:javaType name="java.time.LocalTime" xmlType="xs:time"
+                      adapter="eu.efti.plugin.ws.jaxb.TimeAdapter"/>
+        <xjc:javaType name="java.time.LocalDate" xmlType="xs:date"
+                      adapter="eu.efti.plugin.ws.jaxb.DateAdapter"/>
+    </jaxb:globalBindings>
+
+    <!-- XSD types packages customization -->
+    <jaxb:bindings schemaLocation="../main/resources/schemas/webservicePlugin-header.xsd" node="/xsd:schema">
+        <jaxb:schemaBindings>
+            <jaxb:package
+                    name="eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704"/>
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+    <jaxb:bindings schemaLocation="../main/resources/schemas/webservicePlugin-body.xsd" node="/xsd:schema">
+        <jaxb:schemaBindings>
+            <jaxb:package name="eu.efti.plugin.ws.generated.body"/>
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+    <jaxb:bindings schemaLocation="../main/resources/schemas/xmlmime.xsd" node="/xs:schema">
+        <jaxb:schemaBindings>
+            <jaxb:package name="eu.efti.plugin.ws.generated.common.model.org.w3._2005._05.xmlmime"/>
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+    <!-- Used for the test SendSOAPMessageIT -->
+    <jaxb:bindings schemaLocation="../main/resources/schemas/envelope.xsd" node="/xs:schema">
+        <jaxb:schemaBindings>
+            <jaxb:package name="eu.efti.plugin.ws.generated.common.model.org.w3._2003._05.soap_envelope"/>
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+</jaxb:bindings>

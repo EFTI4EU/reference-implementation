@@ -255,9 +255,10 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
     private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, NotificationContentDto content) {
         final ControlDto controlDto = requestDto.getControl();
-        final Optional<EDeliveryStatus> responseStatus = EDeliveryStatus.fromCode(uilResponse.getStatus());
+        String uilResponseStatus = uilResponse.getStatus();
+        final Optional<EDeliveryStatus> responseStatus = EDeliveryStatus.fromCode(uilResponseStatus);
         if (responseStatus.isEmpty()) {
-            throw new TechnicalException("status " + uilResponse.getStatus() + " not found");
+            throw new TechnicalException("status " + uilResponseStatus + " not found");
         }
         switch (responseStatus.get()) {
             case GATEWAY_TIMEOUT -> {
@@ -277,7 +278,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 controlDto.setError(setErrorFromResponse(uilResponse));
                 controlDto.setStatus(StatusEnum.ERROR);
             }
-            default -> throw new TechnicalException("status " + uilResponse.getStatus() + " not found");
+            default -> throw new TechnicalException("status " + uilResponseStatus + " not found");
 
 
         }
@@ -337,7 +338,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
     private Optional<UilRequestDto> findByRequestId(final String requestId) {
         final Optional<UilRequestEntity> entity = Optional.ofNullable(
-                        this.uilRequestRepository.findByControlRequestIdAndStatus(requestId, RequestStatusEnum.IN_PROGRESS));
+                this.uilRequestRepository.findByControlRequestIdAndStatus(requestId, RequestStatusEnum.IN_PROGRESS));
         return entity.map(uilRequestEntity -> getMapperUtils().requestToRequestDto(uilRequestEntity, UilRequestDto.class));
     }
 }

@@ -1,6 +1,7 @@
 package eu.efti.edeliveryapconnector;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
@@ -66,7 +67,7 @@ class RequestSendingServiceTest {
     void shouldThrowExceptionIfResponseEmpty() throws SendRequestException {
         wireMockServer.stubFor(get(urlEqualTo("/domibus/services/wsplugin?wsdl"))
                 .willReturn(aResponse().withBodyFile("WebServicePlugin.wsdl")));
-        wireMockServer.stubFor(post(urlEqualTo("/domibus/services/wsplugin?wsdl"))
+        wireMockServer.stubFor(WireMock.post(urlEqualTo("/domibus/services/wsplugin?wsdl"))
                 .willReturn(aResponse().withBodyFile("emptyresponse.xml")));
         final ApRequestDto requestDto = ApRequestDto
                 .builder()
