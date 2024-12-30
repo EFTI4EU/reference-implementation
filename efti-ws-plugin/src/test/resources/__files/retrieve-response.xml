@@ -1,0 +1,45 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+    <soap:Header>
+        <ns5:Messaging xmlns:ns4="http://eu.domibus.wsplugin/" xmlns:ns5="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" mustUnderstand="false">
+            <ns5:UserMessage mpc="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC">
+                <ns5:MessageInfo>
+                    <ns5:Timestamp>2023-12-14T10:21:53.296061</ns5:Timestamp>
+                    <ns5:MessageId>9992596f-9a6a-11ee-90b4-0242ac13000e@domibus.eu</ns5:MessageId>
+                </ns5:MessageInfo>
+                <ns5:PartyInfo>
+                    <ns5:From>
+                        <ns5:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:unregistered">borduria</ns5:PartyId>
+                        <ns5:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator</ns5:Role>
+                    </ns5:From>
+                    <ns5:To>
+                        <ns5:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:unregistered">acme</ns5:PartyId>
+                        <ns5:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</ns5:Role>
+                    </ns5:To>
+                </ns5:PartyInfo>
+                <ns5:CollaborationInfo>
+                    <ns5:Service type="tc1">bdx:noprocess</ns5:Service>
+                    <ns5:Action>getUIL</ns5:Action>
+                    <ns5:ConversationId>99928080-9a6a-11ee-90b4-0242ac13000e@domibus.eu</ns5:ConversationId>
+                </ns5:CollaborationInfo>
+                <ns5:MessageProperties>
+                    <ns5:Property name="originalSender">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1</ns5:Property>
+                    <ns5:Property name="finalRecipient">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C4</ns5:Property>
+                </ns5:MessageProperties>
+                <ns5:PayloadInfo>
+                    <ns5:PartInfo href="cid:message">
+                        <ns5:PartProperties>
+                            <ns5:Property name="MimeType">application/json</ns5:Property>
+                        </ns5:PartProperties>
+                    </ns5:PartInfo>
+                </ns5:PayloadInfo>
+            </ns5:UserMessage>
+        </ns5:Messaging>
+    </soap:Header>
+    <soap:Body>
+        <ns2:retrieveMessageResponse xmlns:ns2="http://eu.domibus.wsplugin/" xmlns:ns3="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:ns5="http://www.w3.org/2003/05/soap-envelope" xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
+            <payload payloadId="cid:message">
+                <value>eyJyZXF1ZXN0VXVpZCI6IjdhYzFmYWMwLTUzOGUtNDkyYi1iMWYxLTRjZmRlNzQzNTZkOCIsInN0YXR1cyI6ICJDT01QTEVURUQiLCJlcnJvckRlc2NyaXB0aW9uIjogImNlY2kgZXN0IHVuZSBlcnJldXIiLCAiZUZUSURhdGEiOiAicGxlaW4gZGUgZGF0YSJ9</value>
+            </payload>
+        </ns2:retrieveMessageResponse>
+    </soap:Body>
+</soap:Envelope>
