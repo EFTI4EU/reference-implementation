@@ -47,9 +47,9 @@ this will launch 12 containers:
   <li>mariadb-platform</li>
   <li>domibus-li-1</li>
   <li>domibus-li-2</li>
-  <li>dominbs-sybo-1</li>
-  <li>dominbs-sybo-2</li>
-  <li>dominbs-platform</li>
+  <li>domibus-sybo-1</li>
+  <li>domibus-sybo-2</li>
+  <li>domibus-platform</li>
   <li>nginx</li>
 </ul>
 
