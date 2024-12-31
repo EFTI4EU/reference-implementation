@@ -10,7 +10,7 @@ The reference implementation shall not be used in production as such. It is the 
 
 ### What the Reference Implementation is
 
-- One of efti4eu project deliverables​
+- One of eFTI4EU project deliverables​
 - Conformant the latest version of regulation​
 - Open source​
 - Functional implementation with shared code​
@@ -25,7 +25,7 @@ The reference implementation shall not be used in production as such. It is the 
 
 - As a base code for national implementations: member states can start from the reference implementation and adapt it to their requirements, constraints and environment in order to build a national implementation
 - As an architecture guideline: member states can take inspiration from the reference implementation design and technical choices for their national implementations
-- Aa a test reference: if a national implementation works correctly with the reference implementation, this means that it should work correctly with the other national gates as well
+- As a test reference: if a national implementation works correctly with the reference implementation, this means that it should work correctly with the other national gates as well
 
 Member states should not put the reference implementation as it is to production. In fact, many design and technical choices have been taken during the development of the reference implementation following general environment purpose and best practices. These choices might not necessarily be suitable for all use cases, and member states shall look deeply to the design and the implementation before going to production. Also, the available authentication model, even though based on the OpenID standard, is very limited and member states shall adapt it to their respective authentication systems.
 

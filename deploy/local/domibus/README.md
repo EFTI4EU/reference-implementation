@@ -45,19 +45,19 @@ this will launch 12 containers:
   <li>mariadb-li</li>
   <li>mariadb-sybo</li>
   <li>mariadb-platform</li>
-  <li>Domibus-li-1</li>
-  <li>Domibus-li-2</li>
-  <li>dominus-sybo-1</li>
-  <li>dominus-sybo-2</li>
-  <li>dominus-platform</li>
+  <li>domibus-li-1</li>
+  <li>domibus-li-2</li>
+  <li>dominbs-sybo-1</li>
+  <li>dominbs-sybo-2</li>
+  <li>dominbs-platform</li>
   <li>nginx</li>
 </ul>
 
 Once everything has correctly started, you should be able to access each Domibus login page: (open them in different browsers)
 <ul>
-  <li>Domibus sybo : http://localhost:8081/Domibus/ </li>
-  <li>Domibus li : http://localhost:8090/Domibus/ </li>
-  <li>Domibus platform : http://localhost:8100/Domibus/ </li>
+  <li>Domibus sybo : http://localhost:8081/domibus/ </li>
+  <li>Domibus li : http://localhost:8090/domibus/ </li>
+  <li>Domibus platform : http://localhost:8100/domibus/ </li>
 </ul>
 
 You can now login to each Domibus. The login is <b>super</b>, and the password is generated each time, so look in the log for something like this:
@@ -74,7 +74,7 @@ docker logs <container name>
 
 After first login, you will be asked to update your password.
 
-Once logged, we need to setup each domain, you can switch domains from the list at the top right corner.
+Once logged, we need to setup each domain. you can switch domains from the list at the top right corner.
 For each domain you need to:
 
 - Add the related pmode file. To do this, click on PMode menu on the left, then current > upload and pass it the domain-pmode.xml file stored in the pmodes folder of this project.
