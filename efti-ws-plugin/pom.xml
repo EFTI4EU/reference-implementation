@@ -15,7 +15,10 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.coverage.exclusions>**/jaxb/**</sonar.coverage.exclusions>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../coverage-aggregate/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
+
 
     <dependencies>
         <dependency>
