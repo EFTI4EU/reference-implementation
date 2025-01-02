@@ -40,11 +40,11 @@ public class IdentifiersControlUpdateDelegateService {
 
     @Transactional("controlTransactionManager")
     public void setControlNextStatus(final String controlRequestId) {
-        final List<RequestStatusEnum> requestStatuses = identifiersRequestRepository.findByControlRequestId(controlRequestId).stream()
-                .map(RequestEntity::getStatus)
-                .toList();
         controlService.findByRequestId(controlRequestId).ifPresent(controlEntity -> {
             if (!StatusEnum.ERROR.equals(controlEntity.getStatus())) {
+                final List<RequestStatusEnum> requestStatuses = identifiersRequestRepository.findByControlRequestId(controlRequestId).stream()
+                        .map(RequestEntity::getStatus)
+                        .toList();
                 final StatusEnum controlStatus = getControlNextStatus(controlEntity.getStatus(), requestStatuses);
                 controlEntity.setStatus(controlStatus);
                 controlService.save(controlEntity);
