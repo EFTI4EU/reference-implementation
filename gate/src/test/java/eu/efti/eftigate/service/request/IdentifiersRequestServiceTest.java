@@ -178,7 +178,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
 
         when(validationService.isResponseValid(any())).thenReturn(true);
         when(controlService.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
-        when(identifiersRequestRepository.findByEdeliveryMessageId(any())).thenReturn(identifiersRequestEntity);
+        when(identifiersRequestRepository.findByControlRequestIdAndGateIdDest(any(), any())).thenReturn(identifiersRequestEntity);
 
         //Act
         identifiersRequestService.manageResponseReceived(notificationDto);

@@ -119,12 +119,13 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         }
         String requestId = response.getRequestId();
         if (getControlService().findByRequestId(requestId).isPresent()) {
-            identifiersControlUpdateDelegateService.updateExistingControl(response, notificationDto.getContent().getFromPartyId());
+            String fromPartyId = notificationDto.getContent().getFromPartyId();
+            identifiersControlUpdateDelegateService.updateExistingControl(response, fromPartyId);
             identifiersControlUpdateDelegateService.setControlNextStatus(requestId);
-            IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByEdeliveryMessageId(notificationDto.getMessageId());
+            IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByControlRequestIdAndGateIdDest(requestId, fromPartyId);
 
             //log fti021
-            getLogManager().logReceivedMessage(getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl()), GATE, GATE, body, notificationDto.getContent().getFromPartyId(),
+            getLogManager().logReceivedMessage(getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl()), GATE, GATE, body, fromPartyId,
                     getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
         }
     }
