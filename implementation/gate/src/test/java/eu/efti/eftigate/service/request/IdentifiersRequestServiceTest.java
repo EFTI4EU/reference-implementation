@@ -224,26 +224,26 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldUpdateSentRequestStatus_whenRequestIsExternal() {
+    void shouldUpdateRequestStatus_whenRequestIsExternal() {
         identifiersRequestDto.getControl().setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         when(mapperUtils.requestToRequestDto(identifiersRequestEntity, IdentifiersRequestDto.class)).thenReturn(identifiersRequestDto);
         when(mapperUtils.requestDtoToRequestEntity(identifiersRequestDto, IdentifiersRequestEntity.class)).thenReturn(identifiersRequestEntity);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
 
-        identifiersRequestService.updateSentRequestStatus(identifiersRequestDto, MESSAGE_ID);
+        identifiersRequestService.updateRequestStatus(identifiersRequestDto, MESSAGE_ID);
 
         verify(mapperUtils, times(1)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
         assertEquals(RESPONSE_IN_PROGRESS, identifiersRequestDto.getStatus());
     }
 
     @Test
-    void shouldUpdateSentRequestStatus_whenRequestIsNotExternal() {
+    void shouldUpdateRequestStatus_whenRequestIsNotExternal() {
         identifiersRequestDto.getControl().setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         when(mapperUtils.requestToRequestDto(identifiersRequestEntity, IdentifiersRequestDto.class)).thenReturn(identifiersRequestDto);
         when(mapperUtils.requestDtoToRequestEntity(identifiersRequestDto, IdentifiersRequestEntity.class)).thenReturn(identifiersRequestEntity);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
 
-        identifiersRequestService.updateSentRequestStatus(identifiersRequestDto, MESSAGE_ID);
+        identifiersRequestService.updateRequestStatus(identifiersRequestDto, MESSAGE_ID);
 
         verify(mapperUtils, times(1)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
         assertEquals(IN_PROGRESS, identifiersRequestDto.getStatus());

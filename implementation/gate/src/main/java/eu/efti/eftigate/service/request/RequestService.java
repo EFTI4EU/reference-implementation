@@ -147,7 +147,7 @@ public abstract class RequestService<T extends RequestEntity> {
         log.info("Request has been registered with controlId : {}", requestDto.getControl().getId());
     }
 
-    public void updateSentRequestStatus(final RequestDto requestDto, final String edeliveryMessageId) {
+    public void updateRequestStatus(final RequestDto requestDto, final String edeliveryMessageId) {
         requestDto.setEdeliveryMessageId(edeliveryMessageId);
         final RequestStatusEnum requestStatus = requestDto.getStatus();
         if (!(RESPONSE_IN_PROGRESS.equals(requestStatus) || ERROR.equals(requestStatus) || TIMEOUT.equals(requestStatus))) {

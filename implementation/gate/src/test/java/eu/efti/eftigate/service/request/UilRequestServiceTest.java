@@ -83,10 +83,10 @@ class UilRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void updateSentRequestStatusTest() {
+    void updateRequestStatusTest() {
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
 
-        uilRequestService.updateSentRequestStatus(requestDto, "edeliveryMessageId");
+        uilRequestService.updateRequestStatus(requestDto, "edeliveryMessageId");
 
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
     }
