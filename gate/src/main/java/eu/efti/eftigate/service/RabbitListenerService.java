@@ -14,6 +14,7 @@ import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
+import eu.efti.eftigate.generator.id.MessageIdGenerator;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
@@ -36,6 +37,7 @@ public class RabbitListenerService {
     private final ApIncomingService apIncomingService;
     private final MapperUtils mapperUtils;
     private final LogManager logManager;
+    private final MessageIdGenerator messageIdGenerator;
 
 
     @RabbitListener(queues = "${spring.rabbitmq.queues.eftiReceiveMessageQueue:efti.receive-messages.q}")
@@ -63,13 +65,16 @@ public class RabbitListenerService {
         final boolean isCurrentGate = gateProperties.isCurrentGate(rabbitRequestDto.getGateIdDest());
         final String receiver = isCurrentGate ? rabbitRequestDto.getControl().getPlatformId() : rabbitRequestDto.getGateIdDest();
         final RequestDto requestDto = mapperUtils.rabbitRequestDtoToRequestDto(rabbitRequestDto, EftiGateConstants.REQUEST_TYPE_CLASS_MAP.get(rabbitRequestDto.getRequestType()));
+        String previousEdeliveryMessageId = rabbitRequestDto.getEdeliveryMessageId();
         try {
-            final String edeliveryMessageId = this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto));
+            String eDeliveryMessageId = messageIdGenerator.generateMessageId();
             if (rabbitRequestDto.getError() == null || !ErrorCodesEnum.REQUESTID_MISSING.name().equals(rabbitRequestDto.getError().getErrorCode())) {
-                getRequestService(rabbitRequestDto.getRequestType()).updateSentRequestStatus(requestDto, edeliveryMessageId);
+                getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, eDeliveryMessageId);
             }
+            this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto, eDeliveryMessageId));
         } catch (final SendRequestException e) {
             log.error("error while sending request" + e);
+            getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
             final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
@@ -83,12 +88,13 @@ public class RabbitListenerService {
         }
     }
 
-    private ApRequestDto buildApRequestDto(final RabbitRequestDto requestDto) {
+    private ApRequestDto buildApRequestDto(final RabbitRequestDto requestDto, String edeliveryMessageId) {
         final String receiver = gateProperties.isCurrentGate(requestDto.getGateIdDest()) ? requestDto.getControl().getPlatformId() : requestDto.getGateIdDest();
         return ApRequestDto.builder()
                 .requestId(requestDto.getControl().getRequestId())
                 .sender(gateProperties.getOwner()).receiver(receiver)
                 .body(getRequestService(requestDto.getRequestType()).buildRequestBody(requestDto))
+                .eDeliveryMessageId(edeliveryMessageId)
                 .apConfig(ApConfigDto.builder()
                         .username(gateProperties.getAp().getUsername())
                         .password(gateProperties.getAp().getPassword())
