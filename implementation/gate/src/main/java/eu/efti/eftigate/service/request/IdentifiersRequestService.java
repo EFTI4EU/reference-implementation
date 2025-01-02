@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service.request;
 
-
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.IdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResultsDto;
@@ -119,15 +118,15 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
             return;
         }
         String requestId = response.getRequestId();
-        if (getControlService().existsByCriteria(requestId)) {
-            ControlDto controlDto = getControlService().getControlByRequestId(requestId);
-            identifiersControlUpdateDelegateService.updateExistingControl(response, notificationDto.getContent().getFromPartyId());
+        if (getControlService().findByRequestId(requestId).isPresent()) {
+            String fromPartyId = notificationDto.getContent().getFromPartyId();
+            identifiersControlUpdateDelegateService.updateExistingControl(response, fromPartyId);
             identifiersControlUpdateDelegateService.setControlNextStatus(requestId);
-            IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByEdeliveryMessageId(notificationDto.getMessageId());
+            IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByControlRequestIdAndGateIdDest(requestId, fromPartyId);
 
             //log fti021
-            getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, notificationDto.getContent().getFromPartyId(),
-                    identifiersRequestEntity != null ? getStatusEnumOfRequest(identifiersRequestEntity) : StatusEnum.COMPLETE, LogManager.FTI_021);
+            getLogManager().logReceivedMessage(getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl()), GATE, GATE, body, fromPartyId,
+                    getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
         }
     }
 
@@ -176,6 +175,11 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     @Override
+    public void saveRequest(RequestDto requestDto) {
+        identifiersRequestRepository.save(getMapperUtils().requestDtoToRequestEntity(requestDto, IdentifiersRequestEntity.class));
+    }
+
+    @Override
     protected void updateStatus(final IdentifiersRequestEntity identifiersRequestEntity, final RequestStatusEnum status) {
         identifiersRequestEntity.setStatus(status);
         getControlService().save(identifiersRequestEntity.getControl());
@@ -206,12 +210,16 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
 
     private RequestDto createReceivedRequest(final ControlDto controlDto, final List<ConsignmentDto> identifiersDtos) {
         final RequestDto request = createRequest(controlDto, RECEIVED, identifiersDtos);
-        final ControlDto updatedControl = getControlService().getControlByRequestId(controlDto.getRequestId());
+        final ControlDto updatedControl = updateControl(controlDto);
         if (StatusEnum.COMPLETE == updatedControl.getStatus()) {
             request.setStatus(RESPONSE_IN_PROGRESS);
         }
         request.setControl(updatedControl);
         return request;
+    }
+
+    public ControlDto updateControl(ControlDto controlDto) {
+        return getControlService().updateControl(controlDto.getRequestId());
     }
 
     public IdentifiersRequestDto createRequest(final ControlDto controlDto, final RequestStatusEnum status, final List<ConsignmentDto> identifiersDtoList) {

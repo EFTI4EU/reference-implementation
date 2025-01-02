@@ -149,6 +149,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                 .build();
         when(controlService.getControlByRequestId(anyString())).thenReturn(controlDto);
         when(controlService.createControlFrom(any(), any())).thenReturn(controlDto);
+        when(controlService.updateControl(any())).thenReturn(controlDto);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
         when(validationService.isRequestValid(any())).thenReturn(true);
         //Act
@@ -177,6 +178,8 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
 
         when(controlService.existsByCriteria("67fe38bd-6bf7-4b06-b20e-206264bd639c")).thenReturn(true);
         when(validationService.isResponseValid(any())).thenReturn(true);
+        when(controlService.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
+        when(identifiersRequestRepository.findByControlRequestIdAndGateIdDest(any(), any())).thenReturn(identifiersRequestEntity);
 
         //Act
         identifiersRequestService.manageResponseReceived(notificationDto);
