@@ -62,6 +62,7 @@ import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.isNotFound;
 public class UilRequestService extends RequestService<UilRequestEntity> {
 
     private static final String UIL = "UIL";
+    public static final String UIL_REQUEST_DTO_NOT_FIND_IN_DB = "uilRequestDto not find in DB";
     private final UilRequestRepository uilRequestRepository;
     private final SerializeUtils serializeUtils;
     private final ObjectFactory objectFactory = new ObjectFactory();
@@ -118,7 +119,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 manageResponseFromOtherGate(uilRequestDto.get(), uilResponse, notificationDto.getContent());
             }
         } else {
-            log.error("uilRequestDto not find in DB");
+            log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB);
         }
     }
 

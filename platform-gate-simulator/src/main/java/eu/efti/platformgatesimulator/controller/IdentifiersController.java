@@ -1,12 +1,15 @@
 package eu.efti.platformgatesimulator.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.platformgatesimulator.exception.UploadException;
 import eu.efti.platformgatesimulator.service.ApIncomingService;
+import eu.efti.platformgatesimulator.service.IdentifierService;
 import eu.efti.platformgatesimulator.service.ReaderService;
 import eu.efti.v1.json.SaveIdentifiersRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,11 +23,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/identifiers")
 @AllArgsConstructor
 @Slf4j
-public class    IdentifiersController {
+public class IdentifiersController {
 
     private final ApIncomingService apIncomingService;
 
     private final ReaderService readerService;
+
+    private final IdentifierService identifierService;
 
     @PostMapping("/upload/file")
     public ResponseEntity<String> uploadFile(@RequestPart final MultipartFile file) {
@@ -55,5 +60,15 @@ public class    IdentifiersController {
             return new ResponseEntity<>("No identifiers sent, error in JSON process", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("Identifiers uploaded", HttpStatus.OK);
+    }
+
+    @PostMapping("/control/queryIdentifiers")
+    public ResponseEntity<SearchWithIdentifiersRequestDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto) {
+        log.info("POST on /control/queryIdentifiers on gates {} with params, identifier: {}, identifierType:{}, modeCode: {}, registrationCountryCode: {}, dangerousGoodsIndicator: {} ",
+                StringUtils.join(identifiersRequestDto.getEftiGateIndicator(), ","), identifiersRequestDto.getIdentifier(),
+                StringUtils.join(identifiersRequestDto.getIdentifierType(), ","), identifiersRequestDto.getModeCode(),
+                identifiersRequestDto.getRegistrationCountryCode(), identifiersRequestDto.getDangerousGoodsIndicator());
+        identifierService.sendIdentifierRequest(identifiersRequestDto);
+        return new ResponseEntity<>(identifiersRequestDto, HttpStatus.ACCEPTED);
     }
 }

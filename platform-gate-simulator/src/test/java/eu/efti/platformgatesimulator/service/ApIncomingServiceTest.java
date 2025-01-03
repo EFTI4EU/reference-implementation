@@ -31,13 +31,16 @@ class ApIncomingServiceTest extends AbstractTest {
     AutoCloseable openMocks;
 
     @Mock
-    private RequestSendingService requestSendingService;
+    private IdentifierService identifierService;
 
     @Mock
     private NotificationService notificationService;
 
     @Mock
     private ReaderService readerService;
+
+    @Mock
+    private ControlService controlService;
 
     private ApIncomingService apIncomingService;
 
@@ -53,7 +56,7 @@ class ApIncomingServiceTest extends AbstractTest {
                         .password("password")
                         .username("username").build()).build();
         openMocks = MockitoAnnotations.openMocks(this);
-        apIncomingService = new ApIncomingService(requestSendingService, notificationService, gateProperties, readerService, serializeUtils);
+        apIncomingService = new ApIncomingService(notificationService, gateProperties, readerService, identifierService, controlService);
     }
 
     @AfterEach
@@ -62,7 +65,7 @@ class ApIncomingServiceTest extends AbstractTest {
     }
 
     @Test
-    void manageIncomingNotificationBadFilesTest() throws IOException, InterruptedException {
+    void manageIncomingNotificationBadFilesTest() throws IOException {
         final String body = """
             <uilQuery
                     xmlns="http://efti.eu/v1/edelivery"
