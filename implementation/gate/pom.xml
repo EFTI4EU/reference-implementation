@@ -142,11 +142,9 @@
             <version>2.2.2</version>
         </dependency>
 
-        <!-- required by domibus service -->
         <dependency>
             <groupId>com.sun.xml.messaging.saaj</groupId>
             <artifactId>saaj-impl</artifactId>
-            <version>3.0.4</version>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>

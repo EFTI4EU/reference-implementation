@@ -78,7 +78,6 @@
         <dependency>
             <groupId>com.sun.xml.messaging.saaj</groupId>
             <artifactId>saaj-impl</artifactId>
-            <version>3.0.4</version>
         </dependency>
 
         <dependency>
