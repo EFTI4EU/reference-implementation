@@ -69,7 +69,6 @@
             <version>3.15.0</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/jakarta.xml.soap/jakarta.xml.soap-api -->
         <dependency>
             <groupId>jakarta.xml.soap</groupId>
             <artifactId>jakarta.xml.soap-api</artifactId>
@@ -92,7 +91,7 @@
         <dependency>
             <groupId>eu.efti</groupId>
             <artifactId>commons</artifactId>
-            <version>${revision}</version>
+            <version>0.4.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

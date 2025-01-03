@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
@@ -47,12 +46,8 @@ public class UsedTransportEquipment implements Serializable {
     @JoinColumn(name = "consignment_id", referencedColumnName = "id", updatable = false)
     private Consignment consignment;
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "usedTransportEquipment", targetEntity = CarriedTransportEquipment.class)
     @ToString.Exclude
     private List<CarriedTransportEquipment> carriedTransportEquipments = new ArrayList<>();
-
-    public void setCarriedTransportEquipments(List<CarriedTransportEquipment> carriedTransportEquipments) {
-        CollectionUtils.emptyIfNull(carriedTransportEquipments).forEach(eq -> eq.setUsedTransportEquipment(this));
-        this.carriedTransportEquipments = carriedTransportEquipments;
-    }
 }

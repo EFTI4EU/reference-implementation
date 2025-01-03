@@ -1,6 +1,7 @@
 package eu.efti.eftigate.generator.id;
 
 import com.fasterxml.uuid.NoArgGenerator;
+import eu.efti.eftigate.generator.id.MessageIdGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

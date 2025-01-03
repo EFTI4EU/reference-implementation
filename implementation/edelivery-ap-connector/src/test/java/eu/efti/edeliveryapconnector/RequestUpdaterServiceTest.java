@@ -6,7 +6,6 @@ import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
-import eu.domibus.plugin.ws.generated.MarkMessageAsDownloadedFault;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
