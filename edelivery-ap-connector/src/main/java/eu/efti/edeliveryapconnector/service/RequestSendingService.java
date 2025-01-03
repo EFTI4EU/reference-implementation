@@ -9,6 +9,7 @@ import eu.efti.plugin.ws.generated.body.SubmitRequest;
 import eu.efti.plugin.ws.generated.body.SubmitResponse;
 import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
 import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
+import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
 import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
 import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import eu.efti.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
@@ -26,6 +27,7 @@ import jakarta.activation.DataSource;
 import jakarta.mail.util.ByteArrayDataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
@@ -85,7 +87,11 @@ public class RequestSendingService extends AbstractApService {
         userMessage.setCollaborationInfo(createCollaborationInfo(requestDto.getRequestId()));
         userMessage.setPayloadInfo(createPayloadInfo());
         userMessage.setMessageProperties(createMessageProperties());
-
+        if (StringUtils.isNotBlank(requestDto.getEDeliveryMessageId())) {
+            MessageInfo messageInfo = new MessageInfo();
+            messageInfo.setMessageId(requestDto.getEDeliveryMessageId());
+            userMessage.setMessageInfo(messageInfo);
+        }
         messaging.setUserMessage(userMessage);
         return messaging;
     }

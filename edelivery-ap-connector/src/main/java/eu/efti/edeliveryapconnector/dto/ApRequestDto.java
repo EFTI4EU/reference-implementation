@@ -10,5 +10,6 @@ public class ApRequestDto {
     private String sender;
     private String receiver;
     private String body;
+    private String eDeliveryMessageId;
     private ApConfigDto apConfig;
 }

@@ -193,7 +193,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     @Override
-    public void updateSentRequestStatus(final RequestDto requestDto, final String edeliveryMessageId) {
+    public void updateRequestStatus(final RequestDto requestDto, final String edeliveryMessageId) {
         requestDto.setEdeliveryMessageId(edeliveryMessageId);
         this.updateStatus(requestDto, isExternalRequest(requestDto) ? RESPONSE_IN_PROGRESS : RequestStatusEnum.IN_PROGRESS);
     }
