@@ -27,7 +27,7 @@ public class ApIncomingController {
     private final ApIncomingService apIncomingService;
 
     @PostMapping("/notification")
-    public ResponseEntity<String> getById(final @RequestBody ReceivedNotificationDto receivedNotificationDto) throws IOException, InterruptedException {
+    public ResponseEntity<String> getById(final @RequestBody ReceivedNotificationDto receivedNotificationDto) {
         log.info("Notification reçus");
 
         apIncomingService.manageIncomingNotification(receivedNotificationDto);

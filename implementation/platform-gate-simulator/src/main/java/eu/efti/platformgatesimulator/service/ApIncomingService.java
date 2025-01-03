@@ -1,6 +1,8 @@
 package eu.efti.platformgatesimulator.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.edeliveryapconnector.constant.EDeliveryStatus;
 import eu.efti.platformgatesimulator.mapper.MapperUtils;
@@ -20,25 +22,37 @@ import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.NotificationService;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.platformgatesimulator.config.GateProperties;
+import eu.efti.platformgatesimulator.mapper.MapperUtils;
+import eu.efti.v1.consignment.common.SupplyChainConsignment;
+import eu.efti.v1.edelivery.Consignment;
+import eu.efti.v1.edelivery.IdentifierQuery;
+import eu.efti.v1.edelivery.IdentifierResponse;
+import eu.efti.v1.edelivery.ObjectFactory;
+import eu.efti.v1.edelivery.PostFollowUpRequest;
+import eu.efti.v1.edelivery.UILQuery;
+import eu.efti.v1.edelivery.UILResponse;
+import eu.efti.v1.json.SaveIdentifiersRequest;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.annotation.XmlType;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.C;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.naming.ldap.Control;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-import static java.lang.Thread.sleep;
-
 @Service
 @AllArgsConstructor
 @Slf4j
 public class ApIncomingService {
-    private static final String NOT_FOUND_MESSAGE = "file not found with uuid";
 
     private final RequestSendingService requestSendingService;
 
@@ -47,10 +61,14 @@ public class ApIncomingService {
     private final Random random = new Random();
 
     private final GateProperties gateProperties;
-    private final ReaderService readerService;
     private final MapperUtils mapperUtils = new MapperUtils();
     private final SerializeUtils serializeUtils;
     private final ObjectFactory objectFactory = new ObjectFactory();
+
+    private final ReaderService readerService;
+
+    private final IdentifierService identifierService;
+
 
     public void uploadIdentifiers(final SaveIdentifiersRequest identifiersDto) throws JsonProcessingException {
         final eu.efti.v1.edelivery.SaveIdentifiersRequest edeliveryRequest = mapperUtils.mapToEdeliveryRequest(identifiersDto);
@@ -69,16 +87,32 @@ public class ApIncomingService {
         }
     }
 
-    public void manageIncomingNotification(final ReceivedNotificationDto receivedNotificationDto) throws IOException, InterruptedException {
-        final int rand = random.nextInt(gateProperties.getMaxSleep() - gateProperties.getMinSleep()) + gateProperties.getMinSleep();
-        sleep(rand);
-
+    public void manageIncomingNotification(final ReceivedNotificationDto receivedNotificationDto) {
         final Optional<NotificationDto> notificationDto = notificationService.consume(receivedNotificationDto);
         if (notificationDto.isEmpty() || notificationDto.get().getNotificationType() == NotificationType.SEND_SUCCESS
                 || notificationDto.get().getNotificationType() == NotificationType.SEND_FAILURE) {
             return;
         }
+
         final NotificationContentDto notificationContentDto = notificationDto.get().getContent();
+
+        final XmlType queryAnnotationUilResponse = UILResponse.class.getAnnotation((XmlType.class));
+        if (StringUtils.containsIgnoreCase(notificationContentDto.getBody(), "<" + queryAnnotationUilResponse.name())) {
+            log.info("Receive UilResponse");
+            return;
+        }
+        final XmlType responseIdentifierAnnotation = IdentifierResponse.class.getAnnotation((XmlType.class));
+        if (StringUtils.containsIgnoreCase(notificationContentDto.getBody(), "<" + responseIdentifierAnnotation.name())) {
+            log.info("Receive IdentifierResponse");
+            return;
+        }
+
+        final XmlType queryAnnotationIdentifierQuery = IdentifierQuery.class.getAnnotation((XmlType.class));
+        if (StringUtils.containsIgnoreCase(notificationContentDto.getBody(), "<" + queryAnnotationIdentifierQuery.name())) {
+            final IdentifierQuery identifierQuery = serializeUtils.mapXmlStringToJaxbObject(notificationContentDto.getBody());
+            identifierService.sendResponseIdentifier(identifierQuery, notificationDto.get());
+            return;
+        }
 
         final XmlType queryAnnotation = UILQuery.class.getAnnotation((XmlType.class));
         if (StringUtils.containsIgnoreCase(notificationContentDto.getBody(), "<" + queryAnnotation.name())) {
@@ -88,37 +122,16 @@ public class ApIncomingService {
                 log.info("id {} end with 1, not responding", datasetId);
                 return;
             }
-            sendResponse(buildApConf(), uilQuery.getRequestId(), readerService.readFromFile(gateProperties.getCdaPath() + datasetId));
+            try {
+                final SupplyChainConsignment supplyChainConsignment = readerService.readFromFile(gateProperties.getCdaPath() + datasetId);
+                identifierService.sendResponseUil(uilQuery.getRequestId(), supplyChainConsignment);
+            } catch (IOException e) {
+                log.error("Error can't read file");
+            }
         } else {
             final PostFollowUpRequest messageBody = serializeUtils.mapXmlStringToJaxbObject(notificationDto.get().getContent().getBody());
             log.info("note \"{}\" received for request with id {}", messageBody.getMessage(), messageBody.getRequestId());
         }
-    }
-
-    private void sendResponse(final ApConfigDto apConfigDto, final String requestId, final SupplyChainConsignment data) {
-        final boolean notFound = data == null;
-        final ApRequestDto apRequestDto = ApRequestDto.builder()
-                .requestId(requestId).body(buildBody(data, requestId, notFound))
-                .apConfig(apConfigDto)
-                .receiver(gateProperties.getGate())
-                .sender(gateProperties.getOwner())
-                .build();
-        try {
-            requestSendingService.sendRequest(apRequestDto);
-        } catch (final SendRequestException e) {
-            log.error("SendRequestException received : ", e);
-        }
-    }
-
-    private String buildBody(final SupplyChainConsignment data, final String requestId, final boolean notFound) {
-        final UILResponse uilResponse = new UILResponse();
-        uilResponse.setRequestId(requestId);
-        uilResponse.setDescription(notFound ? NOT_FOUND_MESSAGE :  null);
-        uilResponse.setStatus(notFound ? EDeliveryStatus.NOT_FOUND.getCode() : EDeliveryStatus.OK.getCode());
-        uilResponse.setConsignment(data);
-
-        final JAXBElement<UILResponse> jaxbElement = objectFactory.createUilResponse(uilResponse);
-        return serializeUtils.mapJaxbObjectToXmlString(jaxbElement, UILResponse.class);
     }
 
     private ApConfigDto buildApConf() {

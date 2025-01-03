@@ -154,7 +154,7 @@ public class IdentifierService {
                 .requestId(requestId)
                 .sender(gateProperties.getOwner())
                 .receiver(gateProperties.getGate())
-                .body(uilQueryString(uilDto, requestId))
+                .body(UilQueryString(uilDto, requestId))
                 .apConfig(ApConfigDto.builder()
                         .username(gateProperties.getAp().getUsername())
                         .password(gateProperties.getAp().getPassword())
@@ -163,7 +163,7 @@ public class IdentifierService {
                 .build();
     }
 
-    public String uilQueryString(final UilDto uilDto, final String requestId) {
+    public String UilQueryString(final UilDto uilDto, final String requestId) {
         final UILQuery uilQuery = new UILQuery();
         final UIL uil = new UIL();
         uil.setDatasetId(uilDto.getDatasetId());
