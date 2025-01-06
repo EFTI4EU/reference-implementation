@@ -65,10 +65,10 @@ public class IdentifierService {
 
     private final Random random = new Random();
 
-    private String queryIdentifierString(SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto, String requestId) {
-        IdentifierQuery identifierQuery = new IdentifierQuery();
+    private String queryIdentifierString(final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto, String requestId) {
+        final IdentifierQuery identifierQuery = new IdentifierQuery();
 
-        Identifier identifier = new Identifier();
+        final Identifier identifier = new Identifier();
         identifier.setValue(searchWithIdentifiersRequestDto.getIdentifier());
 
         identifierQuery.setIdentifier(identifier);
@@ -81,7 +81,7 @@ public class IdentifierService {
         return serializeUtils.mapJaxbObjectToXmlString(jaxBResponse, IdentifierQuery.class);
     }
 
-    public ApRequestDto buildApRequestQueryIdentifier(SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {
+    public ApRequestDto buildApRequestQueryIdentifier(final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {
         final String requestId = UUID.randomUUID().toString();
         return ApRequestDto.builder()
                 .requestId(requestId)
@@ -153,7 +153,7 @@ public class IdentifierService {
         if (badRequestPercentage >= 1 || badRequestPercentage <= 0) {
             return true;
         }
-        float randFloat = random.nextFloat();
+        final float randFloat = random.nextFloat();
         return randFloat >= badRequestPercentage;
     }
 
