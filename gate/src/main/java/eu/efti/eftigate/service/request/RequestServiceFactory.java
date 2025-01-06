@@ -12,13 +12,14 @@ public class RequestServiceFactory {
 
     private final List<RequestService<?>> requestServices;
 
-
+    @SuppressWarnings("rawtypes")
     public RequestService getRequestServiceByRequestType(final RequestTypeEnum requestType) {
         return requestServices.stream()
                 .filter(requestService -> requestService.supports(requestType)).findFirst()
                 .orElse(null);
     }
 
+    @SuppressWarnings("rawtypes")
     public RequestService getRequestServiceByRequestType(final String requestType) {
         return requestServices.stream()
                 .filter(requestService -> requestService.supports(requestType)).findFirst()

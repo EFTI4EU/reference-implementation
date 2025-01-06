@@ -15,7 +15,7 @@
 
     <properties>
         <sonar.coverage.exclusions>
-            **/constant/**
+            **/constant/**,**/exception/**.java
         </sonar.coverage.exclusions>
 
     </properties>

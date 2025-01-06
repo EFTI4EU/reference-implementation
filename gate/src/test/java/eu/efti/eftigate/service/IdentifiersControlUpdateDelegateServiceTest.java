@@ -1,4 +1,4 @@
-package eu.efti.eftigate.service.request;
+package eu.efti.eftigate.service;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -9,7 +9,7 @@ import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
-import eu.efti.eftigate.service.BaseServiceTest;
+import eu.efti.eftigate.service.request.IdentifiersRequestService;
 import eu.efti.v1.edelivery.Consignment;
 import eu.efti.v1.edelivery.IdentifierResponse;
 import eu.efti.v1.edelivery.UIL;

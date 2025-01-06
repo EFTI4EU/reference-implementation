@@ -15,6 +15,8 @@ import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
+import eu.efti.eftigate.service.IdentifiersControlUpdateDelegateService;
+import eu.efti.eftigate.service.ValidationService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.codes.TransportEquipmentCategoryCode;
 import org.junit.jupiter.api.BeforeEach;
