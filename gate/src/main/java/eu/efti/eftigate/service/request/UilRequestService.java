@@ -25,6 +25,7 @@ import eu.efti.eftigate.repository.UilRequestRepository;
 import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
+import eu.efti.eftigate.service.ValidationService;
 import eu.efti.eftigate.utils.ControlUtils;
 import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.v1.consignment.common.ObjectFactory;
@@ -279,8 +280,6 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 controlDto.setStatus(StatusEnum.ERROR);
             }
             default -> throw new TechnicalException("status " + uilResponseStatus + " not found");
-
-
         }
         this.save(requestDto);
         ControlDto savedControl = getControlService().save(controlDto);

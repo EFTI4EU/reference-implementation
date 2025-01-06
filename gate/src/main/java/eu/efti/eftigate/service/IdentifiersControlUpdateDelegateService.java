@@ -1,4 +1,4 @@
-package eu.efti.eftigate.service.request;
+package eu.efti.eftigate.service;
 
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.StatusEnum;
@@ -7,7 +7,6 @@ import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
-import eu.efti.eftigate.service.ControlService;
 import eu.efti.v1.edelivery.IdentifierResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

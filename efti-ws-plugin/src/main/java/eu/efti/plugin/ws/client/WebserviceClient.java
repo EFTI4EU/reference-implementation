@@ -31,7 +31,7 @@ public class WebserviceClient {
     }
 
     public WebServicePluginInterface getPort(String username, String password) throws MalformedURLException {
-        if (wsdl == null || wsdl.isEmpty()) {
+        if (StringUtils.isBlank(wsdl)) {
             throw new IllegalArgumentException("No webservice location specified");
         }
 

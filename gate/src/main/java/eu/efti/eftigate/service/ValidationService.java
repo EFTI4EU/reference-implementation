@@ -1,4 +1,4 @@
-package eu.efti.eftigate.service.request;
+package eu.efti.eftigate.service;
 
 import eu.efti.v1.edelivery.Request;
 import eu.efti.v1.edelivery.Response;
