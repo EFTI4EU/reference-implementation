@@ -1,7 +1,7 @@
 package eu.efti.platformgatesimulator.controller;
 
 import eu.efti.commons.dto.UilDto;
-import eu.efti.platformgatesimulator.service.ControlService;
+import eu.efti.platformgatesimulator.service.IdentifierService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class ControlController {
 
-    private final ControlService controlService;
+    private final IdentifierService identifierService;
 
         @PostMapping("/control/queryUIL")
     public ResponseEntity<UilDto> requestUil(@RequestBody final UilDto uilDto) {
         log.info("POST on /control/queryUIL with params gateId: {}, datasetId: {}, platformId: {}", uilDto.getGateId(), uilDto.getDatasetId(), uilDto.getPlatformId());
-        controlService.sendRequestUil(uilDto);
+        identifierService.sendRequestUil(uilDto);
         return new ResponseEntity<>(uilDto, HttpStatus.ACCEPTED);
     }
 }

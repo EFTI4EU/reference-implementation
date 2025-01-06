@@ -46,19 +46,18 @@ import java.util.UUID;
 @Slf4j
 public class ApIncomingService {
 
-    private final RequestSendingService requestSendingService = new RequestSendingService();
+    private final RequestSendingService requestSendingService;
 
     private final NotificationService notificationService;
 
     private final GateProperties gateProperties;
     private final MapperUtils mapperUtils = new MapperUtils();
-    private final SerializeUtils serializeUtils = new SerializeUtils(new ObjectMapper(), new XmlMapper());
+    private final SerializeUtils serializeUtils;
     private final ObjectFactory objectFactory = new ObjectFactory();
 
     private final ReaderService readerService;
-    private final IdentifierService identifierService;
 
-    private final ControlService controlService;
+    private final IdentifierService identifierService;
 
 
     public void uploadIdentifiers(final SaveIdentifiersRequest identifiersDto) throws JsonProcessingException {
@@ -115,7 +114,7 @@ public class ApIncomingService {
             }
             try {
                 final SupplyChainConsignment supplyChainConsignment = readerService.readFromFile(gateProperties.getCdaPath() + datasetId);
-                controlService.sendResponseUil(uilQuery.getRequestId(), supplyChainConsignment);
+                identifierService.sendResponseUil(uilQuery.getRequestId(), supplyChainConsignment);
             } catch (IOException e) {
                 log.error("Error can't read file");
             }
