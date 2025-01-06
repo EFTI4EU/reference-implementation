@@ -58,7 +58,7 @@ public class IdentifierService {
     @Value("${mock.identifierReponseBadResponse.status:502}")
     String statusIdentifierBadResponse;
 
-    @Value("${mock.badRequestPercentage:0}")
+    @Value("${mock.badRequestPercentage:0f}")
     float badRequestPercentage;
 
 
@@ -116,7 +116,7 @@ public class IdentifierService {
     }
 
     private boolean defineBadOrGoodRequest() {
-        if (badRequestPercentage >= 1 || badRequestPercentage <= 0) {
+        if (badRequestPercentage >= 1 || badRequestPercentage < 0) {
             return true;
         }
         float randFloat = random.nextFloat();
@@ -193,7 +193,7 @@ public class IdentifierService {
         return serializeUtils.mapJaxbObjectToXmlString(jaxBResponse, IdentifierQuery.class);
     }
 
-    public ApRequestDto buildApRequestQueryIdentifier(final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {
+    private ApRequestDto buildApRequestQueryIdentifier(final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {
         final String requestId = UUID.randomUUID().toString();
         return ApRequestDto.builder()
                 .requestId(requestId)

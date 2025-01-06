@@ -20,7 +20,7 @@ gate:
     password: Azerty59*1234567
 
 mock:
-  badRequestPercentage: 0.5
+  badRequestPercentage: 0.5f
   gaussWaitingTime:
     average: 10
     standardDeviation: 5

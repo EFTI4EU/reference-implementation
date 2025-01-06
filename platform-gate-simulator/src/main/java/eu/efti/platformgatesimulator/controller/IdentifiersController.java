@@ -61,14 +61,4 @@ public class IdentifiersController {
         }
         return new ResponseEntity<>("Identifiers uploaded", HttpStatus.OK);
     }
-
-    @PostMapping("/control/queryIdentifiers")
-    public ResponseEntity<SearchWithIdentifiersRequestDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto) {
-        log.info("POST on /control/queryIdentifiers on gates {} with params, identifier: {}, identifierType:{}, modeCode: {}, registrationCountryCode: {}, dangerousGoodsIndicator: {} ",
-                StringUtils.join(identifiersRequestDto.getEftiGateIndicator(), ","), identifiersRequestDto.getIdentifier(),
-                StringUtils.join(identifiersRequestDto.getIdentifierType(), ","), identifiersRequestDto.getModeCode(),
-                identifiersRequestDto.getRegistrationCountryCode(), identifiersRequestDto.getDangerousGoodsIndicator());
-        identifierService.sendIdentifierRequest(identifiersRequestDto);
-        return new ResponseEntity<>(identifiersRequestDto, HttpStatus.ACCEPTED);
-    }
 }
