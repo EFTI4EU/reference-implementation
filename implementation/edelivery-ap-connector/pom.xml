@@ -94,13 +94,13 @@
         <dependency>
             <groupId>eu.efti</groupId>
             <artifactId>commons</artifactId>
-            <version>0.4.2-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>eu.efti</groupId>
             <artifactId>efti-ws-plugin</artifactId>
-            <version>0.4.2-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.wiremock/wiremock-standalone -->

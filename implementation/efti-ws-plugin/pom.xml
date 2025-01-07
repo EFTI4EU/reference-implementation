@@ -90,7 +90,7 @@
         <dependency>
             <groupId>eu.efti</groupId>
             <artifactId>commons</artifactId>
-            <version>0.4.2-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 
