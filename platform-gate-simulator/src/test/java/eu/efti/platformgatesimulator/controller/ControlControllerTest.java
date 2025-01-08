@@ -17,7 +17,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,7 +25,7 @@ import static org.mockito.Mockito.verify;
 @ContextConfiguration(classes = {ControlController.class})
 @ExtendWith(SpringExtension.class)
 class ControlControllerTest {
-    
+
     @Mock
     private IdentifierService identifierService;
 
