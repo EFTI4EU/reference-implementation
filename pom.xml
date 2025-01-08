@@ -79,7 +79,7 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:https://gitlab.imprimerienationale.fr/efti/gate.git</connection>
+        <connection>scm:git:https://gitlab.imprimerienationale.fr/kube/projects/efti/gate.git</connection>
     </scm>
 
     <modules>
