@@ -175,7 +175,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
         final UILQuery uilQuery = new UILQuery();
         final UIL uil = new UIL();
-        uil.setDatasetId(controlDto.getEftiDataUuid());
+        uil.setDatasetId(controlDto.getDatasetId());
         uil.setPlatformId(requestDto.getControl().getPlatformId());
         uil.setGateId(requestDto.getGateIdDest());
         uilQuery.setUil(uil);

@@ -18,7 +18,7 @@
   "gateIdDest": "http://france.lol",
   "control": {
     "id": 102,
-    "eftiDataUuid": "12345678-ab12-4ab6-8999-123456789abe",
+    "datasetId": "12345678-ab12-4ab6-8999-123456789abe",
     "requestId": "c5ed0840-bf60-4052-8172-35530d423672",
     "requestType": "LOCAL_UIL_SEARCH",
     "status": "PENDING",

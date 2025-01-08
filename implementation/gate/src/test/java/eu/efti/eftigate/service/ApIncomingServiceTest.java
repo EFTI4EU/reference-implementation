@@ -44,7 +44,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
     private static final String XML_BODY = """
             <SaveIdentifiersRequest>
                 <eFTIPlatformUrl>https://efti.platform.001.eu</eFTIPlatformUrl>
-                <eFTIDataUuid>ac0bbbc9-f46e-4093-b523-830431fb1001</eFTIDataUuid>
+                <datasetId>ac0bbbc9-f46e-4093-b523-830431fb1001</datasetId>
                 <eFTIGateUrl>https://efti.gate.001.eu"</eFTIGateUrl>
                 <isDangerousGoods>true</isDangerousGoods>
                 <journeyStart>2023-06-11T12:2:00+0000</journeyStart>

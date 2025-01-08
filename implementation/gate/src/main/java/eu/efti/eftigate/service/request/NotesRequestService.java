@@ -67,7 +67,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
 
         uil.setPlatformId(requestDto.getControl().getPlatformId());
         uil.setGateId(requestDto.getControl().getGateId());
-        uil.setDatasetId(controlDto.getEftiDataUuid());
+        uil.setDatasetId(controlDto.getDatasetId());
         postFollowUpRequest.setUil(uil);
         postFollowUpRequest.setMessage(requestDto.getNote());
         postFollowUpRequest.setRequestId(requestDto.getControl().getRequestId());

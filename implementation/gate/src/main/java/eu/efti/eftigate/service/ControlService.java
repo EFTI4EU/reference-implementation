@@ -298,10 +298,10 @@ public class ControlService {
     }
 
     private boolean checkOnLocalRegistry(final ControlDto controlDto) {
-        log.info("checking local registry for dataUuid {}", controlDto.getEftiDataUuid());
+        log.info("checking local registry for dataUuid {}", controlDto.getDatasetId());
         //log fti015
         logManager.logRequestRegistry(controlDto, null, ComponentType.GATE, ComponentType.REGISTRY, LogManager.FTI_015);
-        final ConsignmentDto consignmentDto = this.identifiersService.findByUIL(controlDto.getEftiDataUuid(), controlDto.getGateId(), controlDto.getPlatformId());
+        final ConsignmentDto consignmentDto = this.identifiersService.findByUIL(controlDto.getDatasetId(), controlDto.getGateId(), controlDto.getPlatformId());
         //log fti016
         logManager.logRequestRegistry(controlDto, serializeUtils.mapObjectToBase64String(consignmentDto), ComponentType.REGISTRY, ComponentType.GATE, LogManager.FTI_016);
         return consignmentDto != null;

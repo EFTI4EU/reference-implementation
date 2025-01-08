@@ -29,7 +29,7 @@ import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
 public class ControlDto {
     private int id;
     //should be renamed to datasetId (also on database)
-    private String eftiDataUuid;
+    private String datasetId;
     private String requestId;
     private RequestTypeEnum requestType;
     private StatusEnum status;

@@ -9,7 +9,7 @@
   "gateIdDest": "https://efti.gate.be.eu",
   "control": {
     "id": 1,
-    "eftiDataUuid": null,
+    "datasetId": null,
     "requestId": null,
     "requestType": null,
     "status": null,
