@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+           elementFormDefault="qualified" targetNamespace="http://www.w3.org/2003/05/soap-envelope"
+           version="1.0">
+
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace"/>
+
+    <xs:element name="Body" type="env:Body"/>
+
+    <xs:element name="Envelope" type="env:Envelope"/>
+
+    <xs:element name="Fault" type="env:Fault"/>
+
+    <xs:element name="Header" type="env:Header"/>
+
+    <xs:element name="NotUnderstood" type="env:NotUnderstoodType"/>
+
+    <xs:element name="Upgrade" type="env:UpgradeType"/>
+
+    <xs:complexType name="Fault">
+        <xs:sequence>
+            <xs:element name="Code" type="env:faultcode"/>
+            <xs:element name="Reason" type="env:faultreason"/>
+            <xs:element minOccurs="0" name="Node" type="xs:anyURI"/>
+            <xs:element minOccurs="0" name="Role" type="xs:anyURI"/>
+            <xs:element minOccurs="0" name="Detail" type="env:detail"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="faultcode">
+        <xs:sequence>
+            <xs:element name="Value" type="xs:QName"/>
+            <xs:element minOccurs="0" name="Subcode" type="env:subcode"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="subcode">
+        <xs:sequence>
+            <xs:element name="Value" type="xs:QName"/>
+            <xs:element minOccurs="0" name="Subcode" type="env:subcode"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="faultreason">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="Text" type="env:reasontext"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="reasontext">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute ref="xml:lang" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="detail">
+        <xs:sequence>
+            <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
+        </xs:sequence>
+        <xs:anyAttribute namespace="##other" processContents="skip"/>
+    </xs:complexType>
+
+    <xs:complexType name="Envelope">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="Header" type="env:Header"/>
+            <xs:element name="Body" type="env:Body"/>
+        </xs:sequence>
+        <xs:anyAttribute namespace="##other" processContents="skip"/>
+    </xs:complexType>
+
+    <xs:complexType name="Header">
+        <xs:sequence>
+            <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
+        </xs:sequence>
+        <xs:anyAttribute namespace="##other" processContents="skip"/>
+    </xs:complexType>
+
+    <xs:complexType name="Body">
+        <xs:sequence>
+            <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
+        </xs:sequence>
+        <xs:anyAttribute namespace="##other" processContents="skip"/>
+    </xs:complexType>
+
+    <xs:complexType name="NotUnderstoodType">
+        <xs:sequence/>
+        <xs:attribute name="qname" type="xs:QName" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="UpgradeType">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="SupportedEnvelope" type="env:SupportedEnvType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SupportedEnvType">
+        <xs:sequence/>
+        <xs:attribute name="qname" type="xs:QName" use="required"/>
+    </xs:complexType>
+
+    <xs:attribute name="mustUnderstand" type="xs:boolean"/>
+
+</xs:schema>

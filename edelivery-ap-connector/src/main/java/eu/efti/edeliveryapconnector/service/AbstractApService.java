@@ -1,8 +1,8 @@
 package eu.efti.edeliveryapconnector.service;
 
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
-import eu.domibus.plugin.ws.client.WebserviceClient;
-import eu.domibus.plugin.ws.generated.WebServicePluginInterface;
+import eu.efti.plugin.ws.client.WebserviceClient;
+import eu.efti.plugin.ws.generated.WebServicePluginInterface;
 
 import java.net.MalformedURLException;
 

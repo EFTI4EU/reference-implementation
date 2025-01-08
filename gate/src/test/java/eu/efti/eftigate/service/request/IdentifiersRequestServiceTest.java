@@ -15,6 +15,8 @@ import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
+import eu.efti.eftigate.service.IdentifiersControlUpdateDelegateService;
+import eu.efti.eftigate.service.ValidationService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.codes.TransportEquipmentCategoryCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -178,7 +180,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
 
         when(validationService.isResponseValid(any())).thenReturn(true);
         when(controlService.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
-        when(identifiersRequestRepository.findByEdeliveryMessageId(any())).thenReturn(identifiersRequestEntity);
+        when(identifiersRequestRepository.findByControlRequestIdAndGateIdDest(any(), any())).thenReturn(identifiersRequestEntity);
 
         //Act
         identifiersRequestService.manageResponseReceived(notificationDto);
@@ -223,26 +225,26 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldUpdateSentRequestStatus_whenRequestIsExternal() {
+    void shouldUpdateRequestStatus_whenRequestIsExternal() {
         identifiersRequestDto.getControl().setRequestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH);
         when(mapperUtils.requestToRequestDto(identifiersRequestEntity, IdentifiersRequestDto.class)).thenReturn(identifiersRequestDto);
         when(mapperUtils.requestDtoToRequestEntity(identifiersRequestDto, IdentifiersRequestEntity.class)).thenReturn(identifiersRequestEntity);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
 
-        identifiersRequestService.updateSentRequestStatus(identifiersRequestDto, MESSAGE_ID);
+        identifiersRequestService.updateRequestStatus(identifiersRequestDto, MESSAGE_ID);
 
         verify(mapperUtils, times(1)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
         assertEquals(RESPONSE_IN_PROGRESS, identifiersRequestDto.getStatus());
     }
 
     @Test
-    void shouldUpdateSentRequestStatus_whenRequestIsNotExternal() {
+    void shouldUpdateRequestStatus_whenRequestIsNotExternal() {
         identifiersRequestDto.getControl().setRequestType(RequestTypeEnum.EXTERNAL_IDENTIFIERS_SEARCH);
         when(mapperUtils.requestToRequestDto(identifiersRequestEntity, IdentifiersRequestDto.class)).thenReturn(identifiersRequestDto);
         when(mapperUtils.requestDtoToRequestEntity(identifiersRequestDto, IdentifiersRequestEntity.class)).thenReturn(identifiersRequestEntity);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
 
-        identifiersRequestService.updateSentRequestStatus(identifiersRequestDto, MESSAGE_ID);
+        identifiersRequestService.updateRequestStatus(identifiersRequestDto, MESSAGE_ID);
 
         verify(mapperUtils, times(1)).requestDtoToRequestEntity(requestDtoArgumentCaptor.capture(), eq(IdentifiersRequestEntity.class));
         assertEquals(IN_PROGRESS, identifiersRequestDto.getStatus());

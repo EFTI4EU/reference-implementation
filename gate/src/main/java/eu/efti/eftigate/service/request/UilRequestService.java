@@ -25,6 +25,7 @@ import eu.efti.eftigate.repository.UilRequestRepository;
 import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
+import eu.efti.eftigate.service.ValidationService;
 import eu.efti.eftigate.utils.ControlUtils;
 import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.v1.consignment.common.ObjectFactory;
@@ -62,6 +63,7 @@ import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.isNotFound;
 public class UilRequestService extends RequestService<UilRequestEntity> {
 
     private static final String UIL = "UIL";
+    public static final String UIL_REQUEST_DTO_NOT_FIND_IN_DB = "uilRequestDto not find in DB";
     private final UilRequestRepository uilRequestRepository;
     private final SerializeUtils serializeUtils;
     private final ObjectFactory objectFactory = new ObjectFactory();
@@ -118,7 +120,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 manageResponseFromOtherGate(uilRequestDto.get(), uilResponse, notificationDto.getContent());
             }
         } else {
-            log.error("uilRequestDto not find in DB");
+            log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB);
         }
     }
 
@@ -255,9 +257,10 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
     private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, NotificationContentDto content) {
         final ControlDto controlDto = requestDto.getControl();
-        final Optional<EDeliveryStatus> responseStatus = EDeliveryStatus.fromCode(uilResponse.getStatus());
+        String uilResponseStatus = uilResponse.getStatus();
+        final Optional<EDeliveryStatus> responseStatus = EDeliveryStatus.fromCode(uilResponseStatus);
         if (responseStatus.isEmpty()) {
-            throw new TechnicalException("status " + uilResponse.getStatus() + " not found");
+            throw new TechnicalException("status " + uilResponseStatus + " not found");
         }
         switch (responseStatus.get()) {
             case GATEWAY_TIMEOUT -> {
@@ -277,9 +280,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 controlDto.setError(setErrorFromResponse(uilResponse));
                 controlDto.setStatus(StatusEnum.ERROR);
             }
-            default -> throw new TechnicalException("status " + uilResponse.getStatus() + " not found");
-
-
+            default -> throw new TechnicalException("status " + uilResponseStatus + " not found");
         }
         this.save(requestDto);
         ControlDto savedControl = getControlService().save(controlDto);
@@ -337,7 +338,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
     private Optional<UilRequestDto> findByRequestId(final String requestId) {
         final Optional<UilRequestEntity> entity = Optional.ofNullable(
-                        this.uilRequestRepository.findByControlRequestIdAndStatus(requestId, RequestStatusEnum.IN_PROGRESS));
+                this.uilRequestRepository.findByControlRequestIdAndStatus(requestId, RequestStatusEnum.IN_PROGRESS));
         return entity.map(uilRequestEntity -> getMapperUtils().requestToRequestDto(uilRequestEntity, UilRequestDto.class));
     }
 }

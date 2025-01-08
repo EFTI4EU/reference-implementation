@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service;
 
-import eu.efti.eftigate.service.request.ValidationService;
 import eu.efti.v1.edelivery.Request;
 import eu.efti.v1.edelivery.Response;
 import org.junit.jupiter.api.BeforeEach;

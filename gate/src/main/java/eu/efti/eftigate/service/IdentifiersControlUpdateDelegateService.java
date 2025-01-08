@@ -1,4 +1,4 @@
-package eu.efti.eftigate.service.request;
+package eu.efti.eftigate.service;
 
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.StatusEnum;
@@ -7,7 +7,6 @@ import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
-import eu.efti.eftigate.service.ControlService;
 import eu.efti.v1.edelivery.IdentifierResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,11 +39,11 @@ public class IdentifiersControlUpdateDelegateService {
 
     @Transactional("controlTransactionManager")
     public void setControlNextStatus(final String controlRequestId) {
-        final List<RequestStatusEnum> requestStatuses = identifiersRequestRepository.findByControlRequestId(controlRequestId).stream()
-                .map(RequestEntity::getStatus)
-                .toList();
         controlService.findByRequestId(controlRequestId).ifPresent(controlEntity -> {
             if (!StatusEnum.ERROR.equals(controlEntity.getStatus())) {
+                final List<RequestStatusEnum> requestStatuses = identifiersRequestRepository.findByControlRequestId(controlRequestId).stream()
+                        .map(RequestEntity::getStatus)
+                        .toList();
                 final StatusEnum controlStatus = getControlNextStatus(controlEntity.getStatus(), requestStatuses);
                 controlEntity.setStatus(controlStatus);
                 controlService.save(controlEntity);

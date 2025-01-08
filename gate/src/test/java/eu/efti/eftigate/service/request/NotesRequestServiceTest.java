@@ -21,6 +21,7 @@ import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.NotesRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
+import eu.efti.eftigate.service.ValidationService;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
