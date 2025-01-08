@@ -46,6 +46,7 @@ More detailed documentation of different elements of this repository can be foun
     - [Gate core](implementation/gate/README.md)
     - [Registry of identifiers](implementation/registry-of-identifiers/README.md)
     - [eDelivery access point connector](implementation/edelivery-ap-connector/README.md)
+    - [Web Service Client](implementation/efti-ws-plugin/README.md)
     - [Common library](implementation/commons/README.md)
     - [Logger](implementation/efti-logger/README.md)
     - [Platform and gate simulator](implementation/platform-gate-simulator/README.md)

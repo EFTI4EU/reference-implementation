@@ -24,6 +24,6 @@ npm ci
 npm start
 ```
 
-Then go to http://portal.efti.fr:83 and you should be asked to login:
+Then go to http://portal.efti.fr:83 and you should be asked to log in:
 - user: user_bo
 - password: Azerty59*123

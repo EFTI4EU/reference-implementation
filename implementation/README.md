@@ -20,6 +20,8 @@ All the gate components are separate libraries and used to build the gate micros
 
 - [eDelivery connector](edelivery-ap-connector/README.md): Manage the communication between the gate and the related eDelivery access point (provided by Domibus)
 
+- [WS plugin](efti-ws-plugin/README.md): SOAP client used to communicate with domibus.
+
 - [Common library](commons/README.md): Includes a set of useful features
 
 - [Logger](efti-logger/README.md): Traces different types of information including technical logs, audit trail, statistics, ...
