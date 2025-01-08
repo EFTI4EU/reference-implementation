@@ -47,7 +47,7 @@ class AuditRequestLogServiceTest extends AbstractTestService {
                 .requestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH)
                 .requestId("requestId")
                 .subsetId("full")
-                .eftiDataUuid("dataUuid")
+                .datasetId("dataUuid")
                 .error(ErrorDto.fromErrorCode(ErrorCodesEnum.DEFAULT_ERROR))
                 .build();
 

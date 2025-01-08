@@ -26,7 +26,7 @@ public class ControlUtils {
     public static ControlDto fromGateToGateQuery(final UILQuery uilQuery, final RequestTypeEnum requestTypeEnum, final NotificationDto notificationDto, final String gateId) {
         final ControlDto controlDto = new ControlDto();
         UIL uil = uilQuery.getUil();
-        controlDto.setEftiDataUuid(uil.getDatasetId());
+        controlDto.setDatasetId(uil.getDatasetId());
         controlDto.setGateId(gateId);
         controlDto.setFromGateId(notificationDto.getContent().getFromPartyId());
         controlDto.setPlatformId(uil.getPlatformId());
@@ -42,7 +42,7 @@ public class ControlUtils {
         final String uuidGenerator = UUID.randomUUID().toString();
 
         final ControlDto controlDto = new ControlDto();
-        controlDto.setEftiDataUuid(uilDto.getDatasetId());
+        controlDto.setDatasetId(uilDto.getDatasetId());
         controlDto.setGateId(uilDto.getGateId());
         controlDto.setPlatformId(uilDto.getPlatformId());
         controlDto.setRequestId(uuidGenerator);

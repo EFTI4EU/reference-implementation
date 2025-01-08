@@ -48,7 +48,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                 .statusMessage(isError ? StatusEnum.ERROR.name() : StatusEnum.COMPLETE.name())
                 .errorCodeMessage(isError ? errorCode : "")
                 .errorDescriptionMessage(isError ? ErrorCodesEnum.valueOf(errorCode).getMessage() : "")
-                .eFTIDataId(controlDto.getEftiDataUuid())
+                .eFTIDataId(controlDto.getDatasetId())
                 .interfaceType(EDELIVERY)
                 .build());
     }
