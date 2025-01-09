@@ -250,4 +250,5 @@
             </column>
         </addColumn>
     </changeSet>
+    <include file="/db.changelog/db.gate.changelog-1-rename.xml"/>
 </databaseChangeLog>

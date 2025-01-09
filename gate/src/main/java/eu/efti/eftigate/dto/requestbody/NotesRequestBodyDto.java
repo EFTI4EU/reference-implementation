@@ -19,7 +19,7 @@ public class NotesRequestBodyDto {
     private String requestId;
     private String platformId;
     private String gateId;
-    @XmlElement(name = "eFTIDataUuid")
-    private String eFTIDataUuid;
+    @XmlElement(name = "datasetId")
+    private String datasetId;
     private String note;
 }

@@ -174,7 +174,7 @@ class ControlServiceTest extends AbstractServiceTest {
         this.searchWithIdentifiersRequestDto.setAuthority(authorityDto);
         this.searchWithIdentifiersRequestDto.setModeCode("1");
 
-        this.controlDto.setEftiDataUuid(uilDto.getDatasetId());
+        this.controlDto.setDatasetId(uilDto.getDatasetId());
         this.controlDto.setGateId(uilDto.getGateId());
         this.controlDto.setPlatformId(uilDto.getPlatformId());
         this.controlDto.setRequestId(requestId);
@@ -190,7 +190,7 @@ class ControlServiceTest extends AbstractServiceTest {
                 .workingContact(ContactInformationDto.builder().build())
                 .nationalUniqueIdentifier("unique").build());
 
-        this.controlEntity.setEftiDataUuid(controlDto.getEftiDataUuid());
+        this.controlEntity.setDatasetId(controlDto.getDatasetId());
         this.controlEntity.setRequestId(controlDto.getRequestId());
         this.controlEntity.setRequestType(controlDto.getRequestType());
         this.controlEntity.setStatus(controlDto.getStatus());

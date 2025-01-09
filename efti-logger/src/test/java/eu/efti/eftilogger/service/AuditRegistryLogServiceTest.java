@@ -29,7 +29,7 @@ class AuditRegistryLogServiceTest extends AbstractTestService {
         auditRegistryLogService = new AuditRegistryLogService(serializeUtils);
 
         controlDto = ControlDto.builder()
-                .eftiDataUuid("eftiDataUuid").build();
+                .datasetId("eftiDataUuid").build();
     }
 
     @Test

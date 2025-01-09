@@ -49,8 +49,8 @@ public class ControlEntity extends AbstractModel implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "eftidatauuid")
-    private String eftiDataUuid;
+    @Column(name = "datasetid")
+    private String datasetId;
 
     @Column(name = "requestid")
     private String requestId;
