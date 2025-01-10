@@ -22,8 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {IdentifiersRepository.class})
@@ -218,6 +217,110 @@ class IdentifiersRepositoryTest {
         sixthConsignment.setUsedTransportEquipments(List.of(sixthUsedTransportEquipment));
         identifiersRepository.save(sixthConsignment);
 
+    }
+
+    @Test
+    void shouldFindOrNotOnVariousCriteria() {
+        String sixUuid = "67676767-6767-6767-6767-66680123be5b";
+
+        assertAll(
+                //
+                // Registration country code
+                //
+                () -> assertEquals(
+                        Optional.of(sixUuid),
+                        identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                                .identifier("ASB-123") // 6 used transport equipment
+                                .identifierType(List.of("equipment"))
+                                .registrationCountryCode("FI") // 6 used transport equipment
+                                .build()).stream().findFirst().map(Consignment::getDatasetId)),
+                // NOTE: no match when country code is from different "object" than identifier
+                () -> assertEquals(
+                        Optional.empty(),
+                        identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                                .identifier("ASB-123") // 6 used transport equipment
+                                .identifierType(List.of("equipment"))
+                                .registrationCountryCode("DE") // 6 used transport means
+                                .build()).stream().findFirst().map(Consignment::getDatasetId)),
+                () -> assertEquals(
+                        Optional.of(sixUuid),
+                        identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                                .identifier("BBB-345") // 6 used transport means
+                                .identifierType(List.of("means"))
+                                .registrationCountryCode("DE") // 6 used transport means
+                                .build()).stream().findFirst().map(Consignment::getDatasetId)),
+                // NOTE: no match when country code is from different "object" than identifier
+                () -> assertEquals(
+                        Optional.empty(),
+                        identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                                .identifier("BBB-345") // 6 used transport means
+                                .identifierType(List.of("means"))
+                                .registrationCountryCode("FI") // 6 used transport equipment
+                                .build()).stream().findFirst().map(Consignment::getDatasetId)),
+
+                //
+                // Mode code
+                //
+                () -> assertEquals(
+                        Optional.of(sixUuid),
+                        identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                                .identifier("BBB-345") // 6 used transport means
+                                .identifierType(List.of("means"))
+                                .registrationCountryCode("DE") // 6 used transport means
+                                .modeCode("3") // 6 means
+                                .build()).stream().findFirst().map(Consignment::getDatasetId)),
+                () -> assertEquals(
+                        Optional.of(sixUuid),
+                        identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                                .identifier("ASB-123") // 6 used transport equipment
+                                .identifierType(List.of("equipment"))
+                                .registrationCountryCode("FI") // 6 used transport equipment
+                                .modeCode("3") // 6 means
+                                .build()).stream().findFirst().map(Consignment::getDatasetId)),
+                () -> assertEquals(
+                        Optional.empty(),
+                        identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                                .identifier("ASB-123") // 6 used transport equipment
+                                .identifierType(List.of("equipment"))
+                                .registrationCountryCode("FI") // 6 used transport equipment
+                                .modeCode("2") // not matching
+                                .build()).stream().findFirst().map(Consignment::getDatasetId)),
+
+                //
+                // Dangerous goods
+                //
+                () -> assertEquals(
+                        Optional.of(sixUuid),
+                        identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                                .identifier("BBB-345") // 6 used transport means
+                                .identifierType(List.of("means"))
+                                .registrationCountryCode("DE") // 6 used transport means
+                                .dangerousGoodsIndicator(false) // 6 means
+                                .build()).stream().findFirst().map(Consignment::getDatasetId)),
+                () -> assertEquals(
+                        Optional.empty(),
+                        identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                                .identifier("BBB-345") // 6 used transport means
+                                .identifierType(List.of("means"))
+                                .registrationCountryCode("DE") // 6 used transport means
+                                .dangerousGoodsIndicator(true) // not matching
+                                .build()).stream().findFirst().map(Consignment::getDatasetId)),
+                () -> assertEquals(
+                        Optional.of(sixUuid),
+                        identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                                .identifier("ASB-123") // 6 used transport equipment
+                                .identifierType(List.of("equipment"))
+                                .dangerousGoodsIndicator(false) // 6 means
+                                .build()).stream().findFirst().map(Consignment::getDatasetId)),
+                () -> assertEquals(
+                        Optional.empty(),
+                        identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
+                                .identifier("ASB-123") // 6 used transport equipment
+                                .identifierType(List.of("equipment"))
+                                .dangerousGoodsIndicator(true) // not matching
+                                .build()).stream().findFirst().map(Consignment::getDatasetId))
+
+                );
     }
 
     @Test
