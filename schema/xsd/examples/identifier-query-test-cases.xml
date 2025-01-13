@@ -1,0 +1,61 @@
+<identifierQueryTestCases
+        xmlns="http://efti.eu/v1/identifier-query-test-cases"
+        xmlns:efti-ed="http://efti.eu/v1/edelivery"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://efti.eu/v1/identifier-query-test-cases ./identifier-query-test-cases.xsd">
+    <dataGroup>
+        <dataset>
+            <id>1</id>
+            <consignment>
+                <!-- -->
+            </consignment>
+        </dataset>
+        <dataset>
+            <id>2</id>
+            <consignment>
+                <!-- -->
+            </consignment>
+        </dataset>
+        <testCase>
+            <query>
+                <efti-ed:identifier>ABC-123</efti-ed:identifier>
+                <efti-ed:modeCode>3</efti-ed:modeCode>
+            </query>
+            <result>2</result>
+        </testCase>
+        <testCase>
+            <query>
+                <efti-ed:identifier>ABC-123</efti-ed:identifier>
+                <efti-ed:modeCode>2</efti-ed:modeCode>
+            </query>
+            <result>1</result>
+        </testCase>
+    </dataGroup>
+    <dataGroup>
+        <dataset>
+            <id>1</id>
+            <consignment>
+                <!-- -->
+            </consignment>
+        </dataset>
+        <dataset>
+            <id>2</id>
+            <consignment>
+                <!-- -->
+            </consignment>
+        </dataset>
+        <dataset>
+            <id>3</id>
+            <consignment>
+                <!-- -->
+            </consignment>
+        </dataset>
+        <testCase>
+            <query>
+                <efti-ed:identifier>ABC-123</efti-ed:identifier>
+                <efti-ed:dangerousGoodsIndicator>true</efti-ed:dangerousGoodsIndicator>
+            </query>
+            <result>2</result>
+        </testCase>
+    </dataGroup>
+</identifierQueryTestCases>
