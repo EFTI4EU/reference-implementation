@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @EnableJpaRepositories(basePackages = {"eu.efti.identifiersregistry.repository"})
 @EntityScan("eu.efti.identifiersregistry.entity")
 class IdentifiersQueryTest {
+    private static final String IDENTIFIER_QUERY_TEST_CASES_RESOURCE_PATH = "/identifier-query-test-cases.xml";
 
     @Autowired
     private IdentifiersRepository identifiersRepository;
@@ -54,15 +56,19 @@ class IdentifiersQueryTest {
     }
 
     public static Stream<TestCase> readTestCases() {
-        final String path = "/home/mikko-suniala/src/efti/reference-implementation/schema/xsd/examples/identifier-query-test-cases.xml";
+        final String xml = readXml();
+        final IdentifierQueryTestCases spec = unmarshal(xml);
+        return spec.getDataGroup().stream().flatMap((it) -> it.getTestCase().stream().map((tc) -> new TestCase(tc, it.getDataset())));
+    }
+
+    private static String readXml() {
         final String xml;
         try {
-            xml = Files.readString(Paths.get(path));
+            xml = Files.readString(Paths.get(requireNonNull(IdentifiersQueryTest.class.getResource(IDENTIFIER_QUERY_TEST_CASES_RESOURCE_PATH)).getPath()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        final IdentifierQueryTestCases rawTestCases = unmarshal(xml);
-        return rawTestCases.getDataGroup().stream().flatMap((it) -> it.getTestCase().stream().map((tc) -> new TestCase(tc, it.getDataset())));
+        return xml;
     }
 
     @ParameterizedTest
@@ -73,7 +79,16 @@ class IdentifiersQueryTest {
             identifiersRepository.save(entity);
         });
 
-        var querySpec = testCase.testCaseSpec.getQuery();
+        var query = toQuery(testCase.testCaseSpec.getQuery());
+        var expectedDatasetIds = new HashSet<>(testCase.testCaseSpec.getResult());
+
+        var results = identifiersRepository.searchByCriteria(query.build());
+        var resultIds = results.stream().map(Consignment::getDatasetId).collect(Collectors.toSet());
+
+        assertEquals(expectedDatasetIds, resultIds);
+    }
+
+    private static SearchWithIdentifiersRequestDto.SearchWithIdentifiersRequestDtoBuilder toQuery(IdentifierQuery querySpec) {
         var query = SearchWithIdentifiersRequestDto.builder()
                 .identifier(querySpec.getIdentifier().getValue());
         if (querySpec.getIdentifier().getType() != null && !querySpec.getIdentifier().getType().isEmpty()) {
@@ -88,12 +103,7 @@ class IdentifiersQueryTest {
         if (querySpec.getRegistrationCountryCode() != null) {
             query.registrationCountryCode(querySpec.getRegistrationCountryCode());
         }
-
-        var results = identifiersRepository.searchByCriteria(query.build());
-        var resultIds = results.stream().map(Consignment::getDatasetId).collect(Collectors.toSet());
-        var expectedDatasetIds = new HashSet<>(testCase.testCaseSpec.getResult());
-
-        assertEquals(expectedDatasetIds, resultIds);
+        return query;
     }
 
     private static IdentifierQueryTestCases unmarshal(final String content) {

@@ -145,6 +145,37 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources-for-tests</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+<!--                            <outputDirectory>${project.build.directory}/generated-test-resources</outputDirectory>-->
+                            <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../../schema/xsd/examples</directory>
+                                    <includes>
+                                        <include>identifier-query-test-cases.xml</include>
+                                    </includes>
+<!--                                    <filtering>true</filtering>-->
+                                </resource>
+                            </resources>
+<!--                            <fileNameFiltering>true</fileNameFiltering>-->
+<!--                            <filters>-->
+<!--                                <filter>identifier-query-test-cases.xml</filter>-->
+<!--                            </filters>-->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
