@@ -29,7 +29,7 @@ variables:
   - when: always
   trigger:
     include:
-    - project: $PROJET #"kube/build"
+    - project: $PROJECT #"kube/build"
       file: $FICHIER #"template/projects/efti/microservice.yml"
       ref: $REF #"kustomize"
     forward:
