@@ -1,5 +1,6 @@
 <identifierQueryTestCases
         xmlns="http://efti.eu/v1/identifier-query-test-cases"
+        xmlns:efti-id="http://efti.eu/v1/consignment/identifier"
         xmlns:efti-ed="http://efti.eu/v1/edelivery"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://efti.eu/v1/identifier-query-test-cases ./identifier-query-test-cases.xsd">
@@ -7,7 +8,12 @@
         <dataset>
             <id>1</id>
             <consignment>
-                <!-- -->
+                <efti-id:mainCarriageTransportMovement>
+                    <efti-id:modeCode>3</efti-id:modeCode>
+                    <efti-id:usedTransportMeans>
+                        <efti-id:id>ABC-123</efti-id:id>
+                    </efti-id:usedTransportMeans>
+                </efti-id:mainCarriageTransportMovement>
             </consignment>
         </dataset>
         <dataset>
@@ -21,14 +27,14 @@
                 <efti-ed:identifier>ABC-123</efti-ed:identifier>
                 <efti-ed:modeCode>3</efti-ed:modeCode>
             </query>
-            <result>2</result>
+            <result>1</result>
         </testCase>
         <testCase>
             <query>
                 <efti-ed:identifier>ABC-123</efti-ed:identifier>
                 <efti-ed:modeCode>2</efti-ed:modeCode>
             </query>
-            <result>1</result>
+            <result>2</result>
         </testCase>
     </dataGroup>
     <dataGroup>
