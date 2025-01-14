@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<jaxb:bindings
+        version="3.0"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/jaxb
+              https://jakarta.ee/xml/ns/jaxb/bindingschema_3_0.xsd">
+
+    <jaxb:bindings>
+        <jaxb:globalBindings typesafeEnumMaxMembers="370"/>
+    </jaxb:bindings>
+
+    <!--    Attribute 'generateValueClass' is not allowed to appear in element 'jaxb:class'.-->
+    <!--    <jaxb:bindings schemaLocation="../../../../../schema/xsd/consignment-identifier.xsd"-->
+    <!--                   node="//xs:complexType[@name='SupplyChainConsignment']">-->
+    <!--        <jaxb:class generateValueClass="false"/>-->
+    <!--    </jaxb:bindings>-->
+
+    <!-- This will still generate SupplyChainConsignment but identifier-query-test-cases.xsd classes will refer to foo.Foo9 -->
+    <!--    <jaxb:bindings schemaLocation="../../../../../schema/xsd/consignment-identifier.xsd"-->
+    <!--                   node="//xs:complexType[@name='SupplyChainConsignment']">-->
+    <!--        <jaxb:class implClass="foo.Foo9"/>-->
+    <!--    </jaxb:bindings>-->
+
+    <!--  The same but SupplyChainConsignment will become Asdf but DataSet will still use Foo9 as field type  -->
+    <!--    <jaxb:bindings schemaLocation="../../../../../schema/xsd/consignment-identifier.xsd"-->
+    <!--                   node="//xs:complexType[@name='SupplyChainConsignment']">-->
+    <!--        <jaxb:class implClass="foo.Foo9" name="Asdf"/>-->
+    <!--    </jaxb:bindings>-->
+
+    <!--    XPath evaluation of "//xs:complexType[@name='SupplyChainConsignment']" results in empty target node-->
+    <!--    <jaxb:bindings node="//xs:complexType[@name='SupplyChainConsignment']">-->
+    <!--        <jaxb:class implClass="foo.Foo9"/>-->
+    <!--    </jaxb:bindings>-->
+</jaxb:bindings>
