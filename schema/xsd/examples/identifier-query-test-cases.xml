@@ -9,7 +9,6 @@
             <id>c568e9d1-1512-4a59-a974-1dba4f3ddfae</id>
             <consignment>
                 <efti-id:mainCarriageTransportMovement>
-                    <efti-id:dangerousGoodsIndicator>false</efti-id:dangerousGoodsIndicator>
                     <efti-id:modeCode>3</efti-id:modeCode>
                     <efti-id:usedTransportMeans>
                         <efti-id:id>ABC-123</efti-id:id>
@@ -21,7 +20,6 @@
             <id>a208f5a2-817b-42fd-b100-053d266bc6ca</id>
             <consignment>
                 <efti-id:mainCarriageTransportMovement>
-                    <efti-id:dangerousGoodsIndicator>false</efti-id:dangerousGoodsIndicator>
                     <efti-id:modeCode>2</efti-id:modeCode>
                     <efti-id:usedTransportMeans>
                         <efti-id:id>ABC-123</efti-id:id>

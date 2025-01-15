@@ -26,7 +26,15 @@
     <xsd:complexType name="Dataset">
         <xsd:sequence>
             <xsd:element name="id" type="xsd:token" minOccurs="1" maxOccurs="1"/>
-            <xsd:element name="consignment" type="efti-id:SupplyChainConsignment" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="consignment" type="efti-id:SupplyChainConsignment" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>Consignment identifier document that should include only those elements that
+                        are relevant in the test case. For example, if dangerous goods flag is not relevant, then
+                        it should be omitted. If test implementation requires such omitted elements then it should
+                        populate these elements with random values.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
 
