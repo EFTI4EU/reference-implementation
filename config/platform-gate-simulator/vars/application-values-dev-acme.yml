@@ -20,3 +20,17 @@ gate:
     url: http://172.16.201.115:8080/domibus/services/wsplugin
     username: acme_service_account
     password: Azerty59*1234567
+
+mock:
+  badRequestPercentage: 0.0f
+  gaussWaitingTime:
+    average: 10
+    standardDeviation: 5
+    isActiveForIdentifierRequestTimer: false
+    isTimerActiveForIdentifierResponse: false
+  identifierReponseGoodResponse:
+    description: description
+    status: 200
+  identifierReponseBadResponse:
+    description: bad gateway
+    status: 404
