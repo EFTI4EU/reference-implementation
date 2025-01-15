@@ -18,6 +18,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -31,10 +33,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,6 +48,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @EnableJpaRepositories(basePackages = {"eu.efti.identifiersregistry.repository"})
 @EntityScan("eu.efti.identifiersregistry.entity")
 class IdentifiersQueryTest {
+    private static Logger logger = LoggerFactory.getLogger(IdentifiersQueryTest.class);
+
     private static final String IDENTIFIER_QUERY_TEST_CASES_RESOURCE_PATH = "/identifier-query-test-cases.xml";
 
     @Autowired
@@ -99,8 +101,12 @@ class IdentifiersQueryTest {
     @ParameterizedTest
     @MethodSource("readTestCases")
     public void searchByCriteriaConformsToReferenceTestCases(TestCase testCase) {
+        int seed = LocalDate.now().getDayOfMonth() % 4;
+        final Random random = new Random(seed);
+        logger.info("Using random seed {}", seed);
+
         testCase.datasetSpec.forEach(dataset -> {
-            var entity = toEntity(dataset.getConsignment(), dataset.getId());
+            var entity = toEntity(dataset.getConsignment(), dataset.getId(), random);
             identifiersRepository.save(entity);
         });
 
@@ -142,7 +148,16 @@ class IdentifiersQueryTest {
         }
     }
 
-    private Consignment toEntity(SupplyChainConsignment sourceConsignment, String datasetId) {
+    /**
+     * Creates an entity from test case consignment. Populates random values for those fields that are required by our
+     * implementation but omitted in test case specs.
+     */
+    private Consignment toEntity(SupplyChainConsignment sourceConsignment, String datasetId, Random random) {
+        sourceConsignment.getMainCarriageTransportMovement().forEach(tm -> {
+            if (tm.isDangerousGoodsIndicator() == null) {
+                tm.setDangerousGoodsIndicator(random.nextBoolean());
+            }
+        });
         Consignment consignment = identifiersMapper.eDeliverySupplyToEntity(sourceConsignment);
 
         consignment.setGateId("france");
