@@ -2,6 +2,7 @@
 
 # Stop on fail
 set -e
+cd $(dirname $0)
 
 projectPomFile=../../../implementation/pom.xml
 
