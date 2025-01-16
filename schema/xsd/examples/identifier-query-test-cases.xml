@@ -5,6 +5,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://efti.eu/v1/identifier-query-test-cases ./identifier-query-test-cases.xsd">
     <dataGroup>
+        <description>Mode code</description>
         <dataset>
             <id>c568e9d1-1512-4a59-a974-1dba4f3ddfae</id>
             <consignment>
