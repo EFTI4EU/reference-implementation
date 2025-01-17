@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:saveIdentifiersRequest
+        xmlns="http://efti.eu/v1/consignment/identifier"
+        xmlns:ns2="http://efti.eu/v1/edelivery"
+        datasetId="12331232">
+
+    <consignment>
+        <carrierAcceptanceDateTime>202401010000</carrierAcceptanceDateTime>
+        <deliveryEvent>
+            <actualOccurrenceDateTime>202401020000</actualOccurrenceDateTime>
+        </deliveryEvent>
+
+        <mainCarriageTransportMovement>
+            <dangerousGoodsIndicator>false</dangerousGoodsIndicator>
+            <modeCode>3</modeCode>
+
+            <usedTransportMeans>
+                <id>313</id>
+                <registrationCountry>
+                    <code>FI</code>
+                </registrationCountry>
+            </usedTransportMeans>
+        </mainCarriageTransportMovement>
+
+        <usedTransportEquipment>
+            <carriedTransportEquipment>
+                <id>313</id>
+                <sequenceNumber>1</sequenceNumber>
+            </carriedTransportEquipment>
+            <categoryCode>AE</categoryCode>
+            <id>313</id>
+
+            <registrationCountry>
+                <code>FI</code>
+            </registrationCountry>
+            <sequenceNumber>1</sequenceNumber>
+        </usedTransportEquipment>
+    </consignment>
+</ns2:saveIdentifiersRequest>

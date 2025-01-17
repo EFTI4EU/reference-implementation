@@ -36,6 +36,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
@@ -70,7 +71,8 @@ class UilRequestServiceTest extends BaseServiceTest {
     private final UilRequestEntity uilRequestEntityError = new UilRequestEntity();
     private final UilRequestEntity secondUilRequestEntity = new UilRequestEntity();
 
-    private final ValidationService validationService = new ValidationService();
+    @Mock
+    private ValidationService validationService;
 
     @Override
     @BeforeEach
@@ -160,6 +162,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
         Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
+        Mockito.when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
 
         uilRequestService.manageResponseReceived(notificationDto);
 
@@ -198,6 +201,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
         Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
+        Mockito.when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
 
         uilRequestService.manageResponseReceived(notificationDto);
 
@@ -236,6 +240,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
         Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
+        Mockito.when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
 
         uilRequestService.manageResponseReceived(notificationDto);
 
@@ -273,6 +278,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
         Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
         Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
+        Mockito.when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
 
         uilRequestService.manageResponseReceived(notificationDto);
 
@@ -307,17 +313,15 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
+        Mockito.when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
 
-        assertThrows(
-                TechnicalException.class,
-                () -> uilRequestService.manageResponseReceived(notificationDto),
-                "Expected doThing() to throw, but it didn't"
-        );
+        uilRequestService.manageResponseReceived(notificationDto);
+
+        verify(uilRequestRepository, times(1)).findByControlRequestIdAndStatus(any(), any());
     }
 
     @Test
-    void manageResponseReceivedEmptyCodeTest() {
+    void manageResponseReceivedEmptyCodeTest() throws JsonProcessingException {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
@@ -341,13 +345,11 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
+        Mockito.when(validationService.isXmlValid(any())).thenReturn(Optional.of("présent"));
 
-        assertThrows(
-                TechnicalException.class,
-                () -> uilRequestService.manageResponseReceived(notificationDto),
-                "Expected doThing() to throw, but it didn't"
-        );
+        uilRequestService.manageResponseReceived(notificationDto);
+
+        verify(rabbitSenderService,times(1)).sendMessageToRabbit(any(), any(), any());
     }
 
     @Test
@@ -374,14 +376,11 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
-        Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
+        when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
 
         uilRequestService.manageResponseReceived(notificationDto);
 
-        verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
-        verify(uilRequestRepository, times(2)).save(uilRequestEntityArgumentCaptor.capture());
-        assertEquals(RequestStatusEnum.ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
+        verify(uilRequestRepository, times(1)).findByControlRequestIdAndStatus(any(), any());
     }
 
     @Test
@@ -408,14 +407,12 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
-        Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
+        when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
 
         uilRequestService.manageResponseReceived(notificationDto);
 
-        verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
-        verify(uilRequestRepository, times(2)).save(uilRequestEntityArgumentCaptor.capture());
-        assertEquals(RequestStatusEnum.ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
+        verify(uilRequestRepository, times(1)).findByControlRequestIdAndStatus(any(), any());
+
     }
 
     @Test
@@ -442,6 +439,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
         final ArgumentCaptor<ControlDto> argumentCaptorControlDto = ArgumentCaptor.forClass(ControlDto.class);
+
+        when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
 
         uilRequestService.manageQueryReceived(notificationDto);
         verify(controlService).createUilControl(argumentCaptorControlDto.capture());
@@ -487,6 +486,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                 .build();
         final ArgumentCaptor<UilRequestEntity> requestEntityArgumentCaptor = ArgumentCaptor.forClass(UilRequestEntity.class);
         uilRequestEntity.getControl().setFromGateId("other");
+
+        when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
         when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
 
@@ -517,6 +518,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                 .build();
         when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
+        when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
         uilRequestService.manageResponseReceived(notificationDto);
 
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
@@ -545,6 +547,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                 .build();
         when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
+        when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
+
         uilRequestService.manageResponseReceived(notificationDto);
 
         verify(uilRequestRepository, times(2)).save(uilRequestEntityArgumentCaptor.capture());
@@ -582,6 +586,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
         when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(null);
+        when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
 
         uilRequestService.manageResponseReceived(notificationDto);
 

@@ -93,25 +93,27 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     public void manageQueryReceived(final NotificationDto notificationDto) {
-        NotificationContentDto content = notificationDto.getContent();
-        String body = content.getBody();
-        final UILQuery uilQuery = getSerializeUtils().mapXmlStringToJaxbObject(body);
-        if (!validationService.isRequestValid(uilQuery)) {
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH));
+        String body = notificationDto.getContent().getBody();
+        Optional<String> result = validationService.isXmlValid(body);
+        if (result.isPresent()) {
+            log.error("Received invalid UILQuery");
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, result.get()));
             return;
         }
+        final UILQuery uilQuery = getSerializeUtils().mapXmlStringToJaxbObject(body);
         getControlService().createUilControl(ControlUtils
                 .fromGateToGateQuery(uilQuery, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, notificationDto, getGateProperties().getOwner()));
     }
 
     public void manageResponseReceived(final NotificationDto notificationDto) {
-        NotificationContentDto content = notificationDto.getContent();
-        String body = content.getBody();
-        final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(body);
-        if (!validationService.isResponseValid(uilResponse)) {
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH));
+        String body = notificationDto.getContent().getBody();
+        Optional<String> result = validationService.isXmlValid(body);
+        if (result.isPresent()) {
+            log.error("Received invalid UILResponse");
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, result.get()));
             return;
         }
+        final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(body);
         final Optional<UilRequestDto> uilRequestDto = this.findByRequestId(uilResponse.getRequestId());
         if (uilRequestDto.isPresent()) {
             if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.get().getControl().getRequestType())) { //platform response

@@ -61,7 +61,7 @@ class RequestServiceTest {
         NotificationDto notificationDto = NotificationDto.builder()
                 .content(NotificationContentDto.builder().conversationId("je suis une conversation").fromPartyId("fromPartyId").build()).build();
 
-        RequestDto requestDto = requestService.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_UIL_SEARCH);
+        RequestDto requestDto = requestService.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_UIL_SEARCH,"error");
 
         assertEquals("je suis une conversation", requestDto.getControl().getRequestId());
         assertNotNull(requestDto.getError());

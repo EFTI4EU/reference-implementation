@@ -1,0 +1,47 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:efti-iq="http://efti.eu/v1/identifier-query-test-cases"
+            xmlns:efti-ed="http://efti.eu/v1/edelivery"
+            xmlns:efti-id="http://efti.eu/v1/consignment/identifier"
+            targetNamespace="http://efti.eu/v1/identifier-query-test-cases"
+            elementFormDefault="qualified">
+
+    <xsd:import namespace="http://efti.eu/v1/consignment/identifier" schemaLocation="../consignment-identifier.xsd"/>
+    <xsd:import namespace="http://efti.eu/v1/edelivery" schemaLocation="../edelivery/gate.xsd"/>
+
+    <xsd:element name="identifierQueryTestCases" type="efti-iq:IdentifierQueryTestCases"/>
+
+    <xsd:complexType name="IdentifierQueryTestCases">
+        <xsd:sequence>
+            <xsd:element name="dataGroup" type="efti-iq:DataGroup" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="DataGroup">
+        <xsd:sequence>
+            <xsd:element name="dataset" type="efti-iq:Dataset" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="testCase" type="efti-iq:TestCase" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Dataset">
+        <xsd:sequence>
+            <xsd:element name="id" type="xsd:token" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="consignment" type="efti-id:SupplyChainConsignment" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>Consignment identifier document that should include only those elements that
+                        are relevant in the test case. For example, if dangerous goods flag is not relevant, then
+                        it should be omitted. If test implementation requires such omitted elements then it should
+                        populate these elements with random values.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="TestCase">
+        <xsd:sequence>
+            <xsd:element name="query" type="efti-ed:IdentifierQuery" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="result" type="xsd:token" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
