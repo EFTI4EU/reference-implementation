@@ -92,11 +92,13 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     public void manageQueryReceived(final NotificationDto notificationDto) {
-        final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
-        if (!validationService.isRequestValid(identifierQuery)) {
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH));
+        Optional<String> result = validationService.isXmlValid(notificationDto.getContent().getBody());
+        if (result.isPresent()) {
+            log.error("Received invalid IdentifierQuery");
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, result.get()));
             return;
         }
+        final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
         final ControlDto controlDto = getControlService().createControlFrom(identifierQuery, notificationDto.getContent().getFromPartyId());
         //log fti015
         getLogManager().logRequestRegistry(controlDto, null, GATE, REGISTRY, LogManager.FTI_015);
@@ -112,11 +114,13 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
 
     public void manageResponseReceived(final NotificationDto notificationDto) {
         String body = notificationDto.getContent().getBody();
-        final IdentifierResponse response = getSerializeUtils().mapXmlStringToJaxbObject(body);
-        if (!validationService.isResponseValid(response)) {
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH));
+        Optional<String> result = validationService.isXmlValid(notificationDto.getContent().getBody());
+        if (result.isPresent()) {
+            log.error("Received invalid IdentifierResponse");
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, result.get()));
             return;
         }
+        final IdentifierResponse response = getSerializeUtils().mapXmlStringToJaxbObject(body);
         String requestId = response.getRequestId();
         if (getControlService().findByRequestId(requestId).isPresent()) {
             String fromPartyId = notificationDto.getContent().getFromPartyId();
@@ -204,6 +208,12 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     public void createOrUpdate(final NotificationDto notificationDto) {
+        final Optional<String> validationResult = validationService.isXmlValid(notificationDto.getContent().getBody());
+        if (validationResult.isPresent()) {
+            log.error("Received invalid SaveIdentifierRequest from {}", notificationDto.getContent().getFromPartyId());
+            return;
+        }
+
         this.identifiersService.createOrUpdate(new SaveIdentifiersRequestWrapper(notificationDto.getContent().getFromPartyId(),
                 getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody())));
     }

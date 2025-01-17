@@ -91,10 +91,10 @@ public abstract class RequestService<T extends RequestEntity> {
         this.sendRequest(result);
     }
 
-    public RequestDto buildErrorRequestDto(final NotificationDto notificationDto, final RequestTypeEnum requestTypeEnum) {
+    public RequestDto buildErrorRequestDto(final NotificationDto notificationDto, final RequestTypeEnum requestTypeEnum, final String error) {
         ErrorDto errorDto = ErrorDto.builder()
-                .errorCode(ErrorCodesEnum.REQUESTID_MISSING.name())
-                .errorDescription(ErrorCodesEnum.REQUESTID_MISSING.getMessage()).build();
+                .errorCode(ErrorCodesEnum.XML_ERROR.name())
+                .errorDescription(error).build();
 
         ControlDto controlDto = ControlDto.builder()
                 .requestId(notificationDto.getContent().getConversationId())
