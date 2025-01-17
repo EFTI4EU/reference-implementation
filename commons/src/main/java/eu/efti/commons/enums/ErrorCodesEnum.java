@@ -8,6 +8,7 @@ import java.util.Optional;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCodesEnum {
+    XML_ERROR("Xml error"),
     UIL_GATE_MISSING("Missing parameter gateId"),
 
     UIL_UUID_MISSING("Missing parameter datasetId"),

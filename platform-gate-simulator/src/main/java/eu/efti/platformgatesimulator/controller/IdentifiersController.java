@@ -29,8 +29,6 @@ public class IdentifiersController {
 
     private final ReaderService readerService;
 
-    private final IdentifierService identifierService;
-
     @PostMapping("/upload/file")
     public ResponseEntity<String> uploadFile(@RequestPart final MultipartFile file) {
         if (file == null || file.isEmpty()) {

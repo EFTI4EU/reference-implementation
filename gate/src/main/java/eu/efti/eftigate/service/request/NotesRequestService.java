@@ -89,11 +89,13 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     }
 
     public void manageMessageReceive(final NotificationDto notificationDto) {
-        final PostFollowUpRequest messageBody = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
-        if (!validationService.isRequestValid(messageBody)) {
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND));
+        Optional<String> result = validationService.isXmlValid(notificationDto.getContent().getBody());
+        if (result.isPresent()) {
+            log.error("Received invalid PostFollowUpRequest");
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND, result.get()));
             return;
         }
+        final PostFollowUpRequest messageBody = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
         getControlService().getByRequestId(messageBody.getRequestId()).ifPresent(controlEntity -> {
             final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(controlEntity);
             controlDto.setNotes(messageBody.getMessage());

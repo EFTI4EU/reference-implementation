@@ -2,6 +2,7 @@ package eu.efti.eftigate.service.request;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.commons.dto.IdentifiersRequestDto;
+import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.dto.identifiers.UsedTransportEquipmentDto;
 import eu.efti.commons.enums.RequestTypeEnum;
@@ -153,7 +154,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         when(controlService.createControlFrom(any(), any())).thenReturn(controlDto);
         when(controlService.updateControl(any())).thenReturn(controlDto);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
-        when(validationService.isRequestValid(any())).thenReturn(true);
+        when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
         //Act
         identifiersRequestService.manageQueryReceived(notificationDto);
 
@@ -178,7 +179,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         identifiersRequestEntity.setStatus(IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
 
-        when(validationService.isResponseValid(any())).thenReturn(true);
+        when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
         when(controlService.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
         when(identifiersRequestRepository.findByControlRequestIdAndGateIdDest(any(), any())).thenReturn(identifiersRequestEntity);
 
@@ -315,6 +316,36 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     void shouldGetRequestForControlId() {
         identifiersRequestService.findAllForControlId(1);
         verify(identifiersRequestRepository).findByControlId(1);
+    }
+
+    @Test
+    void shouldCreateOrUpdateIdentifiers() {
+        final NotificationDto notificationDto = NotificationDto.builder()
+                .notificationType(NotificationType.RECEIVED)
+                .content(NotificationContentDto.builder()
+                        .messageId(MESSAGE_ID)
+                        .body(testFile("/xml/SaveIdentifierRequest.xml"))
+                        .build())
+                .build();
+        when(validationService.isXmlValid(anyString())).thenReturn(Optional.empty());
+        identifiersRequestService.createOrUpdate(notificationDto);
+
+        verify(identifiersService).createOrUpdate(any(SaveIdentifiersRequestWrapper.class));
+    }
+
+    @Test
+    void shouldNotCreateOrUpdateIdentifiersIfInvalid() {
+        final NotificationDto notificationDto = NotificationDto.builder()
+                .notificationType(NotificationType.RECEIVED)
+                .content(NotificationContentDto.builder()
+                        .messageId(MESSAGE_ID)
+                        .body(testFile("/xml/SaveIdentifierRequest.xml"))
+                        .build())
+                .build();
+        when(validationService.isXmlValid(anyString())).thenReturn(Optional.of("error!"));
+        identifiersRequestService.createOrUpdate(notificationDto);
+
+        verify(identifiersService, never()).createOrUpdate(any(SaveIdentifiersRequestWrapper.class));
     }
 
 
