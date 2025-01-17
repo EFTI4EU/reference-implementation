@@ -18,6 +18,7 @@
 
     <xsd:complexType name="DataGroup">
         <xsd:sequence>
+            <xsd:element name="description" type="xsd:string" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="dataset" type="efti-iq:Dataset" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="testCase" type="efti-iq:TestCase" minOccurs="1" maxOccurs="unbounded"/>
         </xsd:sequence>
