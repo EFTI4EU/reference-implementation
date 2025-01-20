@@ -262,6 +262,34 @@
         </testCase>
         <testCase>
             <query>
+                <efti-ed:identifier type="means">ABC-100</efti-ed:identifier>
+            </query>
+            <result>bba8d6af-8a8a-4479-9299-7a35285f44b4</result>
+        </testCase>
+        <testCase>
+            <query>
+                <efti-ed:identifier type="means equipment">ABC-100</efti-ed:identifier>
+            </query>
+            <result>bba8d6af-8a8a-4479-9299-7a35285f44b4</result>
+            <result>ec562722-3763-4b35-a9ab-d62c8099531f</result>
+        </testCase>
+        <testCase>
+            <query>
+                <efti-ed:identifier type="equipment carried">ABC-100</efti-ed:identifier>
+            </query>
+            <result>e05da15e-b7ea-4083-b619-8752e1b52d13</result>
+            <result>ec562722-3763-4b35-a9ab-d62c8099531f</result>
+        </testCase>
+        <testCase>
+            <query>
+                <efti-ed:identifier type="means equipment carried">ABC-100</efti-ed:identifier>
+            </query>
+            <result>bba8d6af-8a8a-4479-9299-7a35285f44b4</result>
+            <result>e05da15e-b7ea-4083-b619-8752e1b52d13</result>
+            <result>ec562722-3763-4b35-a9ab-d62c8099531f</result>
+        </testCase>
+        <testCase>
+            <query>
                 <efti-ed:identifier>ABC-200</efti-ed:identifier>
             </query>
             <result>bba8d6af-8a8a-4479-9299-7a35285f44b4</result>
