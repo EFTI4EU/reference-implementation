@@ -41,7 +41,7 @@ class NoteControllerTest {
     void createNoteTestAccepted() throws Exception {
         final PostFollowUpRequestDto notesDto = new PostFollowUpRequestDto();
         notesDto.setRequestId("requestId");
-        notesDto.setMessage("Conducteur suspect");
+        notesDto.setMessage("Ugly driver");
 
         when(controlService.getControlByRequestId("requestId")).thenReturn(new ControlDto());
         when(controlService.createNoteRequestForControl(notesDto)).thenReturn(NoteResponseDto.builder().message("Note sent").build());
@@ -62,7 +62,7 @@ class NoteControllerTest {
     void createNoteTestNotAccepted() throws Exception {
         final PostFollowUpRequestDto notesDto = new PostFollowUpRequestDto();
         notesDto.setRequestId("requestId");
-        notesDto.setMessage("Conducteur suspect");
+        notesDto.setMessage("Ugly driver");
 
         when(controlService.createNoteRequestForControl(notesDto)).thenReturn(new NoteResponseDto("Note was not sent", "ID_NOT_FOUND", "Id not found"));
 
