@@ -106,13 +106,13 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
     @Test
     void listenReceiveMessageExceptiontest() {
-        final String message = "ça va pétteeeeer";
+        final String message = "it's gonna explode";
 
         final Exception exception = assertThrows(TechnicalException.class, () -> {
             rabbitListenerService.listenReceiveMessage(message);
         });
 
-        assertEquals("Error when try to map class eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto with message : ça va pétteeeeer", exception.getMessage());
+        assertEquals("Error when try to map class eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto with message : it's gonna explode", exception.getMessage());
     }
 
     @Test
@@ -131,11 +131,11 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
     @Test()
     void listenSendMessageFailedBuildRequestApRequestDtoTest() {
-        final String message = "oki";
+        final String message = "ok";
 
         final Exception exception = assertThrows(TechnicalException.class, () -> rabbitListenerService.listenSendMessage(message));
 
-        assertEquals("Error when try to map class eu.efti.eftigate.dto.RabbitRequestDto with message : oki", exception.getMessage());
+        assertEquals("Error when try to map class eu.efti.eftigate.dto.RabbitRequestDto with message : ok", exception.getMessage());
     }
 
     @Test

@@ -517,7 +517,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createIdentifiersControlVehicleIDIncorrect() {
-        searchWithIdentifiersRequestDto.setIdentifier("fausse plaque");
+        searchWithIdentifiersRequestDto.setIdentifier("bad identifier");
 
         final RequestIdDto requestIdDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
 
