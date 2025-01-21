@@ -11,6 +11,7 @@ import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftilogger.dto.MessagePartiesDto;
+import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.eftilogger.service.AuditRequestLogService;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +55,23 @@ class LogManagerTest extends BaseServiceTest {
     }
 
     @Test
-    void testLogSentMessageError() {
+    void logNoteReceiveFromAapMessageTest() {
+        final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
+                .requestingComponentId("ownerId")
+                .requestingComponentType(GATE)
+                .requestingComponentCountry("ownerCountry")
+                .respondingComponentId("receiver")
+                .respondingComponentType(GATE)
+                .respondingComponentCountry("ownerCountry").build();
+
+        logManager.logNoteReceiveFromAapMessage(controlDto, BODY, RECEIVER, GATE, GATE, true, RequestTypeEnum.NOTE_SEND, "test");
+
+        final String bodyBase64 = serializeUtils.mapObjectToBase64String(BODY);
+        verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", bodyBase64, StatusEnum.COMPLETE, false, "test");
+    }
+
+    @Test
+    void logSentMessageErrorTest() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
                 .requestingComponentId("ownerId")
                 .requestingComponentType(GATE)

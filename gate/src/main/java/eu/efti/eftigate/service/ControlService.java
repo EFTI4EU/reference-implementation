@@ -118,7 +118,11 @@ public class ControlService {
     public NoteResponseDto createNoteRequestForControl(final PostFollowUpRequestDto postFollowUpRequestDto) {
         log.info("create Note Request for control with requestId : {}", postFollowUpRequestDto.getRequestId());
         final ControlDto savedControl = getControlByRequestId(postFollowUpRequestDto.getRequestId());
-        if (savedControl != null && savedControl.isFound()) {
+        final boolean isCurrentGate = gateProperties.isCurrentGate(savedControl.getGateId());
+        final String receiver = isCurrentGate ? savedControl.getPlatformId() : savedControl.getGateId();
+        //log FTI023
+        logManager.logNoteReceiveFromAapMessage(savedControl, serializeUtils.mapObjectToBase64String(postFollowUpRequestDto), receiver, ComponentType.CA_APP, ComponentType.GATE, true, RequestTypeEnum.NOTE_SEND, LogManager.FTI_023);
+        if (savedControl.isFound()) {
             log.info("sending note to platform {}", savedControl.getPlatformId());
             return createNoteRequestForControl(savedControl, postFollowUpRequestDto);
         } else {
@@ -128,12 +132,20 @@ public class ControlService {
 
     private NoteResponseDto createNoteRequestForControl(final ControlDto controlDto, final PostFollowUpRequestDto notesDto) {
         final Optional<ErrorDto> errorOptional = this.validateControl(notesDto);
+        final boolean isCurrentGate = gateProperties.isCurrentGate(controlDto.getGateId());
+        final String receiver = isCurrentGate ? controlDto.getPlatformId() : controlDto.getGateId();
         if (errorOptional.isPresent()) {
             final ErrorDto errorDto = errorOptional.get();
+            controlDto.setError(errorDto);
+            //log fti025 not sent
+            logManager.logNoteReceiveFromAapMessage(controlDto, serializeUtils.mapObjectToBase64String(notesDto), receiver, ComponentType.GATE, ComponentType.PLATFORM, false, isCurrentGate ? RequestTypeEnum.NOTE_SEND : RequestTypeEnum.EXTERNAL_NOTE_SEND, isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026);
+            log.error("Not was not send : {}", errorDto.getErrorDescription());
             return new NoteResponseDto(NOTE_WAS_NOT_SENT, errorDto.getErrorCode(), errorDto.getErrorDescription());
         } else {
             controlDto.setNotes(notesDto.getMessage());
             getRequestService(RequestTypeEnum.NOTE_SEND).createAndSendRequest(controlDto, !gateProperties.isCurrentGate(controlDto.getGateId()) ? controlDto.getGateId() : null);
+            //log fti025
+            logManager.logNoteReceiveFromAapMessage(controlDto, serializeUtils.mapObjectToBase64String(notesDto), receiver, ComponentType.GATE, ComponentType.PLATFORM, true, isCurrentGate ? RequestTypeEnum.NOTE_SEND : RequestTypeEnum.EXTERNAL_NOTE_SEND, isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026);
             log.info("Note has been registered for control with request uuid '{}'", controlDto.getRequestId());
             return NoteResponseDto.builder().message("Note sent").build();
         }

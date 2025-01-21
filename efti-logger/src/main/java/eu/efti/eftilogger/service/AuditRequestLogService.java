@@ -58,8 +58,6 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                 .errorDescriptionMessage(control.getError() != null ? control.getError().getErrorDescription() : null)
                 .build();
         this.log(logRequestDto);
-
-
     }
 
     private String getRequestTypeFromControl(final ControlDto control, final boolean isAck) {
