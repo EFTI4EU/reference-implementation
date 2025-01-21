@@ -41,7 +41,40 @@ public class LogManager {
     public static final String FTI_009_FTI_020 = "fti009|fti020";
     public static final String FTI_021 = "fti021";
     public static final String FTI_019 = "fti019";
+    public static final String FTI_023 = "fti023";
+    public static final String FTI_025 = "fti025";
+    public static final String FTI_026 = "fti026";
 
+    public void logNoteReceiveFromAapMessage(final ControlDto control,
+                                             final String message,
+                                             final String receiver,
+                                             final ComponentType requestingComponentType,
+                                             final ComponentType respondingComponentType,
+                                             final boolean isSuccess,
+                                             final RequestTypeEnum requestType,
+                                             final String name) {
+        String receiverCountry = eftiGateIdResolver.resolve(receiver);
+        control.setRequestType(requestType);
+        sendLogRequest(control, message, receiver, requestingComponentType, respondingComponentType, isSuccess, name, receiverCountry);
+    }
+
+    private void sendLogRequest(ControlDto control, String message, String receiver, ComponentType requestingComponentType, ComponentType respondingComponentType, boolean isSuccess, String name, String receiverCountry) {
+        final MessagePartiesDto messagePartiesDto = buildMessagePartiesDto(receiver, requestingComponentType, respondingComponentType, receiverCountry);
+        final StatusEnum status = isSuccess ? StatusEnum.COMPLETE : StatusEnum.ERROR;
+        final String body = serializeUtils.mapObjectToBase64String(message);
+        this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, status, false, name);
+    }
+
+    private MessagePartiesDto buildMessagePartiesDto(String receiver, ComponentType requestingComponentType, ComponentType respondingComponentType, String receiverCountry) {
+        return MessagePartiesDto.builder()
+                .requestingComponentType(requestingComponentType)
+                .requestingComponentId(gateProperties.getOwner())
+                .requestingComponentCountry(gateProperties.getCountry())
+                .respondingComponentType(respondingComponentType)
+                .respondingComponentId(receiver)
+                .respondingComponentCountry(StringUtils.isNotBlank(receiverCountry) ? receiverCountry : gateProperties.getCountry())
+                .build();
+    }
 
     public void logSentMessage(final ControlDto control,
                                final String message,
@@ -51,17 +84,7 @@ public class LogManager {
                                final boolean isSuccess,
                                final String name) {
         String receiverCountry = eftiGateIdResolver.resolve(receiver);
-        final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
-                .requestingComponentType(requestingComponentType)
-                .requestingComponentId(gateProperties.getOwner())
-                .requestingComponentCountry(gateProperties.getCountry())
-                .respondingComponentType(respondingComponentType)
-                .respondingComponentId(receiver)
-                .respondingComponentCountry(StringUtils.isNotBlank(receiverCountry) ? receiverCountry : gateProperties.getCountry())
-                .build();
-        final StatusEnum status = isSuccess ? StatusEnum.COMPLETE : StatusEnum.ERROR;
-        final String body = serializeUtils.mapObjectToBase64String(message);
-        this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, status, false, name);
+        sendLogRequest(control, message, receiver, requestingComponentType, respondingComponentType, isSuccess, name, receiverCountry);
     }
 
     public void logFromIdentifier(final IdentifiersResponseDto identifiersResponseDto, final ComponentType requestingComponentType, final ComponentType respondingComponentType, final ControlDto controlDto, final String name) {
