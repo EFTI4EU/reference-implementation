@@ -95,7 +95,7 @@ class IdentifiersQueryTest {
     public static Stream<TestCase> readTestCases() {
         final String xml = readXml();
         final IdentifierQueryTestCases spec = unmarshal(xml);
-        return spec.getDataGroup().stream().flatMap((it) -> it.getTestCase().stream().map((tc) -> new TestCase(tc, it.getDataset())));
+        return spec.getDataGroup().stream().flatMap(dg -> dg.getTestCase().stream().map(tc -> new TestCase(dg.getDescription(), tc, dg.getDataset())));
     }
 
     private static String readXml() {

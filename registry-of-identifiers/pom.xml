@@ -109,7 +109,7 @@
                     <sourceType>XmlSchema</sourceType>
                     <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
                     <testSources>
-                        <testSource>../schema/xsd/examples/identifier-query-test-cases.xsd</testSource>
+                        <testSource>../schema/xsd/testing/identifier-query-test-cases.xsd</testSource>
                     </testSources>
                     <testXjbSources>
                         <testXjbSource>src/test/resources/identifier-query-test-cases-bindings.xjb</testXjbSource>
@@ -159,7 +159,7 @@
                             <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../schema/xsd/examples</directory>
+                                    <directory>../schema/xsd/testing</directory>
                                     <includes>
                                         <include>identifier-query-test-cases.xml</include>
                                     </includes>
