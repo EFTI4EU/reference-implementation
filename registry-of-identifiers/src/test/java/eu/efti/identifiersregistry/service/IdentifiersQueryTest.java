@@ -4,10 +4,11 @@ import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.identifiersregistry.IdentifiersMapper;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
+import eu.efti.v1.codes.CountryCode;
 import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
+import eu.efti.v1.consignment.identifier.TradeCountry;
 import eu.efti.v1.edelivery.IdentifierQuery;
 import eu.efti.v1.edelivery.IdentifierType;
-import eu.efti.v1.identifier_query_test_cases.Dataset;
 import eu.efti.v1.identifier_query_test_cases.IdentifierQueryTestCases;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -32,6 +33,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -41,6 +43,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @EnableJpaRepositories(basePackages = {"eu.efti.identifiersregistry.repository"})
 @EntityScan("eu.efti.identifiersregistry.entity")
 class IdentifiersQueryTest {
-    private static Logger logger = LoggerFactory.getLogger(IdentifiersQueryTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(IdentifiersQueryTest.class);
 
     private static final String IDENTIFIER_QUERY_TEST_CASES_RESOURCE_PATH = "/identifier-query-test-cases.xml";
 
@@ -61,11 +64,14 @@ class IdentifiersQueryTest {
 
     private final IdentifiersMapper identifiersMapper = new IdentifiersMapper(new ModelMapper());
 
-    public record TestCase(eu.efti.v1.identifier_query_test_cases.TestCase testCaseSpec, List<Dataset> datasetSpec) {
+    public record TestCase(String description,
+                           eu.efti.v1.identifier_query_test_cases.TestCase testCaseSpec,
+                           List<eu.efti.v1.identifier_query_test_cases.Dataset> datasetSpec) {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("TestCase(");
+            sb.append("'%s', ".formatted(description));
 
             IdentifierQuery query = testCaseSpec.getQuery();
             sb.append("query=[").append(Stream.of(
@@ -89,7 +95,7 @@ class IdentifiersQueryTest {
     public static Stream<TestCase> readTestCases() {
         final String xml = readXml();
         final IdentifierQueryTestCases spec = unmarshal(xml);
-        return spec.getDataGroup().stream().flatMap((it) -> it.getTestCase().stream().map((tc) -> new TestCase(tc, it.getDataset())));
+        return spec.getDataGroup().stream().flatMap(dg -> dg.getTestCase().stream().map(tc -> new TestCase(dg.getDescription(), tc, dg.getDataset())));
     }
 
     private static String readXml() {
@@ -164,6 +170,24 @@ class IdentifiersQueryTest {
                 tm.setDangerousGoodsIndicator(random.nextBoolean());
             }
         });
+        IntStream.range(0, sourceConsignment.getUsedTransportEquipment().size()).forEach(uteIndex -> {
+            var ute = sourceConsignment.getUsedTransportEquipment().get(uteIndex);
+            if (ute.getSequenceNumber() == null) {
+                ute.setSequenceNumber(BigInteger.valueOf(uteIndex));
+            }
+            if (ute.getRegistrationCountry() == null) {
+                var tc = new TradeCountry();
+                var cc = CountryCode.values()[random.nextInt(CountryCode.values().length)];
+                tc.setCode(cc);
+                ute.setRegistrationCountry(tc);
+            }
+
+            IntStream.range(0, ute.getCarriedTransportEquipment().size()).forEach(cteIndex -> {
+                var cte = ute.getCarriedTransportEquipment().get(cteIndex);
+                cte.setSequenceNumber(BigInteger.valueOf(cteIndex));
+            });
+        });
+
         Consignment consignment = identifiersMapper.eDeliverySupplyToEntity(sourceConsignment);
 
         consignment.setGateId("france");

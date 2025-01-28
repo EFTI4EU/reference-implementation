@@ -1,0 +1,213 @@
+﻿<!-- Created with Liquid Studio (https://www.liquid-technologies.com) -->
+<identifierQueryTestCases
+        xmlns="http://efti.eu/v1/identifier-query-test-cases"
+        xmlns:efti-id="http://efti.eu/v1/consignment/identifier"
+        xmlns:efti-ed="http://efti.eu/v1/edelivery"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://efti.eu/v1/identifier-query-test-cases ./identifier-query-test-cases.xsd http://efti.eu/v1/consignment/identifier ./xsd/consignment-identifier.xsd http://efti.eu/v1/edelivery ./xsd/edelivery.xsd">
+    <!-- 
+    - The search is case-insensitive.
+    - Only identification numbers (ID) can be searched alone. Following identifiers are considered as identification numbers. 
+      Others data elements can be used to specify search request more (filtering out). 
+    - An empty data element (optional) in ROI is filtered out when the corresponding search parameter is used and therefore set to a value. 
+      To include empty values of a data element, the search corresponding parameter should not be used.
+    -->
+    <dataGroup>
+        <dataset>
+            <id>57575757-5757-5757-5757-11180123be5b</id>
+            <consignment>
+                <efti-id:carrierAcceptanceDateTime formatId="205">202310011000+0000</efti-id:carrierAcceptanceDateTime>
+                <efti-id:deliveryEvent>
+                    <efti-id:actualOccurrenceDateTime formatId="205">
+                        202310021500+0000
+                    </efti-id:actualOccurrenceDateTime>
+                </efti-id:deliveryEvent>
+                <efti-id:mainCarriageTransportMovement>
+                    <efti-id:dangerousGoodsIndicator>false</efti-id:dangerousGoodsIndicator>
+                    <efti-id:modeCode>3</efti-id:modeCode>
+                    <efti-id:usedTransportMeans>
+                        <efti-id:id schemeAgencyId="UN">MMG418</efti-id:id>
+                        <efti-id:registrationCountry>
+                            <efti-id:code>FR</efti-id:code>
+                        </efti-id:registrationCountry>
+                    </efti-id:usedTransportMeans>
+                </efti-id:mainCarriageTransportMovement>
+                <efti-id:usedTransportEquipment>
+                    <efti-id:carriedTransportEquipment>
+                        <efti-id:id schemeAgencyId="UN">67890</efti-id:id>
+                        <efti-id:sequenceNumber>1</efti-id:sequenceNumber>
+                    </efti-id:carriedTransportEquipment>
+                    <efti-id:categoryCode>AE</efti-id:categoryCode>
+                    <efti-id:id schemeAgencyId="UN">CL654BG</efti-id:id>
+                    <efti-id:registrationCountry>
+                        <efti-id:code>FR</efti-id:code>
+                    </efti-id:registrationCountry>
+                    <efti-id:sequenceNumber>2</efti-id:sequenceNumber>
+                </efti-id:usedTransportEquipment>
+            </consignment>
+        </dataset>
+        <dataset>
+            <id>57575757-5757-5757-5757-555580123be5b</id>
+            <consignment>
+                <efti-id:carrierAcceptanceDateTime formatId="205">202310011000+0000</efti-id:carrierAcceptanceDateTime>
+                <efti-id:deliveryEvent>
+                    <efti-id:actualOccurrenceDateTime formatId="205">202310021500+0000</efti-id:actualOccurrenceDateTime>
+                </efti-id:deliveryEvent>
+                <efti-id:mainCarriageTransportMovement>
+                    <efti-id:modeCode>1</efti-id:modeCode>
+                    <efti-id:usedTransportMeans>
+                        <efti-id:id schemeAgencyId="UN">12345</efti-id:id>
+                        <efti-id:registrationCountry>
+                            <efti-id:code>FR</efti-id:code>
+                        </efti-id:registrationCountry>
+                    </efti-id:usedTransportMeans>
+                </efti-id:mainCarriageTransportMovement>
+                <efti-id:usedTransportEquipment>
+                    <efti-id:carriedTransportEquipment>
+                        <efti-id:id schemeAgencyId="UN">67890</efti-id:id>
+                        <efti-id:sequenceNumber>1</efti-id:sequenceNumber>
+                    </efti-id:carriedTransportEquipment>
+                    <efti-id:categoryCode>AE</efti-id:categoryCode>
+                    <efti-id:id schemeAgencyId="UN">fmc254</efti-id:id>
+                    <efti-id:registrationCountry>
+                        <efti-id:code>IT</efti-id:code>
+                    </efti-id:registrationCountry>
+                    <efti-id:sequenceNumber>2</efti-id:sequenceNumber>
+                </efti-id:usedTransportEquipment>
+            </consignment>
+        </dataset>
+        <dataset>
+            <id>57575757-5757-5757-5757-666680123be5b</id>
+            <consignment>
+                <efti-id:carrierAcceptanceDateTime formatId="205">202310011000+0000</efti-id:carrierAcceptanceDateTime>
+                <efti-id:deliveryEvent>
+                    <efti-id:actualOccurrenceDateTime formatId="205">202310021500+0000</efti-id:actualOccurrenceDateTime>
+                </efti-id:deliveryEvent>
+                <efti-id:mainCarriageTransportMovement>
+                    <efti-id:dangerousGoodsIndicator>true</efti-id:dangerousGoodsIndicator>
+                    <efti-id:modeCode>1</efti-id:modeCode>
+                    <efti-id:usedTransportMeans>
+                        <efti-id:id schemeAgencyId="UN">12345</efti-id:id>
+                        <efti-id:registrationCountry>
+                            <efti-id:code>FR</efti-id:code>
+                        </efti-id:registrationCountry>
+                    </efti-id:usedTransportMeans>
+                </efti-id:mainCarriageTransportMovement>
+                <efti-id:usedTransportEquipment>
+                    <efti-id:carriedTransportEquipment>
+                        <efti-id:id schemeAgencyId="UN">67890</efti-id:id>
+                        <efti-id:sequenceNumber>1</efti-id:sequenceNumber>
+                    </efti-id:carriedTransportEquipment>
+                    <efti-id:categoryCode>AE</efti-id:categoryCode>
+                    <efti-id:id schemeAgencyId="UN">FMC254</efti-id:id>
+                    <efti-id:registrationCountry>
+                        <efti-id:code>IT</efti-id:code>
+                    </efti-id:registrationCountry>
+                    <efti-id:sequenceNumber>2</efti-id:sequenceNumber>
+                </efti-id:usedTransportEquipment>
+            </consignment>
+        </dataset>
+        <dataset>
+            <id>57575757-5757-5757-5757-77770123be5b</id>
+            <consignment>
+                <efti-id:carrierAcceptanceDateTime formatId="205">202310011000+0000</efti-id:carrierAcceptanceDateTime>
+                <efti-id:deliveryEvent>
+                    <efti-id:actualOccurrenceDateTime formatId="205">202310021500+0000</efti-id:actualOccurrenceDateTime>
+                </efti-id:deliveryEvent>
+                <efti-id:mainCarriageTransportMovement>
+                    <efti-id:dangerousGoodsIndicator>false</efti-id:dangerousGoodsIndicator>
+                    <efti-id:modeCode>1</efti-id:modeCode>
+                    <efti-id:usedTransportMeans>
+                        <efti-id:id schemeAgencyId="UN">12345</efti-id:id>
+                        <efti-id:registrationCountry>
+                            <efti-id:code>FR</efti-id:code>
+                        </efti-id:registrationCountry>
+                    </efti-id:usedTransportMeans>
+                </efti-id:mainCarriageTransportMovement>
+                <efti-id:usedTransportEquipment>
+                    <efti-id:carriedTransportEquipment>
+                        <efti-id:id schemeAgencyId="UN">FMC254</efti-id:id>
+                        <efti-id:sequenceNumber>1</efti-id:sequenceNumber>
+                    </efti-id:carriedTransportEquipment>
+                    <efti-id:categoryCode>AE</efti-id:categoryCode>
+                    <efti-id:id schemeAgencyId="UN">54321</efti-id:id>
+                    <efti-id:registrationCountry>
+                        <efti-id:code>FR</efti-id:code>
+                    </efti-id:registrationCountry>
+                    <efti-id:sequenceNumber>2</efti-id:sequenceNumber>
+                </efti-id:usedTransportEquipment>
+            </consignment>
+        </dataset>
+        <testCase>
+            <query>
+                <efti-ed:identifier type="means equipment">CL654BG</efti-ed:identifier>
+                <efti-ed:registrationCountryCode>FR</efti-ed:registrationCountryCode>
+                <efti-ed:modeCode>3</efti-ed:modeCode>
+                <efti-ed:dangerousGoodsIndicator>true</efti-ed:dangerousGoodsIndicator>
+            </query>
+        </testCase>
+        <testCase>
+            <query>
+                <efti-ed:identifier type="means equipment">CL654BG</efti-ed:identifier>
+                <efti-ed:registrationCountryCode>FR</efti-ed:registrationCountryCode>
+                <efti-ed:modeCode>3</efti-ed:modeCode>
+            </query>
+            <result>57575757-5757-5757-5757-11180123be5b</result>
+        </testCase>
+        <testCase>
+            <query>
+                <efti-ed:identifier>FMC254</efti-ed:identifier>
+            </query>
+            <result>57575757-5757-5757-5757-55580123be5b</result>
+            <result>57575757-5757-5757-5757-66680123be5b</result>
+            <result>57575757-5757-5757-5757-77780123be5b</result>
+        </testCase>
+        <testCase>
+            <query>
+                <efti-ed:identifier type="means">FMC254</efti-ed:identifier>
+            </query>
+        </testCase>
+        <testCase>
+            <!-- Test to check if Country Code search is correctly done for equiment (no country code) -->
+            <query>
+                <efti-ed:identifier type="means equipment">FMC254</efti-ed:identifier>
+                <efti-ed:registrationCountryCode>IT</efti-ed:registrationCountryCode>
+                <efti-ed:modeCode>1</efti-ed:modeCode>
+            </query>
+            <result>57575757-5757-5757-5757-55580123be5b</result>
+            <result>57575757-5757-5757-5757-66680123be5b</result>
+        </testCase>
+        <testCase>
+            <query>
+                <efti-ed:identifier type="means carried equipment">FMC254</efti-ed:identifier>
+                <efti-ed:registrationCountryCode>IT</efti-ed:registrationCountryCode>
+                <efti-ed:modeCode>1</efti-ed:modeCode>
+            </query>
+            <result>57575757-5757-5757-5757-55580123be5b</result>
+            <result>57575757-5757-5757-5757-66680123be5b</result>
+            <result>57575757-5757-5757-5757-77780123be5b</result>
+        </testCase>
+        <testCase>
+            <query>
+                <efti-ed:identifier type="carried">FMC254</efti-ed:identifier>
+                <efti-ed:registrationCountryCode>IT</efti-ed:registrationCountryCode>
+            </query>
+            <result>57575757-5757-5757-5757-77780123be5b</result>
+        </testCase>
+        <!-- Test to check if optional value in ROI is well processed -->
+        <testCase>
+            <query>
+                <efti-ed:identifier>FMC254</efti-ed:identifier>
+                <efti-ed:dangerousGoodsIndicator>true</efti-ed:dangerousGoodsIndicator>
+            </query>
+            <result>57575757-5757-5757-5757-66680123be5b</result>
+        </testCase>
+        <testCase>
+            <query>
+                <efti-ed:identifier>FMC254</efti-ed:identifier>
+                <efti-ed:dangerousGoodsIndicator>false</efti-ed:dangerousGoodsIndicator>
+            </query>
+            <result>57575757-5757-5757-5757-77780123be5b</result>
+        </testCase>
+    </dataGroup>
+</identifierQueryTestCases>
