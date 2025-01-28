@@ -12,7 +12,7 @@ variables:
   MAVEN_GROUPEID: eu.efti
   MAVEN_ARTIFACTID: platform-gate-simulator
   MAVEN_EXTENSION: jar
-  VERSION_ARTEFACT_SNAPSHOT: 0.5.1-SNAPSHOT
+  VERSION_ARTEFACT_SNAPSHOT: 0.5.2-SNAPSHOT
   VERSION_ARTEFACT_RELEASE: 0.5.1
 
 "$[[ inputs.job-prefix | expand_vars ]]_build_and_deploy_microservices":
