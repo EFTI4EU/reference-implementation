@@ -74,7 +74,7 @@
         <site>
             <id>INGroupeSite</id>
             <!--suppress UnresolvedMavenProperty -->
-            <url>file:///${distributionManagement.site.rootpath}/efti/${project.artifactId}</url>
+            <url>file:///${distributionManagement.site.rootpath}/EFTI/${project.artifactId}</url>
         </site>
     </distributionManagement>
 
