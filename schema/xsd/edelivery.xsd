@@ -131,7 +131,7 @@
           <!-- uil of the consignment -->
           <xsd:element name="uil" type="efti-ed:UIL"/>
           <!-- subset id of the consignment e.g. identifier, EU1, FI or FI01 -->
-          <xsd:element name="subsetId" type="xsd:string"/>
+          <xsd:element name="subsetId" type="xsd:string" maxOccurs="unbounded"/>
         </xsd:sequence>
       </xsd:extension>
     </xsd:complexContent>
