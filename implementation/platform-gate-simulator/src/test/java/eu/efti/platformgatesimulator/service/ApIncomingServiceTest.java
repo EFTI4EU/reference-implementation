@@ -28,6 +28,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -208,7 +209,7 @@ class ApIncomingServiceTest extends AbstractTest {
                 .build());
         Mockito.when(notificationService.consume(any())).thenReturn(Optional.of(notificationDto));
         apIncomingService.manageIncomingNotification(new ReceivedNotificationDto());
-        verify(readerService).readFromFile(any());
+        verify(readerService).readFromFile(any(), anyList());
     }
 
     @Test
@@ -232,8 +233,8 @@ class ApIncomingServiceTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .build());
         Mockito.when(notificationService.consume(any())).thenReturn(Optional.of(notificationDto));
-        Mockito.when(readerService.readFromFile(any())).thenReturn(new SupplyChainConsignment());
+        Mockito.when(readerService.readFromFile(any(), anyList())).thenReturn(new SupplyChainConsignment());
         apIncomingService.manageIncomingNotification(new ReceivedNotificationDto());
-        verify(readerService).readFromFile(any());
+        verify(readerService).readFromFile(any(), anyList());
     }
 }

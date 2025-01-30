@@ -36,6 +36,30 @@
             <version>3.2.1</version>
         </dependency>
 
+        <!-- efti-data-tools lib for subset -->
+        <dependency>
+            <groupId>eu.efti.datatools</groupId>
+            <artifactId>schema</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+
+
+        <!-- kotlin version for lib of Finland -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>5.2.1</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>

@@ -81,7 +81,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlDto.setRequestId(requestId);
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(StatusEnum.PENDING);
-        this.controlDto.setSubsetId("oki");
+        this.controlDto.setSubsetIds(List.of("oki"));
         this.controlDto.setCreatedDate(localDateTime);
         this.controlDto.setLastModifiedDate(localDateTime);
 
@@ -90,14 +90,14 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         savedControlDto.setPlatformId(uilDto.getPlatformId());
         savedControlDto.setRequestId("42");
         savedControlDto.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
-        savedControlDto.setSubsetId("oki");
+        savedControlDto.setSubsetIds(List.of("oki"));
         savedControlDto.setCreatedDate(LocalDateTime.now());
         savedControlDto.setLastModifiedDate(LocalDateTime.now());
 
         this.controlEntityError.setRequestId(requestId);
         this.controlEntityError.setRequestType(RequestTypeEnum.NOTE_SEND);
         this.controlEntityError.setStatus(StatusEnum.PENDING);
-        this.controlDto.setSubsetId("oki");
+        this.controlDto.setSubsetIds(List.of("oki"));
         this.controlEntityError.setCreatedDate(localDateTime);
         this.controlEntityError.setLastModifiedDate(localDateTime);
 
@@ -107,7 +107,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlEntity.setStatus(controlDto.getStatus());
         this.controlEntity.setPlatformId(controlDto.getPlatformId());
         this.controlEntity.setGateId(controlDto.getGateId());
-        this.controlEntity.setSubsetId(controlDto.getSubsetId());
+        this.controlEntity.setSubsetIds(controlDto.getSubsetIds());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
         this.controlEntity.setFromGateId(controlDto.getFromGateId());

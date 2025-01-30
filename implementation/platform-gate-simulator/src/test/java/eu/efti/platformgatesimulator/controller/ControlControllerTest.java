@@ -18,6 +18,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.Assert.assertEquals;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,7 +28,7 @@ import static org.mockito.Mockito.verify;
 @ContextConfiguration(classes = {ControlController.class})
 @ExtendWith(SpringExtension.class)
 class ControlControllerTest {
-    
+
     @Mock
     private IdentifierService identifierService;
 
@@ -46,7 +48,7 @@ class ControlControllerTest {
         UilDto uilDto = UilDto.builder().platformId("platformId")
                 .gateId("gateId")
                 .datasetId("datasetId")
-                .subsetId("subsetId").build();
+                .subsetIds(List.of("subsetId")).build();
 
         ResponseEntity<UilDto> response = controlController.requestUil(uilDto);
 

@@ -6,6 +6,8 @@ import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.platformgatesimulator.config.GateProperties;
+import eu.efti.platformgatesimulator.service.AbstractTest;
+import eu.efti.platformgatesimulator.service.IdentifierService;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import eu.efti.v1.edelivery.IdentifierQuery;
 import org.junit.jupiter.api.AfterEach;
@@ -17,6 +19,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -87,7 +91,7 @@ class IdentifierServiceTest extends AbstractTest {
     @Test
     void sendRequestUilTest() {
         final UilDto uilDto = UilDto.builder()
-                .subsetId("subsetId")
+                .subsetIds(List.of("subsetId"))
                 .datasetId("datasetId")
                 .gateId("gateId")
                 .platformId("platformId").build();

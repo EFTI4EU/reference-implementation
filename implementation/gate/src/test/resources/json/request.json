@@ -15,7 +15,7 @@
     "status": null,
     "platformId": null,
     "gateId": null,
-    "subsetId": null,
+    "subsetIds": null,
     "createdDate": null,
     "lastModifiedDate": null,
     "eftiData": null,
