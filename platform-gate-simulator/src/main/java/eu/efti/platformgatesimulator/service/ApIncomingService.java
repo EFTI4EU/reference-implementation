@@ -1,10 +1,7 @@
 package eu.efti.platformgatesimulator.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import eu.efti.commons.utils.SerializeUtils;
-import eu.efti.edeliveryapconnector.constant.EDeliveryStatus;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
 import eu.efti.edeliveryapconnector.dto.ApRequestDto;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
@@ -17,7 +14,6 @@ import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.platformgatesimulator.config.GateProperties;
 import eu.efti.platformgatesimulator.mapper.MapperUtils;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
-import eu.efti.v1.edelivery.Consignment;
 import eu.efti.v1.edelivery.IdentifierQuery;
 import eu.efti.v1.edelivery.IdentifierResponse;
 import eu.efti.v1.edelivery.ObjectFactory;
@@ -28,17 +24,11 @@ import eu.efti.v1.json.SaveIdentifiersRequest;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.annotation.XmlType;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.C;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import javax.naming.ldap.Control;
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -114,7 +104,7 @@ public class ApIncomingService {
                 return;
             }
             try {
-                final SupplyChainConsignment supplyChainConsignment = readerService.readFromFile(gateProperties.getCdaPath() + datasetId, List.of(uilQuery.getSubsetId()));
+                final SupplyChainConsignment supplyChainConsignment = readerService.readFromFile(gateProperties.getCdaPath() + datasetId, uilQuery.getSubsetId());
                 identifierService.sendResponseUil(uilQuery.getRequestId(), supplyChainConsignment);
             } catch (IOException e) {
                 log.error("Error can't read file");
