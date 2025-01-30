@@ -298,7 +298,7 @@
                             <outputDirectory>${project.build.directory}/classes/xsd/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../schema/xsd</directory>
+                                    <directory>../../schema/xsd</directory>
                                     <includes>
                                         <include>**/*</include>
                                     </includes>

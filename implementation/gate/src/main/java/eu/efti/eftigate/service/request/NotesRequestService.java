@@ -18,7 +18,6 @@ import eu.efti.eftigate.repository.NotesRequestRepository;
 import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
-import eu.efti.eftigate.service.ValidationService;
 import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.v1.edelivery.PostFollowUpRequest;
 import eu.efti.v1.edelivery.UIL;

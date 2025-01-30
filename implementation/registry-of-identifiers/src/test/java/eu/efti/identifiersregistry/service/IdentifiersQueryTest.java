@@ -103,13 +103,15 @@ class IdentifiersQueryTest {
     }
 
     private static String readXml() {
-        final String xml;
-        try {
-            xml = Files.readString(Paths.get(requireNonNull(IdentifiersQueryTest.class.getResource(IDENTIFIER_QUERY_TEST_CASES_RESOURCE_PATH)).getPath()));
+
+        try (final InputStream inputStream = IdentifiersQueryTest.class.getResourceAsStream(IDENTIFIER_QUERY_TEST_CASES_RESOURCE_PATH)) {
+            if(inputStream == null) {
+                throw new RuntimeException(String.format("file %s not found", IDENTIFIER_QUERY_TEST_CASES_RESOURCE_PATH));
+            }
+            return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return xml;
     }
 
     @ParameterizedTest

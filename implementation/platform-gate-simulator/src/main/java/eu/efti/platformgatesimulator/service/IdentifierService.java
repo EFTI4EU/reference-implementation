@@ -171,7 +171,7 @@ public class IdentifierService {
         uil.setGateId(gateProperties.getGate());
         uilQuery.setUil(uil);
         uilQuery.setRequestId(requestId);
-        uilQuery.setSubsetId("full");
+        uilQuery.getSubsetId().add("full");
 
         final JAXBElement<UILQuery> jaxBResponse = objectFactory.createUilQuery(uilQuery);
         return serializeUtils.mapJaxbObjectToXmlString(jaxBResponse, UILQuery.class);
