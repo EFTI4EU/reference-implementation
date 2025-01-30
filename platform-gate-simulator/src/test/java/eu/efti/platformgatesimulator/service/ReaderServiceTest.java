@@ -17,6 +17,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -83,8 +84,8 @@ class ReaderServiceTest {
         Mockito.when(resourceLoader.getResource(any())).thenReturn(resource);
         Mockito.when(resource.exists()).thenReturn(false);
         Mockito.when(resource.exists()).thenReturn(true);
-        Mockito.when(resource.getInputStream()).thenReturn(IOUtils.toInputStream(data, "UTF-8"));
-        final SupplyChainConsignment result = readerService.readFromFile("classpath:cda/teest");
+        Mockito.when(resource.getContentAsString(any())).thenReturn(data);
+        final SupplyChainConsignment result = readerService.readFromFile("classpath:cda/teest", List.of("full"));
 
         Assertions.assertNotNull(result);
     }
@@ -95,7 +96,7 @@ class ReaderServiceTest {
         Mockito.when(resourceLoader.getResource(any())).thenReturn(resource);
         Mockito.when(resource.exists()).thenReturn(false);
         Mockito.when(resource.exists()).thenReturn(false);
-        final SupplyChainConsignment result = readerService.readFromFile("classpath:cda/bouuuuuuuuuuuuh");
+        final SupplyChainConsignment result = readerService.readFromFile("classpath:cda/bouuuuuuuuuuuuh", List.of("full"));
 
         Assertions.assertNull(result);
     }
