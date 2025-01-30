@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 
 import javax.naming.ldap.Control;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -113,7 +114,7 @@ public class ApIncomingService {
                 return;
             }
             try {
-                final SupplyChainConsignment supplyChainConsignment = readerService.readFromFile(gateProperties.getCdaPath() + datasetId);
+                final SupplyChainConsignment supplyChainConsignment = readerService.readFromFile(gateProperties.getCdaPath() + datasetId, List.of(uilQuery.getSubsetId()));
                 identifierService.sendResponseUil(uilQuery.getRequestId(), supplyChainConsignment);
             } catch (IOException e) {
                 log.error("Error can't read file");

@@ -10,6 +10,7 @@ import eu.efti.edeliveryapconnector.service.NotificationService;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.platformgatesimulator.config.GateProperties;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
+import eu.efti.v1.edelivery.UILQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -197,6 +198,7 @@ class ApIncomingServiceTest extends AbstractTest {
                        <uil>
                             <datasetId>67fe38bd-6bf7-4b06-b20e-206264bd639c</datasetId>
                        </uil>
+                       <subsetId>full</subsetId>
                     </uilQuery>
                 """;
 
@@ -208,7 +210,7 @@ class ApIncomingServiceTest extends AbstractTest {
                 .build());
         Mockito.when(notificationService.consume(any())).thenReturn(Optional.of(notificationDto));
         apIncomingService.manageIncomingNotification(new ReceivedNotificationDto());
-        verify(readerService).readFromFile(any());
+        verify(readerService).readFromFile(any(), any());
     }
 
     @Test
@@ -222,6 +224,7 @@ class ApIncomingServiceTest extends AbstractTest {
                        <uil>
                             <datasetId>67fe38bd-6bf7-4b06-b20e-206264bd639c</datasetId>
                        </uil>
+                       <subsetId>full</subsetId>
                     </uilQuery>
                 """;
 
@@ -232,8 +235,8 @@ class ApIncomingServiceTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .build());
         Mockito.when(notificationService.consume(any())).thenReturn(Optional.of(notificationDto));
-        Mockito.when(readerService.readFromFile(any())).thenReturn(new SupplyChainConsignment());
+        Mockito.when(readerService.readFromFile(any(), any())).thenReturn(new SupplyChainConsignment());
         apIncomingService.manageIncomingNotification(new ReceivedNotificationDto());
-        verify(readerService).readFromFile(any());
+        verify(readerService).readFromFile(any(), any());
     }
 }
