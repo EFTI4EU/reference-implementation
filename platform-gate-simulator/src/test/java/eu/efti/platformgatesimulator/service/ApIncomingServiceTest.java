@@ -10,7 +10,6 @@ import eu.efti.edeliveryapconnector.service.NotificationService;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.platformgatesimulator.config.GateProperties;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
-import eu.efti.v1.edelivery.UILQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -33,8 +33,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -101,7 +101,7 @@ class IdentifiersQueryTest {
     private static String readXml() {
 
         try (final InputStream inputStream = IdentifiersQueryTest.class.getResourceAsStream(IDENTIFIER_QUERY_TEST_CASES_RESOURCE_PATH)) {
-            if(inputStream == null) {
+            if (inputStream == null) {
                 throw new RuntimeException(String.format("file %s not found", IDENTIFIER_QUERY_TEST_CASES_RESOURCE_PATH));
             }
             return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
@@ -112,7 +112,7 @@ class IdentifiersQueryTest {
 
     @ParameterizedTest
     @MethodSource("readTestCases")
-    public void searchByCriteriaConformsToReferenceTestCases(TestCase testCase) {
+    void searchByCriteriaConformsToReferenceTestCases(TestCase testCase) {
         int seed = LocalDate.now().getDayOfMonth() % 4;
         final Random random = new Random(seed);
         logger.info("Using random seed {}", seed);

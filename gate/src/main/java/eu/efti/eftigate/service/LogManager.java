@@ -136,7 +136,9 @@ public class LogManager {
                                        final ComponentType respondingComponentType,
                                        final String name) {
         final String body = consignementList != null ? serializeUtils.mapObjectToBase64String(consignementList) : null;
-        this.auditRegistryLogService.logByControlDto(control, gateProperties.getOwner(), gateProperties.getCountry(), requestingComponentType, respondingComponentType, body, null, name);
+        StatusEnum status = control.isError() ? StatusEnum.ERROR : StatusEnum.COMPLETE;
+        final MessagePartiesDto messagePartiesDto = getMessagePartiesDto(requestingComponentType, respondingComponentType);
+        this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, status, false, name);
     }
 
     public void logLocalIdentifierMessage(final ControlDto control,
@@ -159,7 +161,9 @@ public class LogManager {
 
     public void logRequestRegistry(final ControlDto controlDto, final String body, final ComponentType requestingComponentType,
                                    final ComponentType respondingComponentType, final String name) {
-        this.auditRegistryLogService.logByControlDto(controlDto, gateProperties.getOwner(), gateProperties.getCountry(), requestingComponentType, respondingComponentType, body, null, name);
+        StatusEnum status = controlDto.isError() ? StatusEnum.ERROR : StatusEnum.COMPLETE;
+        final MessagePartiesDto messagePartiesDto = getMessagePartiesDto(requestingComponentType, respondingComponentType);
+        this.auditRequestLogService.log(controlDto, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, status, false, name);
     }
 
     public <T extends ValidableDto> void logAppRequest(final ControlDto control,
