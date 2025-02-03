@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
@@ -34,7 +35,7 @@ public class ControlDto {
     private StatusEnum status;
     private String platformId;
     private String gateId;
-    private String subsetId;
+    private List<String> subsetIds = new ArrayList<>();
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private byte[] eftiData;

@@ -45,7 +45,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                 .respondingComponentId(messagePartiesDto.getRespondingComponentId())
                 .respondingComponentCountry(messagePartiesDto.getRespondingComponentCountry())
                 .requestId(control.getRequestId())
-                .subsetId(control.getSubsetId())
+                .subsetIds(control.getSubsetIds())
                 .eftidataId(control.getDatasetId())
                 .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
                 .messageContent(body)

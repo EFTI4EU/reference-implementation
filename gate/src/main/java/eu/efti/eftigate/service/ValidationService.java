@@ -25,6 +25,8 @@ public class ValidationService {
 
     Validator validator;
 
+    SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
     public ValidationService() {
         try {
             validator = initValidator();
@@ -39,7 +41,7 @@ public class ValidationService {
     }
 
     private Validator initValidator() throws FileNotFoundException, SAXException {
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
         Source schemaFile = new StreamSource(getFile());
         Schema schema = factory.newSchema(schemaFile);
         return schema.newValidator();
