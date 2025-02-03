@@ -11,7 +11,6 @@ import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftilogger.dto.MessagePartiesDto;
-import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.eftilogger.service.AuditRequestLogService;
 import org.junit.jupiter.api.BeforeEach;
@@ -208,8 +207,14 @@ class LogManagerTest extends BaseServiceTest {
     @Test
     void logRequestRegistryTest() {
         logManager.logRequestRegistry(controlDto, "body", REGISTRY, GATE, "test");
-
-        verify(auditRegistryLogService).logByControlDto(controlDto, "ownerId", "ownerCountry", REGISTRY, GATE, "body", null, "test");
+        final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
+                .requestingComponentId("ownerId")
+                .requestingComponentType(REGISTRY)
+                .requestingComponentCountry("ownerCountry")
+                .respondingComponentId("ownerId")
+                .respondingComponentType(GATE)
+                .respondingComponentCountry("ownerCountry").build();
+        verify(auditRequestLogService).log(controlDto, messagePartiesDto, "ownerId", "ownerCountry", "body", StatusEnum.COMPLETE, false, "test");
     }
 
     @Test
@@ -219,7 +224,14 @@ class LogManagerTest extends BaseServiceTest {
 
         logManager.logRegistryIdentifiers(controlDto, consignmentDtoList, GATE, REGISTRY, "test");
 
-        verify(auditRegistryLogService).logByControlDto(controlDto, "ownerId", "ownerCountry", GATE, REGISTRY, body, null, "test");
+        final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
+                .requestingComponentId("ownerId")
+                .requestingComponentType(GATE)
+                .requestingComponentCountry("ownerCountry")
+                .respondingComponentId("ownerId")
+                .respondingComponentType(REGISTRY)
+                .respondingComponentCountry("ownerCountry").build();
+        verify(auditRequestLogService).log(controlDto, messagePartiesDto, "ownerId", "ownerCountry", body, StatusEnum.COMPLETE, false, "test");
     }
 
     @Test

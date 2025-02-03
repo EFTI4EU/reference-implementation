@@ -1,8 +1,6 @@
 package eu.efti.eftilogger.service;
 
-import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
-import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftilogger.LogMarkerEnum;
@@ -22,36 +20,6 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
     private static final LogMarkerEnum MARKER = LogMarkerEnum.REGISTRY;
     private static final String EDELIVERY = "EDELIVERY";
     private final SerializeUtils serializeUtils;
-
-    public void logByControlDto(final ControlDto controlDto,
-                                final String currentGateId,
-                                final String currentGateCountry,
-                                final ComponentType requestedComponentType,
-                                final ComponentType respondingComponentType,
-                                final String body,
-                                final String errorCode,
-                                final String name) {
-        final boolean isError = errorCode != null;
-        this.log(LogRegistryDto.builder()
-                .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
-                .name(name)
-                .componentType(ComponentType.GATE)
-                .componentId(currentGateId)
-                .componentCountry(currentGateCountry)
-                .requestingComponentType(requestedComponentType)
-                .requestingComponentId(currentGateId)
-                .requestingComponentCountry(currentGateCountry)
-                .respondingComponentType(respondingComponentType)
-                .respondingComponentId(currentGateId)
-                .respondingComponentCountry(currentGateCountry)
-                .messageContent(body)
-                .statusMessage(isError ? StatusEnum.ERROR.name() : StatusEnum.COMPLETE.name())
-                .errorCodeMessage(isError ? errorCode : "")
-                .errorDescriptionMessage(isError ? ErrorCodesEnum.valueOf(errorCode).getMessage() : "")
-                .eFTIDataId(controlDto.getDatasetId())
-                .interfaceType(EDELIVERY)
-                .build());
-    }
 
     public void log(final SaveIdentifiersRequestWrapper requestWrapper,
                     final String currentGateId,
