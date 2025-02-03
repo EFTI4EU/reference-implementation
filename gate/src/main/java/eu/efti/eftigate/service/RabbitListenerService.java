@@ -77,12 +77,20 @@ public class RabbitListenerService {
             getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
-            final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
-            if (RequestType.UIL.equals(requestDto.getRequestType())) {
-                //log fti020 and fti009
-                logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, isCurrentGate ? ComponentType.PLATFORM : ComponentType.GATE, true, LogManager.FTI_009_FTI_020);
-            } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
-                //log fti019
+            logSentMessage(rabbitRequestDto, requestTypeEnum, requestDto, receiver, isCurrentGate);
+        }
+    }
+
+    private void logSentMessage(RabbitRequestDto rabbitRequestDto, RequestTypeEnum requestTypeEnum, RequestDto requestDto, String receiver, boolean isCurrentGate) {
+        final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
+        if (RequestType.UIL.equals(requestDto.getRequestType())) {
+            //log fti020 and fti009
+            logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, isCurrentGate ? ComponentType.PLATFORM : ComponentType.GATE, true, LogManager.FTI_009_FTI_020);
+        } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
+            //log fti019 or fti021
+            if (RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH.equals(requestTypeEnum)) {
+                logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, ComponentType.GATE, true, LogManager.FTI_021);
+            } else {
                 logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, ComponentType.GATE, true, LogManager.FTI_019);
             }
         }
