@@ -69,8 +69,8 @@ public class ControlEntity extends AbstractModel implements Serializable {
     @Column(name = "gateid")
     private String gateId;
 
-    @Column(name = "subsetid")
-    private String subsetId;
+    @Column(name = "subsetids")
+    private List<String> subsetIds;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "transportidentifiers")

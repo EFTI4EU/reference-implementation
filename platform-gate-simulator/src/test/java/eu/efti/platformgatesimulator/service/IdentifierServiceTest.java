@@ -18,6 +18,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -87,7 +89,7 @@ class IdentifierServiceTest extends AbstractTest {
     @Test
     void sendRequestUilTest() {
         final UilDto uilDto = UilDto.builder()
-                .subsetId("subsetId")
+                .subsetIds(List.of("subsetId"))
                 .datasetId("datasetId")
                 .gateId("gateId")
                 .platformId("platformId").build();
