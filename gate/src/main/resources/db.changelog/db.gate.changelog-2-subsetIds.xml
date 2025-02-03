@@ -6,8 +6,8 @@
     <changeSet author="jthueux" id="080120251606-1">
         <dropColumn tableName="control" columnName="subsetid"/>
         <addColumn tableName="control">
-            <column name="subsetids" type="TEXT[]" defaultValueComputed="'{full}'::text[]">
-                <constraints nullable="false"/>
+            <column name="subsetids" type="TEXT[]">
+                <constraints nullable="true"/>
             </column>
         </addColumn>
     </changeSet>
