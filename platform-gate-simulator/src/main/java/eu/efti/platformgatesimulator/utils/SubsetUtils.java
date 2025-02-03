@@ -30,6 +30,7 @@ import java.util.Set;
 public class SubsetUtils {
 
     final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    final TransformerFactory tf = TransformerFactory.newInstance();
 
     public Optional<String> parseBySubsets(final String xlmToParse, final List<String> subsets) {
         try {
@@ -49,7 +50,6 @@ public class SubsetUtils {
             final DOMSource domSource = new DOMSource(doc);
             final StringWriter writer = new StringWriter();
             final StreamResult result = new StreamResult(writer);
-            final TransformerFactory tf = TransformerFactory.newInstance();
             final Transformer transformer = tf.newTransformer();
             transformer.transform(domSource, result);
             return writer.toString();
