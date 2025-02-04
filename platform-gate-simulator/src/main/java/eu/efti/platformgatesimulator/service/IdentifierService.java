@@ -137,6 +137,8 @@ public class IdentifierService {
             sleep(gaussWaitingTime * 1000);
         } catch (InterruptedException e) {
             log.error("Error when try to call gauss operation !", e);
+            /* Clean up whatever needs to be handled before interrupting  */
+            Thread.currentThread().interrupt();
         }
     }
 
