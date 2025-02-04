@@ -120,8 +120,8 @@ public class ControlService {
         final ControlDto savedControl = getControlByRequestId(postFollowUpRequestDto.getRequestId());
         final boolean isCurrentGate = gateProperties.isCurrentGate(savedControl.getGateId());
         final String receiver = isCurrentGate ? savedControl.getPlatformId() : savedControl.getGateId();
-        //log FTI023
-        logManager.logNoteReceiveFromAapMessage(savedControl, serializeUtils.mapObjectToBase64String(postFollowUpRequestDto), receiver, ComponentType.CA_APP, ComponentType.GATE, true, RequestTypeEnum.NOTE_SEND, LogManager.FTI_023);
+        //log FTI024
+        logManager.logNoteReceiveFromAapMessage(savedControl, serializeUtils.mapObjectToBase64String(postFollowUpRequestDto), receiver, ComponentType.CA_APP, ComponentType.GATE, true, RequestTypeEnum.NOTE_SEND, LogManager.FTI_024);
         if (savedControl.isFound()) {
             log.info("sending note to platform {}", savedControl.getPlatformId());
             return createNoteRequestForControl(savedControl, postFollowUpRequestDto);
@@ -401,9 +401,9 @@ public class ControlService {
         final List<IdentifierRequestResultDto> identifierResultDtos = new LinkedList<>();
         requestDtos.forEach(requestDto -> identifierResultDtos.add(
                 IdentifierRequestResultDto.builder()
-                        .consignments(requestDto.getIdentifiersResults() != null ? mapperUtils.consignmentDtoToApiDto(requestDto.getIdentifiersResults().getConsignments()): Collections.emptyList())
-                        .errorCode(requestDto.getError() != null? requestDto.getError().getErrorCode() : null)
-                        .errorDescription(requestDto.getError() != null? requestDto.getError().getErrorDescription() : null)
+                        .consignments(requestDto.getIdentifiersResults() != null ? mapperUtils.consignmentDtoToApiDto(requestDto.getIdentifiersResults().getConsignments()) : Collections.emptyList())
+                        .errorCode(requestDto.getError() != null ? requestDto.getError().getErrorCode() : null)
+                        .errorDescription(requestDto.getError() != null ? requestDto.getError().getErrorDescription() : null)
                         .gateIndicator(eftiGateIdResolver.resolve(requestDto.getGateIdDest()))
                         .status(mapRequestStatus(requestDto.getStatus()))
                         .build())
@@ -440,11 +440,11 @@ public class ControlService {
     }
 
     private String mapRequestStatus(final RequestStatusEnum requestStatus) {
-        if( List.of(RECEIVED, IN_PROGRESS, RESPONSE_IN_PROGRESS).contains(requestStatus) ) {
+        if (List.of(RECEIVED, IN_PROGRESS, RESPONSE_IN_PROGRESS).contains(requestStatus)) {
             return PENDING.name();
-        } else if ( RequestStatusEnum.SUCCESS.equals(requestStatus)) {
+        } else if (RequestStatusEnum.SUCCESS.equals(requestStatus)) {
             return COMPLETE.name();
-        } else if ( List.of(SEND_ERROR, ERROR).contains(requestStatus)) {
+        } else if (List.of(SEND_ERROR, ERROR).contains(requestStatus)) {
             return StatusEnum.ERROR.name();
         }
         return requestStatus.name();

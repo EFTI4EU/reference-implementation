@@ -3,7 +3,6 @@ package eu.efti.platformgatesimulator.service;
 import eu.efti.platformgatesimulator.config.GateProperties;
 import eu.efti.platformgatesimulator.exception.UploadException;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
