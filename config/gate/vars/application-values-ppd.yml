@@ -28,6 +28,8 @@ gate:
     url: https://edelivery-fr.ppd.efti.service.groupein.local/ap-gate/domibus/services/wsplugin
     username: france_service_account
     password: tq9tQ6ykymK60zjBsDSO+
+  xsd:
+    path: /opt/javapp/schema/xsd/edelivery/gate.xsd
 
 batch:
   retry:
