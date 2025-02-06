@@ -31,6 +31,7 @@ import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.utils.ControlUtils;
+import eu.efti.eftigate.utils.SubsetsCheckerUtils;
 import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.edelivery.IdentifierQuery;
@@ -155,6 +156,11 @@ public class ControlService {
         final Validator validator;
         try (final ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             validator = factory.getValidator();
+        }
+
+        if (validable instanceof UilDto uilDto && !SubsetsCheckerUtils.isSubsetsValid(uilDto.getSubsetIds())) {
+            log.error("Error bad subsets send");
+            return Optional.of(ErrorDto.fromErrorCode(ErrorCodesEnum.BAD_SUBSETS));
         }
 
         final Set<ConstraintViolation<ValidableDto>> violations = validator.validate(validable);

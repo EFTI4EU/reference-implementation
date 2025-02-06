@@ -27,6 +27,7 @@ import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
 import eu.efti.eftigate.service.ValidationService;
 import eu.efti.eftigate.utils.ControlUtils;
+import eu.efti.eftigate.utils.SubsetsCheckerUtils;
 import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.v1.consignment.common.ObjectFactory;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
@@ -97,10 +98,16 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         Optional<String> result = validationService.isXmlValid(body);
         if (result.isPresent()) {
             log.error("Received invalid UILQuery");
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, result.get()));
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, result.get(), ErrorCodesEnum.XML_ERROR.name()));
             return;
         }
         final UILQuery uilQuery = getSerializeUtils().mapXmlStringToJaxbObject(body);
+        final boolean isSubsetValid = SubsetsCheckerUtils.isSubsetsValid(uilQuery.getSubsetId());
+        if (!isSubsetValid) {
+            log.error("Received invalid UILQuery with bad subsets");
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, ErrorCodesEnum.BAD_SUBSETS.getMessage(), ErrorCodesEnum.BAD_SUBSETS.name()));
+            return;
+        }
         getControlService().createUilControl(ControlUtils
                 .fromGateToGateQuery(uilQuery, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, notificationDto, getGateProperties().getOwner()));
     }
@@ -110,7 +117,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         Optional<String> result = validationService.isXmlValid(body);
         if (result.isPresent()) {
             log.error("Received invalid UILResponse");
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, result.get()));
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, result.get(), ErrorCodesEnum.XML_ERROR.name()));
             return;
         }
         final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(body);

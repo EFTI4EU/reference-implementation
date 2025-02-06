@@ -91,9 +91,9 @@ public abstract class RequestService<T extends RequestEntity> {
         this.sendRequest(result);
     }
 
-    public RequestDto buildErrorRequestDto(final NotificationDto notificationDto, final RequestTypeEnum requestTypeEnum, final String error) {
+    public RequestDto buildErrorRequestDto(final NotificationDto notificationDto, final RequestTypeEnum requestTypeEnum, final String error, final String errorCodeString) {
         ErrorDto errorDto = ErrorDto.builder()
-                .errorCode(ErrorCodesEnum.XML_ERROR.name())
+                .errorCode(errorCodeString)
                 .errorDescription(error).build();
 
         ControlDto controlDto = ControlDto.builder()

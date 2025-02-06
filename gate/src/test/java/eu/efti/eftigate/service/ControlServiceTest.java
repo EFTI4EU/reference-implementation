@@ -168,7 +168,7 @@ class ControlServiceTest extends AbstractServiceTest {
         this.uilDto.setGateId("france");
         this.uilDto.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
         this.uilDto.setPlatformId("ttf");
-        this.uilDto.setSubsetIds(List.of("full"));
+        this.uilDto.setSubsetIds(List.of("EL05"));
 
         this.searchWithIdentifiersRequestDto.setIdentifier("abc123");
         this.searchWithIdentifiersRequestDto.setRegistrationCountryCode("FR");

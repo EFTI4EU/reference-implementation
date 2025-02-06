@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.RequestDto;
+import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
@@ -61,7 +62,7 @@ class RequestServiceTest {
         NotificationDto notificationDto = NotificationDto.builder()
                 .content(NotificationContentDto.builder().conversationId("I'm a conversation").fromPartyId("fromPartyId").build()).build();
 
-        RequestDto requestDto = requestService.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_UIL_SEARCH,"error");
+        RequestDto requestDto = requestService.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_UIL_SEARCH,"error", ErrorCodesEnum.XML_ERROR.name());
 
         assertEquals("I'm a conversation", requestDto.getControl().getRequestId());
         assertNotNull(requestDto.getError());
