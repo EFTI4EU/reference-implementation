@@ -1,6 +1,8 @@
 package eu.efti.eftigate.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.xml.sax.SAXException;
@@ -21,13 +23,15 @@ import java.util.Optional;
 @Slf4j
 public class ValidationService {
 
-    private static final String GATE_XSD = "classpath:xsd/edelivery/gate.xsd";
-
     Validator validator;
 
     SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-    public ValidationService() {
+    @Value("${gate.xsd.path:classpath:xsd/edelivery/gate.xsd}")
+    private String GATE_XSD;
+
+    @PostConstruct
+    public void postConstruct() {
         try {
             validator = initValidator();
         } catch (FileNotFoundException | SAXException e) {
@@ -41,13 +45,13 @@ public class ValidationService {
     }
 
     private Validator initValidator() throws FileNotFoundException, SAXException {
-
         Source schemaFile = new StreamSource(getFile());
+
         Schema schema = factory.newSchema(schemaFile);
         return schema.newValidator();
     }
 
-    public Optional<String> isXmlValid(String body) {
+    public Optional<String> isXmlValid(final String body) {
         try {
             validator.validate(new StreamSource(new StringReader(body)));
         } catch (SAXException | IOException e) {
