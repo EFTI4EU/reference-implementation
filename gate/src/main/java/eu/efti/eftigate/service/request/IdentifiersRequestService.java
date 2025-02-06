@@ -8,6 +8,7 @@ import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.SearchParameter;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
+import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
@@ -97,7 +98,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         Optional<String> result = validationService.isXmlValid(notificationDto.getContent().getBody());
         if (result.isPresent()) {
             log.error("Received invalid IdentifierQuery");
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, result.get()));
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, result.get(), ErrorCodesEnum.XML_ERROR.name()));
             return;
         }
         final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
@@ -119,7 +120,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         Optional<String> result = validationService.isXmlValid(notificationDto.getContent().getBody());
         if (result.isPresent()) {
             log.error("Received invalid IdentifierResponse");
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, result.get()));
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, result.get(), ErrorCodesEnum.XML_ERROR.name()));
             return;
         }
         final IdentifierResponse response = getSerializeUtils().mapXmlStringToJaxbObject(body);

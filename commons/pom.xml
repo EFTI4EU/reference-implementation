@@ -90,6 +90,7 @@
                     <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
                     <sources>
                         <source>../schema/xsd/edelivery/gate.xsd</source>
+                        <source>../schema/xsd/codes/subsets.xsd</source>
                     </sources>
                     <xjcSourceExcludeFilters>
                         <filter implementation="org.codehaus.mojo.jaxb2.shared.filters.pattern.PatternFileFilter">

@@ -3,6 +3,7 @@ package eu.efti.eftigate.service.request;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.NotesRequestDto;
 import eu.efti.commons.dto.RequestDto;
+import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -99,7 +100,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
         Optional<String> result = validationService.isXmlValid(notificationDto.getContent().getBody());
         if (result.isPresent()) {
             log.error("Received invalid PostFollowUpRequest");
-            RequestDto requestDto = this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND, result.get());
+            RequestDto requestDto = this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND, result.get(), ErrorCodesEnum.XML_ERROR.name());
             sendLogNote(requestDto.getControl(), true, notificationDto.getContent().getBody());
             this.sendRequest(requestDto);
             return;

@@ -3,7 +3,6 @@ package eu.efti.platformgatesimulator.utils;
 import eu.efti.datatools.schema.SubsetUtil;
 import eu.efti.datatools.schema.XmlSchemaElement;
 import lombok.experimental.UtilityClass;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
