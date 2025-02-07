@@ -58,6 +58,7 @@ import static eu.efti.commons.enums.RequestStatusEnum.TIMEOUT;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH;
 import static eu.efti.commons.enums.StatusEnum.COMPLETE;
 import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.isNotFound;
+import static eu.efti.eftilogger.model.ComponentType.GATE;
 
 @Slf4j
 @Component
@@ -257,11 +258,11 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             manageErrorReceived(uilRequestDto, uilResponse.getStatus(), uilResponse.getDescription());
         }
         if (uilRequestDto.getControl().isExternalAsk()) {
-            respondToOtherGate(uilRequestDto);
+            respondToOtherGate(uilRequestDto, notificationDto.getContent().getBody());
         }
         //log fti010
         NotificationContentDto content = notificationDto.getContent();
-        getLogManager().logReceivedMessage(uilRequestDto.getControl(), ComponentType.PLATFORM, ComponentType.GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
+        getLogManager().logReceivedMessage(uilRequestDto.getControl(), ComponentType.PLATFORM, GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
     }
 
     private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, NotificationContentDto content) {
@@ -294,7 +295,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         this.save(requestDto);
         ControlDto savedControl = getControlService().save(controlDto);
         if (!StatusEnum.PENDING.equals(savedControl.getStatus())) {
-            getLogManager().logReceivedMessage(controlDto, ComponentType.GATE, ComponentType.GATE, content.getBody(), content.getFromPartyId(), savedControl.getStatus(), LogManager.FTI_022);
+            getLogManager().logReceivedMessage(controlDto, GATE, GATE, content.getBody(), content.getFromPartyId(), savedControl.getStatus(), LogManager.FTI_022);
         }
     }
 
@@ -337,12 +338,13 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         getControlService().save(controlDto);
     }
 
-    private void respondToOtherGate(final UilRequestDto uilRequestDto) {
+    private void respondToOtherGate(final UilRequestDto uilRequestDto, String body) {
         this.updateStatus(uilRequestDto, RESPONSE_IN_PROGRESS);
         uilRequestDto.setGateIdDest(uilRequestDto.getControl().getFromGateId());
         final RequestDto savedUilRequestDto = this.save(uilRequestDto);
         savedUilRequestDto.setRequestType(RequestType.UIL);
         this.sendRequest(savedUilRequestDto);
+        getLogManager().logSentMessage(savedUilRequestDto.getControl(), body, savedUilRequestDto.getControl().getFromGateId(), GATE, GATE, true, LogManager.FTI_022);
     }
 
     private Optional<UilRequestDto> findByRequestId(final String requestId) {
