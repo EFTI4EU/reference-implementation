@@ -1,6 +1,7 @@
 package eu.efti.eftigate.service;
 
 import eu.efti.commons.constant.EftiGateConstants;
+import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestType;
@@ -18,12 +19,15 @@ import eu.efti.eftigate.generator.id.MessageIdGenerator;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
-import eu.efti.eftilogger.model.ComponentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import static eu.efti.eftilogger.model.ComponentType.GATE;
+import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
@@ -84,15 +88,27 @@ public class RabbitListenerService {
     private void logSentMessage(RabbitRequestDto rabbitRequestDto, RequestTypeEnum requestTypeEnum, RequestDto requestDto, String receiver, boolean isCurrentGate) {
         final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
         if (RequestType.UIL.equals(requestDto.getRequestType())) {
-            //log fti020 and fti009
-            logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, isCurrentGate ? ComponentType.PLATFORM : ComponentType.GATE, true, LogManager.FTI_009_FTI_020);
+            logSentUilMessage(rabbitRequestDto, requestDto.getControl(), receiver, body);
         } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
-            //log fti019 or fti021
-            if (RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH.equals(requestTypeEnum)) {
-                logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, ComponentType.GATE, true, LogManager.FTI_021);
-            } else {
-                logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, ComponentType.GATE, true, LogManager.FTI_019);
-            }
+            logSentIdentifierMessage(requestTypeEnum, requestDto.getControl(), receiver, body);
+        }
+    }
+
+    private void logSentIdentifierMessage(RequestTypeEnum requestTypeEnum, ControlDto controlDto, String receiver, String body) {
+        //log fti019 or fti021
+        if (RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH.equals(requestTypeEnum)) {
+            logManager.logSentMessage(controlDto, body, receiver, GATE, GATE, true, LogManager.FTI_021);
+        } else {
+            logManager.logSentMessage(controlDto, body, receiver, GATE, GATE, true, LogManager.FTI_019);
+        }
+    }
+
+    private void logSentUilMessage(RabbitRequestDto rabbitRequestDto, ControlDto controlDto, String receiver, String body) {
+        //log fti020 and fti009
+        if (StringUtils.isNotBlank(receiver) && receiver.equalsIgnoreCase(rabbitRequestDto.getControl().getPlatformId())) {
+            logManager.logSentMessage(controlDto, body, receiver, GATE, PLATFORM, true, LogManager.FTI_009);
+        } else {
+            logManager.logSentMessage(controlDto, body, receiver, GATE, GATE, true, LogManager.FTI_020);
         }
     }
 

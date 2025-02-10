@@ -38,7 +38,8 @@ public class LogManager {
     public static final String FTI_011_FTI_017 = "fti011|fti017";
     public static final String FTI_022 = "fti022";
     public static final String FTI_010 = "fti010";
-    public static final String FTI_009_FTI_020 = "fti009|fti020";
+    public static final String FTI_009 = "fti009";
+    public static final String FTI_020 = "fti020";
     public static final String FTI_021 = "fti021";
     public static final String FTI_019 = "fti019";
     public static final String FTI_024 = "fti024";
