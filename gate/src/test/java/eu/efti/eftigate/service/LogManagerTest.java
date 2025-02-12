@@ -6,6 +6,7 @@ import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.commons.dto.identifiers.api.IdentifierRequestResultDto;
+import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.config.GateProperties;
@@ -111,10 +112,11 @@ class LogManagerTest extends BaseServiceTest {
                 .respondingComponentId("ownerId")
                 .respondingComponentType(null)
                 .respondingComponentCountry("ownerCountry").build();
+        requestDto.setRequestType(RequestType.IDENTIFIER);
 
-        logManager.logAckMessage(controlDto, null, null, false, "test");
+        logManager.logAckMessage(controlDto, null, null, true, requestDto, "test");
 
-        verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", "", StatusEnum.ERROR, true, "test");
+        verify(auditRequestLogService).logAck(controlDto, expectedMessageParties, "ownerId", "ownerCountry", "", StatusEnum.COMPLETE, RequestType.IDENTIFIER, "test");
     }
 
     @Test
@@ -126,10 +128,11 @@ class LogManagerTest extends BaseServiceTest {
                 .respondingComponentId("ownerId")
                 .respondingComponentType(null)
                 .respondingComponentCountry("ownerCountry").build();
+        requestDto.setRequestType(RequestType.UIL);
 
-        logManager.logAckMessage(controlDto, null, null, true, "test");
+        logManager.logAckMessage(controlDto, null, null, false, requestDto, "test");
 
-        verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", "", StatusEnum.COMPLETE, true, "test");
+        verify(auditRequestLogService).logAck(controlDto, expectedMessageParties, "ownerId", "ownerCountry", "", StatusEnum.ERROR, RequestType.UIL, "test");
     }
 
     @Test

@@ -95,22 +95,30 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     public void manageQueryReceived(final NotificationDto notificationDto) {
-        String body = notificationDto.getContent().getBody();
+        NotificationContentDto content = notificationDto.getContent();
+        String body = content.getBody();
+        String fromPartyId = content.getFromPartyId();
         Optional<String> result = validationService.isXmlValid(body);
         if (result.isPresent()) {
             log.error("Received invalid UILQuery");
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, result.get(), ErrorCodesEnum.XML_ERROR.name()));
+            RequestDto errorRequestDto = this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, result.get(), ErrorCodesEnum.XML_ERROR.name());
+            this.sendRequest(errorRequestDto);
+            getLogManager().logReceivedMessage(errorRequestDto.getControl(), GATE, GATE, body, fromPartyId, StatusEnum.ERROR, LogManager.FTI_020);
             return;
         }
         final UILQuery uilQuery = getSerializeUtils().mapXmlStringToJaxbObject(body);
         final boolean isSubsetValid = SubsetsCheckerUtils.isSubsetsValid(uilQuery.getSubsetId());
         if (!isSubsetValid) {
             log.error("Received invalid UILQuery with bad subsets");
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, ErrorCodesEnum.BAD_SUBSETS.getMessage(), ErrorCodesEnum.BAD_SUBSETS.name()));
+            RequestDto errorRequestDto = this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, ErrorCodesEnum.BAD_SUBSETS.getMessage(), ErrorCodesEnum.BAD_SUBSETS.name());
+            this.sendRequest(errorRequestDto);
+            getLogManager().logReceivedMessage(errorRequestDto.getControl(), GATE, GATE, body, fromPartyId, StatusEnum.ERROR, LogManager.FTI_020);
             return;
         }
-        getControlService().createUilControl(ControlUtils
-                .fromGateToGateQuery(uilQuery, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, notificationDto, getGateProperties().getOwner()));
+        ControlDto controlDto = ControlUtils
+                .fromGateToGateQuery(uilQuery, EXTERNAL_ASK_UIL_SEARCH, notificationDto, getGateProperties().getOwner());
+        getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId, StatusEnum.COMPLETE, LogManager.FTI_020);
+        getControlService().createUilControl(controlDto);
     }
 
     public void manageResponseReceived(final NotificationDto notificationDto) {

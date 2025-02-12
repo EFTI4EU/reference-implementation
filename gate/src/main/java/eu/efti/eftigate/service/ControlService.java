@@ -58,6 +58,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+import static eu.efti.commons.constant.EftiGateConstants.UIL_TYPES;
 import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
 import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
@@ -67,6 +68,7 @@ import static eu.efti.commons.enums.RequestStatusEnum.SEND_ERROR;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH;
 import static eu.efti.commons.enums.StatusEnum.COMPLETE;
 import static eu.efti.commons.enums.StatusEnum.PENDING;
+import static eu.efti.eftigate.service.LogManager.FTI_017;
 import static java.lang.String.format;
 
 
@@ -145,8 +147,6 @@ public class ControlService {
         } else {
             controlDto.setNotes(notesDto.getMessage());
             getRequestService(RequestTypeEnum.NOTE_SEND).createAndSendRequest(controlDto, !gateProperties.isCurrentGate(controlDto.getGateId()) ? controlDto.getGateId() : null);
-            //log fti025
-            logManager.logNoteReceiveFromAapMessage(controlDto, serializeUtils.mapObjectToBase64String(notesDto), receiver, ComponentType.GATE, ComponentType.PLATFORM, true, isCurrentGate ? RequestTypeEnum.NOTE_SEND : RequestTypeEnum.EXTERNAL_NOTE_SEND, isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026);
             log.info("Note has been registered for control with request uuid '{}'", controlDto.getRequestId());
             return NoteResponseDto.builder().message("Note sent").build();
         }
@@ -343,11 +343,21 @@ public class ControlService {
     }
 
     private <T extends ValidableDto> void createControlFromType(final T searchDto, final ControlDto controlDto) {
-        logManager.logAppRequest(controlDto, searchDto, ComponentType.CA_APP, ComponentType.GATE, LogManager.FTI_008_FTI_014);
+        logAppRequest(searchDto, controlDto);
         if (searchDto instanceof UilDto) {
             createUilControl(controlDto);
         } else if (searchDto instanceof final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {
             createIdentifiersControl(controlDto, searchWithIdentifiersRequestDto);
+        }
+    }
+
+    private <T extends ValidableDto> void logAppRequest(T searchDto, ControlDto controlDto) {
+        if (controlDto.getRequestType() != null) {
+            if (UIL_TYPES.contains(controlDto.getRequestType())) {
+                logManager.logAppRequest(controlDto, searchDto, ComponentType.CA_APP, ComponentType.GATE, LogManager.FTI_008);
+            } else {
+                logManager.logAppRequest(controlDto, searchDto, ComponentType.CA_APP, ComponentType.GATE, LogManager.FTI_014);
+            }
         }
     }
 
@@ -366,9 +376,19 @@ public class ControlService {
             result.setErrorCode(controlDto.getError().getErrorCode());
         }
         if (controlDto.getStatus() != PENDING) { // pending request are not logged
-            logManager.logAppResponse(controlDto, result, ComponentType.GATE, gateProperties.getOwner(), ComponentType.CA_APP, null, LogManager.FTI_011_FTI_017);
+            logAppResponse(controlDto, result);
         }
         return result;
+    }
+
+    private void logAppResponse(ControlDto controlDto, RequestIdDto result) {
+        if (controlDto.getRequestType() != null) {
+            if (UIL_TYPES.contains(controlDto.getRequestType())) {
+                logManager.logAppResponse(controlDto, result, ComponentType.GATE, gateProperties.getOwner(), ComponentType.CA_APP, null, LogManager.FTI_011);
+            } else {
+                logManager.logAppResponse(controlDto, result, ComponentType.GATE, gateProperties.getOwner(), ComponentType.CA_APP, null, FTI_017);
+            }
+        }
     }
 
     public int updatePendingControls() {
@@ -398,7 +418,7 @@ public class ControlService {
 
         if (StringUtils.isBlank(controlDto.getFromGateId())) {
             //log fti017
-            logManager.logFromIdentifier(result, ComponentType.GATE, ComponentType.CA_APP, controlDto, LogManager.FTI_011_FTI_017);
+            logManager.logFromIdentifier(result, ComponentType.GATE, ComponentType.CA_APP, controlDto, FTI_017);
         }
         return result;
     }

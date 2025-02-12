@@ -2,6 +2,7 @@ package eu.efti.eftigate.service;
 
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
+import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.ValidableDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.enums.RequestTypeEnum;
@@ -32,10 +33,12 @@ public class LogManager {
 
     public static final String FTI_ROOT_RESPONSE_SUCESS = "send sucess to domibus";
     public static final String FTI_SEND_FAIL = "send fail to domibus";
-    public static final String FTI_008_FTI_014 = "fti008|fti014";
+    public static final String FTI_014 = "fti014";
+    public static final String FTI_008 = "fti008";
     public static final String FTI_015 = "fti015";
     public static final String FTI_016 = "fti016";
-    public static final String FTI_011_FTI_017 = "fti011|fti017";
+    public static final String FTI_017 = "fti017";
+    public static final String FTI_011 = "fti011";
     public static final String FTI_022 = "fti022";
     public static final String FTI_010 = "fti010";
     public static final String FTI_009 = "fti009";
@@ -96,7 +99,7 @@ public class LogManager {
                               final ComponentType requestingComponentType,
                               final ComponentType respondingComponentType,
                               final boolean isSuccess,
-                              final String name) {
+                              RequestDto request, final String name) {
         //todo not working for gate to gate, need to find a way to find the receiver
         final boolean isLocalRequest = control.getRequestType() == RequestTypeEnum.LOCAL_UIL_SEARCH;
         final String receiver = isLocalRequest ? control.getPlatformId() : control.getGateId();
@@ -108,7 +111,7 @@ public class LogManager {
                 .respondingComponentId(gateProperties.getOwner())
                 .respondingComponentCountry(gateProperties.getCountry()).build();
         final StatusEnum status = isSuccess ? StatusEnum.COMPLETE : StatusEnum.ERROR;
-        this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), "", status, true, name);
+        this.auditRequestLogService.logAck(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), "", status, request.getRequestType(), name);
     }
 
     public void logReceivedMessage(final ControlDto control,
