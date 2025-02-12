@@ -95,17 +95,24 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     public void manageQueryReceived(final NotificationDto notificationDto) {
-        Optional<String> result = validationService.isXmlValid(notificationDto.getContent().getBody());
+        String body = notificationDto.getContent().getBody();
+        String fromPartyId = notificationDto.getContent().getFromPartyId();
+        Optional<String> result = validationService.isXmlValid(body);
         if (result.isPresent()) {
             log.error("Received invalid IdentifierQuery");
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, result.get(), ErrorCodesEnum.XML_ERROR.name()));
+            RequestDto errorRequestDto = this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, result.get(), ErrorCodesEnum.XML_ERROR.name());
+            this.sendRequest(errorRequestDto);
+            getLogManager().logReceivedMessage(errorRequestDto.getControl(), GATE, GATE, body, fromPartyId, StatusEnum.ERROR, LogManager.FTI_019);
             return;
         }
-        final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
-        final ControlDto controlDto = getControlService().createControlFrom(identifierQuery, notificationDto.getContent().getFromPartyId());
+
+        final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToJaxbObject(body);
+        final ControlDto controlDto = getControlService().createControlFrom(identifierQuery, fromPartyId);
+        //log fti019
+        getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId, StatusEnum.COMPLETE, LogManager.FTI_019);
+        final List<ConsignmentDto> identifiersDtoList = identifiersService.search(buildIdentifiersRequestDtoFrom(identifierQuery));
         //log fti015
         getLogManager().logRequestRegistry(controlDto, null, GATE, REGISTRY, LogManager.FTI_015);
-        final List<ConsignmentDto> identifiersDtoList = identifiersService.search(buildIdentifiersRequestDtoFrom(identifierQuery));
         controlDto.setIdentifiersResults(identifiersDtoList);
         getControlService().save(controlDto);
         //log fti016

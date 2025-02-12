@@ -19,6 +19,7 @@ import eu.efti.eftigate.generator.id.MessageIdGenerator;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
+import eu.efti.eftilogger.model.ComponentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -81,17 +82,25 @@ public class RabbitListenerService {
             getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
-            logSentMessage(rabbitRequestDto, requestTypeEnum, requestDto, receiver, isCurrentGate);
+            logSentMessage(rabbitRequestDto, requestTypeEnum, requestDto, receiver);
         }
     }
 
-    private void logSentMessage(RabbitRequestDto rabbitRequestDto, RequestTypeEnum requestTypeEnum, RequestDto requestDto, String receiver, boolean isCurrentGate) {
+    private void logSentMessage(RabbitRequestDto rabbitRequestDto, RequestTypeEnum requestTypeEnum, RequestDto requestDto, String receiver) {
         final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
+        ControlDto controlDto = requestDto.getControl();
         if (RequestType.UIL.equals(requestDto.getRequestType())) {
-            logSentUilMessage(rabbitRequestDto, requestDto.getControl(), receiver, body);
+            logSentUilMessage(rabbitRequestDto, controlDto, receiver, body);
         } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
-            logSentIdentifierMessage(requestTypeEnum, requestDto.getControl(), receiver, body);
+            logSentIdentifierMessage(requestTypeEnum, controlDto, receiver, body);
+        } else if (RequestType.NOTE.equals(requestDto.getRequestType())) {
+            logSentNoteMessage(controlDto, receiver, body);
         }
+    }
+
+    private void logSentNoteMessage(ControlDto control, String receiver, String body) {
+        final boolean isCurrentGate = gateProperties.isCurrentGate(control.getGateId());
+        logManager.logNoteReceiveFromAapMessage(control, body, receiver, ComponentType.GATE, ComponentType.PLATFORM, true, isCurrentGate ? RequestTypeEnum.NOTE_SEND : RequestTypeEnum.EXTERNAL_NOTE_SEND, isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026);
     }
 
     private void logSentIdentifierMessage(RequestTypeEnum requestTypeEnum, ControlDto controlDto, String receiver, String body) {

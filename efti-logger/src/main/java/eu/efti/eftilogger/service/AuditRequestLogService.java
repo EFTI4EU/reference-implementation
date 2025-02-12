@@ -1,6 +1,7 @@
 package eu.efti.eftilogger.service;
 
 import eu.efti.commons.dto.ControlDto;
+import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftilogger.LogMarkerEnum;
@@ -24,6 +25,7 @@ import static eu.efti.eftilogger.model.ComponentType.GATE;
 public class AuditRequestLogService implements LogService<LogRequestDto> {
 
     private static final LogMarkerEnum MARKER = LogMarkerEnum.REQUEST;
+    public static final String ACK = "_ACK";
 
     private final SerializeUtils serializeUtils;
 
@@ -35,8 +37,12 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                     final StatusEnum status,
                     final boolean isAck,
                     final String name) {
+        final LogRequestDto logRequestDto = getLogRequestDto(control, messagePartiesDto, currentGateId, currentGateCountry, body, status, isAck, name);
+        this.log(logRequestDto);
+    }
 
-        final LogRequestDto logRequestDto = LogRequestDto.builder()
+    private LogRequestDto getLogRequestDto(ControlDto control, MessagePartiesDto messagePartiesDto, String currentGateId, String currentGateCountry, String body, StatusEnum status, boolean isAck, String name) {
+        return LogRequestDto.builder()
                 .name(name)
                 .requestingComponentType(messagePartiesDto.getRequestingComponentType())
                 .requestingComponentId(messagePartiesDto.getRequestingComponentId())
@@ -57,7 +63,6 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                 .errorCodeMessage(control.getError() != null ? control.getError().getErrorCode() : null)
                 .errorDescriptionMessage(control.getError() != null ? control.getError().getErrorDescription() : null)
                 .build();
-        this.log(logRequestDto);
     }
 
     private String getRequestTypeFromControl(final ControlDto control, final boolean isAck) {
@@ -76,5 +81,18 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
     public void log(final LogRequestDto data) {
         final String content = serializeUtils.mapObjectToJsonString(data);
         logger.info(MarkerFactory.getMarker(MARKER.name()), content);
+    }
+
+    public void logAck(final ControlDto control,
+                       final MessagePartiesDto messagePartiesDto,
+                       final String currentGateId,
+                       final String currentGateCountry,
+                       final String body,
+                       final StatusEnum status,
+                       final RequestType requestType,
+                       final String name) {
+        LogRequestDto logRequestDto = getLogRequestDto(control, messagePartiesDto, currentGateId, currentGateCountry, body, status, true, name);
+        logRequestDto.setRequestType(requestType.name().concat(ACK));
+        this.log(logRequestDto);
     }
 }

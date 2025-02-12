@@ -12,9 +12,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class LogRequestDto extends LogCommonDto {
 
-    public final String requestId;
+    private String requestId;
     @JsonProperty("eFTIDataId")
-    public final String eftidataId;
-    public final List<String> subsetIds;
-    public final String requestType;
+    private String eftidataId;
+    private List<String> subsetIds;
+    private String requestType;
 }
