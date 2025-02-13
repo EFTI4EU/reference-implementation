@@ -21,8 +21,8 @@ services:
     working_dir: /usr/src/myapp
     command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar -Dspring.config.location=file:application.yml -Dspring.profiles.active=ACME platform-simulator.jar --port=8070
     ports:
-      - "127.0.0.1:8070:8070"
-      - "127.0.0.1:8893:5005"
+      - "8070:8070"
+      - "8893:5005"
     networks:
       efti:
 
@@ -36,8 +36,8 @@ services:
     working_dir: /usr/src/myapp
     command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar -Dspring.config.location=file:application.yml -Dspring.profiles.active=MASSIVE platform-simulator.jar --port=8071
     ports:
-      - "127.0.0.1:8071:8071"
-      - "127.0.0.1:8894:5005"
+      - "8071:8071"
+      - "8894:5005"
     networks:
       efti:
   
@@ -51,8 +51,8 @@ services:
     working_dir: /usr/src/myapp
     command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar -Dspring.config.location=file:application.yml -Dspring.profiles.active=UMBRELLA platform-simulator.jar --port=8072
     ports:
-      - "127.0.0.1:8072:8072"
-      - "127.0.0.1:8895:5005"
+      - "8072:8072"
+      - "8895:5005"
     networks:
       efti:
 
@@ -68,8 +68,8 @@ services:
     working_dir: /usr/src/myapp
     command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar -Dspring.config.location=/usr/src/myapp/ -Dspring.profiles.active=$${PROFILE} efti-gate.jar
     ports:
-      - "127.0.0.1:8880:8880"
-      - "127.0.0.1:8890:5005"
+      - "8880:8880"
+      - "8890:5005"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -87,8 +87,8 @@ services:
     working_dir: /usr/src/myapp
     command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar -Dspring.config.location=/usr/src/myapp/ -Dspring.profiles.active=$${PROFILE} efti-gate.jar
     ports:
-      - "127.0.0.1:8881:8881"
-      - "127.0.0.1:8891:5005"
+      - "8881:8881"
+      - "8891:5005"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -106,8 +106,8 @@ services:
     working_dir: /usr/src/myapp
     command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar -Dspring.config.location=/usr/src/myapp/ -Dspring.profiles.active=$${PROFILE} efti-gate.jar
     ports:
-      - "127.0.0.1:8882:8882"
-      - "127.0.0.1:8892:5005"
+      - "8882:8882"
+      - "8892:5005"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -120,7 +120,7 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: efti
     ports:
-      - "127.0.0.1:9001:5432"
+      - "9001:5432"
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
     networks:
@@ -132,7 +132,7 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: efti
     ports:
-      - "127.0.0.1:2345:5432"
+      - "2345:5432"
     volumes:
       - ./sql-meta:/docker-entrypoint-initdb.d
     networks:
@@ -147,8 +147,8 @@ services:
       - DEBUG=true
       - DEBUG_PORT=*:8788
     ports:
-      - "127.0.0.1:8080:8080"
-      - "127.0.0.1:8788:8788"
+      - "8080:8080"
+      - "8788:8788"
     volumes:
       - ./keycloak/bo-export.json:/opt/keycloak/data/import/bo-export.json
       - ./keycloak/li-export.json:/opt/keycloak/data/import/li-export.json
@@ -165,7 +165,7 @@ services:
     container_name: apache
     image: bellackn/httpd_oidc
     ports:
-      - 127.0.0.1:83:83
+      - "83:83"
     volumes:
       - ./httpd/config/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./httpd/config/conf.d:/usr/local/apache2/conf.d
