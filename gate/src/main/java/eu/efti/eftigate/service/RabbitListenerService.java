@@ -116,7 +116,7 @@ public class RabbitListenerService {
         //log fti020 and fti009
         if (StringUtils.isNotBlank(receiver) && receiver.equalsIgnoreCase(rabbitRequestDto.getControl().getPlatformId())) {
             logManager.logSentMessage(controlDto, body, receiver, GATE, PLATFORM, true, LogManager.FTI_009);
-        } else {
+        } else if (RequestTypeEnum.EXTERNAL_UIL_SEARCH.equals(controlDto.getRequestType())) {
             logManager.logSentMessage(controlDto, body, receiver, GATE, GATE, true, LogManager.FTI_020);
         }
     }
