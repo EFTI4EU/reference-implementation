@@ -102,9 +102,9 @@ services:
       - ./domibus/sh/setenv-node-1.sh:/opt/domibus/bin/setenv.sh
       - ./domibus/li/plugins-conf/:/opt/domibus/conf/domibus/plugins/config/domains/
     depends_on:
-      mariadb-sybo:
+      mariadb-li:
         condition: service_healthy
-      activemq-sybo:
+      activemq-li:
         condition: service_started
     networks:
       efti:
@@ -124,9 +124,9 @@ services:
       - ./domibus/sh/setenv-node-1.sh:/opt/domibus/bin/setenv.sh
       - ./domibus/platform/plugins-conf/:/opt/domibus/conf/domibus/plugins/config/domains/
     depends_on:
-      mariadb-sybo:
+      mariadb-platform:
         condition: service_healthy
-      activemq-sybo:
+      activemq-platform:
         condition: service_started
     networks:
       efti:
