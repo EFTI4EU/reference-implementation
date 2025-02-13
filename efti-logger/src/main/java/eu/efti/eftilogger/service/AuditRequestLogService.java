@@ -25,7 +25,7 @@ import static eu.efti.eftilogger.model.ComponentType.GATE;
 public class AuditRequestLogService implements LogService<LogRequestDto> {
 
     private static final LogMarkerEnum MARKER = LogMarkerEnum.REQUEST;
-    public static final String ACK = "_ACK";
+    private static final String ACK = "_ACK";
 
     private final SerializeUtils serializeUtils;
 
@@ -72,7 +72,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
         } else if (IDENTIFIERS_TYPES.contains(control.getRequestType())) {
             return isAck ? RequestTypeLog.IDENTIFIERS_ACK.name() : RequestTypeLog.IDENTIFIERS.name();
         } else if (NOTES_TYPES.contains(control.getRequestType())) {
-            return isAck ? RequestTypeLog.NOTES_ACK.name() : RequestTypeLog.NOTES.name();
+            return isAck ? RequestTypeLog.NOTE_ACK.name() : RequestTypeLog.NOTE.name();
         }
         return "";
     }
