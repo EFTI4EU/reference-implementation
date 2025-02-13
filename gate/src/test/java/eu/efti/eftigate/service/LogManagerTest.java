@@ -106,15 +106,14 @@ class LogManagerTest extends BaseServiceTest {
     @Test
     void testLogAckMessageSuccess() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
-                .requestingComponentId("platformId")
                 .requestingComponentType(null)
                 .requestingComponentCountry("ownerCountry")
                 .respondingComponentId("ownerId")
-                .respondingComponentType(null)
+                .respondingComponentType(GATE)
                 .respondingComponentCountry("ownerCountry").build();
         requestDto.setRequestType(RequestType.IDENTIFIER);
 
-        logManager.logAckMessage(controlDto, null, null, true, requestDto, "test");
+        logManager.logAckMessage(controlDto, GATE, true, requestDto, "test");
 
         verify(auditRequestLogService).logAck(controlDto, expectedMessageParties, "ownerId", "ownerCountry", "", StatusEnum.COMPLETE, RequestType.IDENTIFIER, "test");
     }
@@ -122,15 +121,14 @@ class LogManagerTest extends BaseServiceTest {
     @Test
     void testLogAckMessageError() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
-                .requestingComponentId("platformId")
                 .requestingComponentType(null)
                 .requestingComponentCountry("ownerCountry")
                 .respondingComponentId("ownerId")
-                .respondingComponentType(null)
+                .respondingComponentType(GATE)
                 .respondingComponentCountry("ownerCountry").build();
         requestDto.setRequestType(RequestType.UIL);
 
-        logManager.logAckMessage(controlDto, null, null, false, requestDto, "test");
+        logManager.logAckMessage(controlDto, GATE, false, requestDto, "test");
 
         verify(auditRequestLogService).logAck(controlDto, expectedMessageParties, "ownerId", "ownerCountry", "", StatusEnum.ERROR, RequestType.UIL, "test");
     }
