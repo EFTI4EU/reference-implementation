@@ -96,16 +96,12 @@ public class LogManager {
     }
 
     public void logAckMessage(final ControlDto control,
-                              final ComponentType requestingComponentType,
                               final ComponentType respondingComponentType,
                               final boolean isSuccess,
                               RequestDto request, final String name) {
-        //todo not working for gate to gate, need to find a way to find the receiver
         final boolean isLocalRequest = control.getRequestType() == RequestTypeEnum.LOCAL_UIL_SEARCH;
         final String receiver = isLocalRequest ? control.getPlatformId() : control.getGateId();
         final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
-                .requestingComponentType(requestingComponentType)
-                .requestingComponentId(receiver)
                 .requestingComponentCountry(isLocalRequest ? gateProperties.getCountry() : eftiGateIdResolver.resolve(receiver))
                 .respondingComponentType(respondingComponentType)
                 .respondingComponentId(gateProperties.getOwner())
