@@ -68,7 +68,7 @@ services:
     networks:
       efti:
 
-  domibus-sybo-1:
+  domibus-sybo:
     image: efti4eu/domibus
     tty: true
     ports:
@@ -89,28 +89,7 @@ services:
     networks:
       efti:
 
-  domibus-sybo-2:
-    image: efti4eu/domibus
-    tty: true
-    ports:
-      - "8082:8080"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    volumes:
-      - ./domibus/sybo/domains/syldavia/:/opt/domibus/conf/domibus/domains/syldavia/
-      - ./domibus/sybo/domains/borduria/:/opt/domibus/conf/domibus/domains/borduria/
-      - ./domibus/sybo/domibus-sybo.properties:/opt/domibus/conf/domibus/domibus.properties
-      - ./domibus/sh/setenv-node-2.sh:/opt/domibus/bin/setenv.sh
-      - ./domibus/sybo/plugins-conf/:/opt/domibus/conf/domibus/plugins/config/domains/
-    depends_on:
-      mariadb-sybo:
-        condition: service_healthy
-      activemq-sybo:
-        condition: service_started
-    networks:
-      efti:
-
-  domibus-li-1:
+  domibus-li:
     image: efti4eu/domibus
     tty: true
     ports:
@@ -123,29 +102,9 @@ services:
       - ./domibus/sh/setenv-node-1.sh:/opt/domibus/bin/setenv.sh
       - ./domibus/li/plugins-conf/:/opt/domibus/conf/domibus/plugins/config/domains/
     depends_on:
-      mariadb-sybo:
+      mariadb-li:
         condition: service_healthy
-      activemq-sybo:
-        condition: service_started
-    networks:
-      efti:
-
-  domibus-li-2:
-    image: efti4eu/domibus
-    tty: true
-    ports:
-      - "8091:8080"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    volumes:
-      - ./domibus/li/domains/listenbourg/:/opt/domibus/conf/domibus/domains/listenbourg/
-      - ./domibus/li/domibus-li.properties:/opt/domibus/conf/domibus/domibus.properties
-      - ./domibus/sh/setenv-node-2.sh:/opt/domibus/bin/setenv.sh
-      - ./domibus/li/plugins-conf/:/opt/domibus/conf/domibus/plugins/config/domains/
-    depends_on:
-      mariadb-sybo:
-        condition: service_healthy
-      activemq-sybo:
+      activemq-li:
         condition: service_started
     networks:
       efti:
@@ -165,9 +124,9 @@ services:
       - ./domibus/sh/setenv-node-1.sh:/opt/domibus/bin/setenv.sh
       - ./domibus/platform/plugins-conf/:/opt/domibus/conf/domibus/plugins/config/domains/
     depends_on:
-      mariadb-sybo:
+      mariadb-platform:
         condition: service_healthy
-      activemq-sybo:
+      activemq-platform:
         condition: service_started
     networks:
       efti:
