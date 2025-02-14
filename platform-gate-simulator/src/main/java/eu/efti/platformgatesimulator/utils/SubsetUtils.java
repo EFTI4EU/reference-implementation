@@ -45,17 +45,12 @@ public class SubsetUtils {
     }
 
     private String docToString(final Document doc) throws TransformerException {
-        try {
-            final DOMSource domSource = new DOMSource(doc);
-            final StringWriter writer = new StringWriter();
-            final StreamResult result = new StreamResult(writer);
-            final Transformer transformer = tf.newTransformer();
-            transformer.transform(domSource, result);
-            return writer.toString();
-        } catch (TransformerException e) {
-            log.error("Error when try to convert Document to String: " + e);
-            throw new TransformerException(e.getMessage());
-        }
+        final DOMSource domSource = new DOMSource(doc);
+        final StringWriter writer = new StringWriter();
+        final StreamResult result = new StreamResult(writer);
+        final Transformer transformer = tf.newTransformer();
+        transformer.transform(domSource, result);
+        return writer.toString();
     }
 
     private Set<XmlSchemaElement.SubsetId> createSubsetIdList(final List<String> stringSubsetId) {
