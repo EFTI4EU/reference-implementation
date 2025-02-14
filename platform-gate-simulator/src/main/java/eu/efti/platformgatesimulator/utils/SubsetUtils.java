@@ -3,7 +3,6 @@ package eu.efti.platformgatesimulator.utils;
 import eu.efti.datatools.schema.SubsetUtil;
 import eu.efti.datatools.schema.XmlSchemaElement;
 import lombok.experimental.UtilityClass;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -46,17 +45,12 @@ public class SubsetUtils {
     }
 
     private String docToString(final Document doc) throws TransformerException {
-        try {
-            final DOMSource domSource = new DOMSource(doc);
-            final StringWriter writer = new StringWriter();
-            final StreamResult result = new StreamResult(writer);
-            final Transformer transformer = tf.newTransformer();
-            transformer.transform(domSource, result);
-            return writer.toString();
-        } catch (TransformerException e) {
-            log.error("Error when try to convert Document to String: " + e);
-            throw new TransformerException(e.getMessage());
-        }
+        final DOMSource domSource = new DOMSource(doc);
+        final StringWriter writer = new StringWriter();
+        final StreamResult result = new StreamResult(writer);
+        final Transformer transformer = tf.newTransformer();
+        transformer.transform(domSource, result);
+        return writer.toString();
     }
 
     private Set<XmlSchemaElement.SubsetId> createSubsetIdList(final List<String> stringSubsetId) {

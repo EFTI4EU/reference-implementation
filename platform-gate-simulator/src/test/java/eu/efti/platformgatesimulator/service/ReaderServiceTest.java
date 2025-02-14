@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
@@ -27,11 +26,8 @@ class ReaderServiceTest {
 
     private ReaderService readerService;
 
-    private ResourceLoader resourceLoader;
-
     @BeforeEach
     public void before() {
-        resourceLoader = Mockito.mock(ResourceLoader.class);
         openMocks = MockitoAnnotations.openMocks(this);
         final GateProperties gateProperties = GateProperties.builder()
                 .owner("france")
@@ -42,7 +38,7 @@ class ReaderServiceTest {
                         .url("url")
                         .password("password")
                         .username("username").build()).build();
-        readerService = new ReaderService(gateProperties, resourceLoader);
+        readerService = new ReaderService(gateProperties);
     }
 
     @AfterEach
@@ -51,15 +47,9 @@ class ReaderServiceTest {
     }
 
     @Test
-    void uploadFileNullTest() {
-        assertThrows(NullPointerException.class, () -> readerService.uploadFile(null));
-    }
-
-    @Test
     void uploadFileTest() throws IOException {
         final Resource resource = Mockito.mock(Resource.class);
         final URI uri = Mockito.mock(URI.class);
-        Mockito.when(resourceLoader.getResource(any())).thenReturn(resource);
         Mockito.when(resource.getURI()).thenReturn(uri);
         Mockito.when(uri.getPath()).thenReturn("./cda/");
         final MockMultipartFile mockMultipartFile = new MockMultipartFile(
@@ -80,11 +70,10 @@ class ReaderServiceTest {
                 </consignment>
                 """;
         final Resource resource = Mockito.mock(Resource.class);
-        Mockito.when(resourceLoader.getResource(any())).thenReturn(resource);
         Mockito.when(resource.exists()).thenReturn(false);
         Mockito.when(resource.exists()).thenReturn(true);
         Mockito.when(resource.getContentAsString(any())).thenReturn(data);
-        final SupplyChainConsignment result = readerService.readFromFile("classpath:cda/teest", List.of("full"));
+        final SupplyChainConsignment result = readerService.readFromFile("src/test/resources/teest", List.of("full"));
 
         Assertions.assertNotNull(result);
     }
@@ -92,7 +81,6 @@ class ReaderServiceTest {
     @Test
     void readFromFileXmlNullTest() throws IOException {
         final Resource resource = Mockito.mock(Resource.class);
-        Mockito.when(resourceLoader.getResource(any())).thenReturn(resource);
         Mockito.when(resource.exists()).thenReturn(false);
         Mockito.when(resource.exists()).thenReturn(false);
         final SupplyChainConsignment result = readerService.readFromFile("classpath:cda/bouuuuuuuuuuuuh", List.of("full"));

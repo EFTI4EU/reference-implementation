@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
@@ -104,7 +105,7 @@ public class ApIncomingService {
                 return;
             }
             try {
-                final SupplyChainConsignment supplyChainConsignment = readerService.readFromFile(gateProperties.getCdaPath() + datasetId, uilQuery.getSubsetId());
+                final SupplyChainConsignment supplyChainConsignment = readerService.readFromFile(gateProperties.getCdaPath() + File.separator + datasetId, uilQuery.getSubsetId());
                 identifierService.sendResponseUil(uilQuery.getRequestId(), supplyChainConsignment);
             } catch (IOException e) {
                 log.error("Error can't read file");

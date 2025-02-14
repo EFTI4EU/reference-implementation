@@ -12,7 +12,7 @@ gate:
   minSleep: 1000
   maxSleep: 2000
   owner: massivedynamic
-  cda_path: classpath:cda/
+  cda_path: .cda/
   gate: syldavia
   ap:
     url: http://efti.platform.massivedynamic.com:81/domibus/services/wsplugin

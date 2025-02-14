@@ -73,10 +73,6 @@ public class IdentifierService {
     private final Random random = new Random();
 
     public void sendResponseUil(final String requestId, final SupplyChainConsignment consignment) {
-        sendResponse(requestId, consignment);
-    }
-
-    private void sendResponse(final String requestId, final SupplyChainConsignment consignment) {
         final ApRequestDto apRequestDto = ApRequestDto.builder()
                 .requestId(requestId)
                 .sender(gateProperties.getOwner())
@@ -98,13 +94,14 @@ public class IdentifierService {
     private String buildBody(final String requestId, final SupplyChainConsignment consignment) {
         final UILResponse uilResponse = new UILResponse();
         if (defineBadOrGoodRequest()) {
-            log.info("Good request will be send");
+            final boolean hasData = consignment != null;
+            log.info("Good request will be sent");
             uilResponse.setRequestId(requestId);
             uilResponse.setDescription(null);
-            uilResponse.setStatus(EDeliveryStatus.OK.getCode());
+            uilResponse.setStatus(hasData ? EDeliveryStatus.OK.getCode() : EDeliveryStatus.INTERNAL_SERVER_ERROR.getCode());
             uilResponse.setConsignment(consignment);
         } else {
-            log.info("Bad request will be send");
+            log.info("Bad request will be sent");
             uilResponse.setRequestId(requestId);
             uilResponse.setDescription("Not found");
             uilResponse.setStatus(EDeliveryStatus.NOT_FOUND.getCode());
@@ -250,7 +247,7 @@ public class IdentifierService {
         final IdentifierResponse identifierResponse = new IdentifierResponse();
 
         if (defineBadOrGoodRequest()) {
-            log.info("Good request will be send");
+            log.info("Good request will be sent");
             identifierResponse.setRequestId(identifierQuery.getRequestId());
             identifierResponse.setDescription(descriptionIdentifierResponse);
             identifierResponse.setStatus(statusIdentifierResponse);

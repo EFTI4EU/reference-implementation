@@ -12,7 +12,7 @@ gate:
   minSleep: 1000
   maxSleep: 2000
   owner: umbrellainc
-  cda_path: classpath:cda/
+  cda_path: cda/
   gate: listenbourg
   ap:
     url: http://efti.platform.umbrellainc.com:81/domibus/services/wsplugin
