@@ -62,9 +62,10 @@ class LogManagerTest extends BaseServiceTest {
                 .requestingComponentCountry("ownerCountry")
                 .respondingComponentId("receiver")
                 .respondingComponentType(GATE)
+                .requestType("NOTE")
                 .respondingComponentCountry("ownerCountry").build();
 
-        logManager.logNoteReceiveFromAapMessage(controlDto, BODY, RECEIVER, GATE, GATE, true, RequestTypeEnum.NOTE_SEND, "test");
+        logManager.logNoteReceiveFromAapMessage(controlDto, BODY, RECEIVER, GATE, GATE, true, "test");
 
         final String bodyBase64 = serializeUtils.mapObjectToBase64String(BODY);
         verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", bodyBase64, StatusEnum.COMPLETE, false, "test");

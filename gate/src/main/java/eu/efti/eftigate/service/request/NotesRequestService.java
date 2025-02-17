@@ -6,7 +6,9 @@ import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
+import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
+import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
@@ -26,7 +28,9 @@ import eu.efti.v1.edelivery.UIL;
 import jakarta.xml.bind.JAXBElement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,28 +95,36 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     }
 
     private void sendLogNote(final ControlDto controlDto, final boolean isError, final String messageBody) {
-        final boolean isCurrentGate = getGateProperties().isCurrentGate(controlDto.getGateId());
-        final String receiver = isCurrentGate ? controlDto.getPlatformId() : controlDto.getGateId();
-        getLogManager().logNoteReceiveFromAapMessage(controlDto,getSerializeUtils().mapObjectToBase64String(messageBody), receiver, ComponentType.GATE, ComponentType.GATE, !isError, RequestTypeEnum.EXTERNAL_NOTE_SEND, LogManager.FTI_026);
+        getLogManager().logReceivedNoteMessage(controlDto, ComponentType.GATE, ComponentType.GATE, messageBody, controlDto.getFromGateId(), isError ? StatusEnum.ERROR : StatusEnum.COMPLETE, LogManager.FTI_026);
     }
 
     public void manageMessageReceive(final NotificationDto notificationDto) {
-        Optional<String> result = validationService.isXmlValid(notificationDto.getContent().getBody());
-        if (result.isPresent()) {
-            log.error("Received invalid PostFollowUpRequest");
-            RequestDto requestDto = this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND, result.get(), ErrorCodesEnum.XML_ERROR.name());
-            sendLogNote(requestDto.getControl(), true, notificationDto.getContent().getBody());
-            this.sendRequest(requestDto);
-            return;
+        NotificationContentDto content = notificationDto.getContent();
+        String body = content.getBody();
+        try {
+            validationService.validateXml(body);
+            final PostFollowUpRequest messageBody = getSerializeUtils().mapXmlStringToJaxbObject(body);
+            getControlService().getByRequestId(messageBody.getRequestId()).ifPresent(controlEntity -> {
+                final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(controlEntity);
+                sendLogNote(controlDto, false, body);
+                controlDto.setNotes(messageBody.getMessage());
+                createAndSendRequest(controlDto, messageBody.getUil().getPlatformId());
+                markMessageAsDownloaded(notificationDto.getMessageId());
+            });
+        } catch (SAXException e) {
+            String exceptionMessage = e.getMessage();
+            log.error("Received invalid PostFollowUpRequest from {}, {}", content.getFromPartyId(), exceptionMessage);
+            sendErrorRequests(notificationDto, exceptionMessage, body);
+        } catch (IllegalArgumentException | IOException e) {
+            log.error("Something went wrong when validating PostFollowUpRequest from{}", content.getFromPartyId(), e);
+            sendErrorRequests(notificationDto, e.getMessage(), body);
         }
-        final PostFollowUpRequest messageBody = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
-        getControlService().getByRequestId(messageBody.getRequestId()).ifPresent(controlEntity -> {
-            final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(controlEntity);
-            sendLogNote(controlDto, false, notificationDto.getContent().getBody());
-            controlDto.setNotes(messageBody.getMessage());
-            createAndSendRequest(controlDto, messageBody.getUil().getPlatformId());
-            markMessageAsDownloaded(notificationDto.getMessageId());
-        });
+    }
+
+    private void sendErrorRequests(NotificationDto notificationDto, String e, String body) {
+        RequestDto requestDto = this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND, e, ErrorCodesEnum.XML_ERROR.name());
+        sendLogNote(requestDto.getControl(), true, body);
+        this.sendRequest(requestDto);
     }
 
     @Override

@@ -31,6 +31,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.xml.sax.SAXException;
 import org.xmlunit.matchers.CompareMatcher;
 
 import java.io.IOException;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -154,7 +156,6 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         when(controlService.createControlFrom(any(), any())).thenReturn(controlDto);
         when(controlService.updateControl(any())).thenReturn(controlDto);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
-        when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
         //Act
         identifiersRequestService.manageQueryReceived(notificationDto);
 
@@ -179,7 +180,6 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         identifiersRequestEntity.setStatus(IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
 
-        when(validationService.isXmlValid(any())).thenReturn(Optional.empty());
         when(controlService.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
         when(identifiersRequestRepository.findByControlRequestIdAndGateIdDest(any(), any())).thenReturn(identifiersRequestEntity);
 
@@ -327,14 +327,13 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                         .body(testFile("/xml/SaveIdentifierRequest.xml"))
                         .build())
                 .build();
-        when(validationService.isXmlValid(anyString())).thenReturn(Optional.empty());
         identifiersRequestService.createOrUpdate(notificationDto);
 
         verify(identifiersService).createOrUpdate(any(SaveIdentifiersRequestWrapper.class));
     }
 
     @Test
-    void shouldNotCreateOrUpdateIdentifiersIfInvalid() {
+    void shouldNotCreateOrUpdateIdentifiersIfInvalid() throws IOException, SAXException {
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
@@ -342,7 +341,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                         .body(testFile("/xml/SaveIdentifierRequest.xml"))
                         .build())
                 .build();
-        when(validationService.isXmlValid(anyString())).thenReturn(Optional.of("error!"));
+        doThrow(new SAXException("Error occurred")).when(validationService).validateXml(anyString());
         identifiersRequestService.createOrUpdate(notificationDto);
 
         verify(identifiersService, never()).createOrUpdate(any(SaveIdentifiersRequestWrapper.class));

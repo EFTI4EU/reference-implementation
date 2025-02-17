@@ -41,7 +41,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -98,47 +100,53 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         NotificationContentDto content = notificationDto.getContent();
         String body = content.getBody();
         String fromPartyId = content.getFromPartyId();
-        Optional<String> result = validationService.isXmlValid(body);
-        if (result.isPresent()) {
-            log.error("Received invalid UILQuery");
-            RequestDto errorRequestDto = this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, result.get(), ErrorCodesEnum.XML_ERROR.name());
-            this.sendRequest(errorRequestDto);
-            getLogManager().logReceivedMessage(errorRequestDto.getControl(), GATE, GATE, body, fromPartyId, StatusEnum.ERROR, LogManager.FTI_020);
-            return;
+        try {
+            validationService.validateXml(body);
+            final UILQuery uilQuery = getSerializeUtils().mapXmlStringToJaxbObject(body);
+            final boolean isSubsetValid = SubsetsCheckerUtils.isSubsetsValid(uilQuery.getSubsetId());
+            ControlDto controlDto = ControlUtils
+                    .fromGateToGateQuery(uilQuery, EXTERNAL_ASK_UIL_SEARCH, notificationDto, getGateProperties().getOwner());
+            if (!isSubsetValid) {
+                log.error("Received invalid UILQuery with bad subsets");
+                this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, ErrorCodesEnum.BAD_SUBSETS.getMessage(), ErrorCodesEnum.BAD_SUBSETS.name()));
+                getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId, StatusEnum.ERROR, LogManager.FTI_020);
+                return;
+            }
+            getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId, StatusEnum.COMPLETE, LogManager.FTI_020);
+            getControlService().createUilControl(controlDto);
+
+        } catch (SAXException e) {
+            String exceptionMessage = e.getMessage();
+            log.error("Received invalid UILQuery from {}, {}", content.getFromPartyId(), exceptionMessage);
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, exceptionMessage, ErrorCodesEnum.XML_ERROR.name()));
+        } catch (IllegalArgumentException | IOException e) {
+            log.error("Something went wrong when validating UILQuery from{}", content.getFromPartyId(), e);
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, e.getMessage(), ErrorCodesEnum.XML_ERROR.name()));
         }
-        final UILQuery uilQuery = getSerializeUtils().mapXmlStringToJaxbObject(body);
-        final boolean isSubsetValid = SubsetsCheckerUtils.isSubsetsValid(uilQuery.getSubsetId());
-        if (!isSubsetValid) {
-            log.error("Received invalid UILQuery with bad subsets");
-            RequestDto errorRequestDto = this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, ErrorCodesEnum.BAD_SUBSETS.getMessage(), ErrorCodesEnum.BAD_SUBSETS.name());
-            this.sendRequest(errorRequestDto);
-            getLogManager().logReceivedMessage(errorRequestDto.getControl(), GATE, GATE, body, fromPartyId, StatusEnum.ERROR, LogManager.FTI_020);
-            return;
-        }
-        ControlDto controlDto = ControlUtils
-                .fromGateToGateQuery(uilQuery, EXTERNAL_ASK_UIL_SEARCH, notificationDto, getGateProperties().getOwner());
-        getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId, StatusEnum.COMPLETE, LogManager.FTI_020);
-        getControlService().createUilControl(controlDto);
     }
 
     public void manageResponseReceived(final NotificationDto notificationDto) {
-        String body = notificationDto.getContent().getBody();
-        Optional<String> result = validationService.isXmlValid(body);
-        if (result.isPresent()) {
-            log.error("Received invalid UILResponse");
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, result.get(), ErrorCodesEnum.XML_ERROR.name()));
-            return;
+        NotificationContentDto content = notificationDto.getContent();
+        String body = content.getBody();
+        try {
+            validationService.validateXml(body);
+            final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(body);
+            this.findByRequestId(uilResponse.getRequestId()).ifPresentOrElse(uilRequestDto -> manageResponse(notificationDto, uilRequestDto, uilResponse, content), () -> log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB));
+        } catch (SAXException e) {
+            String exceptionMessage = e.getMessage();
+            log.error("Received invalid UILResponse from {}, {}", content.getFromPartyId(), exceptionMessage);
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, exceptionMessage, ErrorCodesEnum.XML_ERROR.name()));
+        } catch (IllegalArgumentException | IOException e) {
+            log.error("Something went wrong when validating UILResponse from{}", content.getFromPartyId(), e);
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, e.getMessage(), ErrorCodesEnum.XML_ERROR.name()));
         }
-        final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(body);
-        final Optional<UilRequestDto> uilRequestDto = this.findByRequestId(uilResponse.getRequestId());
-        if (uilRequestDto.isPresent()) {
-            if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.get().getControl().getRequestType())) { //platform response
-                manageResponseFromPlatform(uilRequestDto.get(), uilResponse, notificationDto);
-            } else { // gate response
-                manageResponseFromOtherGate(uilRequestDto.get(), uilResponse, notificationDto.getContent());
-            }
-        } else {
-            log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB);
+    }
+
+    private void manageResponse(NotificationDto notificationDto, UilRequestDto uilRequestDto, UILResponse uilResponse, NotificationContentDto content) {
+        if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.getControl().getRequestType())) { //platform response
+            manageResponseFromPlatform(uilRequestDto, uilResponse, notificationDto);
+        } else { // gate response
+            manageResponseFromOtherGate(uilRequestDto, uilResponse, content);
         }
     }
 
@@ -193,6 +201,14 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             return getSerializeUtils().mapJaxbObjectToXmlString(jaxBResponse, UILResponse.class);
         }
 
+        final UILQuery uilQuery = buildUilQuery(requestDto, controlDto);
+        controlDto.getSubsetIds().forEach(subset -> uilQuery.getSubsetId().add(subset));
+
+        final JAXBElement<UILQuery> jaxBResponse = getObjectFactory().createUilQuery(uilQuery);
+        return getSerializeUtils().mapJaxbObjectToXmlString(jaxBResponse, UILQuery.class);
+    }
+
+    private UILQuery buildUilQuery(RabbitRequestDto requestDto, ControlDto controlDto) {
         final UILQuery uilQuery = new UILQuery();
         final UIL uil = new UIL();
         uil.setDatasetId(controlDto.getDatasetId());
@@ -200,23 +216,24 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         uil.setGateId(requestDto.getGateIdDest());
         uilQuery.setUil(uil);
         uilQuery.setRequestId(requestDto.getControl().getRequestId());
-        controlDto.getSubsetIds().forEach(subset -> uilQuery.getSubsetId().add(subset));
-
-        final JAXBElement<UILQuery> jaxBResponse = getObjectFactory().createUilQuery(uilQuery);
-        return getSerializeUtils().mapJaxbObjectToXmlString(jaxBResponse, UILQuery.class);
+        return uilQuery;
     }
 
     private String getStatus(final RabbitRequestDto requestDto, final boolean hasError) {
         if (hasError) {
-            String errorCode = requestDto.getError().getErrorCode();
-            if (isNotFound(errorCode) || DATA_NOT_FOUND_ON_REGISTRY.name().equalsIgnoreCase(errorCode)) {
-                return EDeliveryStatus.NOT_FOUND.getCode();
-            }
-            return EDeliveryStatus.BAD_REQUEST.getCode();
+            return getEdeliverStatusForError(requestDto);
         } else if (TIMEOUT.equals(requestDto.getStatus())) {
             return EDeliveryStatus.GATEWAY_TIMEOUT.getCode();
         }
         return EDeliveryStatus.OK.getCode();
+    }
+
+    private String getEdeliverStatusForError(RabbitRequestDto requestDto) {
+        String errorCode = requestDto.getError().getErrorCode();
+        if (isNotFound(errorCode) || DATA_NOT_FOUND_ON_REGISTRY.name().equalsIgnoreCase(errorCode)) {
+            return EDeliveryStatus.NOT_FOUND.getCode();
+        }
+        return EDeliveryStatus.BAD_REQUEST.getCode();
     }
 
     @Override
@@ -351,6 +368,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         uilRequestDto.setGateIdDest(uilRequestDto.getControl().getFromGateId());
         final RequestDto savedUilRequestDto = this.save(uilRequestDto);
         savedUilRequestDto.setRequestType(RequestType.UIL);
+
         this.sendRequest(savedUilRequestDto);
         getLogManager().logSentMessage(savedUilRequestDto.getControl(), body, savedUilRequestDto.getControl().getFromGateId(), GATE, GATE, true, LogManager.FTI_022);
     }

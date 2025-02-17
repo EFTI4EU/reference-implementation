@@ -14,4 +14,5 @@ public class MessagePartiesDto {
     private ComponentType respondingComponentType;
     private String respondingComponentId;
     private String respondingComponentCountry;
+    private String requestType;
 }

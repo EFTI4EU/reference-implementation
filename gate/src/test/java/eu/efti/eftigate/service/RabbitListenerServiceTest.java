@@ -118,7 +118,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
     @Test
     void listenSendMessageUilTest() {
         when(requestServiceFactory.getRequestServiceByRequestType(any(String.class))).thenReturn(uilRequestService);
-        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
+        when(requestServiceFactory.getRequestServiceByRequestType(anyString())).thenReturn(uilRequestService);
 
         final String requestJson = testFile("/json/localuilrequest.json");
 
@@ -144,7 +144,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
         when(requestServiceFactory.getRequestServiceByRequestType(any(String.class))).thenReturn(uilRequestService);
         when(requestSendingService.sendRequest(any())).thenThrow(SendRequestException.class);
-        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
+        when(requestServiceFactory.getRequestServiceByRequestType(anyString())).thenReturn(uilRequestService);
         final Exception exception = assertThrows(TechnicalException.class, () -> rabbitListenerService.listenSendMessage(message));
         verify(logManager).logSentMessage(any(), any(), anyString(), any(), any(), anyBoolean(), any());
         assertEquals("Error when try to send message to domibus", exception.getMessage());
