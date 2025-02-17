@@ -14,7 +14,7 @@ gate:
   minSleep: 1000
   maxSleep: 2000
   owner: acme
-  cda_path: file:/opt/javapp/config/cda
+  cda_path: /opt/javapp/config/cda
   gate: borduria
   ap:
     url: http://172.16.201.115:8080/domibus/services/wsplugin

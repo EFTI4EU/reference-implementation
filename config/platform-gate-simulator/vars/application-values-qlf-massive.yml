@@ -14,7 +14,7 @@ gate:
   minSleep: 1000
   maxSleep: 2000
   owner: massivedynamic
-  cda_path: file:/opt/javapp/config/cda
+  cda_path: /opt/javapp/config/cda
   gate: syldavia
   ap:
     url: https://edelivery-sy.qlf.efti.service.groupein.local/ap-mock/domibus/services/wsplugin
