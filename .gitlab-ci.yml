@@ -49,14 +49,14 @@ workflow:
       SA: ${DEPLOY_ENVIRONMENT}-efti-sa
       GL_RUNNER: k8s-devint
       PROJECT: "kube/build"
-      REF: "main"
+      REF: "kustomize"
   - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && ($DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int") && ($LABEL != "NONE" || $LABEL != null)
     variables:
       NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti-mock
       SA: ${DEPLOY_ENVIRONMENT}-efti-mock-sa
       GL_RUNNER: k8s-devint
       PROJECT: "kube/build"
-      REF: "main"
+      REF: "kustomize"
   - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "qlf" && $LABEL == "NONE"
     variables:
       NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti
@@ -78,6 +78,13 @@ workflow:
       GL_RUNNER: k8s-prod
       PROJECT: "kube/build_prod"
       REF: "main"
+  - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "prd" && $LABEL == "NONE"
+    variables:
+      NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti
+      SA: ${DEPLOY_ENVIRONMENT}-efti-sa
+      GL_RUNNER: k8s-prod
+      PROJECT: "kube/build_prod"
+      REF: "main"      
   - if: ($CI_PIPELINE_SOURCE == "api" || $CI_PIPELINE_SOURCE == "web") && $DEPLOY_ENVIRONMENT == "ppd" && ($LABEL != "NONE" || $LABEL != null)
     variables:
       NAMESPACE: app-${DEPLOY_ENVIRONMENT}-efti-mock
