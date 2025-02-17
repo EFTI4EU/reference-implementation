@@ -3,10 +3,10 @@ package eu.efti.platformgatesimulator.service;
 import eu.efti.platformgatesimulator.config.GateProperties;
 import eu.efti.platformgatesimulator.exception.UploadException;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -46,7 +46,7 @@ class ReaderServiceTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     void uploadFileTest() throws UploadException {
         final MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "teest.xml",
