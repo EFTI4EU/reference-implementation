@@ -28,6 +28,8 @@ gate:
     url: http://ileftimicr01in.service.groupein.local:8080/domibus/services/wsplugin
     username: france_service_account
     password: Azerty59*1234567
+  xsd:
+    path: /opt/javapp/schema/xsd/edelivery/gate.xsd
 
 batch:
   retry:

@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
@@ -28,14 +29,14 @@ import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
         property = "id")
 public class ControlDto {
     private int id;
-    //à voir pour changer en datasetId
-    private String eftiDataUuid;
+    private String datasetId;
     private String requestId;
     private RequestTypeEnum requestType;
     private StatusEnum status;
     private String platformId;
     private String gateId;
-    private String subsetId;
+    @Builder.Default
+    private List<String> subsetIds = new ArrayList<>();
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private byte[] eftiData;

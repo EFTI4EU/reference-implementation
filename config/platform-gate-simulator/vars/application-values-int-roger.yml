@@ -14,10 +14,23 @@ gate:
   minSleep: 1000
   maxSleep: 2000
   owner: roger
-  cda_path: file:/opt/javapp/config/cda
+  cda_path: /opt/javapp/config/cda
   gate: france
   ap:
     url: http://ileftimicr02in.service.groupein.local:8080/domibus/services/wsplugin
     username: roger_service_account
     password: Azerty59*1234567
 
+mock:
+  badRequestPercentage: 0.0f
+  gaussWaitingTime:
+    average: 10
+    standardDeviation: 5
+    isActiveForIdentifierRequestTimer: false
+    isTimerActiveForIdentifierResponse: false
+  identifierReponseGoodResponse:
+    description: description
+    status: 200
+  identifierReponseBadResponse:
+    description: bad gateway
+    status: 404

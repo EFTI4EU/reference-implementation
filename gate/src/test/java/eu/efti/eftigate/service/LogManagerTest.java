@@ -6,6 +6,7 @@ import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.dto.identifiers.api.ConsignmentApiDto;
 import eu.efti.commons.dto.identifiers.api.IdentifierRequestResultDto;
+import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.config.GateProperties;
@@ -54,7 +55,24 @@ class LogManagerTest extends BaseServiceTest {
     }
 
     @Test
-    void testLogSentMessageError() {
+    void logReceivedNoteTest() {
+        final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
+                .requestingComponentId("ownerId")
+                .requestingComponentType(GATE)
+                .requestingComponentCountry("ownerCountry")
+                .respondingComponentId("receiver")
+                .respondingComponentType(GATE)
+                .requestType("NOTE")
+                .respondingComponentCountry("ownerCountry").build();
+
+        logManager.logReceivedNote(controlDto, BODY, RECEIVER, GATE, GATE, true, "test");
+
+        final String bodyBase64 = serializeUtils.mapObjectToBase64String(BODY);
+        verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", bodyBase64, StatusEnum.COMPLETE, false, "test");
+    }
+
+    @Test
+    void logSentMessageErrorTest() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
                 .requestingComponentId("ownerId")
                 .requestingComponentType(GATE)
@@ -89,31 +107,31 @@ class LogManagerTest extends BaseServiceTest {
     @Test
     void testLogAckMessageSuccess() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
-                .requestingComponentId("platformId")
                 .requestingComponentType(null)
                 .requestingComponentCountry("ownerCountry")
                 .respondingComponentId("ownerId")
-                .respondingComponentType(null)
+                .respondingComponentType(GATE)
                 .respondingComponentCountry("ownerCountry").build();
+        requestDto.setRequestType(RequestType.IDENTIFIER);
 
-        logManager.logAckMessage(controlDto, null, null, false, "test");
+        logManager.logAckMessage(controlDto, GATE, true, requestDto, "test");
 
-        verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", "", StatusEnum.ERROR, true, "test");
+        verify(auditRequestLogService).logAck(controlDto, expectedMessageParties, "ownerId", "ownerCountry", "", StatusEnum.COMPLETE, RequestType.IDENTIFIER, "test");
     }
 
     @Test
     void testLogAckMessageError() {
         final MessagePartiesDto expectedMessageParties = MessagePartiesDto.builder()
-                .requestingComponentId("platformId")
                 .requestingComponentType(null)
                 .requestingComponentCountry("ownerCountry")
                 .respondingComponentId("ownerId")
-                .respondingComponentType(null)
+                .respondingComponentType(GATE)
                 .respondingComponentCountry("ownerCountry").build();
+        requestDto.setRequestType(RequestType.UIL);
 
-        logManager.logAckMessage(controlDto, null, null, true, "test");
+        logManager.logAckMessage(controlDto, GATE, false, requestDto, "test");
 
-        verify(auditRequestLogService).log(controlDto, expectedMessageParties, "ownerId", "ownerCountry", "", StatusEnum.COMPLETE, true, "test");
+        verify(auditRequestLogService).logAck(controlDto, expectedMessageParties, "ownerId", "ownerCountry", "", StatusEnum.ERROR, RequestType.UIL, "test");
     }
 
     @Test
@@ -191,8 +209,14 @@ class LogManagerTest extends BaseServiceTest {
     @Test
     void logRequestRegistryTest() {
         logManager.logRequestRegistry(controlDto, "body", REGISTRY, GATE, "test");
-
-        verify(auditRegistryLogService).logByControlDto(controlDto, "ownerId", "ownerCountry", REGISTRY, GATE, "body", null, "test");
+        final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
+                .requestingComponentId("ownerId")
+                .requestingComponentType(REGISTRY)
+                .requestingComponentCountry("ownerCountry")
+                .respondingComponentId("ownerId")
+                .respondingComponentType(GATE)
+                .respondingComponentCountry("ownerCountry").build();
+        verify(auditRequestLogService).log(controlDto, messagePartiesDto, "ownerId", "ownerCountry", "body", StatusEnum.COMPLETE, false, "test");
     }
 
     @Test
@@ -202,7 +226,14 @@ class LogManagerTest extends BaseServiceTest {
 
         logManager.logRegistryIdentifiers(controlDto, consignmentDtoList, GATE, REGISTRY, "test");
 
-        verify(auditRegistryLogService).logByControlDto(controlDto, "ownerId", "ownerCountry", GATE, REGISTRY, body, null, "test");
+        final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
+                .requestingComponentId("ownerId")
+                .requestingComponentType(GATE)
+                .requestingComponentCountry("ownerCountry")
+                .respondingComponentId("ownerId")
+                .respondingComponentType(REGISTRY)
+                .respondingComponentCountry("ownerCountry").build();
+        verify(auditRequestLogService).log(controlDto, messagePartiesDto, "ownerId", "ownerCountry", body, StatusEnum.COMPLETE, false, "test");
     }
 
     @Test

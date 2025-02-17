@@ -75,39 +75,39 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         searchParameter.setRegistrationCountryCode(CountryIndicator.BE.toString());
         searchParameter.setModeCode("1");
 
-        this.controlDto.setEftiDataUuid(uilDto.getDatasetId());
+        this.controlDto.setDatasetId(uilDto.getDatasetId());
         this.controlDto.setGateId(uilDto.getGateId());
         this.controlDto.setPlatformId(uilDto.getPlatformId());
         this.controlDto.setRequestId(requestId);
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(StatusEnum.PENDING);
-        this.controlDto.setSubsetId("oki");
+        this.controlDto.setSubsetIds(List.of("oki"));
         this.controlDto.setCreatedDate(localDateTime);
         this.controlDto.setLastModifiedDate(localDateTime);
 
-        savedControlDto.setEftiDataUuid(uilDto.getDatasetId());
+        savedControlDto.setDatasetId(uilDto.getDatasetId());
         savedControlDto.setGateId(uilDto.getGateId());
         savedControlDto.setPlatformId(uilDto.getPlatformId());
         savedControlDto.setRequestId("42");
         savedControlDto.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
-        savedControlDto.setSubsetId("oki");
+        savedControlDto.setSubsetIds(List.of("oki"));
         savedControlDto.setCreatedDate(LocalDateTime.now());
         savedControlDto.setLastModifiedDate(LocalDateTime.now());
 
         this.controlEntityError.setRequestId(requestId);
         this.controlEntityError.setRequestType(RequestTypeEnum.NOTE_SEND);
         this.controlEntityError.setStatus(StatusEnum.PENDING);
-        this.controlDto.setSubsetId("oki");
+        this.controlDto.setSubsetIds(List.of("oki"));
         this.controlEntityError.setCreatedDate(localDateTime);
         this.controlEntityError.setLastModifiedDate(localDateTime);
 
-        this.controlEntity.setEftiDataUuid(controlDto.getEftiDataUuid());
+        this.controlEntity.setDatasetId(controlDto.getDatasetId());
         this.controlEntity.setRequestId(controlDto.getRequestId());
         this.controlEntity.setRequestType(controlDto.getRequestType());
         this.controlEntity.setStatus(controlDto.getStatus());
         this.controlEntity.setPlatformId(controlDto.getPlatformId());
         this.controlEntity.setGateId(controlDto.getGateId());
-        this.controlEntity.setSubsetId(controlDto.getSubsetId());
+        this.controlEntity.setSubsetIds(controlDto.getSubsetIds());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
         this.controlEntity.setFromGateId(controlDto.getFromGateId());

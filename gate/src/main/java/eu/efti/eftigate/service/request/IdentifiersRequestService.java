@@ -14,6 +14,7 @@ import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.edeliveryapconnector.constant.EDeliveryStatus;
+import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
@@ -39,12 +40,15 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import static eu.efti.commons.constant.EftiGateConstants.IDENTIFIERS_TYPES;
+import static eu.efti.commons.enums.ErrorCodesEnum.XML_ERROR;
 import static eu.efti.commons.enums.RequestStatusEnum.RECEIVED;
 import static eu.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
@@ -94,41 +98,62 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     public void manageQueryReceived(final NotificationDto notificationDto) {
-        final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
-        if (!validationService.isRequestValid(identifierQuery)) {
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH));
-            return;
+        NotificationContentDto content = notificationDto.getContent();
+        String body = content.getBody();
+        String fromPartyId = notificationDto.getContent().getFromPartyId();
+        try {
+            validationService.validateXml(body);
+            final IdentifierQuery identifierQuery = getSerializeUtils().mapXmlStringToJaxbObject(body);
+            final ControlDto controlDto = getControlService().createControlFrom(identifierQuery, fromPartyId);
+            //log fti019
+            getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId, StatusEnum.COMPLETE, LogManager.FTI_019);
+            final List<ConsignmentDto> identifiersDtoList = identifiersService.search(buildIdentifiersRequestDtoFrom(identifierQuery));
+            //log fti015
+            getLogManager().logRequestRegistry(controlDto, null, GATE, REGISTRY, LogManager.FTI_015);
+            controlDto.setIdentifiersResults(identifiersDtoList);
+            getControlService().save(controlDto);
+            //log fti016
+            getLogManager().logRequestRegistry(controlDto, getSerializeUtils().mapObjectToBase64String(identifiersDtoList), REGISTRY, GATE, LogManager.FTI_016);
+            final RequestDto request = createReceivedRequest(controlDto, identifiersDtoList);
+            final RequestDto updatedRequest = this.updateStatus(request, RESPONSE_IN_PROGRESS);
+            super.sendRequest(updatedRequest);
+        } catch (SAXException e) {
+            log.error("Received invalid IdentifierQuery from {}, {}", content.getFromPartyId(), e.getMessage());
+            RequestDto errorRequestDto = this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, e.getMessage(), XML_ERROR.name());
+            this.sendRequest(errorRequestDto);
+            getLogManager().logReceivedMessage(errorRequestDto.getControl(), GATE, GATE, body, fromPartyId, StatusEnum.ERROR, LogManager.FTI_019);
+
+        } catch (IllegalArgumentException | IOException e) {
+            log.error("Something went wrong when validating IdentifierQuery from{}", content.getFromPartyId(), e);
+            RequestDto errorRequestDto = this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, e.getMessage(), XML_ERROR.name());
+            this.sendRequest(errorRequestDto);
+            getLogManager().logReceivedMessage(errorRequestDto.getControl(), GATE, GATE, body, fromPartyId, StatusEnum.ERROR, LogManager.FTI_019);
         }
-        final ControlDto controlDto = getControlService().createControlFrom(identifierQuery, notificationDto.getContent().getFromPartyId());
-        //log fti015
-        getLogManager().logRequestRegistry(controlDto, null, GATE, REGISTRY, LogManager.FTI_015);
-        final List<ConsignmentDto> identifiersDtoList = identifiersService.search(buildIdentifiersRequestDtoFrom(identifierQuery));
-        controlDto.setIdentifiersResults(identifiersDtoList);
-        getControlService().save(controlDto);
-        //log fti016
-        getLogManager().logRequestRegistry(controlDto, getSerializeUtils().mapObjectToBase64String(identifiersDtoList), REGISTRY, GATE, LogManager.FTI_016);
-        final RequestDto request = createReceivedRequest(controlDto, identifiersDtoList);
-        final RequestDto updatedRequest = this.updateStatus(request, RESPONSE_IN_PROGRESS);
-        super.sendRequest(updatedRequest);
     }
 
     public void manageResponseReceived(final NotificationDto notificationDto) {
-        String body = notificationDto.getContent().getBody();
-        final IdentifierResponse response = getSerializeUtils().mapXmlStringToJaxbObject(body);
-        if (!validationService.isResponseValid(response)) {
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH));
-            return;
-        }
-        String requestId = response.getRequestId();
-        if (getControlService().findByRequestId(requestId).isPresent()) {
-            String fromPartyId = notificationDto.getContent().getFromPartyId();
-            identifiersControlUpdateDelegateService.updateExistingControl(response, fromPartyId);
-            identifiersControlUpdateDelegateService.setControlNextStatus(requestId);
-            IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByControlRequestIdAndGateIdDest(requestId, fromPartyId);
+        NotificationContentDto content = notificationDto.getContent();
+        String body = content.getBody();
+        try {
+            validationService.validateXml(body);
+            final IdentifierResponse response = getSerializeUtils().mapXmlStringToJaxbObject(body);
+            String requestId = response.getRequestId();
+            if (getControlService().findByRequestId(requestId).isPresent()) {
+                String fromPartyId = content.getFromPartyId();
+                identifiersControlUpdateDelegateService.updateExistingControl(response, fromPartyId);
+                identifiersControlUpdateDelegateService.setControlNextStatus(requestId);
+                IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByControlRequestIdAndGateIdDest(requestId, fromPartyId);
 
-            //log fti021
-            getLogManager().logReceivedMessage(getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl()), GATE, GATE, body, fromPartyId,
-                    getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
+                //log fti021
+                getLogManager().logReceivedMessage(getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl()), GATE, GATE, body, fromPartyId,
+                        getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
+            }
+        } catch (SAXException e) {
+            log.error("Received invalid IdentifierResponse from {}, {}", content.getFromPartyId(), e.getMessage());
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, e.getMessage(), XML_ERROR.name()));
+        } catch (IllegalArgumentException | IOException e) {
+            log.error("Something went wrong when validating IdentifierResponse from{}", content.getFromPartyId(), e);
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, e.getMessage(), XML_ERROR.name()));
         }
     }
 
@@ -206,8 +231,15 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     public void createOrUpdate(final NotificationDto notificationDto) {
-        this.identifiersService.createOrUpdate(new SaveIdentifiersRequestWrapper(notificationDto.getContent().getFromPartyId(),
-                getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody())));
+        try {
+            validationService.validateXml(notificationDto.getContent().getBody());
+            this.identifiersService.createOrUpdate(new SaveIdentifiersRequestWrapper(notificationDto.getContent().getFromPartyId(),
+                    getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody())));
+        } catch (SAXException e) {
+            log.error("Received invalid SaveIdentifierRequest from {}, {}", notificationDto.getContent().getFromPartyId(), e.getMessage());
+        } catch (IllegalArgumentException | IOException e) {
+            log.error("Something went wrong when validating SaveIdentifierRequest from{}", notificationDto.getContent().getFromPartyId(), e);
+        }
     }
 
     private RequestDto createReceivedRequest(final ControlDto controlDto, final List<ConsignmentDto> identifiersDtos) {

@@ -70,7 +70,8 @@ class NotesRequestServiceTest extends BaseServiceTest {
     private final NoteRequestEntity noteRequestEntity = new NoteRequestEntity();
     private final UilRequestEntity uilRequestEntity = new UilRequestEntity();
     private final NotesRequestDto notesRequestDto = new NotesRequestDto();
-    private final ValidationService validationService = new ValidationService();
+    @Mock
+    private ValidationService validationService;
 
     @Override
     @BeforeEach

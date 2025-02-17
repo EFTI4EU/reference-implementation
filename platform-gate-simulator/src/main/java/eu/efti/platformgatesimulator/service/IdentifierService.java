@@ -73,10 +73,6 @@ public class IdentifierService {
     private final Random random = new Random();
 
     public void sendResponseUil(final String requestId, final SupplyChainConsignment consignment) {
-        sendResponse(requestId, consignment);
-    }
-
-    private void sendResponse(final String requestId, final SupplyChainConsignment consignment) {
         final ApRequestDto apRequestDto = ApRequestDto.builder()
                 .requestId(requestId)
                 .sender(gateProperties.getOwner())
@@ -98,13 +94,14 @@ public class IdentifierService {
     private String buildBody(final String requestId, final SupplyChainConsignment consignment) {
         final UILResponse uilResponse = new UILResponse();
         if (defineBadOrGoodRequest()) {
-            log.info("Good request will be send");
+            final boolean hasData = consignment != null;
+            log.info("Good request will be sent");
             uilResponse.setRequestId(requestId);
             uilResponse.setDescription(null);
-            uilResponse.setStatus(EDeliveryStatus.OK.getCode());
+            uilResponse.setStatus(hasData ? EDeliveryStatus.OK.getCode() : EDeliveryStatus.INTERNAL_SERVER_ERROR.getCode());
             uilResponse.setConsignment(consignment);
         } else {
-            log.info("Bad request will be send");
+            log.info("Bad request will be sent");
             uilResponse.setRequestId(requestId);
             uilResponse.setDescription("Not found");
             uilResponse.setStatus(EDeliveryStatus.NOT_FOUND.getCode());
@@ -137,6 +134,8 @@ public class IdentifierService {
             sleep(gaussWaitingTime * 1000);
         } catch (InterruptedException e) {
             log.error("Error when try to call gauss operation !", e);
+            /* Clean up whatever needs to be handled before interrupting  */
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -154,7 +153,7 @@ public class IdentifierService {
                 .requestId(requestId)
                 .sender(gateProperties.getOwner())
                 .receiver(gateProperties.getGate())
-                .body(UilQueryString(uilDto, requestId))
+                .body(uilQueryString(uilDto, requestId))
                 .apConfig(ApConfigDto.builder()
                         .username(gateProperties.getAp().getUsername())
                         .password(gateProperties.getAp().getPassword())
@@ -163,7 +162,7 @@ public class IdentifierService {
                 .build();
     }
 
-    public String UilQueryString(final UilDto uilDto, final String requestId) {
+    public String uilQueryString(final UilDto uilDto, final String requestId) {
         final UILQuery uilQuery = new UILQuery();
         final UIL uil = new UIL();
         uil.setDatasetId(uilDto.getDatasetId());
@@ -171,7 +170,7 @@ public class IdentifierService {
         uil.setGateId(gateProperties.getGate());
         uilQuery.setUil(uil);
         uilQuery.setRequestId(requestId);
-        uilQuery.setSubsetId("full");
+        uilQuery.getSubsetId().add("full");
 
         final JAXBElement<UILQuery> jaxBResponse = objectFactory.createUilQuery(uilQuery);
         return serializeUtils.mapJaxbObjectToXmlString(jaxBResponse, UILQuery.class);
@@ -248,7 +247,7 @@ public class IdentifierService {
         final IdentifierResponse identifierResponse = new IdentifierResponse();
 
         if (defineBadOrGoodRequest()) {
-            log.info("Good request will be send");
+            log.info("Good request will be sent");
             identifierResponse.setRequestId(identifierQuery.getRequestId());
             identifierResponse.setDescription(descriptionIdentifierResponse);
             identifierResponse.setStatus(statusIdentifierResponse);

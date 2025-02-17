@@ -2,6 +2,7 @@ package eu.efti.eftigate.service.request;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.commons.dto.IdentifiersRequestDto;
+import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.dto.identifiers.UsedTransportEquipmentDto;
 import eu.efti.commons.enums.RequestTypeEnum;
@@ -30,6 +31,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.xml.sax.SAXException;
 import org.xmlunit.matchers.CompareMatcher;
 
 import java.io.IOException;
@@ -52,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -153,7 +156,6 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         when(controlService.createControlFrom(any(), any())).thenReturn(controlDto);
         when(controlService.updateControl(any())).thenReturn(controlDto);
         when(identifiersRequestRepository.save(any())).thenReturn(identifiersRequestEntity);
-        when(validationService.isRequestValid(any())).thenReturn(true);
         //Act
         identifiersRequestService.manageQueryReceived(notificationDto);
 
@@ -178,7 +180,6 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         identifiersRequestEntity.setStatus(IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
 
-        when(validationService.isResponseValid(any())).thenReturn(true);
         when(controlService.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
         when(identifiersRequestRepository.findByControlRequestIdAndGateIdDest(any(), any())).thenReturn(identifiersRequestEntity);
 
@@ -315,6 +316,35 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     void shouldGetRequestForControlId() {
         identifiersRequestService.findAllForControlId(1);
         verify(identifiersRequestRepository).findByControlId(1);
+    }
+
+    @Test
+    void shouldCreateOrUpdateIdentifiers() {
+        final NotificationDto notificationDto = NotificationDto.builder()
+                .notificationType(NotificationType.RECEIVED)
+                .content(NotificationContentDto.builder()
+                        .messageId(MESSAGE_ID)
+                        .body(testFile("/xml/SaveIdentifierRequest.xml"))
+                        .build())
+                .build();
+        identifiersRequestService.createOrUpdate(notificationDto);
+
+        verify(identifiersService).createOrUpdate(any(SaveIdentifiersRequestWrapper.class));
+    }
+
+    @Test
+    void shouldNotCreateOrUpdateIdentifiersIfInvalid() throws IOException, SAXException {
+        final NotificationDto notificationDto = NotificationDto.builder()
+                .notificationType(NotificationType.RECEIVED)
+                .content(NotificationContentDto.builder()
+                        .messageId(MESSAGE_ID)
+                        .body(testFile("/xml/SaveIdentifierRequest.xml"))
+                        .build())
+                .build();
+        doThrow(new SAXException("Error occurred")).when(validationService).validateXml(anyString());
+        identifiersRequestService.createOrUpdate(notificationDto);
+
+        verify(identifiersService, never()).createOrUpdate(any(SaveIdentifiersRequestWrapper.class));
     }
 
 

@@ -17,6 +17,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -45,7 +47,7 @@ class ControlControllerTest {
         UilDto uilDto = UilDto.builder().platformId("platformId")
                 .gateId("gateId")
                 .datasetId("datasetId")
-                .subsetId("subsetId").build();
+                .subsetIds(List.of("subsetId")).build();
 
         ResponseEntity<UilDto> response = controlController.requestUil(uilDto);
 

@@ -12,7 +12,7 @@ gate:
   minSleep: 1000
   maxSleep: 2000
   owner: acme
-  cda_path: classpath:cda/
+  cda_path: /opt/javapp/cda
   gate: borduria
   ap:
     url: http://efti.platform.acme.com:81/domibus/services/wsplugin
@@ -20,7 +20,7 @@ gate:
     password: Azerty59*1234567
 
 mock:
-  badRequestPercentage: 0.5f
+  badRequestPercentage: 0.0f
   gaussWaitingTime:
     average: 10
     standardDeviation: 5

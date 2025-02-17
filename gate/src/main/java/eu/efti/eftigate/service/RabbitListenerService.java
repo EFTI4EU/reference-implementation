@@ -1,6 +1,7 @@
 package eu.efti.eftigate.service;
 
 import eu.efti.commons.constant.EftiGateConstants;
+import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestType;
@@ -21,9 +22,13 @@ import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftilogger.model.ComponentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import static eu.efti.eftilogger.model.ComponentType.GATE;
+import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
@@ -77,14 +82,45 @@ public class RabbitListenerService {
             getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
-            final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
-            if (RequestType.UIL.equals(requestDto.getRequestType())) {
-                //log fti020 and fti009
-                logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, isCurrentGate ? ComponentType.PLATFORM : ComponentType.GATE, true, LogManager.FTI_009_FTI_020);
-            } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
-                //log fti019
-                logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, ComponentType.GATE, true, LogManager.FTI_019);
-            }
+            logSentMessage(rabbitRequestDto, requestTypeEnum, requestDto, receiver);
+        }
+    }
+
+    private void logSentMessage(RabbitRequestDto rabbitRequestDto, RequestTypeEnum requestTypeEnum, RequestDto requestDto, String receiver) {
+        final String body = getRequestService(requestDto.getRequestType()).buildRequestBody(rabbitRequestDto);
+        ControlDto controlDto = requestDto.getControl();
+        if (RequestType.UIL.equals(requestDto.getRequestType())) {
+            logSentUilMessage(rabbitRequestDto, controlDto, receiver, body);
+        } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
+            logSentIdentifierMessage(requestTypeEnum, controlDto, receiver, body);
+        } else if (RequestType.NOTE.equals(requestDto.getRequestType())) {
+            logSentNoteMessage(controlDto, receiver, body);
+        }
+    }
+
+    private void logSentNoteMessage(ControlDto control, String receiver, String body) {
+        final boolean isCurrentGate = gateProperties.isCurrentGate(control.getGateId());
+
+        String logName = isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026;
+        logManager.logReceivedNote(control, body, receiver, ComponentType.GATE, LogManager.FTI_025.equalsIgnoreCase(logName) ? PLATFORM : GATE,
+                true, logName);
+    }
+
+    private void logSentIdentifierMessage(RequestTypeEnum requestTypeEnum, ControlDto controlDto, String receiver, String body) {
+        //log fti019 or fti021
+        if (RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH.equals(requestTypeEnum)) {
+            logManager.logSentMessage(controlDto, body, receiver, GATE, GATE, true, LogManager.FTI_021);
+        } else {
+            logManager.logSentMessage(controlDto, body, receiver, GATE, GATE, true, LogManager.FTI_019);
+        }
+    }
+
+    private void logSentUilMessage(RabbitRequestDto rabbitRequestDto, ControlDto controlDto, String receiver, String body) {
+        //log fti020 and fti009
+        if (StringUtils.isNotBlank(receiver) && receiver.equalsIgnoreCase(rabbitRequestDto.getControl().getPlatformId())) {
+            logManager.logSentMessage(controlDto, body, receiver, GATE, PLATFORM, true, LogManager.FTI_009);
+        } else if (RequestTypeEnum.EXTERNAL_UIL_SEARCH.equals(controlDto.getRequestType())) {
+            logManager.logSentMessage(controlDto, body, receiver, GATE, GATE, true, LogManager.FTI_020);
         }
     }
 

@@ -11,7 +11,6 @@ import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
-import eu.efti.commons.exception.TechnicalException;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
@@ -34,7 +33,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -50,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -70,7 +72,8 @@ class UilRequestServiceTest extends BaseServiceTest {
     private final UilRequestEntity uilRequestEntityError = new UilRequestEntity();
     private final UilRequestEntity secondUilRequestEntity = new UilRequestEntity();
 
-    private final ValidationService validationService = new ValidationService();
+    @Mock
+    private ValidationService validationService;
 
     @Override
     @BeforeEach
@@ -307,17 +310,13 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
+        uilRequestService.manageResponseReceived(notificationDto);
 
-        assertThrows(
-                TechnicalException.class,
-                () -> uilRequestService.manageResponseReceived(notificationDto),
-                "Expected doThing() to throw, but it didn't"
-        );
+        verify(uilRequestRepository, times(1)).findByControlRequestIdAndStatus(any(), any());
     }
 
     @Test
-    void manageResponseReceivedEmptyCodeTest() {
+    void manageResponseReceivedEmptyCodeTest() throws IOException, SAXException {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
@@ -341,13 +340,11 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
+        doThrow(new SAXException("Error occurred")).when(validationService).validateXml(anyString());
 
-        assertThrows(
-                TechnicalException.class,
-                () -> uilRequestService.manageResponseReceived(notificationDto),
-                "Expected doThing() to throw, but it didn't"
-        );
+        uilRequestService.manageResponseReceived(notificationDto);
+
+        verify(rabbitSenderService, times(1)).sendMessageToRabbit(any(), any(), any());
     }
 
     @Test
@@ -374,14 +371,9 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
-        Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
-
         uilRequestService.manageResponseReceived(notificationDto);
 
-        verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
-        verify(uilRequestRepository, times(2)).save(uilRequestEntityArgumentCaptor.capture());
-        assertEquals(RequestStatusEnum.ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
+        verify(uilRequestRepository, times(1)).findByControlRequestIdAndStatus(any(), any());
     }
 
     @Test
@@ -408,14 +400,10 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
-        Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
-
         uilRequestService.manageResponseReceived(notificationDto);
 
-        verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
-        verify(uilRequestRepository, times(2)).save(uilRequestEntityArgumentCaptor.capture());
-        assertEquals(RequestStatusEnum.ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
+        verify(uilRequestRepository, times(1)).findByControlRequestIdAndStatus(any(), any());
+
     }
 
     @Test
@@ -487,6 +475,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                 .build();
         final ArgumentCaptor<UilRequestEntity> requestEntityArgumentCaptor = ArgumentCaptor.forClass(UilRequestEntity.class);
         uilRequestEntity.getControl().setFromGateId("other");
+
         when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
 
@@ -545,6 +534,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                 .build();
         when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
+
         uilRequestService.manageResponseReceived(notificationDto);
 
         verify(uilRequestRepository, times(2)).save(uilRequestEntityArgumentCaptor.capture());

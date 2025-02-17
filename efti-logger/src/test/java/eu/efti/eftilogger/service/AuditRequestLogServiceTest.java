@@ -21,6 +21,8 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 import static eu.efti.eftilogger.model.ComponentType.GATE;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,12 +34,16 @@ class AuditRequestLogServiceTest extends AbstractTestService {
     private MessagePartiesDto messagePartiesDto;
     private final StatusEnum status = StatusEnum.COMPLETE;
     private ListAppender<ILoggingEvent> logWatcher;
+    private CustomComparator messageDateComparator;
 
     @BeforeEach
     public void init() {
         logWatcher = new ListAppender<>();
         logWatcher.start();
         ((Logger) LoggerFactory.getLogger(LogService.class)).addAppender(logWatcher);
+
+        messageDateComparator = new CustomComparator(JSONCompareMode.LENIENT,
+                new Customization("messageDate", (o1, o2) -> true));
 
         controlDto = ControlDto.builder()
                 .id(1)
@@ -46,8 +52,8 @@ class AuditRequestLogServiceTest extends AbstractTestService {
                         .nationalUniqueIdentifier("nui").build())
                 .requestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH)
                 .requestId("requestId")
-                .subsetId("full")
-                .eftiDataUuid("dataUuid")
+                .subsetIds(List.of("full"))
+                .datasetId("dataUuid")
                 .error(ErrorDto.fromErrorCode(ErrorCodesEnum.DEFAULT_ERROR))
                 .build();
 
@@ -63,19 +69,15 @@ class AuditRequestLogServiceTest extends AbstractTestService {
 
     @Test
     void shouldLogAckTrue() throws JSONException {
-        final String expected = "{\"messageDate\":\"2024-07-31 15:05:53\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"sender\",\"requestingComponentCountry\":\"senderCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"receiver\",\"respondingComponentCountry\":\"receiverCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"DEFAULT_ERROR\",\"errorDescriptionMessage\":\"Error\",\"requestId\":\"requestId\",\"subsetId\":\"full\",\"requestType\":\"UIL_ACK\",\"eFTIDataId\":\"dataUuid\"}";
+        final String expected = "{\"messageDate\":\"2024-07-31 15:05:53\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"sender\",\"requestingComponentCountry\":\"senderCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"receiver\",\"respondingComponentCountry\":\"receiverCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"DEFAULT_ERROR\",\"errorDescriptionMessage\":\"Error\",\"requestId\":\"requestId\",\"subsetIds\":[\"full\"],\"requestType\":\"UIL_ACK\",\"eFTIDataId\":\"dataUuid\"}";
         auditRequestLogService.log(controlDto, messagePartiesDto, GATE_ID, GATE_COUNTRY, BODY, status, true, "name");
-        JSONAssert.assertEquals(expected, logWatcher.list.get(0).getFormattedMessage(),
-                new CustomComparator(JSONCompareMode.LENIENT,
-                        new Customization("messageDate", (o1, o2) -> true)));
+        JSONAssert.assertEquals(expected, logWatcher.list.get(0).getFormattedMessage(), messageDateComparator);
     }
 
     @Test
     void shouldLogAckFalse() throws JSONException {
-        final String expected = "{\"messageDate\":\"2024-07-31 15:05:53\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"sender\",\"requestingComponentCountry\":\"senderCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"receiver\",\"respondingComponentCountry\":\"receiverCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"DEFAULT_ERROR\",\"errorDescriptionMessage\":\"Error\",\"requestId\":\"requestId\",\"subsetId\":\"full\",\"requestType\":\"UIL\",\"eFTIDataId\":\"dataUuid\"}";
+        final String expected = "{\"messageDate\":\"2024-07-31 15:05:53\",\"componentType\":\"GATE\",\"componentId\":\"gateId\",\"componentCountry\":\"gateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"sender\",\"requestingComponentCountry\":\"senderCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"receiver\",\"respondingComponentCountry\":\"receiverCountry\",\"messageContent\":\"body\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"DEFAULT_ERROR\",\"errorDescriptionMessage\":\"Error\",\"requestId\":\"requestId\",\"subsetIds\":[\"full\"],\"requestType\":\"UIL\",\"eFTIDataId\":\"dataUuid\"}";
         auditRequestLogService.log(controlDto, messagePartiesDto, GATE_ID, GATE_COUNTRY, BODY, status, false, "name");
-        JSONAssert.assertEquals(expected, logWatcher.list.get(0).getFormattedMessage(),
-                new CustomComparator(JSONCompareMode.LENIENT,
-                        new Customization("messageDate", (o1, o2) -> true)));
+        JSONAssert.assertEquals(expected, logWatcher.list.get(0).getFormattedMessage(), messageDateComparator);
     }
 }

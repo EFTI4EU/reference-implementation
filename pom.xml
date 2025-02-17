@@ -17,7 +17,7 @@
     <description>gate</description>
 
     <properties>
-        <revision>0.5.1-SNAPSHOT</revision>
+        <revision>0.5.2</revision>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/../coverage-aggregate/target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
@@ -47,7 +47,7 @@
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-        <dependency-check-maven.version>11.1.1</dependency-check-maven.version>
+        <dependency-check-maven.version>12.1.0</dependency-check-maven.version>
         <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
         <maven-project-info-reports-plugin.version>3.4.3</maven-project-info-reports-plugin.version>
         <maven-apt-plugin.version>1.0.4</maven-apt-plugin.version>
@@ -74,12 +74,12 @@
         <site>
             <id>INGroupeSite</id>
             <!--suppress UnresolvedMavenProperty -->
-            <url>file:///${distributionManagement.site.rootpath}/efti/${project.artifactId}</url>
+            <url>file:///${distributionManagement.site.rootpath}/EFTI/${project.artifactId}</url>
         </site>
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:https://gitlab.imprimerienationale.fr/efti/gate.git</connection>
+        <connection>scm:git:https://gitlab.imprimerienationale.fr/kube/projects/efti/gate.git</connection>
     </scm>
 
     <modules>
@@ -103,6 +103,41 @@
                 <groupId>com.sun.xml.messaging.saaj</groupId>
                 <artifactId>saaj-impl</artifactId>
                 <version>3.0.4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-rt</artifactId>
+                <version>4.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.modelmapper</groupId>
+                <artifactId>modelmapper</artifactId>
+                <version>3.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>2.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.15.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>4.4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.vladmihalcea</groupId>
+                <artifactId>hibernate-types-52</artifactId>
+                <version>2.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>4.0.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

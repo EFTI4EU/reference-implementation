@@ -31,6 +31,7 @@ import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.utils.ControlUtils;
+import eu.efti.eftigate.utils.SubsetsCheckerUtils;
 import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.edelivery.IdentifierQuery;
@@ -57,6 +58,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+import static eu.efti.commons.constant.EftiGateConstants.UIL_TYPES;
 import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
 import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
@@ -66,6 +68,7 @@ import static eu.efti.commons.enums.RequestStatusEnum.SEND_ERROR;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH;
 import static eu.efti.commons.enums.StatusEnum.COMPLETE;
 import static eu.efti.commons.enums.StatusEnum.PENDING;
+import static eu.efti.eftigate.service.LogManager.FTI_017;
 import static java.lang.String.format;
 
 
@@ -118,7 +121,9 @@ public class ControlService {
     public NoteResponseDto createNoteRequestForControl(final PostFollowUpRequestDto postFollowUpRequestDto) {
         log.info("create Note Request for control with requestId : {}", postFollowUpRequestDto.getRequestId());
         final ControlDto savedControl = getControlByRequestId(postFollowUpRequestDto.getRequestId());
-        if (savedControl != null && savedControl.isFound()) {
+        //log FTI024
+        logManager.logReceivedNote(savedControl, postFollowUpRequestDto, gateProperties.getOwner(), ComponentType.CA_APP, ComponentType.GATE, true, LogManager.FTI_024);
+        if (savedControl.isFound()) {
             log.info("sending note to platform {}", savedControl.getPlatformId());
             return createNoteRequestForControl(savedControl, postFollowUpRequestDto);
         } else {
@@ -126,13 +131,19 @@ public class ControlService {
         }
     }
 
-    private NoteResponseDto createNoteRequestForControl(final ControlDto controlDto, final PostFollowUpRequestDto notesDto) {
-        final Optional<ErrorDto> errorOptional = this.validateControl(notesDto);
+    private NoteResponseDto createNoteRequestForControl(final ControlDto controlDto, final PostFollowUpRequestDto postFollowUpRequestDto) {
+        final Optional<ErrorDto> errorOptional = this.validateControl(postFollowUpRequestDto);
+        final boolean isCurrentGate = gateProperties.isCurrentGate(controlDto.getGateId());
+        final String receiver = isCurrentGate ? controlDto.getPlatformId() : controlDto.getGateId();
         if (errorOptional.isPresent()) {
             final ErrorDto errorDto = errorOptional.get();
+            controlDto.setError(errorDto);
+            //log fti025 not sent
+            logManager.logReceivedNote(controlDto, postFollowUpRequestDto, receiver, ComponentType.GATE, ComponentType.PLATFORM, false, isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026);
+            log.error("Not was not send : {}", errorDto.getErrorDescription());
             return new NoteResponseDto(NOTE_WAS_NOT_SENT, errorDto.getErrorCode(), errorDto.getErrorDescription());
         } else {
-            controlDto.setNotes(notesDto.getMessage());
+            controlDto.setNotes(postFollowUpRequestDto.getMessage());
             getRequestService(RequestTypeEnum.NOTE_SEND).createAndSendRequest(controlDto, !gateProperties.isCurrentGate(controlDto.getGateId()) ? controlDto.getGateId() : null);
             log.info("Note has been registered for control with request uuid '{}'", controlDto.getRequestId());
             return NoteResponseDto.builder().message("Note sent").build();
@@ -143,6 +154,11 @@ public class ControlService {
         final Validator validator;
         try (final ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             validator = factory.getValidator();
+        }
+
+        if (validable instanceof UilDto uilDto && !SubsetsCheckerUtils.isSubsetsValid(uilDto.getSubsetIds())) {
+            log.error("Error bad subsets send");
+            return Optional.of(ErrorDto.fromErrorCode(ErrorCodesEnum.BAD_SUBSETS));
         }
 
         final Set<ConstraintViolation<ValidableDto>> violations = validator.validate(validable);
@@ -298,10 +314,10 @@ public class ControlService {
     }
 
     private boolean checkOnLocalRegistry(final ControlDto controlDto) {
-        log.info("checking local registry for dataUuid {}", controlDto.getEftiDataUuid());
+        log.info("checking local registry for dataUuid {}", controlDto.getDatasetId());
         //log fti015
         logManager.logRequestRegistry(controlDto, null, ComponentType.GATE, ComponentType.REGISTRY, LogManager.FTI_015);
-        final ConsignmentDto consignmentDto = this.identifiersService.findByUIL(controlDto.getEftiDataUuid(), controlDto.getGateId(), controlDto.getPlatformId());
+        final ConsignmentDto consignmentDto = this.identifiersService.findByUIL(controlDto.getDatasetId(), controlDto.getGateId(), controlDto.getPlatformId());
         //log fti016
         logManager.logRequestRegistry(controlDto, serializeUtils.mapObjectToBase64String(consignmentDto), ComponentType.REGISTRY, ComponentType.GATE, LogManager.FTI_016);
         return consignmentDto != null;
@@ -325,11 +341,21 @@ public class ControlService {
     }
 
     private <T extends ValidableDto> void createControlFromType(final T searchDto, final ControlDto controlDto) {
-        logManager.logAppRequest(controlDto, searchDto, ComponentType.CA_APP, ComponentType.GATE, LogManager.FTI_008_FTI_014);
+        logAppRequest(searchDto, controlDto);
         if (searchDto instanceof UilDto) {
             createUilControl(controlDto);
         } else if (searchDto instanceof final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {
             createIdentifiersControl(controlDto, searchWithIdentifiersRequestDto);
+        }
+    }
+
+    private <T extends ValidableDto> void logAppRequest(T searchDto, ControlDto controlDto) {
+        if (controlDto.getRequestType() != null) {
+            if (UIL_TYPES.contains(controlDto.getRequestType())) {
+                logManager.logAppRequest(controlDto, searchDto, ComponentType.CA_APP, ComponentType.GATE, LogManager.FTI_008);
+            } else {
+                logManager.logAppRequest(controlDto, searchDto, ComponentType.CA_APP, ComponentType.GATE, LogManager.FTI_014);
+            }
         }
     }
 
@@ -348,9 +374,19 @@ public class ControlService {
             result.setErrorCode(controlDto.getError().getErrorCode());
         }
         if (controlDto.getStatus() != PENDING) { // pending request are not logged
-            logManager.logAppResponse(controlDto, result, ComponentType.GATE, gateProperties.getOwner(), ComponentType.CA_APP, null, LogManager.FTI_011_FTI_017);
+            logAppResponse(controlDto, result);
         }
         return result;
+    }
+
+    private void logAppResponse(ControlDto controlDto, RequestIdDto result) {
+        if (controlDto.getRequestType() != null) {
+            if (UIL_TYPES.contains(controlDto.getRequestType())) {
+                logManager.logAppResponse(controlDto, result, ComponentType.GATE, gateProperties.getOwner(), ComponentType.CA_APP, null, LogManager.FTI_011);
+            } else {
+                logManager.logAppResponse(controlDto, result, ComponentType.GATE, gateProperties.getOwner(), ComponentType.CA_APP, null, FTI_017);
+            }
+        }
     }
 
     public int updatePendingControls() {
@@ -380,7 +416,7 @@ public class ControlService {
 
         if (StringUtils.isBlank(controlDto.getFromGateId())) {
             //log fti017
-            logManager.logFromIdentifier(result, ComponentType.GATE, ComponentType.CA_APP, controlDto, LogManager.FTI_011_FTI_017);
+            logManager.logFromIdentifier(result, ComponentType.GATE, ComponentType.CA_APP, controlDto, FTI_017);
         }
         return result;
     }
@@ -389,9 +425,9 @@ public class ControlService {
         final List<IdentifierRequestResultDto> identifierResultDtos = new LinkedList<>();
         requestDtos.forEach(requestDto -> identifierResultDtos.add(
                 IdentifierRequestResultDto.builder()
-                        .consignments(requestDto.getIdentifiersResults() != null ? mapperUtils.consignmentDtoToApiDto(requestDto.getIdentifiersResults().getConsignments()): Collections.emptyList())
-                        .errorCode(requestDto.getError() != null? requestDto.getError().getErrorCode() : null)
-                        .errorDescription(requestDto.getError() != null? requestDto.getError().getErrorDescription() : null)
+                        .consignments(requestDto.getIdentifiersResults() != null ? mapperUtils.consignmentDtoToApiDto(requestDto.getIdentifiersResults().getConsignments()) : Collections.emptyList())
+                        .errorCode(requestDto.getError() != null ? requestDto.getError().getErrorCode() : null)
+                        .errorDescription(requestDto.getError() != null ? requestDto.getError().getErrorDescription() : null)
                         .gateIndicator(eftiGateIdResolver.resolve(requestDto.getGateIdDest()))
                         .status(mapRequestStatus(requestDto.getStatus()))
                         .build())
@@ -428,11 +464,11 @@ public class ControlService {
     }
 
     private String mapRequestStatus(final RequestStatusEnum requestStatus) {
-        if( List.of(RECEIVED, IN_PROGRESS, RESPONSE_IN_PROGRESS).contains(requestStatus) ) {
+        if (List.of(RECEIVED, IN_PROGRESS, RESPONSE_IN_PROGRESS).contains(requestStatus)) {
             return PENDING.name();
-        } else if ( RequestStatusEnum.SUCCESS.equals(requestStatus)) {
+        } else if (RequestStatusEnum.SUCCESS.equals(requestStatus)) {
             return COMPLETE.name();
-        } else if ( List.of(SEND_ERROR, ERROR).contains(requestStatus)) {
+        } else if (List.of(SEND_ERROR, ERROR).contains(requestStatus)) {
             return StatusEnum.ERROR.name();
         }
         return requestStatus.name();

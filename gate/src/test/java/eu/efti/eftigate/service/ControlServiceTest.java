@@ -168,19 +168,20 @@ class ControlServiceTest extends AbstractServiceTest {
         this.uilDto.setGateId("france");
         this.uilDto.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
         this.uilDto.setPlatformId("ttf");
+        this.uilDto.setSubsetIds(List.of("EL05"));
 
         this.searchWithIdentifiersRequestDto.setIdentifier("abc123");
         this.searchWithIdentifiersRequestDto.setRegistrationCountryCode("FR");
         this.searchWithIdentifiersRequestDto.setAuthority(authorityDto);
         this.searchWithIdentifiersRequestDto.setModeCode("1");
 
-        this.controlDto.setEftiDataUuid(uilDto.getDatasetId());
+        this.controlDto.setDatasetId(uilDto.getDatasetId());
         this.controlDto.setGateId(uilDto.getGateId());
         this.controlDto.setPlatformId(uilDto.getPlatformId());
         this.controlDto.setRequestId(requestId);
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(status);
-        this.controlDto.setSubsetId("oki");
+        this.controlDto.setSubsetIds(List.of("oki"));
         this.controlDto.setCreatedDate(localDateTime);
         this.controlDto.setLastModifiedDate(localDateTime);
         this.controlDto.setAuthority(AuthorityDto.builder()
@@ -190,13 +191,13 @@ class ControlServiceTest extends AbstractServiceTest {
                 .workingContact(ContactInformationDto.builder().build())
                 .nationalUniqueIdentifier("unique").build());
 
-        this.controlEntity.setEftiDataUuid(controlDto.getEftiDataUuid());
+        this.controlEntity.setDatasetId(controlDto.getDatasetId());
         this.controlEntity.setRequestId(controlDto.getRequestId());
         this.controlEntity.setRequestType(controlDto.getRequestType());
         this.controlEntity.setStatus(controlDto.getStatus());
         this.controlEntity.setPlatformId(controlDto.getPlatformId());
         this.controlEntity.setGateId(controlDto.getGateId());
-        this.controlEntity.setSubsetId(controlDto.getSubsetId());
+        this.controlEntity.setSubsetIds(controlDto.getSubsetIds());
         this.controlEntity.setCreatedDate(controlDto.getCreatedDate());
         this.controlEntity.setLastModifiedDate(controlDto.getLastModifiedDate());
         this.controlEntity.setFromGateId(controlDto.getFromGateId());
@@ -517,7 +518,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
     @Test
     void createIdentifiersControlVehicleIDIncorrect() {
-        searchWithIdentifiersRequestDto.setIdentifier("fausse plaque");
+        searchWithIdentifiersRequestDto.setIdentifier("bad identifier");
 
         final RequestIdDto requestIdDtoResult = controlService.createIdentifiersControl(searchWithIdentifiersRequestDto);
 
@@ -562,7 +563,7 @@ class ControlServiceTest extends AbstractServiceTest {
                 .requestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")
                 .status(StatusEnum.PENDING)
                 .requestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH)
-                .subsetId("full")
+                .subsetIds(List.of("full"))
                 .gateId("france")
                 .fromGateId("https://efti.gate.france.eu")
                 .transportIdentifiers(SearchParameter.builder()
@@ -586,7 +587,7 @@ class ControlServiceTest extends AbstractServiceTest {
                 .requestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")
                 .status(StatusEnum.PENDING)
                 .requestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH)
-                .subsetId("full")
+                .subsetIds(List.of("full"))
                 .gateId("france")
                 .fromGateId("https://efti.gate.france.eu")
                 .eftiData(new byte[0])

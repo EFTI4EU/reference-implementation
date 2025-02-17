@@ -29,6 +29,20 @@ gate:
     username: {{ gate.ap.username }}
     password: {{ gate.ap.password }}
 
+mock:
+  badRequestPercentage: {{ mock.badRequestPercentage}}
+  gaussWaitingTime:
+    average: {{ mock.gaussWaitingTime.average }}
+    standardDeviation: {{ mock.gaussWaitingTime.standardDeviation }}
+    isActiveForIdentifierRequestTimer: {{ mock.gaussWaitingTime.isActiveForIdentifierRequestTimer }}
+    isTimerActiveForIdentifierResponse: {{ mock.gaussWaitingTime.isTimerActiveForIdentifierResponse }}
+  identifierReponseGoodResponse:
+    description: {{ mock.identifierReponseGoodResponse.description }}
+    status: {{ mock.identifierReponseGoodResponse.status }}
+  identifierReponseBadResponse:
+    description: {{ mock.identifierReponseBadResponse.description }}
+    status: {{ mock.identifierReponseBadResponse.status }}
+
 management:
   endpoint:
     info:

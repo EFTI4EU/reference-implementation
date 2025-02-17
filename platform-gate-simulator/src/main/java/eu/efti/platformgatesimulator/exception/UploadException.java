@@ -10,4 +10,8 @@ public class UploadException extends Exception {
     public UploadException(final Exception exception) {
         super(exception);
     }
+
+    public UploadException(final String message) {
+        super(message);
+    }
 }

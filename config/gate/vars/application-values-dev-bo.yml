@@ -28,6 +28,8 @@ gate:
     url: http://172.16.201.146:8080/domibus/services/wsplugin
     username: borduria_service_account
     password: Azerty59*1234567
+  xsd:
+    path: /opt/javapp/schema/xsd/edelivery/gate.xsd
 
 batch:
   retry:

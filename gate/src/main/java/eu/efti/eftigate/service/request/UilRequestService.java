@@ -27,6 +27,7 @@ import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
 import eu.efti.eftigate.service.ValidationService;
 import eu.efti.eftigate.utils.ControlUtils;
+import eu.efti.eftigate.utils.SubsetsCheckerUtils;
 import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.v1.consignment.common.ObjectFactory;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
@@ -40,7 +41,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -57,6 +60,7 @@ import static eu.efti.commons.enums.RequestStatusEnum.TIMEOUT;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH;
 import static eu.efti.commons.enums.StatusEnum.COMPLETE;
 import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.isNotFound;
+import static eu.efti.eftilogger.model.ComponentType.GATE;
 
 @Slf4j
 @Component
@@ -95,32 +99,54 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     public void manageQueryReceived(final NotificationDto notificationDto) {
         NotificationContentDto content = notificationDto.getContent();
         String body = content.getBody();
-        final UILQuery uilQuery = getSerializeUtils().mapXmlStringToJaxbObject(body);
-        if (!validationService.isRequestValid(uilQuery)) {
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH));
-            return;
+        String fromPartyId = content.getFromPartyId();
+        try {
+            validationService.validateXml(body);
+            final UILQuery uilQuery = getSerializeUtils().mapXmlStringToJaxbObject(body);
+            final boolean isSubsetValid = SubsetsCheckerUtils.isSubsetsValid(uilQuery.getSubsetId());
+            ControlDto controlDto = ControlUtils
+                    .fromGateToGateQuery(uilQuery, EXTERNAL_ASK_UIL_SEARCH, notificationDto, getGateProperties().getOwner());
+            if (!isSubsetValid) {
+                log.error("Received invalid UILQuery with bad subsets");
+                this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, ErrorCodesEnum.BAD_SUBSETS.getMessage(), ErrorCodesEnum.BAD_SUBSETS.name()));
+                getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId, StatusEnum.ERROR, LogManager.FTI_020);
+                return;
+            }
+            getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId, StatusEnum.COMPLETE, LogManager.FTI_020);
+            getControlService().createUilControl(controlDto);
+
+        } catch (SAXException e) {
+            String exceptionMessage = e.getMessage();
+            log.error("Received invalid UILQuery from {}, {}", content.getFromPartyId(), exceptionMessage);
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, exceptionMessage, ErrorCodesEnum.XML_ERROR.name()));
+        } catch (IllegalArgumentException | IOException e) {
+            log.error("Something went wrong when validating UILQuery from{}", content.getFromPartyId(), e);
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, e.getMessage(), ErrorCodesEnum.XML_ERROR.name()));
         }
-        getControlService().createUilControl(ControlUtils
-                .fromGateToGateQuery(uilQuery, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, notificationDto, getGateProperties().getOwner()));
     }
 
     public void manageResponseReceived(final NotificationDto notificationDto) {
         NotificationContentDto content = notificationDto.getContent();
         String body = content.getBody();
-        final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(body);
-        if (!validationService.isResponseValid(uilResponse)) {
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH));
-            return;
+        try {
+            validationService.validateXml(body);
+            final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(body);
+            this.findByRequestId(uilResponse.getRequestId()).ifPresentOrElse(uilRequestDto -> manageResponse(notificationDto, uilRequestDto, uilResponse, content), () -> log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB));
+        } catch (SAXException e) {
+            String exceptionMessage = e.getMessage();
+            log.error("Received invalid UILResponse from {}, {}", content.getFromPartyId(), exceptionMessage);
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, exceptionMessage, ErrorCodesEnum.XML_ERROR.name()));
+        } catch (IllegalArgumentException | IOException e) {
+            log.error("Something went wrong when validating UILResponse from{}", content.getFromPartyId(), e);
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, e.getMessage(), ErrorCodesEnum.XML_ERROR.name()));
         }
-        final Optional<UilRequestDto> uilRequestDto = this.findByRequestId(uilResponse.getRequestId());
-        if (uilRequestDto.isPresent()) {
-            if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.get().getControl().getRequestType())) { //platform response
-                manageResponseFromPlatform(uilRequestDto.get(), uilResponse, notificationDto);
-            } else { // gate response
-                manageResponseFromOtherGate(uilRequestDto.get(), uilResponse, notificationDto.getContent());
-            }
-        } else {
-            log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB);
+    }
+
+    private void manageResponse(NotificationDto notificationDto, UilRequestDto uilRequestDto, UILResponse uilResponse, NotificationContentDto content) {
+        if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.getControl().getRequestType())) { //platform response
+            manageResponseFromPlatform(uilRequestDto, uilResponse, notificationDto);
+        } else { // gate response
+            manageResponseFromOtherGate(uilRequestDto, uilResponse, content);
         }
     }
 
@@ -175,30 +201,39 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             return getSerializeUtils().mapJaxbObjectToXmlString(jaxBResponse, UILResponse.class);
         }
 
-        final UILQuery uilQuery = new UILQuery();
-        final UIL uil = new UIL();
-        uil.setDatasetId(controlDto.getEftiDataUuid());
-        uil.setPlatformId(requestDto.getControl().getPlatformId());
-        uil.setGateId(requestDto.getGateIdDest());
-        uilQuery.setUil(uil);
-        uilQuery.setRequestId(requestDto.getControl().getRequestId());
-        uilQuery.setSubsetId(controlDto.getSubsetId());
+        final UILQuery uilQuery = buildUilQuery(requestDto, controlDto);
+        controlDto.getSubsetIds().forEach(subset -> uilQuery.getSubsetId().add(subset));
 
         final JAXBElement<UILQuery> jaxBResponse = getObjectFactory().createUilQuery(uilQuery);
         return getSerializeUtils().mapJaxbObjectToXmlString(jaxBResponse, UILQuery.class);
     }
 
+    private UILQuery buildUilQuery(RabbitRequestDto requestDto, ControlDto controlDto) {
+        final UILQuery uilQuery = new UILQuery();
+        final UIL uil = new UIL();
+        uil.setDatasetId(controlDto.getDatasetId());
+        uil.setPlatformId(requestDto.getControl().getPlatformId());
+        uil.setGateId(requestDto.getGateIdDest());
+        uilQuery.setUil(uil);
+        uilQuery.setRequestId(requestDto.getControl().getRequestId());
+        return uilQuery;
+    }
+
     private String getStatus(final RabbitRequestDto requestDto, final boolean hasError) {
         if (hasError) {
-            String errorCode = requestDto.getError().getErrorCode();
-            if (isNotFound(errorCode) || DATA_NOT_FOUND_ON_REGISTRY.name().equalsIgnoreCase(errorCode)) {
-                return EDeliveryStatus.NOT_FOUND.getCode();
-            }
-            return EDeliveryStatus.BAD_REQUEST.getCode();
+            return getEdeliverStatusForError(requestDto);
         } else if (TIMEOUT.equals(requestDto.getStatus())) {
             return EDeliveryStatus.GATEWAY_TIMEOUT.getCode();
         }
         return EDeliveryStatus.OK.getCode();
+    }
+
+    private String getEdeliverStatusForError(RabbitRequestDto requestDto) {
+        String errorCode = requestDto.getError().getErrorCode();
+        if (isNotFound(errorCode) || DATA_NOT_FOUND_ON_REGISTRY.name().equalsIgnoreCase(errorCode)) {
+            return EDeliveryStatus.NOT_FOUND.getCode();
+        }
+        return EDeliveryStatus.BAD_REQUEST.getCode();
     }
 
     @Override
@@ -248,11 +283,11 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             manageErrorReceived(uilRequestDto, uilResponse.getStatus(), uilResponse.getDescription());
         }
         if (uilRequestDto.getControl().isExternalAsk()) {
-            respondToOtherGate(uilRequestDto);
+            respondToOtherGate(uilRequestDto, notificationDto.getContent().getBody());
         }
         //log fti010
         NotificationContentDto content = notificationDto.getContent();
-        getLogManager().logReceivedMessage(uilRequestDto.getControl(), ComponentType.PLATFORM, ComponentType.GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
+        getLogManager().logReceivedMessage(uilRequestDto.getControl(), ComponentType.PLATFORM, GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
     }
 
     private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, NotificationContentDto content) {
@@ -285,7 +320,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         this.save(requestDto);
         ControlDto savedControl = getControlService().save(controlDto);
         if (!StatusEnum.PENDING.equals(savedControl.getStatus())) {
-            getLogManager().logReceivedMessage(controlDto, ComponentType.GATE, ComponentType.GATE, content.getBody(), content.getFromPartyId(), savedControl.getStatus(), LogManager.FTI_022);
+            getLogManager().logReceivedMessage(controlDto, GATE, GATE, content.getBody(), content.getFromPartyId(), savedControl.getStatus(), LogManager.FTI_022);
         }
     }
 
@@ -328,12 +363,14 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         getControlService().save(controlDto);
     }
 
-    private void respondToOtherGate(final UilRequestDto uilRequestDto) {
+    private void respondToOtherGate(final UilRequestDto uilRequestDto, String body) {
         this.updateStatus(uilRequestDto, RESPONSE_IN_PROGRESS);
         uilRequestDto.setGateIdDest(uilRequestDto.getControl().getFromGateId());
         final RequestDto savedUilRequestDto = this.save(uilRequestDto);
         savedUilRequestDto.setRequestType(RequestType.UIL);
+
         this.sendRequest(savedUilRequestDto);
+        getLogManager().logSentMessage(savedUilRequestDto.getControl(), body, savedUilRequestDto.getControl().getFromGateId(), GATE, GATE, true, LogManager.FTI_022);
     }
 
     private Optional<UilRequestDto> findByRequestId(final String requestId) {

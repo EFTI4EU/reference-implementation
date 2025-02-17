@@ -11,7 +11,6 @@ import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.RequestRepository;
 import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
-import eu.efti.eftilogger.model.ComponentType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static eu.efti.commons.enums.RequestStatusEnum.SEND_ERROR;
+import static eu.efti.eftilogger.model.ComponentType.GATE;
 
 @Slf4j
 @Component
@@ -39,8 +39,9 @@ public class EftiRequestUpdater {
     public void manageSendFailure(final NotificationDto notificationDto, final String name) {
         final Optional<RequestDto> requestDto = getRequestDtoFromMessageId(notificationDto.getMessageId());
         if (requestDto.isPresent()) {
-            this.updateStatus(requestDto.get(), SEND_ERROR);
-            logManager.logAckMessage(requestDto.get().getControl(), null, null, false, name);
+            RequestDto request = requestDto.get();
+            this.updateStatus(request, SEND_ERROR);
+            logManager.logAckMessage(request.getControl(), GATE, false, request, name);
         }
     }
 
@@ -50,12 +51,13 @@ public class EftiRequestUpdater {
             log.info(SENT_MESSAGE_SUCCESSFULLY_BUT_NOT_SAVED_IN_DB, notificationDto.getMessageId());
             return;
         }
-        if (List.of(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, RequestTypeEnum.EXTERNAL_UIL_SEARCH, RequestTypeEnum.LOCAL_UIL_SEARCH).contains(requestDto.get().getControl().getRequestType())) {
-            getRequestService(requestDto.get().getRequestType().name()).manageSendSuccess(notificationDto.getMessageId());
+        RequestDto req = requestDto.get();
+        if (List.of(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, RequestTypeEnum.EXTERNAL_UIL_SEARCH, RequestTypeEnum.LOCAL_UIL_SEARCH).contains(req.getControl().getRequestType())) {
+            getRequestService(req.getRequestType().name()).manageSendSuccess(notificationDto.getMessageId());
         } else {
             log.info(SENT_MESSAGE_SUCCESSFULLY, notificationDto.getMessageId());
         }
-        logManager.logAckMessage(requestDto.get().getControl(), ComponentType.GATE, null, true, name);
+        logManager.logAckMessage(req.getControl(), GATE, true, req, name);
     }
 
     private RequestService<?> getRequestService(final String requestType) {

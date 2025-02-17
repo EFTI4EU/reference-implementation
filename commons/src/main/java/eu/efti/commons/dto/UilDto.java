@@ -1,10 +1,14 @@
 package eu.efti.commons.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -13,6 +17,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class UilDto extends AbstractUilDto implements ValidableDto {
     private static final String REGEX_URI = "^[-@./#&+\\w\\s]*$";
-
-    private String subsetId;
+    @Builder.Default
+    private List<String> subsetIds = new ArrayList<>();
 }
