@@ -77,8 +77,10 @@ public class MapperUtils {
         }
         eu.efti.v1.consignment.identifier.LogisticsTransportMovement resultLogisticsTransportMovement = new eu.efti.v1.consignment.identifier.LogisticsTransportMovement();
         resultLogisticsTransportMovement.setModeCode(mainCarriageTransportMovement.getModeCode());
-        resultLogisticsTransportMovement.setDangerousGoodsIndicator(mainCarriageTransportMovement.getDangerousGoodsIndicator());
         resultLogisticsTransportMovement.setUsedTransportMeans(from(mainCarriageTransportMovement.getUsedTransportMeans()));
+        if (mainCarriageTransportMovement.getDangerousGoodsIndicator() != null) {
+            resultLogisticsTransportMovement.setDangerousGoodsIndicator(mainCarriageTransportMovement.getDangerousGoodsIndicator());
+        }
         return resultLogisticsTransportMovement;
     }
 

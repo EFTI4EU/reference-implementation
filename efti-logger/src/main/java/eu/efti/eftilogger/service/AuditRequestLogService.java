@@ -9,6 +9,7 @@ import eu.efti.eftilogger.dto.LogRequestDto;
 import eu.efti.eftilogger.dto.MessagePartiesDto;
 import eu.efti.eftilogger.model.RequestTypeLog;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MarkerFactory;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +60,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                 .componentType(GATE)
                 .componentId(currentGateId)
                 .componentCountry(currentGateCountry)
-                .requestType(getRequestTypeFromControl(control, isAck))
+                .requestType(StringUtils.isNotBlank(messagePartiesDto.getRequestType()) ? messagePartiesDto.getRequestType() : getRequestTypeFromControl(control, isAck))
                 .errorCodeMessage(control.getError() != null ? control.getError().getErrorCode() : null)
                 .errorDescriptionMessage(control.getError() != null ? control.getError().getErrorDescription() : null)
                 .build();

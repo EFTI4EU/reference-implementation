@@ -166,9 +166,7 @@ class IdentifiersQueryTest {
      */
     private Consignment toEntity(SupplyChainConsignment sourceConsignment, String datasetId, Random random) {
         sourceConsignment.getMainCarriageTransportMovement().forEach(tm -> {
-            if (tm.isDangerousGoodsIndicator() == null) {
-                tm.setDangerousGoodsIndicator(random.nextBoolean());
-            }
+            tm.setDangerousGoodsIndicator(random.nextBoolean());
         });
         IntStream.range(0, sourceConsignment.getUsedTransportEquipment().size()).forEach(uteIndex -> {
             var ute = sourceConsignment.getUsedTransportEquipment().get(uteIndex);

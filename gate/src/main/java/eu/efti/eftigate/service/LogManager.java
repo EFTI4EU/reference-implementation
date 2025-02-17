@@ -13,6 +13,7 @@ import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftilogger.dto.MessagePartiesDto;
 import eu.efti.eftilogger.model.ComponentType;
+import eu.efti.eftilogger.model.RequestTypeLog;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.eftilogger.service.AuditRequestLogService;
 import lombok.RequiredArgsConstructor;
@@ -55,11 +56,20 @@ public class LogManager {
                                              final ComponentType requestingComponentType,
                                              final ComponentType respondingComponentType,
                                              final boolean isSuccess,
-                                             final RequestTypeEnum requestType,
                                              final String name) {
         String receiverCountry = eftiGateIdResolver.resolve(receiver);
-        control.setRequestType(requestType);
-        sendLogRequest(control, message, receiver, requestingComponentType, respondingComponentType, isSuccess, name, receiverCountry);
+        final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
+                .requestingComponentType(requestingComponentType)
+                .requestingComponentId(gateProperties.getOwner())
+                .requestingComponentCountry(gateProperties.getCountry())
+                .respondingComponentType(respondingComponentType)
+                .respondingComponentId(receiver)
+                .respondingComponentCountry(StringUtils.isNotBlank(receiverCountry) ? receiverCountry : gateProperties.getCountry())
+                .requestType(RequestTypeLog.NOTE.name())
+                .build();
+        final StatusEnum status = isSuccess ? StatusEnum.COMPLETE : StatusEnum.ERROR;
+        final String body = serializeUtils.mapObjectToBase64String(message);
+        this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, status, false, name);
     }
 
     private void sendLogRequest(ControlDto control, String message, String receiver, ComponentType requestingComponentType, ComponentType respondingComponentType, boolean isSuccess, String name, String receiverCountry) {
@@ -126,6 +136,28 @@ public class LogManager {
                 .respondingComponentType(respondingComponentType)
                 .respondingComponentId(gateProperties.getOwner())
                 .respondingComponentCountry(gateProperties.getCountry()).build();
+        final String bodyBase64 = serializeUtils.mapObjectToBase64String(body);
+        this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), bodyBase64, statusEnum, false, name);
+    }
+
+    public void logReceivedNoteMessage(final ControlDto control,
+                                       final ComponentType requestingComponentType,
+                                       final ComponentType respondingComponentType,
+                                       final String body,
+                                       final String sender,
+                                       final StatusEnum statusEnum,
+                                       final String name) {
+        final String senderCountry = eftiGateIdResolver.resolve(sender);
+        final boolean senderIsKnown = senderCountry != null;
+        final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
+                .requestingComponentType(requestingComponentType) // if sender is unknown, its a platform
+                .requestingComponentId(sender)
+                .requestingComponentCountry(senderIsKnown ? senderCountry : gateProperties.getCountry())
+                .respondingComponentType(respondingComponentType)
+                .respondingComponentId(gateProperties.getOwner())
+                .respondingComponentCountry(gateProperties.getCountry())
+                .requestType(RequestTypeLog.NOTE.name())
+                .build();
         final String bodyBase64 = serializeUtils.mapObjectToBase64String(body);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), bodyBase64, statusEnum, false, name);
     }
@@ -201,5 +233,4 @@ public class LogManager {
         final String body = serializeUtils.mapObjectToBase64String(requestIdDto);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, control.getStatus(), false, name);
     }
-
 }

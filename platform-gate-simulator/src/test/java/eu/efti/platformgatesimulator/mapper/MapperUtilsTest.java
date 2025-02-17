@@ -4,7 +4,7 @@ import eu.efti.v1.json.Consignment;
 import eu.efti.v1.json.MainCarriageTransportMovement;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MapperUtilsTest {
 
@@ -16,6 +16,7 @@ class MapperUtilsTest {
         Consignment consignment = new Consignment();
         MainCarriageTransportMovement sourceMovement = new MainCarriageTransportMovement();
         sourceMovement.setModeCode("1");
+        sourceMovement.setDangerousGoodsIndicator(false);
         consignment.getMainCarriageTransportMovement().add(sourceMovement);
         identifiersDto.setConsignment(consignment);
 

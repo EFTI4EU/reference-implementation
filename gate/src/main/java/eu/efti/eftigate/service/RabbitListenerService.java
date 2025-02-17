@@ -87,7 +87,7 @@ public class RabbitListenerService {
     }
 
     private void logSentMessage(RabbitRequestDto rabbitRequestDto, RequestTypeEnum requestTypeEnum, RequestDto requestDto, String receiver) {
-        final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
+        final String body = getRequestService(requestDto.getRequestType()).buildRequestBody(rabbitRequestDto);
         ControlDto controlDto = requestDto.getControl();
         if (RequestType.UIL.equals(requestDto.getRequestType())) {
             logSentUilMessage(rabbitRequestDto, controlDto, receiver, body);
@@ -100,7 +100,10 @@ public class RabbitListenerService {
 
     private void logSentNoteMessage(ControlDto control, String receiver, String body) {
         final boolean isCurrentGate = gateProperties.isCurrentGate(control.getGateId());
-        logManager.logNoteReceiveFromAapMessage(control, body, receiver, ComponentType.GATE, ComponentType.PLATFORM, true, isCurrentGate ? RequestTypeEnum.NOTE_SEND : RequestTypeEnum.EXTERNAL_NOTE_SEND, isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026);
+
+        String logName = isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026;
+        logManager.logNoteReceiveFromAapMessage(control, body, receiver, ComponentType.GATE, LogManager.FTI_025.equalsIgnoreCase(logName) ? PLATFORM : GATE,
+                true, logName);
     }
 
     private void logSentIdentifierMessage(RequestTypeEnum requestTypeEnum, ControlDto controlDto, String receiver, String body) {
