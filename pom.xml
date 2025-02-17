@@ -17,7 +17,7 @@
     <description>gate</description>
 
     <properties>
-        <revision>0.5.2</revision>
+        <revision>0.5.3-SNAPSHOT</revision>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/../coverage-aggregate/target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
