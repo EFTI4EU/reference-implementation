@@ -102,7 +102,7 @@ public class RabbitListenerService {
         final boolean isCurrentGate = gateProperties.isCurrentGate(control.getGateId());
 
         String logName = isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026;
-        logManager.logNoteReceiveFromAapMessage(control, body, receiver, ComponentType.GATE, LogManager.FTI_025.equalsIgnoreCase(logName) ? PLATFORM : GATE,
+        logManager.logReceivedNote(control, body, receiver, ComponentType.GATE, LogManager.FTI_025.equalsIgnoreCase(logName) ? PLATFORM : GATE,
                 true, logName);
     }
 
