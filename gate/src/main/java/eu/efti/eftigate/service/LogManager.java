@@ -50,13 +50,13 @@ public class LogManager {
     public static final String FTI_025 = "fti025";
     public static final String FTI_026 = "fti026";
 
-    public void logNoteReceiveFromAapMessage(final ControlDto control,
-                                             final String message,
-                                             final String receiver,
-                                             final ComponentType requestingComponentType,
-                                             final ComponentType respondingComponentType,
-                                             final boolean isSuccess,
-                                             final String name) {
+    public <T> void logReceivedNote(final ControlDto control,
+                                    final T message,
+                                    final String receiver,
+                                    final ComponentType requestingComponentType,
+                                    final ComponentType respondingComponentType,
+                                    final boolean isSuccess,
+                                    final String name) {
         String receiverCountry = eftiGateIdResolver.resolve(receiver);
         final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
                 .requestingComponentType(requestingComponentType)
