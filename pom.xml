@@ -47,7 +47,7 @@
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-        <dependency-check-maven.version>11.1.1</dependency-check-maven.version>
+        <dependency-check-maven.version>12.1.0</dependency-check-maven.version>
         <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
         <maven-project-info-reports-plugin.version>3.4.3</maven-project-info-reports-plugin.version>
         <maven-apt-plugin.version>1.0.4</maven-apt-plugin.version>
