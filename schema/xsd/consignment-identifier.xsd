@@ -895,7 +895,7 @@
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
-            <xsd:element name="registrationCountry" type="efti:TradeCountry">
+            <xsd:element name="registrationCountry" type="efti:TradeCountry" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:appinfo>
                         <unCefact unId="UN01003834" id="Logistics_ Transport Means. Registration. Trade_ Country"/>
