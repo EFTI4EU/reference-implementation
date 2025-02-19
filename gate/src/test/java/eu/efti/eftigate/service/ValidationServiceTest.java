@@ -29,7 +29,7 @@ class ValidationServiceTest {
 
     @ParameterizedTest
     @MethodSource("provideValidXml")
-    void validateXml_ShouldNotThrowExceptionWhenXmlAreValid(String inputValidXml) {
+    void validateXml_ShouldNotThrowExceptionWhenXmlAreValid(final String inputValidXml) {
         assertDoesNotThrow(() -> validationService.validateXml(inputValidXml));
     }
 

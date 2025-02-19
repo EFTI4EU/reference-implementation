@@ -142,7 +142,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         }
     }
 
-    private void manageResponse(NotificationDto notificationDto, UilRequestDto uilRequestDto, UILResponse uilResponse, NotificationContentDto content) {
+    private void manageResponse(final NotificationDto notificationDto, final UilRequestDto uilRequestDto, final UILResponse uilResponse, final NotificationContentDto content) {
         if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.getControl().getRequestType())) { //platform response
             manageResponseFromPlatform(uilRequestDto, uilResponse, notificationDto);
         } else { // gate response
@@ -208,7 +208,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         return getSerializeUtils().mapJaxbObjectToXmlString(jaxBResponse, UILQuery.class);
     }
 
-    private UILQuery buildUilQuery(RabbitRequestDto requestDto, ControlDto controlDto) {
+    private UILQuery buildUilQuery(final RabbitRequestDto requestDto, final ControlDto controlDto) {
         final UILQuery uilQuery = new UILQuery();
         final UIL uil = new UIL();
         uil.setDatasetId(controlDto.getDatasetId());
@@ -228,7 +228,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         return EDeliveryStatus.OK.getCode();
     }
 
-    private String getEdeliverStatusForError(RabbitRequestDto requestDto) {
+    private String getEdeliverStatusForError(final RabbitRequestDto requestDto) {
         String errorCode = requestDto.getError().getErrorCode();
         if (isNotFound(errorCode) || DATA_NOT_FOUND_ON_REGISTRY.name().equalsIgnoreCase(errorCode)) {
             return EDeliveryStatus.NOT_FOUND.getCode();
@@ -247,7 +247,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     @Override
-    public void saveRequest(RequestDto requestDto) {
+    public void saveRequest(final RequestDto requestDto) {
         uilRequestRepository.save(
                 getMapperUtils().requestDtoToRequestEntity(requestDto, UilRequestEntity.class));
     }
@@ -266,7 +266,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     @Override
-    public List<UilRequestEntity> findAllForControlId(int controlId) {
+    public List<UilRequestEntity> findAllForControlId(final int controlId) {
         throw new UnsupportedOperationException("Operation not allowed for UIL Request");
     }
 
@@ -290,7 +290,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         getLogManager().logReceivedMessage(uilRequestDto.getControl(), ComponentType.PLATFORM, GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
     }
 
-    private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, NotificationContentDto content) {
+    private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, final NotificationContentDto content) {
         final ControlDto controlDto = requestDto.getControl();
         String uilResponseStatus = uilResponse.getStatus();
         final Optional<EDeliveryStatus> responseStatus = EDeliveryStatus.fromCode(uilResponseStatus);
@@ -332,7 +332,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         return getErrorCodeFromDescription(uilResponseDescription);
     }
 
-    private ErrorDto getErrorCodeFromDescription(String description) {
+    private ErrorDto getErrorCodeFromDescription(final String description) {
         Optional<ErrorCodesEnum> errorCode = ErrorCodesEnum.fromMessage(description);
         if (errorCode.isPresent()) {
             return ErrorDto.fromErrorCode(errorCode.get());
@@ -363,7 +363,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         getControlService().save(controlDto);
     }
 
-    private void respondToOtherGate(final UilRequestDto uilRequestDto, String body) {
+    private void respondToOtherGate(final UilRequestDto uilRequestDto, final String body) {
         this.updateStatus(uilRequestDto, RESPONSE_IN_PROGRESS);
         uilRequestDto.setGateIdDest(uilRequestDto.getControl().getFromGateId());
         final RequestDto savedUilRequestDto = this.save(uilRequestDto);

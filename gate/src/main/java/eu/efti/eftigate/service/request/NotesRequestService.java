@@ -90,7 +90,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     }
 
     @Override
-    public List<NoteRequestEntity> findAllForControlId(int controlId) {
+    public List<NoteRequestEntity> findAllForControlId(final int controlId) {
         throw new UnsupportedOperationException("Operation not allowed for Note Request");
     }
 
@@ -121,7 +121,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
         }
     }
 
-    private void sendErrorRequests(NotificationDto notificationDto, String e, String body) {
+    private void sendErrorRequests(final NotificationDto notificationDto, final String e, final String body) {
         RequestDto requestDto = this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND, e, ErrorCodesEnum.XML_ERROR.name());
         sendLogNote(requestDto.getControl(), true, body);
         this.sendRequest(requestDto);
@@ -153,7 +153,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     }
 
     @Override
-    public void saveRequest(RequestDto requestDto) {
+    public void saveRequest(final RequestDto requestDto) {
         notesRequestRepository.save(getMapperUtils().requestDtoToRequestEntity(requestDto, NoteRequestEntity.class));
     }
 

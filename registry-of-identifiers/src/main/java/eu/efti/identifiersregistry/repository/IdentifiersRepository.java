@@ -63,7 +63,7 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
         return new ArrayList<>(results);
     }
 
-    default List<Consignment> findAllForMeans(SearchWithIdentifiersRequestDto request) {
+    default List<Consignment> findAllForMeans(final SearchWithIdentifiersRequestDto request) {
         return this.findAll((root, query, cb) -> {
             final List<Predicate> predicates = new ArrayList<>();
             Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin = root.join(MOVEMENTS, JoinType.LEFT);
@@ -80,7 +80,7 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
         });
     }
 
-    default List<Consignment> findAllForEquipment(SearchWithIdentifiersRequestDto request) {
+    default List<Consignment> findAllForEquipment(final SearchWithIdentifiersRequestDto request) {
         return this.findAll((root, query, cb) -> {
             final List<Predicate> predicates = new ArrayList<>();
             Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin = root.join(MOVEMENTS, JoinType.LEFT);
@@ -96,7 +96,7 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
         });
     }
 
-    default List<Consignment> findAllForCarried(SearchWithIdentifiersRequestDto request) {
+    default List<Consignment> findAllForCarried(final SearchWithIdentifiersRequestDto request) {
         return this.findAll((root, query, cb) -> {
             final List<Predicate> predicates = new ArrayList<>();
             Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin = root.join(MOVEMENTS, JoinType.LEFT);
@@ -111,7 +111,7 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
         });
     }
 
-    private void buildCommonAttributesRequest(SearchWithIdentifiersRequestDto request, CriteriaBuilder cb, List<Predicate> predicates, Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin) {
+    private void buildCommonAttributesRequest(final SearchWithIdentifiersRequestDto request, final CriteriaBuilder cb, final List<Predicate> predicates, final Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin) {
         if (request.getDangerousGoodsIndicator() != null) {
             predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(IS_DANGEROUS_GOODS), request.getDangerousGoodsIndicator())));
         }

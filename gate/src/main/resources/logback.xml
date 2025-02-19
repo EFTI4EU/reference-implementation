@@ -76,6 +76,7 @@
             <totalSizeCap>${LOG_TOTAL_SIZE}</totalSizeCap>
         </rollingPolicy>
         <encoder>
+            <charset>UTF-8</charset>
             <pattern>%msg%n</pattern>
         </encoder>
     </appender>

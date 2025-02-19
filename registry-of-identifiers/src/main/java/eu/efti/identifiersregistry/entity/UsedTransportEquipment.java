@@ -62,7 +62,7 @@ public class UsedTransportEquipment implements Serializable {
     @ToString.Exclude
     private List<CarriedTransportEquipment> carriedTransportEquipments = new ArrayList<>();
 
-    public void setCarriedTransportEquipments(List<CarriedTransportEquipment> carriedTransportEquipments) {
+    public void setCarriedTransportEquipments(final List<CarriedTransportEquipment> carriedTransportEquipments) {
         CollectionUtils.emptyIfNull(carriedTransportEquipments).forEach(eq -> eq.setUsedTransportEquipment(this));
         this.carriedTransportEquipments = carriedTransportEquipments;
     }

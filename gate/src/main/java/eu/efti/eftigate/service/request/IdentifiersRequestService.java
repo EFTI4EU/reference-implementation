@@ -202,7 +202,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     @Override
-    public void saveRequest(RequestDto requestDto) {
+    public void saveRequest(final RequestDto requestDto) {
         identifiersRequestRepository.save(getMapperUtils().requestDtoToRequestEntity(requestDto, IdentifiersRequestEntity.class));
     }
 
@@ -252,7 +252,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         return request;
     }
 
-    public ControlDto updateControl(ControlDto controlDto) {
+    public ControlDto updateControl(final ControlDto controlDto) {
         return getControlService().updateControl(controlDto.getRequestId());
     }
 

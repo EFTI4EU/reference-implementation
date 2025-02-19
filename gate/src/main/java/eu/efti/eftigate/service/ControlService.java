@@ -232,7 +232,7 @@ public class ControlService {
         return mapperUtils.controlEntityToControlDto(controlRepository.save(controlEntity));
     }
 
-    private boolean shouldSetTimeoutTo(ControlEntity controlEntity) {
+    private boolean shouldSetTimeoutTo(final ControlEntity controlEntity) {
         return getSecondsSinceCreation(controlEntity) > timeoutValue &&
                 CollectionUtils.emptyIfNull(controlEntity.getRequests())
                         .stream()
@@ -349,7 +349,7 @@ public class ControlService {
         }
     }
 
-    private <T extends ValidableDto> void logAppRequest(T searchDto, ControlDto controlDto) {
+    private <T extends ValidableDto> void logAppRequest(final T searchDto, final ControlDto controlDto) {
         if (controlDto.getRequestType() != null) {
             if (UIL_TYPES.contains(controlDto.getRequestType())) {
                 logManager.logAppRequest(controlDto, searchDto, ComponentType.CA_APP, ComponentType.GATE, LogManager.FTI_008);
@@ -379,7 +379,7 @@ public class ControlService {
         return result;
     }
 
-    private void logAppResponse(ControlDto controlDto, RequestIdDto result) {
+    private void logAppResponse(final ControlDto controlDto, final RequestIdDto result) {
         if (controlDto.getRequestType() != null) {
             if (UIL_TYPES.contains(controlDto.getRequestType())) {
                 logManager.logAppResponse(controlDto, result, ComponentType.GATE, gateProperties.getOwner(), ComponentType.CA_APP, null, LogManager.FTI_011);

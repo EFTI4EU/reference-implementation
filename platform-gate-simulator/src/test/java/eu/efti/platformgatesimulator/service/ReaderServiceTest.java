@@ -46,7 +46,7 @@ class ReaderServiceTest {
     }
 
     @Test
-    @Disabled
+    @Disabled("disabled temporarily")
     void uploadFileTest() throws UploadException {
         final MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "teest.xml",

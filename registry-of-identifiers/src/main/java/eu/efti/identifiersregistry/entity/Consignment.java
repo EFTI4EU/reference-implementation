@@ -54,7 +54,7 @@ public class Consignment extends AbstractModel implements Serializable {
     @ToString.Exclude
     private List<MainCarriageTransportMovement> mainCarriageTransportMovements = new ArrayList<>();
 
-    public void setMainCarriageTransportMovements(List<MainCarriageTransportMovement> mainCarriageTransportMovements) {
+    public void setMainCarriageTransportMovements(final List<MainCarriageTransportMovement> mainCarriageTransportMovements) {
         this.mainCarriageTransportMovements.forEach(mctm -> mctm.setConsignment(null));
         this.mainCarriageTransportMovements.clear();
         if (mainCarriageTransportMovements != null) {
@@ -68,7 +68,7 @@ public class Consignment extends AbstractModel implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
     private List<UsedTransportEquipment> usedTransportEquipments = new ArrayList<>();
 
-    public void setUsedTransportEquipments(List<UsedTransportEquipment> usedTransportEquipments) {
+    public void setUsedTransportEquipments(final List<UsedTransportEquipment> usedTransportEquipments) {
         this.usedTransportEquipments.forEach(ute -> ute.setConsignment(null));
         this.usedTransportEquipments.clear();
         if (usedTransportEquipments != null) {

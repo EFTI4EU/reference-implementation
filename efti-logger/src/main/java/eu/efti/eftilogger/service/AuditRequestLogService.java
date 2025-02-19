@@ -42,7 +42,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
         this.log(logRequestDto);
     }
 
-    private LogRequestDto getLogRequestDto(ControlDto control, MessagePartiesDto messagePartiesDto, String currentGateId, String currentGateCountry, String body, StatusEnum status, boolean isAck, String name) {
+    private LogRequestDto getLogRequestDto(final ControlDto control, final MessagePartiesDto messagePartiesDto, final String currentGateId, final String currentGateCountry, final String body, final StatusEnum status, final boolean isAck, final String name) {
         return LogRequestDto.builder()
                 .name(name)
                 .requestingComponentType(messagePartiesDto.getRequestingComponentType())
