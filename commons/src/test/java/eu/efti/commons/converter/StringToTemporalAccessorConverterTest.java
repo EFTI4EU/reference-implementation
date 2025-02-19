@@ -159,7 +159,7 @@ class StringToTemporalAccessorConverterTest {
         assertEquals("Should have returned a valid UTC local time for a valid offset time source", expected, result);
     }
 
-    public void givenFormatter(DateTimeFormatter formatter) {
+    public void givenFormatter(final DateTimeFormatter formatter) {
         converter = new StringToTemporalAccessorConverter(formatter);
     }
 }

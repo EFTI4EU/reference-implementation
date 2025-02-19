@@ -24,7 +24,7 @@ public class TimeAdapter extends XmlAdapter<String, LocalTime> {
     }
 
     @Override
-    public LocalTime unmarshal(String s) throws Exception {
+    public LocalTime unmarshal(final String s) throws Exception {
         TemporalAccessor converted = converter.convert(s);
         if (!(converted instanceof LocalTime)) {
             log.warn("The source [{}] could not be correctly converted to a local time instance [{}]", s, converted);
@@ -34,7 +34,7 @@ public class TimeAdapter extends XmlAdapter<String, LocalTime> {
     }
 
     @Override
-    public String marshal(LocalTime lt) {
+    public String marshal(final LocalTime lt) {
         if (lt == null) {
             log.info("Returning null value for a null local time input");
             return null;

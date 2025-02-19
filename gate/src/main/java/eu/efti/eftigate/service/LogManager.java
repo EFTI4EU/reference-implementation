@@ -72,14 +72,14 @@ public class LogManager {
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, status, false, name);
     }
 
-    private void sendLogRequest(ControlDto control, String message, String receiver, ComponentType requestingComponentType, ComponentType respondingComponentType, boolean isSuccess, String name, String receiverCountry) {
+    private void sendLogRequest(final ControlDto control, final String message, final String receiver, final ComponentType requestingComponentType, final ComponentType respondingComponentType, final boolean isSuccess, final String name, final String receiverCountry) {
         final MessagePartiesDto messagePartiesDto = buildMessagePartiesDto(receiver, requestingComponentType, respondingComponentType, receiverCountry);
         final StatusEnum status = isSuccess ? StatusEnum.COMPLETE : StatusEnum.ERROR;
         final String body = serializeUtils.mapObjectToBase64String(message);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, status, false, name);
     }
 
-    private MessagePartiesDto buildMessagePartiesDto(String receiver, ComponentType requestingComponentType, ComponentType respondingComponentType, String receiverCountry) {
+    private MessagePartiesDto buildMessagePartiesDto(final String receiver, final ComponentType requestingComponentType, final ComponentType respondingComponentType, final String receiverCountry) {
         return MessagePartiesDto.builder()
                 .requestingComponentType(requestingComponentType)
                 .requestingComponentId(gateProperties.getOwner())
@@ -108,7 +108,7 @@ public class LogManager {
     public void logAckMessage(final ControlDto control,
                               final ComponentType respondingComponentType,
                               final boolean isSuccess,
-                              RequestDto request, final String name) {
+                              final RequestDto request, final String name) {
         final boolean isLocalRequest = control.getRequestType() == RequestTypeEnum.LOCAL_UIL_SEARCH;
         final String receiver = isLocalRequest ? control.getPlatformId() : control.getGateId();
         final MessagePartiesDto messagePartiesDto = MessagePartiesDto.builder()
@@ -175,13 +175,13 @@ public class LogManager {
 
     public void logLocalIdentifierMessage(final ControlDto control,
                                           final IdentifiersResponseDto identifierRequestResultDtos,
-                                          ComponentType requestingComponentType, ComponentType respondingComponentType, final String name) {
+                                          final ComponentType requestingComponentType, final ComponentType respondingComponentType, final String name) {
         final MessagePartiesDto messagePartiesDto = getMessagePartiesDto(requestingComponentType, respondingComponentType);
         final String body = serializeUtils.mapObjectToBase64String(identifierRequestResultDtos);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, StatusEnum.COMPLETE, false, name);
     }
 
-    private MessagePartiesDto getMessagePartiesDto(ComponentType requestingComponentType, ComponentType respondingComponentType) {
+    private MessagePartiesDto getMessagePartiesDto(final ComponentType requestingComponentType, final ComponentType respondingComponentType) {
         return MessagePartiesDto.builder()
                 .requestingComponentType(requestingComponentType)
                 .requestingComponentId(gateProperties.getOwner())

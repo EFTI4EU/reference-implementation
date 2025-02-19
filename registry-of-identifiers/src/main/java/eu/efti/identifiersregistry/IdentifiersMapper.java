@@ -45,7 +45,7 @@ public class IdentifiersMapper {
         return consignmentEntityList.stream().map(this::entityToDto).toList();
     }
 
-    private OffsetDateTime fromDateTime(DateTime dateTime) {
+    private OffsetDateTime fromDateTime(final DateTime dateTime) {
         if (dateTime == null || StringUtils.isBlank(dateTime.getValue())) return null;
         return switch (dateTime.getFormatId()) {
             case "102" -> {
@@ -57,7 +57,7 @@ public class IdentifiersMapper {
         };
     }
 
-    private DateTime fromOffsetDate(OffsetDateTime offsetDateTime) {
+    private DateTime fromOffsetDate(final OffsetDateTime offsetDateTime) {
         if (offsetDateTime == null) {
             return null;
         }
@@ -73,7 +73,7 @@ public class IdentifiersMapper {
         return consignment;
     }
 
-    public Consignment eDeliveryToEntity(eu.efti.v1.edelivery.Consignment sourceConsignment) {
+    public Consignment eDeliveryToEntity(final eu.efti.v1.edelivery.Consignment sourceConsignment) {
 
         Consignment consignment = eDeliverySupplyToEntity(sourceConsignment);
 
@@ -84,7 +84,7 @@ public class IdentifiersMapper {
         return consignment;
     }
 
-    public Consignment eDeliverySupplyToEntity(SupplyChainConsignment sourceConsignment) {
+    public Consignment eDeliverySupplyToEntity(final SupplyChainConsignment sourceConsignment) {
         Consignment consignment = new Consignment();
 
         consignment.setCarrierAcceptanceDatetime(fromDateTime(sourceConsignment.getCarrierAcceptanceDateTime()));
@@ -127,7 +127,7 @@ public class IdentifiersMapper {
         return consignment;
     }
 
-    private static UsedTransportEquipment toUsedTransportEquipmentEntity(LogisticsTransportEquipment equipment) {
+    private static UsedTransportEquipment toUsedTransportEquipmentEntity(final LogisticsTransportEquipment equipment) {
         UsedTransportEquipment usedTransportEquipment = new UsedTransportEquipment();
         usedTransportEquipment.setEquipmentId(equipment.getId().getValue());
         usedTransportEquipment.setSchemeAgencyId(equipment.getId().getSchemeAgencyId());

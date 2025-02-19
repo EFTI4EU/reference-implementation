@@ -25,7 +25,7 @@ public class DateAdapter extends XmlAdapter<String, LocalDate> {
     }
 
     @Override
-    public LocalDate unmarshal(String s) {
+    public LocalDate unmarshal(final String s) {
         //this is mapped to xsd:date with or without timezone
         TemporalAccessor converted = converter.convert(s);
         if (!(converted instanceof LocalDate)) {
@@ -36,7 +36,7 @@ public class DateAdapter extends XmlAdapter<String, LocalDate> {
     }
 
     @Override
-    public String marshal(LocalDate dt) {
+    public String marshal(final LocalDate dt) {
         if (dt == null) {
             log.info("Returning null value for a null local date input");
             return null;

@@ -1,6 +1,5 @@
 package eu.efti.edeliveryapconnector.constant;
 
-import eu.efti.commons.enums.StatusEnum;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +24,7 @@ public enum EDeliveryStatus {
         return NOT_FOUND.name().equalsIgnoreCase(code);
     }
 
-    public static Optional<EDeliveryStatus> fromCode(String text) {
+    public static Optional<EDeliveryStatus> fromCode(final String text) {
         for (EDeliveryStatus e : EDeliveryStatus.values()) {
             if (e.code.equalsIgnoreCase(text)) {
                 return Optional.of(e);

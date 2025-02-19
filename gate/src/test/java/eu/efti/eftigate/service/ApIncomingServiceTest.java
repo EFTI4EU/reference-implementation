@@ -40,40 +40,38 @@ class ApIncomingServiceTest extends BaseServiceTest {
     @Mock
     private EftiRequestUpdater eftiRequestUpdater;
 
-    //todo change body
     private static final String XML_BODY = """
-            <SaveIdentifiersRequest>
-                <eFTIPlatformUrl>https://efti.platform.001.eu</eFTIPlatformUrl>
-                <datasetId>ac0bbbc9-f46e-4093-b523-830431fb1001</datasetId>
-                <eFTIGateUrl>https://efti.gate.001.eu"</eFTIGateUrl>
-                <isDangerousGoods>true</isDangerousGoods>
-                <journeyStart>2023-06-11T12:2:00+0000</journeyStart>
-                <countryStart>null</countryStart>
-                <journeyEnd>2023-08-13T12:23:00+0000</journeyEnd>
-                <countryEnd>DE</countryEnd>
-                <transportVehicles>
-                    <transportVehicle>
-                        <transportMode>tututu</transportMode>
-                        <sequence>1</sequence>
-                        <vehicleID>abc123</vehicleID>
-                        <vehicleCountry>IT</vehicleCountry>
-                        <journeyStart>2023-06-11T12:23:00+0000</journeyStart>
-                        <countryStart>IT</countryStart>
-                        <journeyEnd>2023-06-12T12:02:00+0000</journeyEnd>
-                        <countryEnd>IT</countryEnd>
-                    </transportVehicle>
-                    <transportVehicle>
-                        <transportMode>ROAD</transportMode>
-                        <sequence>221</sequence>
-                        <vehicleID>abc124</vehicleID>
-                        <vehicleCountry></vehicleCountry>
-                        <journeyStart>2023-06-12T12:03:00+0000</journeyStart>
-                        <countryStart>gITggggg</countryStart>
-                        <journeyEnd>2023-08-13T12:02:00+0000</journeyEnd>
-                        <countryEnd>DE</countryEnd>
-                    </transportVehicle>
-                </transportVehicles>
-            </SaveIdentifiersRequest>
+            <?xml version="1.0" encoding="UTF-8"?>
+            <ns2:saveIdentifiersRequest xmlns:ns2="http://efti.eu/v1/edelivery" xmlns="http://efti.eu/v1/consignment/identifier" datasetId="12345678-ab12-4ab6-8999-123456789abc">
+            	<consignment>
+            		<carrierAcceptanceDateTime formatId="205">202310011000+0000</carrierAcceptanceDateTime>
+            		<deliveryEvent>
+            			<actualOccurrenceDateTime formatId="205">202310021500+0000</actualOccurrenceDateTime>
+            		</deliveryEvent>
+            		<mainCarriageTransportMovement>
+            			<dangerousGoodsIndicator>false</dangerousGoodsIndicator>
+            			<modeCode>1</modeCode>
+            			<usedTransportMeans>
+            				<id schemeAgencyId="UN">12345</id>
+            				<registrationCountry>
+            					<code>DE</code>
+            				</registrationCountry>
+            			</usedTransportMeans>
+            		</mainCarriageTransportMovement>
+            		<usedTransportEquipment>
+            			<carriedTransportEquipment>
+            				<id schemeAgencyId="UN">67890</id>
+            				<sequenceNumber>1</sequenceNumber>
+            			</carriedTransportEquipment>
+            			<categoryCode>AE</categoryCode>
+            			<id schemeAgencyId="UN">54321</id>
+            			<registrationCountry>
+            				<code>FR</code>
+            			</registrationCountry>
+            			<sequenceNumber>2</sequenceNumber>
+            		</usedTransportEquipment>
+            	</consignment>
+            </ns2:saveIdentifiersRequest>
             """;
 
     @Override

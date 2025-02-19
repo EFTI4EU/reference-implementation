@@ -112,7 +112,7 @@ class IdentifiersQueryTest {
 
     @ParameterizedTest
     @MethodSource("readTestCases")
-    void searchByCriteriaConformsToReferenceTestCases(TestCase testCase) {
+    void searchByCriteriaConformsToReferenceTestCases(final TestCase testCase) {
         int seed = LocalDate.now().getDayOfMonth() % 4;
         final Random random = new Random(seed);
         logger.info("Using random seed {}", seed);
@@ -131,7 +131,7 @@ class IdentifiersQueryTest {
         assertEquals(expectedDatasetIds, resultIds);
     }
 
-    private static SearchWithIdentifiersRequestDto.SearchWithIdentifiersRequestDtoBuilder toQuery(IdentifierQuery querySpec) {
+    private static SearchWithIdentifiersRequestDto.SearchWithIdentifiersRequestDtoBuilder toQuery(final IdentifierQuery querySpec) {
         var query = SearchWithIdentifiersRequestDto.builder()
                 .identifier(querySpec.getIdentifier().getValue());
         if (querySpec.getIdentifier().getType() != null && !querySpec.getIdentifier().getType().isEmpty()) {
@@ -164,7 +164,7 @@ class IdentifiersQueryTest {
      * Creates an entity from test case consignment. Populates random values for those fields that are required by our
      * implementation but omitted in test case specs.
      */
-    private Consignment toEntity(SupplyChainConsignment sourceConsignment, String datasetId, Random random) {
+    private Consignment toEntity(final SupplyChainConsignment sourceConsignment, final String datasetId, final Random random) {
         sourceConsignment.getMainCarriageTransportMovement().forEach(tm -> {
             tm.setDangerousGoodsIndicator(random.nextBoolean());
         });

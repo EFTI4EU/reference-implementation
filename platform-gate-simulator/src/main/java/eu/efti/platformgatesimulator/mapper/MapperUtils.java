@@ -13,7 +13,7 @@ import java.math.BigInteger;
 
 public class MapperUtils {
 
-    public eu.efti.v1.edelivery.SaveIdentifiersRequest mapToEdeliveryRequest(eu.efti.v1.json.SaveIdentifiersRequest sourceSaveIdentifiersRequest) {
+    public eu.efti.v1.edelivery.SaveIdentifiersRequest mapToEdeliveryRequest(final eu.efti.v1.json.SaveIdentifiersRequest sourceSaveIdentifiersRequest) {
         if (sourceSaveIdentifiersRequest == null) {
             return null;
         }
@@ -23,7 +23,7 @@ public class MapperUtils {
         return resultSaveIdentifiersRequest;
     }
 
-    public eu.efti.v1.consignment.identifier.SupplyChainConsignment from(eu.efti.v1.json.Consignment sourceConsignment) {
+    public eu.efti.v1.consignment.identifier.SupplyChainConsignment from(final eu.efti.v1.json.Consignment sourceConsignment) {
         if (sourceConsignment == null) {
             return null;
         }
@@ -39,7 +39,7 @@ public class MapperUtils {
         return resultSupplyChainConsignment;
     }
 
-    private eu.efti.v1.consignment.identifier.LogisticsTransportEquipment from(UsedTransportEquipment usedTransportEquipment) {
+    private eu.efti.v1.consignment.identifier.LogisticsTransportEquipment from(final UsedTransportEquipment usedTransportEquipment) {
         if (usedTransportEquipment == null) {
             return null;
         }
@@ -54,7 +54,7 @@ public class MapperUtils {
         return resultLogisticsTransportEquipment;
     }
 
-    private eu.efti.v1.consignment.identifier.AssociatedTransportEquipment from(CarriedTransportEquipment carriedTransportEquipment) {
+    private eu.efti.v1.consignment.identifier.AssociatedTransportEquipment from(final CarriedTransportEquipment carriedTransportEquipment) {
         if (carriedTransportEquipment == null) {
             return null;
         }
@@ -64,14 +64,14 @@ public class MapperUtils {
         return resultAssociatedTransportEquipment;
     }
 
-    private eu.efti.v1.codes.TransportEquipmentCategoryCode from(UsedTransportEquipment.CategoryCode categoryCode) {
+    private eu.efti.v1.codes.TransportEquipmentCategoryCode from(final UsedTransportEquipment.CategoryCode categoryCode) {
         if (categoryCode == null) {
             return null;
         }
         return TransportEquipmentCategoryCode.fromValue(categoryCode.value());
     }
 
-    private eu.efti.v1.consignment.identifier.LogisticsTransportMovement from(MainCarriageTransportMovement mainCarriageTransportMovement) {
+    private eu.efti.v1.consignment.identifier.LogisticsTransportMovement from(final MainCarriageTransportMovement mainCarriageTransportMovement) {
         if (mainCarriageTransportMovement == null) {
             return null;
         }
@@ -84,7 +84,7 @@ public class MapperUtils {
         return resultLogisticsTransportMovement;
     }
 
-    private eu.efti.v1.consignment.identifier.LogisticsTransportMeans from(UsedTransportMeans usedTransportMeans) {
+    private eu.efti.v1.consignment.identifier.LogisticsTransportMeans from(final UsedTransportMeans usedTransportMeans) {
         if (usedTransportMeans == null) {
             return null;
         }
@@ -94,7 +94,7 @@ public class MapperUtils {
         return resultLogisticsTransportMeans;
     }
 
-    private eu.efti.v1.types.Identifier17 from(eu.efti.v1.json.Identifier17 id) {
+    private eu.efti.v1.types.Identifier17 from(final eu.efti.v1.json.Identifier17 id) {
         if (id == null) {
             return null;
         }
@@ -104,7 +104,7 @@ public class MapperUtils {
         return resultIdentifier;
     }
 
-    private eu.efti.v1.consignment.identifier.TradeCountry from(eu.efti.v1.json.TradeCountry registrationCountry) {
+    private eu.efti.v1.consignment.identifier.TradeCountry from(final eu.efti.v1.json.TradeCountry registrationCountry) {
         if (registrationCountry == null) {
             return null;
         }
@@ -113,14 +113,14 @@ public class MapperUtils {
         return tradeCountry;
     }
 
-    private eu.efti.v1.codes.CountryCode from(eu.efti.v1.json.TradeCountry.Code code) {
+    private eu.efti.v1.codes.CountryCode from(final eu.efti.v1.json.TradeCountry.Code code) {
         if (code == null) {
             return null;
         }
         return CountryCode.valueOf(code.name());
     }
 
-    public eu.efti.v1.consignment.identifier.TransportEvent from(eu.efti.v1.json.DeliveryEvent sourceTransportEvent) {
+    public eu.efti.v1.consignment.identifier.TransportEvent from(final eu.efti.v1.json.DeliveryEvent sourceTransportEvent) {
         if (sourceTransportEvent == null) {
             return null;
         }
@@ -129,7 +129,7 @@ public class MapperUtils {
         return resultTransportEvent;
     }
 
-    public eu.efti.v1.types.DateTime from(eu.efti.v1.json.DateTime sourceDateTime) {
+    public eu.efti.v1.types.DateTime from(final eu.efti.v1.json.DateTime sourceDateTime) {
         if (sourceDateTime == null) {
             return null;
         }
