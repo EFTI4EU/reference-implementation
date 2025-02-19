@@ -16,6 +16,7 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -51,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {IdentifiersRepository.class})
 @DataJpaTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @EnableJpaRepositories(basePackages = {"eu.efti.identifiersregistry.repository"})
 @EntityScan("eu.efti.identifiersregistry.entity")
 class IdentifiersQueryTest {
@@ -165,9 +166,6 @@ class IdentifiersQueryTest {
      * implementation but omitted in test case specs.
      */
     private Consignment toEntity(final SupplyChainConsignment sourceConsignment, final String datasetId, final Random random) {
-        sourceConsignment.getMainCarriageTransportMovement().forEach(tm -> {
-            tm.setDangerousGoodsIndicator(random.nextBoolean());
-        });
         IntStream.range(0, sourceConsignment.getUsedTransportEquipment().size()).forEach(uteIndex -> {
             var ute = sourceConsignment.getUsedTransportEquipment().get(uteIndex);
             if (ute.getSequenceNumber() == null) {
@@ -193,5 +191,10 @@ class IdentifiersQueryTest {
         consignment.setDatasetId(datasetId);
 
         return consignment;
+    }
+
+    @AfterEach
+    void tearDown() {
+        identifiersRepository.deleteAll();
     }
 }
