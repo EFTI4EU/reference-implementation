@@ -901,67 +901,6 @@
     <associatedTransportEquipment>
       <id schemeAgencyId="token">string</id>
     </associatedTransportEquipment>
-    <crossBorderRegulatoryProcedure>
-      <exportCustomsOfficeLocation>
-        <geographicalCoordinates>
-          <latitude unitId="token">1000.000000000000</latitude>
-          <longitude unitId="token">1000.000000000000</longitude>
-        </geographicalCoordinates>
-        <id schemeAgencyId="token">string</id>
-        <name>string</name>
-        <postalAddress>
-          <additionalStreetName>string</additionalStreetName>
-          <buildingNumber>string</buildingNumber>
-          <cityName>string</cityName>
-          <countryCode>UG</countryCode>
-          <countrySubDivisionName>string</countrySubDivisionName>
-          <departmentName>string</departmentName>
-          <postOfficeBox>string</postOfficeBox>
-          <postcode>token</postcode>
-          <streetName>string</streetName>
-        </postalAddress>
-      </exportCustomsOfficeLocation>
-      <importCustomsOfficeLocation>
-        <geographicalCoordinates>
-          <latitude unitId="token">1000.000000000000</latitude>
-          <longitude unitId="token">1000.000000000000</longitude>
-        </geographicalCoordinates>
-        <id schemeAgencyId="token">string</id>
-        <name>string</name>
-        <postalAddress>
-          <additionalStreetName>string</additionalStreetName>
-          <buildingNumber>string</buildingNumber>
-          <cityName>string</cityName>
-          <countryCode>US</countryCode>
-          <countrySubDivisionName>string</countrySubDivisionName>
-          <departmentName>string</departmentName>
-          <postOfficeBox>string</postOfficeBox>
-          <postcode>token</postcode>
-          <streetName>string</streetName>
-        </postalAddress>
-      </importCustomsOfficeLocation>
-      <quotaID schemeAgencyId="token">string</quotaID>
-      <transitCustomsOfficeLocation>
-        <geographicalCoordinates>
-          <latitude unitId="token">1000.000000000000</latitude>
-          <longitude unitId="token">1000.000000000000</longitude>
-        </geographicalCoordinates>
-        <id schemeAgencyId="token">string</id>
-        <name>string</name>
-        <postalAddress>
-          <additionalStreetName>string</additionalStreetName>
-          <buildingNumber>string</buildingNumber>
-          <cityName>string</cityName>
-          <countryCode>GM</countryCode>
-          <countrySubDivisionName>string</countrySubDivisionName>
-          <departmentName>string</departmentName>
-          <postOfficeBox>string</postOfficeBox>
-          <postcode>token</postcode>
-          <streetName>string</streetName>
-        </postalAddress>
-      </transitCustomsOfficeLocation>
-      <typeCode>token</typeCode>
-    </crossBorderRegulatoryProcedure>
     <dimensions>
       <description>string</description>
       <height unitId="token">1000.000000000000</height>
