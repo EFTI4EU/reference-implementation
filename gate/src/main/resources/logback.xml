@@ -75,7 +75,7 @@
             <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
             <totalSizeCap>${LOG_TOTAL_SIZE}</totalSizeCap>
         </rollingPolicy>
-        <encoder>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
             <pattern>%msg%n</pattern>
         </encoder>
