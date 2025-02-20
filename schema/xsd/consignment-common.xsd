@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:efti="http://efti.eu/v1/consignment/common" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:types="http://efti.eu/v1/types" xmlns:codes="http://efti.eu/v1/codes" version="0.6"
-            targetNamespace="http://efti.eu/v1/consignment/common" elementFormDefault="qualified">
+            xmlns:types="http://efti.eu/v1/types" xmlns:codes="http://efti.eu/v1/codes"
+            targetNamespace="http://efti.eu/v1/consignment/common" version="0.7" elementFormDefault="qualified">
   <xsd:import namespace="http://efti.eu/v1/types" schemaLocation="types/types.xsd"/>
   <xsd:import namespace="http://efti.eu/v1/codes" schemaLocation="codes/codes.xsd"/>
   <xsd:element name="consignment" type="efti:SupplyChainConsignment"/>
@@ -686,6 +686,35 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
+      <xsd:element name="weightVerificationMethodCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015731" id="Associated_ Transport Equipment. Weight Verification Method. Code"/>
+            <efti id="eFTI1412" format="an..3"
+                  definition="A code specifying a weight verification method for the carried transport equipment."
+                  parentId="ASBIE1092">
+              <subset id="EL05" status="O"/>
+              <subset id="LT01" status="M"/>
+              <subset id="LT02" status="M"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>A code specifying a weight verification method for this associated transport equipment.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="weightVerifierParty" type="efti:TradeParty" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015732" id="Associated_ Transport Equipment. Weight Verifier. Trade_ Party"/>
+            <efti id="ASBIE1292" format="" definition="A weight verifier party for this carried transport equipment."
+                  parentId="ASBIE1092">
+              <subset id="AT09" status="SI"/>
+              <subset id="EL05" status="SI"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>A weight verifier party for this associated transport equipment.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
   <xsd:complexType name="AttachedTransportEquipment">
@@ -734,6 +763,29 @@
   </xsd:complexType>
   <xsd:complexType name="AuthoritativeSignatoryPerson">
     <xsd:sequence>
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015733" id="Authoritative Signatory_ Person. Identification. Identifier"/>
+            <efti id="eFTI198" format="an..17"
+                  definition="The identifier of the person who has been authorised to sign on behalf of the certifying party."
+                  parentId="ASBIE1063">
+              <subset id="CY02" status="C"/>
+              <subset id="CZ03" status="C"/>
+              <subset id="EL07" status="C"/>
+              <subset id="ES03" status="C"/>
+              <subset id="EU06" status="C"/>
+              <subset id="IE07" status="C"/>
+              <subset id="LU07" status="C"/>
+              <subset id="PL06" status="C"/>
+              <subset id="RO06" status="C"/>
+              <subset id="SE04" status="C"/>
+              <subset id="SK02" status="C"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>An identifier for this authoritative signatory person.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
       <xsd:element name="name" type="types:LimitedString35" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
@@ -1300,6 +1352,66 @@
             </efti>
           </xsd:appinfo>
           <xsd:documentation>Content, expressed as text, of this document clause.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ExemptionCalculation">
+    <xsd:sequence>
+      <xsd:element name="hazardCategoryCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015739" id="Exemption_ Calculation. Hazard_ Category. Code"/>
+            <efti id="eFTI1752" format="an..3"
+                  definition="The code specifying the hazard category to be used for the exemption calculation from a dangerous goods regulatory requirement for this consignment."
+                  parentId="ASBIE1753">
+              <subset id="AT05" status="C"/>
+              <subset id="AT06" status="C"/>
+              <subset id="AT07" status="C"/>
+              <subset id="AT12" status="C"/>
+              <subset id="AT16" status="C"/>
+              <subset id="BE02" status="C"/>
+              <subset id="BE05" status="C"/>
+              <subset id="BE06" status="C"/>
+              <subset id="BG05" status="C"/>
+              <subset id="BG06" status="C"/>
+              <subset id="DE03a" status="C"/>
+              <subset id="DE04" status="O"/>
+              <subset id="EU05a" status="C"/>
+              <subset id="HR05a" status="C"/>
+              <subset id="IT03a" status="C"/>
+              <subset id="PL04a" status="C"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>A code specifying a hazard category for this exemption calculation.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="reportableQuantity" type="types:Integer8" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015738" id="Exemption_ Calculation. Reportable. Quantity"/>
+            <efti id="eFTI1751" format="n..8"
+                  definition="The reportable quantity used for calculating an exemption from a dangerous goods regulatory requirement for this consignment."
+                  parentId="ASBIE1753">
+              <subset id="AT05" status="C"/>
+              <subset id="AT06" status="C"/>
+              <subset id="AT07" status="C"/>
+              <subset id="AT12" status="C"/>
+              <subset id="AT16" status="C"/>
+              <subset id="BE02" status="C"/>
+              <subset id="BE05" status="C"/>
+              <subset id="BE06" status="C"/>
+              <subset id="BG05" status="C"/>
+              <subset id="BG06" status="C"/>
+              <subset id="DE03a" status="C"/>
+              <subset id="DE04" status="O"/>
+              <subset id="EU05a" status="C"/>
+              <subset id="HR05a" status="C"/>
+              <subset id="IT03a" status="C"/>
+              <subset id="PL04a" status="C"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>A reportable quantity for this exemption calculation.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
     </xsd:sequence>
@@ -5161,6 +5273,22 @@
   </xsd:complexType>
   <xsd:complexType name="LogisticsTransportMeans">
     <xsd:sequence>
+      <xsd:element name="attachedOperationalEquipment" type="efti:AttachedTransportEquipment" minOccurs="0"
+                   maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015742" id="Logistics_ Transport Means. Operational. Attached_ Transport Equipment"/>
+            <efti id="ASBIE1448" format=""
+                  definition="Operational equipment attached to this means of transport, such as refrigerator unit or ropes etc."
+                  parentId="ASBIE1107">
+              <subset id="LT02" status="SI"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>Operational transport equipment, such as a refrigerator unit or ropes, attached to this
+            logistics transport means.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
       <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
@@ -5727,7 +5855,7 @@
           <xsd:documentation>A route in the itinerary of this logistics transport movement.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="loadingEvent" type="efti:TransportEvent" minOccurs="0" maxOccurs="1">
+      <xsd:element name="loadingEvent" type="efti:TransportEvent" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003856" id="Logistics_ Transport Movement. Loading. Transport_ Event"/>
@@ -5776,7 +5904,7 @@
               <subset id="SI02" status="SI"/>
             </efti>
           </xsd:appinfo>
-          <xsd:documentation>The loading event during which goods will be or have been loaded into or onto the means of
+          <xsd:documentation>A loading event during which goods will be or have been loaded into or onto the means of
             transport used for this logistics transport movement.
           </xsd:documentation>
         </xsd:annotation>
@@ -5932,7 +6060,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="unloadingEvent" type="efti:TransportEvent" minOccurs="0" maxOccurs="1">
+      <xsd:element name="unloadingEvent" type="efti:TransportEvent" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003857" id="Logistics_ Transport Movement. Unloading. Transport_ Event"/>
@@ -5983,7 +6111,7 @@
               <subset id="AT01" status="SI"/>
             </efti>
           </xsd:appinfo>
-          <xsd:documentation>The unloading event during which goods will be or have been unloaded from the means of
+          <xsd:documentation>An unloading event during which goods will be or have been unloaded from the means of
             transport used for this logistics transport movement.
           </xsd:documentation>
         </xsd:annotation>
@@ -8254,6 +8382,65 @@
       </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
+  <xsd:complexType name="RegulatoryExemption">
+    <xsd:sequence>
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015756" id="Regulatory_ Exemption. Identification. Identifier"/>
+            <efti id="eFTI1746" format="an..17"
+                  definition="The identifier of an exemption from a dangerous goods regulatory requirement for this consignment."
+                  parentId="ASBIE1750">
+              <subset id="DE04" status="M"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>An identifier for this regulatory exemption.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="reportableExemptionCalculation" type="efti:ExemptionCalculation" minOccurs="0"
+                   maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015763" id="Regulatory_ Exemption. Reportable. Exemption_ Calculation"/>
+            <efti id="ASBIE1753" format=""
+                  definition="A calculation to be reported to support this exemption from a dangerous goods regulatory requirement for this consignment."
+                  parentId="ASBIE1750">
+              <subset id="AT05" status="SI"/>
+              <subset id="AT06" status="SI"/>
+              <subset id="AT07" status="SI"/>
+              <subset id="AT12" status="SI"/>
+              <subset id="AT16" status="SI"/>
+              <subset id="BE02" status="SI"/>
+              <subset id="BE05" status="SI"/>
+              <subset id="BE06" status="SI"/>
+              <subset id="BG05" status="SI"/>
+              <subset id="BG06" status="SI"/>
+              <subset id="DE03a" status="SI"/>
+              <subset id="DE04" status="SI"/>
+              <subset id="EU05a" status="SI"/>
+              <subset id="HR05a" status="SI"/>
+              <subset id="IT03a" status="SI"/>
+              <subset id="PL04a" status="SI"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>A reportable calculation for this regulatory exemption.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="typeCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015757" id="Regulatory_ Exemption. Type. Code"/>
+            <efti id="eFTI1748" format="an..3"
+                  definition="A type code specifying a regulatory exemption from a dangerous goods regulatory requirement for this consignment."
+                  parentId="ASBIE1750">
+              <subset id="DE04" status="M"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>A code specifying a type of regulatory exemption.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
   <xsd:complexType name="RepresentativePerson">
     <xsd:sequence>
       <xsd:element name="name" type="types:LimitedString35" minOccurs="0" maxOccurs="1">
@@ -10373,7 +10560,7 @@
           <xsd:documentation>The code specifying the type of specified fuel.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="volumeMeasure" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="volumeMeasure" type="types:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015620" id="Specified_ Fuel. Volume. Measure"/>
@@ -10461,10 +10648,10 @@
               <subset id="SK05" status="C"/>
             </efti>
           </xsd:appinfo>
-          <xsd:documentation>A measure of a weight (mass) for this specified fuel.</xsd:documentation>
+          <xsd:documentation>A measure of a volume for this specified fuel.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="weightMeasure" type="types:VolumeUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="weightMeasure" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015621" id="Specified_ Fuel. Weight. Measure"/>
@@ -10552,7 +10739,7 @@
               <subset id="SK05" status="C"/>
             </efti>
           </xsd:appinfo>
-          <xsd:documentation>A measure of a volume for this specified fuel.</xsd:documentation>
+          <xsd:documentation>A measure of a weight (mass) for this specified fuel.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
       <xsd:element name="workingPressureMeasure" type="types:UnitMeasure" minOccurs="0" maxOccurs="unbounded">
@@ -10727,7 +10914,7 @@
   </xsd:complexType>
   <xsd:complexType name="SpecifiedPeriod">
     <xsd:sequence>
-      <xsd:element name="durationMeasure" type="types:Measure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="durationMeasure" type="types:DurationUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01001271" id="Specified_ Period. Duration. Measure"/>
@@ -12916,6 +13103,20 @@
           </xsd:appinfo>
           <xsd:documentation>A measure of the net weight (mass) of this consignment which excludes the weight of
             packaging of this supply chain consignment and that of any transport equipment.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="notifiedWasteMaterial" type="efti:TransportationWasteMaterial" minOccurs="0"
+                   maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015768" id="Supply Chain_ Consignment. Notified. Transportation Waste_ Material"/>
+            <efti id="ASBIE1666" format="" definition="Waste material notified for this consignment."
+                  parentId="ASBIE1027">
+              <subset id="SE03" status="SI"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>Transportation waste material notified for this supply chain consignment.
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -19530,6 +19731,17 @@
   </xsd:complexType>
   <xsd:complexType name="TradeContract">
     <xsd:sequence>
+      <xsd:element name="durationMeasure" type="types:DurationUnitMeasure" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015775" id="Trade_ Contract. Specified_ Duration. Measure"/>
+            <efti id="eFTI1406" format="n..4" definition="The duration of this carrier contract." parentId="ASBIE1281">
+              <subset id="BE03a" status="O"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>A measure of duration specified for this trade contract.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
       <xsd:element name="issueDateTime" type="types:DateTime" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
@@ -22429,6 +22641,35 @@
   </xsd:complexType>
   <xsd:complexType name="TransportDangerousGoods">
     <xsd:sequence>
+      <xsd:element name="applicableRegulatoryExemption" type="efti:RegulatoryExemption" minOccurs="0"
+                   maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015781" id="Transport_ Dangerous Goods. Applicable. Regulatory_ Exemption"/>
+            <efti id="ASBIE1750" format=""
+                  definition="An exemption from a regulatory requirement related to the dangerous goods in this consignment."
+                  parentId="ASBIE1127">
+              <subset id="AT05" status="SI"/>
+              <subset id="AT06" status="SI"/>
+              <subset id="AT07" status="SI"/>
+              <subset id="AT12" status="SI"/>
+              <subset id="AT16" status="SI"/>
+              <subset id="BE02" status="SI"/>
+              <subset id="BE05" status="SI"/>
+              <subset id="BE06" status="SI"/>
+              <subset id="BG05" status="SI"/>
+              <subset id="BG06" status="SI"/>
+              <subset id="DE03a" status="SI"/>
+              <subset id="DE04" status="SI"/>
+              <subset id="EU05a" status="SI"/>
+              <subset id="HR05a" status="SI"/>
+              <subset id="IT03a" status="SI"/>
+              <subset id="PL04a" status="SI"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>A regulatory exemption applicable to these transported dangerous goods.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
       <xsd:element name="controlTemperature" type="efti:Measurement" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
@@ -23720,6 +23961,20 @@
             </efti>
           </xsd:appinfo>
           <xsd:documentation>Information, expressed as text, concerning the transport of these dangerous goods.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="labelTypeCode" type="xsd:token" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015779" id="Transport_ Dangerous Goods. Label Type. Code"/>
+            <efti id="eFTI1340" format="an..3" definition="The label type code for these transported dangerous goods."
+                  parentId="ASBIE1066">
+              <subset id="AT14" status="O"/>
+              <subset id="HU07" status="M"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>A code specifying a type of label for these transported dangerous goods.
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
@@ -26700,7 +26955,19 @@
   </xsd:complexType>
   <xsd:complexType name="TransportationWasteMaterial">
     <xsd:sequence>
-      <xsd:element name="weight" type="types:Measure" minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="id" type="types:Identifier17" minOccurs="0" maxOccurs="1">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015778" id="Transportation Waste_ Material. Identification. Identifier"/>
+            <efti id="eFTI1496" format="an..17"
+                  definition="The identifier of the waste material notified for the consignment." parentId="ASBIE1666">
+              <subset id="SE03" status="O"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>An identifier for this transportation waste material.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="weight" type="types:WeightUnitMeasure" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01014623" id="Transportation Waste_ Material. Weight. Measure"/>
@@ -26710,7 +26977,7 @@
               <subset id="SE03" status="O"/>
             </efti>
           </xsd:appinfo>
-          <xsd:documentation>A measure of the weight of this transportation waste material.</xsd:documentation>
+          <xsd:documentation>A measure of a weight of this transportation waste material.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
     </xsd:sequence>
