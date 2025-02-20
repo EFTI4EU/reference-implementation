@@ -23,6 +23,7 @@ public class NoteController implements NoteControllerApi {
 
     @Override
     public ResponseEntity<NoteResponseDto> createNote(final @RequestBody PostFollowUpRequestDto notesDto) {
+        log.info("logs to check encoding @éèçàùäËÜÏêâîôÖ");
         log.info("POST on /control/uil/follow-up with param requestId {} and value {}", notesDto.getRequestId(), notesDto.getMessage());
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
         return new ResponseEntity<>(noteResponseDto, StringUtils.isNotBlank(noteResponseDto.getErrorCode()) ? HttpStatus.BAD_REQUEST : HttpStatus.ACCEPTED);
