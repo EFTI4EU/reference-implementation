@@ -6,6 +6,7 @@
         <encoder>
             <pattern>%d %-5level %logger : %msg%n</pattern>
         </encoder>
+        <charset>UTF-8</charset>
     </appender>
 
     <logger name="eu.efti.plugin.ws" level="INFO"/>
