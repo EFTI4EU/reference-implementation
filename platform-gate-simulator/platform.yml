@@ -18,8 +18,8 @@ variables:
 "$[[ inputs.job-prefix | expand_vars ]]_build_and_deploy_microservices":
   stage: $[[ inputs.job-stage ]]
   rules:
-  - if: $DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int"
-    when: always
+  #- if: $DEPLOY_ENVIRONMENT == "dev" || $DEPLOY_ENVIRONMENT == "int"
+  #  when: always
   - if: $CI_COMMIT_REF_NAME =~ /feat/
     variables:
       TAG: PREVIEW
