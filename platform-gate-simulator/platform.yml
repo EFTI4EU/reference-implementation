@@ -24,6 +24,7 @@ variables:
     variables:
       TAG: PREVIEW
     when: manual
+  - when: always
   trigger:
     include:
     - project: $PROJECT #"kube/build"
