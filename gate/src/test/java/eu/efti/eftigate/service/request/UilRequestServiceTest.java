@@ -317,6 +317,7 @@ class UilRequestServiceTest extends BaseServiceTest {
 
     @Test
     void manageResponseReceivedEmptyCodeTest() throws IOException, SAXException {
+        controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
         final ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
@@ -337,10 +338,12 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .contentType("application/json")
                         .fromPartyId("http://efti.gate.listenbourg.eu")
                         .messageId(messageId)
+                        .conversationId(messageId)
                         .build())
                 .build();
 
         doThrow(new SAXException("Error occurred")).when(validationService).validateXml(anyString());
+        Mockito.when(uilRequestRepository.findByControlRequestId(any())).thenReturn(List.of(uilRequestEntity));
 
         uilRequestService.manageResponseReceived(notificationDto);
 

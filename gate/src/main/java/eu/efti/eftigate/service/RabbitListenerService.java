@@ -2,6 +2,7 @@ package eu.efti.eftigate.service;
 
 import eu.efti.commons.constant.EftiGateConstants;
 import eu.efti.commons.dto.ControlDto;
+import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestType;
@@ -73,7 +74,8 @@ public class RabbitListenerService {
         String previousEdeliveryMessageId = rabbitRequestDto.getEdeliveryMessageId();
         try {
             String eDeliveryMessageId = messageIdGenerator.generateMessageId();
-            if (rabbitRequestDto.getError() == null || !ErrorCodesEnum.REQUESTID_MISSING.name().equals(rabbitRequestDto.getError().getErrorCode())) {
+            ErrorDto errorDto = rabbitRequestDto.getError();
+            if (errorDto == null || !ErrorCodesEnum.REQUESTID_MISSING.name().equals(errorDto.getErrorCode())) {
                 getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, eDeliveryMessageId);
             }
             this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto, eDeliveryMessageId));
