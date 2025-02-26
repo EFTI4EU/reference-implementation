@@ -57,9 +57,6 @@ public class NotificationService {
     private Optional<NotificationDto> onMessageReceived(final ReceivedNotificationDto receivedNotificationDto) {
         final MessagingDto messagingDto = objectMapper.convertValue(receivedNotificationDto.getMessaging(), MessagingDto.class);
         final PayloadDto payloadDto = objectMapper.convertValue(receivedNotificationDto.getPayload(), PayloadDto.class);
-        log.info("received encoded payload value {}", payloadDto.getValue());
-        log.info("received decoded payload value {}", new String(Base64.getDecoder().decode(payloadDto.getValue().getBytes(UTF_8)), UTF_8));
-
         final NotificationContentDto notificationContentDto = NotificationContentDto.builder()
                 .body(new String(Base64.getDecoder().decode(payloadDto.getValue().getBytes(UTF_8)), UTF_8))
                 .contentType(payloadDto.getMimeType())
