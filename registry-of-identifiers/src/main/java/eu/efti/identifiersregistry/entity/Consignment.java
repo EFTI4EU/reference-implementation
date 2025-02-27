@@ -17,6 +17,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
@@ -48,6 +50,8 @@ public class Consignment extends AbstractModel implements Serializable {
     private OffsetDateTime carrierAcceptanceDatetime;
     @Column(name = "delivery_event_actual_occurrence_datetime")
     private OffsetDateTime deliveryEventActualOccurrenceDatetime;
+    @Column(name = "disabled_date")
+    private OffsetDateTime disabledDate;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
     @Builder.Default
@@ -65,6 +69,7 @@ public class Consignment extends AbstractModel implements Serializable {
 
     @Builder.Default
     @ToString.Exclude
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
     private List<UsedTransportEquipment> usedTransportEquipments = new ArrayList<>();
 

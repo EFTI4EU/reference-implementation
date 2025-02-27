@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="modify_foreign_key" author="jthueux">
+        <dropForeignKeyConstraint
+                                   baseTableName="main_carriage_transport_movement"
+                                   constraintName="main_carriage_transport_movement_consignment_id_fkey"/>
+        <addForeignKeyConstraint  baseColumnNames="consignment_id"
+                                  baseTableName="main_carriage_transport_movement"
+                                  constraintName="main_carriage_transport_movement_consignment_id_fkey"
+                                  onDelete="CASCADE"
+                                  referencedColumnNames="id"
+                                  referencedTableName="consignment"
+                                  validate="true"/>
+
+        <dropForeignKeyConstraint
+                baseTableName="used_transport_equipment"
+                constraintName="used_transport_equipment_consignment_id_fkey"/>
+        <addForeignKeyConstraint  baseColumnNames="consignment_id"
+                                  baseTableName="used_transport_equipment"
+                                  constraintName="used_transport_equipment_consignment_id_fkey"
+                                  onDelete="CASCADE"
+                                  referencedColumnNames="id"
+                                  referencedTableName="consignment"
+                                  validate="true"/>
+
+        <dropForeignKeyConstraint
+                baseTableName="carried_transport_equipment"
+                constraintName="carried_transport_equipment_used_transport_equipment_id_fkey"/>
+        <addForeignKeyConstraint  baseColumnNames="used_transport_equipment_id"
+                                  baseTableName="carried_transport_equipment"
+                                  constraintName="carried_transport_equipment_used_transport_equipment_id_fkey"
+                                  onDelete="CASCADE"
+                                  referencedColumnNames="id"
+                                  referencedTableName="used_transport_equipment"
+                                  validate="true"/>
+    </changeSet>
+</databaseChangeLog>

@@ -52,6 +52,12 @@ server:
 batch:
   update:
     cron: "0 */1 * ? * *"
+  identifier:
+    cron: "0 0 1 ? * *"
+    deactivation-delay:
+      three: 12
+      other: 0
+      null-delivery-date: 90
 
 springdoc:
   swagger-ui:

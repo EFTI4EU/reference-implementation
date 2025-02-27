@@ -9,12 +9,16 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.Clock;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,8 +43,15 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
     String USED_TRANSPORT_MEANS_REGISTRATION_COUNTRY = "usedTransportMeansRegistrationCountry";
     String USED_TRANSPORT_MEANS_ID = "usedTransportMeansId";
 
+    @Query(value = "SELECT c FROM Consignment c where c.gateId = :gate and c.datasetId = :uuid and c.platformId = :platform and CURRENT_TIMESTAMP <= c.disabledDate")
+    Optional<Consignment> findActiveByUil(final String gate, final String uuid, final String platform);
+
     @Query(value = "SELECT c FROM Consignment c where c.gateId = :gate and c.datasetId = :uuid and c.platformId = :platform")
     Optional<Consignment> findByUil(final String gate, final String uuid, final String platform);
+
+    @Modifying
+    @Query(value = "DELETE from Consignment c where c.disabledDate <= current_timestamp")
+    int deleteAllDisabledConsignment();
 
     default List<Consignment> searchByCriteria(final SearchWithIdentifiersRequestDto request) {
         final Set<Consignment> results = new HashSet<>();
@@ -70,7 +81,7 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
 
             predicates.add(cb.equal(cb.upper(mainCarriageTransportMovementJoin.get(USED_TRANSPORT_MEANS_ID)), request.getIdentifier().toUpperCase()));
 
-            buildCommonAttributesRequest(request, cb, predicates, mainCarriageTransportMovementJoin);
+            buildCommonAttributesRequest(request, cb, predicates, mainCarriageTransportMovementJoin, root);
 
             if (StringUtils.isNotBlank(request.getRegistrationCountryCode())) {
                 predicates.add(cb.equal(mainCarriageTransportMovementJoin.get(USED_TRANSPORT_MEANS_REGISTRATION_COUNTRY), request.getRegistrationCountryCode()));
@@ -87,7 +98,7 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
             Join<Consignment, UsedTransportEquipment> equipmentJoin = root.join(TRANSPORT_VEHICLES, JoinType.LEFT);
             predicates.add(cb.equal(cb.upper(equipmentJoin.get(VEHICLE_ID)), request.getIdentifier().toUpperCase()));
 
-            buildCommonAttributesRequest(request, cb, predicates, mainCarriageTransportMovementJoin);
+            buildCommonAttributesRequest(request, cb, predicates, mainCarriageTransportMovementJoin, root);
 
             if (StringUtils.isNotBlank(request.getRegistrationCountryCode())) {
                 predicates.add(cb.equal(equipmentJoin.get(VEHICLE_COUNTRY), request.getRegistrationCountryCode()));
@@ -105,18 +116,19 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
 
             predicates.add(cb.equal(cb.upper(carriedJoin.get(VEHICLE_ID)), request.getIdentifier().toUpperCase()));
 
-            buildCommonAttributesRequest(request, cb, predicates, mainCarriageTransportMovementJoin);
+            buildCommonAttributesRequest(request, cb, predicates, mainCarriageTransportMovementJoin, root);
 
             return cb.and(predicates.toArray(new Predicate[]{}));
         });
     }
 
-    private void buildCommonAttributesRequest(final SearchWithIdentifiersRequestDto request, final CriteriaBuilder cb, final List<Predicate> predicates, final Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin) {
+    private void buildCommonAttributesRequest(final SearchWithIdentifiersRequestDto request, final CriteriaBuilder cb, final List<Predicate> predicates, final Join<Consignment, MainCarriageTransportMovement> mainCarriageTransportMovementJoin, final Root<Consignment> root) {
         if (request.getDangerousGoodsIndicator() != null) {
             predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(IS_DANGEROUS_GOODS), request.getDangerousGoodsIndicator())));
         }
         if (StringUtils.isNotBlank(request.getModeCode())) {
             predicates.add(cb.and(cb.equal(mainCarriageTransportMovementJoin.get(TRANSPORT_MODE), request.getModeCode())));
         }
+        predicates.add(cb.greaterThanOrEqualTo(root.get("disabledDate").as(OffsetDateTime.class), OffsetDateTime.now(Clock.systemUTC())));
     }
 }
