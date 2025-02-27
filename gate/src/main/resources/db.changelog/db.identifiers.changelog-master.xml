@@ -7,4 +7,7 @@
     <include file="/db.changelog/db.identifiers.changelog-3-maincarriageschemeagency.sql"/>
     <include file="/db.changelog/db.identifiers.changelog-4-modecodestring.xml"/>
     <include file="/db.changelog/db.identifiers.changelog-5-indexes.sql"/>
+    <include file="/db.changelog/db.identifiers.changelog-6-disabledDate.xml"/>
+    <include file="/db.changelog/db.identifiers.changelog-7-indexes-disabledDate.sql"/>
+    <include file="/db.changelog/db.identifiers.changelog-8-indexes-changeForeignKey.xml"/>
 </databaseChangeLog>
