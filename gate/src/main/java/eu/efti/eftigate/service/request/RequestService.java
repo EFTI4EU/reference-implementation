@@ -166,7 +166,7 @@ public abstract class RequestService<T extends RequestEntity> {
         }
     }
 
-    protected <U extends RequestEntity> StatusEnum getStatusEnumOfRequest(U request) {
+    protected <U extends RequestEntity> StatusEnum getStatusEnumOfRequest(final U request) {
         if (RequestStatusEnum.ERROR.equals(request.getStatus())) {
             return StatusEnum.ERROR;
         } else if (RequestStatusEnum.TIMEOUT.equals(request.getStatus())) {

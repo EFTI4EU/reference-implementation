@@ -55,23 +55,23 @@ public class ValidationService {
         return schema.newValidator();
     }
 
-    public void validateXml(String xml) throws SAXException, IOException {
+    public void validateXml(final String xml) throws SAXException, IOException {
         List<SAXParseException> exceptions = new ArrayList<>();
         validator.setErrorHandler(new ErrorHandler() {
 
             @Override
-            public void warning(SAXParseException exception) throws SAXException {
+            public void warning(final SAXParseException exception) throws SAXException {
                 log.warn(exception.getMessage());
             }
 
             @Override
-            public void error(SAXParseException exception) throws SAXException {
+            public void error(final SAXParseException exception) throws SAXException {
                 log.error(exception.getMessage());
                 exceptions.add(exception);
             }
 
             @Override
-            public void fatalError(SAXParseException exception) throws SAXException {
+            public void fatalError(final SAXParseException exception) throws SAXException {
                 log.error(exception.getMessage());
                 exceptions.add(exception);
             }

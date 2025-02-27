@@ -16,8 +16,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Component
 @RequiredArgsConstructor
@@ -61,7 +62,7 @@ public class SerializeUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public <U> U mapXmlStringToJaxbObject(final String content, JAXBContext jaxbContext) {
+    public <U> U mapXmlStringToJaxbObject(final String content, final JAXBContext jaxbContext) {
         try {
             final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             final StringReader reader = new StringReader(content);
@@ -81,6 +82,6 @@ public class SerializeUtils {
     }
 
     public <T> String mapObjectToBase64String(final T content) {
-        return new String(Base64.getEncoder().encode(this.mapObjectToJsonString(content).getBytes()), StandardCharsets.UTF_8);
+        return new String(Base64.getEncoder().encode(this.mapObjectToJsonString(content).getBytes(UTF_8)), UTF_8);
     }
 }

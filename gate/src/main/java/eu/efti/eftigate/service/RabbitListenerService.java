@@ -2,6 +2,7 @@ package eu.efti.eftigate.service;
 
 import eu.efti.commons.constant.EftiGateConstants;
 import eu.efti.commons.dto.ControlDto;
+import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestType;
@@ -73,7 +74,8 @@ public class RabbitListenerService {
         String previousEdeliveryMessageId = rabbitRequestDto.getEdeliveryMessageId();
         try {
             String eDeliveryMessageId = messageIdGenerator.generateMessageId();
-            if (rabbitRequestDto.getError() == null || !ErrorCodesEnum.REQUESTID_MISSING.name().equals(rabbitRequestDto.getError().getErrorCode())) {
+            ErrorDto errorDto = rabbitRequestDto.getError();
+            if (errorDto == null || !ErrorCodesEnum.REQUESTID_MISSING.name().equals(errorDto.getErrorCode())) {
                 getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, eDeliveryMessageId);
             }
             this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto, eDeliveryMessageId));
@@ -86,7 +88,7 @@ public class RabbitListenerService {
         }
     }
 
-    private void logSentMessage(RabbitRequestDto rabbitRequestDto, RequestTypeEnum requestTypeEnum, RequestDto requestDto, String receiver) {
+    private void logSentMessage(final RabbitRequestDto rabbitRequestDto, final RequestTypeEnum requestTypeEnum, final RequestDto requestDto, final String receiver) {
         final String body = getRequestService(requestDto.getRequestType()).buildRequestBody(rabbitRequestDto);
         ControlDto controlDto = requestDto.getControl();
         if (RequestType.UIL.equals(requestDto.getRequestType())) {
@@ -98,7 +100,7 @@ public class RabbitListenerService {
         }
     }
 
-    private void logSentNoteMessage(ControlDto control, String receiver, String body) {
+    private void logSentNoteMessage(final ControlDto control, final String receiver, final String body) {
         final boolean isCurrentGate = gateProperties.isCurrentGate(control.getGateId());
 
         String logName = isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026;
@@ -106,7 +108,7 @@ public class RabbitListenerService {
                 true, logName);
     }
 
-    private void logSentIdentifierMessage(RequestTypeEnum requestTypeEnum, ControlDto controlDto, String receiver, String body) {
+    private void logSentIdentifierMessage(final RequestTypeEnum requestTypeEnum, final ControlDto controlDto, final String receiver, final String body) {
         //log fti019 or fti021
         if (RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH.equals(requestTypeEnum)) {
             logManager.logSentMessage(controlDto, body, receiver, GATE, GATE, true, LogManager.FTI_021);
@@ -115,7 +117,7 @@ public class RabbitListenerService {
         }
     }
 
-    private void logSentUilMessage(RabbitRequestDto rabbitRequestDto, ControlDto controlDto, String receiver, String body) {
+    private void logSentUilMessage(final RabbitRequestDto rabbitRequestDto, final ControlDto controlDto, final String receiver, final String body) {
         //log fti020 and fti009
         if (StringUtils.isNotBlank(receiver) && receiver.equalsIgnoreCase(rabbitRequestDto.getControl().getPlatformId())) {
             logManager.logSentMessage(controlDto, body, receiver, GATE, PLATFORM, true, LogManager.FTI_009);
@@ -124,7 +126,7 @@ public class RabbitListenerService {
         }
     }
 
-    private ApRequestDto buildApRequestDto(final RabbitRequestDto requestDto, String edeliveryMessageId) {
+    private ApRequestDto buildApRequestDto(final RabbitRequestDto requestDto, final String edeliveryMessageId) {
         final String receiver = gateProperties.isCurrentGate(requestDto.getGateIdDest()) ? requestDto.getControl().getPlatformId() : requestDto.getGateIdDest();
         return ApRequestDto.builder()
                 .requestId(requestDto.getControl().getRequestId())

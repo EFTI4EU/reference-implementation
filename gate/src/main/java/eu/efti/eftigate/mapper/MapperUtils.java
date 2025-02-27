@@ -110,11 +110,11 @@ public class MapperUtils {
         return CollectionUtils.emptyIfNull(consignmentDtoList).stream().map(this::dtoToEntity).toList();
     }
 
-    public List<ConsignmentApiDto> consignmentDtoToApiDto(List<ConsignmentDto> consignmentDtos) {
+    public List<ConsignmentApiDto> consignmentDtoToApiDto(final List<ConsignmentDto> consignmentDtos) {
         return CollectionUtils.emptyIfNull(consignmentDtos).stream().map(this::dtoToApiDto).toList();
     }
 
-    private ConsignmentApiDto dtoToApiDto(ConsignmentDto consignmentDto) {
+    private ConsignmentApiDto dtoToApiDto(final ConsignmentDto consignmentDto) {
         return modelMapper.map(consignmentDto, ConsignmentApiDto.class);
     }
 }

@@ -21,7 +21,7 @@ public class WebserviceClient {
 
     private final boolean logMessages;
 
-    public WebserviceClient(String webserviceLocation, boolean logMessages) {
+    public WebserviceClient(final String webserviceLocation, final boolean logMessages) {
         this.wsdl = webserviceLocation;
         this.logMessages = logMessages;
     }
@@ -30,7 +30,7 @@ public class WebserviceClient {
         return getPort(null, null);
     }
 
-    public WebServicePluginInterface getPort(String username, String password) throws MalformedURLException {
+    public WebServicePluginInterface getPort(final String username, final String password) throws MalformedURLException {
         if (StringUtils.isBlank(wsdl)) {
             throw new IllegalArgumentException("No webservice location specified");
         }

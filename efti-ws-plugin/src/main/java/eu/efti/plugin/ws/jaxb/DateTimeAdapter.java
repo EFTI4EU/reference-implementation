@@ -25,7 +25,7 @@ public class DateTimeAdapter extends XmlAdapter<String, LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime unmarshal(String s) {
+    public LocalDateTime unmarshal(final String s) {
         TemporalAccessor converted = converter.convert(s);
         if (!(converted instanceof LocalDateTime)) {
             log.warn("The source [{}] could not be correctly converted to a local date time instance [{}]", s, converted);
@@ -35,7 +35,7 @@ public class DateTimeAdapter extends XmlAdapter<String, LocalDateTime> {
     }
 
     @Override
-    public String marshal(LocalDateTime dt) {
+    public String marshal(final LocalDateTime dt) {
         if (dt == null) {
             log.info("Returning null value for a null local date time input");
             return null;

@@ -189,21 +189,21 @@ class IdentifiersMapperTest {
         assertEquals(2, internalConsignment.getUsedTransportEquipments().get(0).getCarriedTransportEquipments().get(0).getSequenceNumber());
     }
 
-    private static TradeCountry tradeCountryOf(CountryCode countryCode) {
+    private static TradeCountry tradeCountryOf(final CountryCode countryCode) {
         TradeCountry tradeCountry = new TradeCountry();
 
         tradeCountry.setCode(countryCode);
         return tradeCountry;
     }
 
-    private static Identifier17 toIdentifier17(String idString, String schemeAgencyId) {
+    private static Identifier17 toIdentifier17(final String idString, final String schemeAgencyId) {
         Identifier17 id = new Identifier17();
         id.setValue(idString);
         id.setSchemeAgencyId(schemeAgencyId);
         return id;
     }
 
-    private static DateTime dateTimeOf(String dateTimeString, String typeCode) {
+    private static DateTime dateTimeOf(final String dateTimeString, final String typeCode) {
         DateTime carrierAcceptanceDateTime = new DateTime();
         carrierAcceptanceDateTime.setValue(dateTimeString);
 

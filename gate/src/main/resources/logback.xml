@@ -34,10 +34,12 @@
             <totalSizeCap>100MB</totalSizeCap>
         </rollingPolicy>
         <encoder>
+            <charset>UTF-8</charset>
             <pattern>%d %-5level [%thread] %logger : %msg%n</pattern>
         </encoder>
     </appender>
 
+    <!-- Appender for Stats -->
     <appender name="RollingFile-Stats-Appender"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
@@ -55,10 +57,12 @@
             <totalSizeCap>${LOG_TOTAL_SIZE}</totalSizeCap>
         </rollingPolicy>
         <encoder>
+            <charset>UTF-8</charset>
             <pattern>%msg%n</pattern>
         </encoder>
     </appender>
 
+    <!-- Appender for Requests -->
     <appender name="RollingFile-Request-Appender"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
@@ -76,10 +80,12 @@
             <totalSizeCap>${LOG_TOTAL_SIZE}</totalSizeCap>
         </rollingPolicy>
         <encoder>
+            <charset>UTF-8</charset>
             <pattern>%msg%n</pattern>
         </encoder>
     </appender>
 
+    <!-- Appender for Registry -->
     <appender name="RollingFile-Registry-Appender"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
@@ -97,10 +103,12 @@
             <totalSizeCap>${LOG_TOTAL_SIZE}</totalSizeCap>
         </rollingPolicy>
         <encoder>
+            <charset>UTF-8</charset>
             <pattern>%msg%n</pattern>
         </encoder>
     </appender>
 
+    <!-- Appender for Console -->
     <appender name="Console-Appender"
               class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
@@ -124,9 +132,10 @@
             <OnMismatch>NEUTRAL</OnMismatch>
             <OnMatch>DENY</OnMatch>
         </filter>
-        <layout>
+        <encoder>
             <pattern>%d %-5level %logger : %msg%n</pattern>
-        </layout>
+        </encoder>
+        <charset>UTF-8</charset>
     </appender>
 
     <appender name="Async-Appender" class="ch.qos.logback.classic.AsyncAppender">

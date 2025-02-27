@@ -23,7 +23,7 @@ public class MessageLoggingHandler implements SOAPHandler<SOAPMessageContext> {
     }
 
     @Override
-    public boolean handleMessage(SOAPMessageContext context) {
+    public boolean handleMessage(final SOAPMessageContext context) {
         boolean isRequest = (boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
         if (isRequest) {
@@ -39,18 +39,18 @@ public class MessageLoggingHandler implements SOAPHandler<SOAPMessageContext> {
     }
 
     @Override
-    public boolean handleFault(SOAPMessageContext context) {
+    public boolean handleFault(final SOAPMessageContext context) {
         log.info("======== Logging SOAPFault ========");
         logSOAPMessage(context.getMessage(), false);
         return true;
     }
 
     @Override
-    public void close(MessageContext messageContext) {
+    public void close(final MessageContext messageContext) {
         //do nothing
     }
 
-    private void logSOAPMessage(SOAPMessage message, boolean debug) {
+    private void logSOAPMessage(final SOAPMessage message, final boolean debug) {
         String output = null;
         try {
             output = convertToString(message);
@@ -66,7 +66,7 @@ public class MessageLoggingHandler implements SOAPHandler<SOAPMessageContext> {
         }
     }
 
-    private String convertToString(SOAPMessage message) throws IOException, SOAPException {
+    private String convertToString(final SOAPMessage message) throws IOException, SOAPException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         message.writeTo(stream);
         return stream.toString(StandardCharsets.UTF_8);

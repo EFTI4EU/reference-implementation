@@ -21,7 +21,7 @@ public class StringToTemporalAccessorConverter implements Converter<String, Temp
 
     private final DateTimeFormatter formatter;
 
-    public StringToTemporalAccessorConverter(DateTimeFormatter formatter) {
+    public StringToTemporalAccessorConverter(final DateTimeFormatter formatter) {
         this.formatter = formatter;
     }
 
@@ -32,7 +32,7 @@ public class StringToTemporalAccessorConverter implements Converter<String, Temp
      * @return a temporal in the UTC timezone.
      */
     @Override
-    public TemporalAccessor convert(@Nullable String source) {
+    public TemporalAccessor convert(@Nullable final String source) {
         if (source == null) {
             log.info("Returning null temporal for null input string");
             return null;

@@ -17,8 +17,10 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
+import eu.efti.eftigate.entity.ErrorEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
+import eu.efti.eftigate.exception.AmbiguousIdentifierException;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.UilRequestRepository;
@@ -40,6 +42,7 @@ import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.postgresql.shaded.com.ongres.scram.common.util.Preconditions;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
@@ -61,6 +64,7 @@ import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH;
 import static eu.efti.commons.enums.StatusEnum.COMPLETE;
 import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.isNotFound;
 import static eu.efti.eftilogger.model.ComponentType.GATE;
+import static java.lang.String.format;
 
 @Slf4j
 @Component
@@ -135,14 +139,46 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         } catch (SAXException e) {
             String exceptionMessage = e.getMessage();
             log.error("Received invalid UILResponse from {}, {}", content.getFromPartyId(), exceptionMessage);
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, exceptionMessage, ErrorCodesEnum.XML_ERROR.name()));
+            String conversationId = notificationDto.getContent().getConversationId();
+            UilRequestEntity request = this.findRequestByControlRequestId(conversationId);
+            if (request != null) {
+                updateRequestWithError(exceptionMessage, request);
+            } else {
+                this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, exceptionMessage, ErrorCodesEnum.XML_ERROR.name()));
+            }
         } catch (IllegalArgumentException | IOException e) {
             log.error("Something went wrong when validating UILResponse from{}", content.getFromPartyId(), e);
             this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, e.getMessage(), ErrorCodesEnum.XML_ERROR.name()));
         }
     }
 
-    private void manageResponse(NotificationDto notificationDto, UilRequestDto uilRequestDto, UILResponse uilResponse, NotificationContentDto content) {
+    private void updateRequestWithError(String exceptionMessage, UilRequestEntity request) {
+        ErrorEntity errorEntity = ErrorEntity.builder()
+                .errorCode(ErrorCodesEnum.XML_ERROR.name())
+                .errorDescription(exceptionMessage).build();
+        request.setError(errorEntity);
+        if (request.getControl().isExternalAsk()) {
+            this.sendRequest(getMapperUtils().requestToRequestDto(request, UilRequestDto.class));
+        } else {
+            request.getControl().setStatus(StatusEnum.ERROR);
+            request.getControl().setError(errorEntity);
+            this.updateStatus(request, ERROR);
+        }
+    }
+
+    private UilRequestEntity findRequestByControlRequestId(String requestId) {
+        Preconditions.checkArgument(requestId != null, "Request Id must not be null");
+        List<UilRequestEntity> requestsByControlRequestId = uilRequestRepository.findByControlRequestId(requestId);
+        if (CollectionUtils.isNotEmpty(requestsByControlRequestId)) {
+            if (requestsByControlRequestId.size() > 1) {
+                throw new AmbiguousIdentifierException(format("Request with id '%s', is not unique, %d controls found!", requestId, requestsByControlRequestId.size()));
+            } else {
+                return requestsByControlRequestId.get(0);
+            }
+        } else throw new RequestNotFoundException(format("Request with id '%s', not found!", requestId));
+    }
+
+    private void manageResponse(final NotificationDto notificationDto, final UilRequestDto uilRequestDto, final UILResponse uilResponse, final NotificationContentDto content) {
         if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(uilRequestDto.getControl().getRequestType())) { //platform response
             manageResponseFromPlatform(uilRequestDto, uilResponse, notificationDto);
         } else { // gate response
@@ -208,7 +244,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         return getSerializeUtils().mapJaxbObjectToXmlString(jaxBResponse, UILQuery.class);
     }
 
-    private UILQuery buildUilQuery(RabbitRequestDto requestDto, ControlDto controlDto) {
+    private UILQuery buildUilQuery(final RabbitRequestDto requestDto, final ControlDto controlDto) {
         final UILQuery uilQuery = new UILQuery();
         final UIL uil = new UIL();
         uil.setDatasetId(controlDto.getDatasetId());
@@ -228,7 +264,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         return EDeliveryStatus.OK.getCode();
     }
 
-    private String getEdeliverStatusForError(RabbitRequestDto requestDto) {
+    private String getEdeliverStatusForError(final RabbitRequestDto requestDto) {
         String errorCode = requestDto.getError().getErrorCode();
         if (isNotFound(errorCode) || DATA_NOT_FOUND_ON_REGISTRY.name().equalsIgnoreCase(errorCode)) {
             return EDeliveryStatus.NOT_FOUND.getCode();
@@ -247,7 +283,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     @Override
-    public void saveRequest(RequestDto requestDto) {
+    public void saveRequest(final RequestDto requestDto) {
         uilRequestRepository.save(
                 getMapperUtils().requestDtoToRequestEntity(requestDto, UilRequestEntity.class));
     }
@@ -266,7 +302,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     }
 
     @Override
-    public List<UilRequestEntity> findAllForControlId(int controlId) {
+    public List<UilRequestEntity> findAllForControlId(final int controlId) {
         throw new UnsupportedOperationException("Operation not allowed for UIL Request");
     }
 
@@ -290,7 +326,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         getLogManager().logReceivedMessage(uilRequestDto.getControl(), ComponentType.PLATFORM, GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
     }
 
-    private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, NotificationContentDto content) {
+    private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, final NotificationContentDto content) {
         final ControlDto controlDto = requestDto.getControl();
         String uilResponseStatus = uilResponse.getStatus();
         final Optional<EDeliveryStatus> responseStatus = EDeliveryStatus.fromCode(uilResponseStatus);
@@ -332,7 +368,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         return getErrorCodeFromDescription(uilResponseDescription);
     }
 
-    private ErrorDto getErrorCodeFromDescription(String description) {
+    private ErrorDto getErrorCodeFromDescription(final String description) {
         Optional<ErrorCodesEnum> errorCode = ErrorCodesEnum.fromMessage(description);
         if (errorCode.isPresent()) {
             return ErrorDto.fromErrorCode(errorCode.get());
@@ -363,7 +399,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         getControlService().save(controlDto);
     }
 
-    private void respondToOtherGate(final UilRequestDto uilRequestDto, String body) {
+    private void respondToOtherGate(final UilRequestDto uilRequestDto, final String body) {
         this.updateStatus(uilRequestDto, RESPONSE_IN_PROGRESS);
         uilRequestDto.setGateIdDest(uilRequestDto.getControl().getFromGateId());
         final RequestDto savedUilRequestDto = this.save(uilRequestDto);
