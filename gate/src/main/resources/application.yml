@@ -54,6 +54,7 @@ batch:
     cron: "0 */1 * ? * *"
   identifier:
     cron: "0 0 1 ? * *"
+    activated: true
     deactivation-delay:
       three: 12
       other: 0

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -27,7 +28,8 @@ class DeleteDisabledConsignmentTest {
 
     @BeforeEach
     public void init() {
-        deleteDisabledConsignment = new DeleteDisabledConsignment(identifiersService, jdbcTemplate);
+        deleteDisabledConsignment = new DeleteDisabledConsignment(identifiersService, jdbcTemplate, true);
+        ReflectionTestUtils.setField(deleteDisabledConsignment, "deleteUilActivated", true);
     }
 
     @Test
@@ -36,5 +38,14 @@ class DeleteDisabledConsignmentTest {
         doNothing().when(jdbcTemplate).execute(anyString());
         deleteDisabledConsignment.deleteOldConsignment();
         verify(identifiersService, times(1)).deleteOldConsignment();
+    }
+
+    @Test
+    void deleteOldConsignmentFalseTest() {
+        ReflectionTestUtils.setField(deleteDisabledConsignment, "deleteUilActivated", false);
+
+        deleteDisabledConsignment.deleteOldConsignment();
+
+        verify(identifiersService, times(0)).deleteOldConsignment();
     }
 }
