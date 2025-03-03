@@ -98,6 +98,7 @@ batch:
     cron: "0 */1 * ? * *"
     identifier:
       cron: {{ batch.identifier.cron }}
+      activated: {{ batch.identifier.activated }}
       deactivation-delay:
         three: {{ batch.identifier.deactivation-delay.three }}
         other: {{ batch.identifier.deactivation-delay.other }}
