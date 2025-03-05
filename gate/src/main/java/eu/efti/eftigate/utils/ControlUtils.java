@@ -84,7 +84,6 @@ public class ControlUtils {
         controlDto.setRequestId(requestId);
         controlDto.setRequestType(requestTypeEnum);
         controlDto.setStatus(PENDING);
-        controlDto.setSubsetIds(List.of(SUBSET_ID));
         controlDto.setAuthority(authorityDto);
         return controlDto;
     }
