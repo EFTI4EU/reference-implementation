@@ -27,7 +27,7 @@ public class ValidationService {
             validator = initValidator();
         } catch (SAXException e) {
             log.error("can't initialize ValidationService", e);
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(e);
         }
     }
 
