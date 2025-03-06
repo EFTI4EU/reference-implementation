@@ -40,11 +40,11 @@ public class ValidationService {
                     path = systemId.substring(systemId.lastIndexOf('/') + 1);
                 }
 
-                // Try different possible locations
+                // Try different possible locations from inside the JAR
                 for (String prefix : new String[]{"xsd/", "xsd/types/", "xsd/codes/", "xsd/edelivery/"}) {
                     InputStream stream = getClass().getClassLoader().getResourceAsStream(prefix + path);
                     if (stream != null) {
-                        LSInput input = new MyLSInput();
+                        LSInput input = new XSDInsideJarInput();
                         input.setPublicId(publicId);
                         input.setSystemId(systemId);
                         input.setBaseURI(baseURI);
@@ -71,7 +71,7 @@ public class ValidationService {
         return Optional.empty();
     }
 
-    private static class MyLSInput implements LSInput {
+    private static class XSDInsideJarInput implements LSInput {
 
         private Reader characterStream;
         private InputStream byteStream;
