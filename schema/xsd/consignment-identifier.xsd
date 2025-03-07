@@ -586,7 +586,7 @@
           <xsd:documentation>The unique identifier of this piece of logistics transport equipment.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="registrationCountry" type="efti:TradeCountry" minOccurs="0" maxOccurs="1">
+      <xsd:element name="registrationCountry" type="efti:TradeCountry">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01015630" id="Logistics_ Transport Equipment. Registration. Trade_ Country"/>
@@ -929,7 +929,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="registrationCountry" type="efti:TradeCountry" minOccurs="0" maxOccurs="1">
+      <xsd:element name="registrationCountry" type="efti:TradeCountry">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003834" id="Logistics_ Transport Means. Registration. Trade_ Country"/>
@@ -1054,7 +1054,7 @@
   </xsd:complexType>
   <xsd:complexType name="LogisticsTransportMovement">
     <xsd:sequence>
-      <xsd:element name="dangerousGoodsIndicator" type="xsd:boolean" minOccurs="0" maxOccurs="1">
+      <xsd:element name="dangerousGoodsIndicator" type="xsd:boolean" >
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01010121" id="Logistics_ Transport Movement. Dangerous Goods. Indicator"/>
@@ -1067,7 +1067,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="modeCode" type="codes:TransportModeCode" minOccurs="0" maxOccurs="1">
+      <xsd:element name="modeCode" type="codes:TransportModeCode">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01003839" id="Logistics_ Transport Movement. Mode. Code"/>
@@ -1833,7 +1833,7 @@
   </xsd:complexType>
   <xsd:complexType name="TradeCountry">
     <xsd:sequence>
-      <xsd:element name="code" type="codes:CountryCode" minOccurs="0" maxOccurs="1">
+      <xsd:element name="code" type="codes:CountryCode">
         <xsd:annotation>
           <xsd:appinfo>
             <unCefact unId="UN01002553" id="Trade_ Country. Identification. Identifier"/>

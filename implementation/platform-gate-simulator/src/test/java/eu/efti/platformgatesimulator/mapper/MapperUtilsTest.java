@@ -16,6 +16,7 @@ class MapperUtilsTest {
         Consignment consignment = new Consignment();
         MainCarriageTransportMovement sourceMovement = new MainCarriageTransportMovement();
         sourceMovement.setModeCode("1");
+        sourceMovement.setDangerousGoodsIndicator(true);
         consignment.getMainCarriageTransportMovement().add(sourceMovement);
         identifiersDto.setConsignment(consignment);
 

@@ -115,6 +115,11 @@
                 <updatePolicy>daily</updatePolicy>
             </snapshots>
         </repository>
+        <repository>
+            <id>eftiLocal</id>
+            <name>EFTI local repo</name>
+            <url>https://github.com/EFTI4EU/efti-data-tools/raw/mvn-repo</url>
+        </repository>
     </repositories>
 
     <scm>
