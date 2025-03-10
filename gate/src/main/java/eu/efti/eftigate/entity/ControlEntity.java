@@ -52,7 +52,7 @@ public class ControlEntity extends AbstractModel implements Serializable {
     @Column(name = "datasetid")
     private String datasetId;
 
-    @Column(name = "requestid")
+    @Column(name = "requestid", unique = true, nullable = false)
     private String requestId;
 
     @Column(name = "requesttype")
