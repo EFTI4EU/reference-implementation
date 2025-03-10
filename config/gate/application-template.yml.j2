@@ -96,13 +96,17 @@ gate:
 batch:
   update:
     cron: "0 */1 * ? * *"
-    identifier:
-      cron: {{ batch.identifier.cron }}
-      activated: {{ batch.identifier.activated }}
-      deactivation-delay:
-        three: {{ batch.identifier.deactivation_delay.three }}
-        other: {{ batch.identifier.deactivation_delay.other }}
-        null-delivery-date: {{ batch.identifier.deactivation_delay.null_delivery_date }}
+  retry:
+    cron: "*/20 * * * * *"
+    time: 20, 120, 300
+    size: 10
+  identifier:
+    cron: {{ batch.identifier.cron }}
+    activated: {{ batch.identifier.activated }}
+    deactivation-delay:
+      three: {{ batch.identifier.deactivation_delay.three }}
+      other: {{ batch.identifier.deactivation_delay.other }}
+      null-delivery-date: {{ batch.identifier.deactivation_delay.null_delivery_date }}
 
 springdoc:
   swagger-ui:
