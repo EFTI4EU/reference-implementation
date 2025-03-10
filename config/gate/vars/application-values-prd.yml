@@ -36,11 +36,11 @@ batch:
     size: 10
   identifier:
     cron: "0 0 1 ? * *"
-    activated: true
-    deactivation-delay:
+    activated: false
+    deactivation_delay:
       three: 12
       other: 0
-      null-delivery-date: 90
+      null_delivery_date: 90
 
 springdoc:
   swagger_ui:
