@@ -5,6 +5,7 @@ import eu.efti.commons.dto.NotesRequestDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
+import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -122,7 +123,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     }
 
     private void sendErrorRequests(final NotificationDto notificationDto, final String e, final String body) {
-        RequestDto requestDto = this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND, e, ErrorCodesEnum.XML_ERROR.name());
+        RequestDto requestDto = this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND, e, ErrorCodesEnum.XML_ERROR.name(), RequestType.NOTE);
         sendLogNote(requestDto.getControl(), true, body);
         this.sendRequest(requestDto);
     }
