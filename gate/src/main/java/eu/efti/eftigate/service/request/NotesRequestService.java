@@ -5,6 +5,7 @@ import eu.efti.commons.dto.NotesRequestDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
+import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -13,6 +14,8 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
+import eu.efti.eftigate.entity.ControlEntity;
+import eu.efti.eftigate.entity.ErrorEntity;
 import eu.efti.eftigate.entity.NoteRequestEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
@@ -35,6 +38,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static eu.efti.commons.constant.EftiGateConstants.NOTES_TYPES;
+import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
 import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
 
@@ -122,7 +126,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     }
 
     private void sendErrorRequests(final NotificationDto notificationDto, final String e, final String body) {
-        RequestDto requestDto = this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND, e, ErrorCodesEnum.XML_ERROR.name());
+        RequestDto requestDto = this.buildErrorRequestDto(notificationDto, RequestTypeEnum.EXTERNAL_NOTE_SEND, e, ErrorCodesEnum.XML_ERROR.name(), RequestType.NOTE);
         sendLogNote(requestDto.getControl(), true, body);
         this.sendRequest(requestDto);
     }
@@ -167,5 +171,21 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     protected NoteRequestEntity findRequestByMessageIdOrThrow(final String eDeliveryMessageId) {
         return Optional.ofNullable(this.notesRequestRepository.findByEdeliveryMessageId(eDeliveryMessageId))
                 .orElseThrow(() -> new RequestNotFoundException("couldn't find Notes request for messageId: " + eDeliveryMessageId));
+    }
+
+    @Override
+    public void updateRequestWithError(String exceptionMessage, NoteRequestEntity request) {
+        ErrorEntity errorEntity = ErrorEntity.builder()
+                .errorCode(ErrorCodesEnum.XML_ERROR.name())
+                .errorDescription(exceptionMessage).build();
+        request.setError(errorEntity);
+        ControlEntity control = request.getControl();
+        if (control.isExternalAsk()) {
+            this.sendRequest(getMapperUtils().requestToRequestDto(request, NotesRequestDto.class));
+        } else {
+            control.setStatus(StatusEnum.ERROR);
+            control.setError(errorEntity);
+            this.updateStatus(request, ERROR);
+        }
     }
 }

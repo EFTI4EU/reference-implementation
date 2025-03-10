@@ -78,6 +78,8 @@ public abstract class RequestService<T extends RequestEntity> {
 
     protected abstract T findRequestByMessageIdOrThrow(final String eDeliveryMessageId);
 
+    public abstract void updateRequestWithError(final String exceptionMessage, T request);
+
     public abstract List<T> findAllForControlId(final int controlId);
 
     public void createAndSendRequest(final ControlDto controlDto, final String destinationUrl) {
@@ -91,7 +93,7 @@ public abstract class RequestService<T extends RequestEntity> {
         this.sendRequest(result);
     }
 
-    public RequestDto buildErrorRequestDto(final NotificationDto notificationDto, final RequestTypeEnum requestTypeEnum, final String error, final String errorCodeString) {
+    public RequestDto buildErrorRequestDto(final NotificationDto notificationDto, final RequestTypeEnum requestTypeEnum, final String error, final String errorCodeString, RequestType requestType) {
         ErrorDto errorDto = ErrorDto.builder()
                 .errorCode(errorCodeString)
                 .errorDescription(error).build();
@@ -106,7 +108,7 @@ public abstract class RequestService<T extends RequestEntity> {
                 .control(controlDto)
                 .error(errorDto)
                 .status(ERROR)
-                .requestType(RequestType.UIL)
+                .requestType(requestType)
                 .gateIdDest(notificationDto.getContent().getFromPartyId()).build();
     }
 

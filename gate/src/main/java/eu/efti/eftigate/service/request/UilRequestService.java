@@ -17,10 +17,10 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
+import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.ErrorEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
-import eu.efti.eftigate.exception.AmbiguousIdentifierException;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.UilRequestRepository;
@@ -42,7 +42,6 @@ import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.postgresql.shaded.com.ongres.scram.common.util.Preconditions;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
@@ -62,9 +61,10 @@ import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
 import static eu.efti.commons.enums.RequestStatusEnum.TIMEOUT;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH;
 import static eu.efti.commons.enums.StatusEnum.COMPLETE;
+import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.BAD_GATEWAY;
+import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.INTERNAL_SERVER_ERROR;
 import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.isNotFound;
 import static eu.efti.eftilogger.model.ComponentType.GATE;
-import static java.lang.String.format;
 
 @Slf4j
 @Component
@@ -112,7 +112,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                     .fromGateToGateQuery(uilQuery, EXTERNAL_ASK_UIL_SEARCH, notificationDto, getGateProperties().getOwner());
             if (!isSubsetValid) {
                 log.error("Received invalid UILQuery with bad subsets");
-                this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, ErrorCodesEnum.BAD_SUBSETS.getMessage(), ErrorCodesEnum.BAD_SUBSETS.name()));
+                this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, ErrorCodesEnum.BAD_SUBSETS.getMessage(), ErrorCodesEnum.BAD_SUBSETS.name(), RequestType.UIL));
                 getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId, StatusEnum.ERROR, LogManager.FTI_020);
                 return;
             }
@@ -122,10 +122,10 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         } catch (SAXException e) {
             String exceptionMessage = e.getMessage();
             log.error("Received invalid UILQuery from {}, {}", content.getFromPartyId(), exceptionMessage);
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, exceptionMessage, ErrorCodesEnum.XML_ERROR.name()));
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, exceptionMessage, ErrorCodesEnum.XML_ERROR.name(), RequestType.UIL));
         } catch (IllegalArgumentException | IOException e) {
             log.error("Something went wrong when validating UILQuery from{}", content.getFromPartyId(), e);
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, e.getMessage(), ErrorCodesEnum.XML_ERROR.name()));
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, e.getMessage(), ErrorCodesEnum.XML_ERROR.name(), RequestType.UIL));
         }
     }
 
@@ -139,43 +139,34 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         } catch (SAXException e) {
             String exceptionMessage = e.getMessage();
             log.error("Received invalid UILResponse from {}, {}", content.getFromPartyId(), exceptionMessage);
-            String conversationId = notificationDto.getContent().getConversationId();
-            UilRequestEntity request = this.findRequestByControlRequestId(conversationId);
-            if (request != null) {
-                updateRequestWithError(exceptionMessage, request);
-            } else {
-                this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, exceptionMessage, ErrorCodesEnum.XML_ERROR.name()));
-            }
+            handleInvalidResponse(body, exceptionMessage, BAD_GATEWAY, notificationDto, content);
         } catch (IllegalArgumentException | IOException e) {
             log.error("Something went wrong when validating UILResponse from{}", content.getFromPartyId(), e);
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_UIL_SEARCH, e.getMessage(), ErrorCodesEnum.XML_ERROR.name()));
+            handleInvalidResponse(body, e.getMessage(), INTERNAL_SERVER_ERROR, notificationDto, content);
         }
     }
 
-    private void updateRequestWithError(String exceptionMessage, UilRequestEntity request) {
+    private void handleInvalidResponse(String body, String exceptionMessage, EDeliveryStatus badGateway, NotificationDto notificationDto, NotificationContentDto content) {
+        final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(body);
+        uilResponse.setDescription(exceptionMessage);
+        uilResponse.setStatus(badGateway.getCode());
+        this.findByRequestId(uilResponse.getRequestId()).ifPresentOrElse(uilRequestDto -> manageResponse(notificationDto, uilRequestDto, uilResponse, content), () -> log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB));
+    }
+
+    @Override
+    public void updateRequestWithError(String exceptionMessage, UilRequestEntity request) {
         ErrorEntity errorEntity = ErrorEntity.builder()
                 .errorCode(ErrorCodesEnum.XML_ERROR.name())
                 .errorDescription(exceptionMessage).build();
         request.setError(errorEntity);
-        if (request.getControl().isExternalAsk()) {
+        ControlEntity control = request.getControl();
+        if (control.isExternalAsk()) {
             this.sendRequest(getMapperUtils().requestToRequestDto(request, UilRequestDto.class));
         } else {
-            request.getControl().setStatus(StatusEnum.ERROR);
-            request.getControl().setError(errorEntity);
+            control.setStatus(StatusEnum.ERROR);
+            control.setError(errorEntity);
             this.updateStatus(request, ERROR);
         }
-    }
-
-    private UilRequestEntity findRequestByControlRequestId(String requestId) {
-        Preconditions.checkArgument(requestId != null, "Request Id must not be null");
-        List<UilRequestEntity> requestsByControlRequestId = uilRequestRepository.findByControlRequestId(requestId);
-        if (CollectionUtils.isNotEmpty(requestsByControlRequestId)) {
-            if (requestsByControlRequestId.size() > 1) {
-                throw new AmbiguousIdentifierException(format("Request with id '%s', is not unique, %d controls found!", requestId, requestsByControlRequestId.size()));
-            } else {
-                return requestsByControlRequestId.get(0);
-            }
-        } else throw new RequestNotFoundException(format("Request with id '%s', not found!", requestId));
     }
 
     private void manageResponse(final NotificationDto notificationDto, final UilRequestDto uilRequestDto, final UILResponse uilResponse, final NotificationContentDto content) {

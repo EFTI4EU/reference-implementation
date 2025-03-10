@@ -343,7 +343,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                 .build();
 
         doThrow(new SAXException("Error occurred")).when(validationService).validateXml(anyString());
-        Mockito.when(uilRequestRepository.findByControlRequestId(any())).thenReturn(List.of(uilRequestEntity));
+        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
+        when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
 
         uilRequestService.manageResponseReceived(notificationDto);
 
