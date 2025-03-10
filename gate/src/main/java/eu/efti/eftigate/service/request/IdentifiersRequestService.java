@@ -228,7 +228,6 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 .orElseThrow(() -> new RequestNotFoundException("couldn't find Consignment request for messageId: " + eDeliveryMessageId));
     }
 
-    @Override
     public void updateRequestWithError(String exceptionMessage, IdentifiersRequestEntity request) {
         ErrorEntity errorEntity = ErrorEntity.builder()
                 .errorCode(ErrorCodesEnum.XML_ERROR.name())

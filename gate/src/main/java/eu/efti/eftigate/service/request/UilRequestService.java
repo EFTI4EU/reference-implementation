@@ -17,8 +17,6 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
-import eu.efti.eftigate.entity.ControlEntity;
-import eu.efti.eftigate.entity.ErrorEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
@@ -151,22 +149,6 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         uilResponse.setDescription(exceptionMessage);
         uilResponse.setStatus(badGateway.getCode());
         this.findByRequestId(uilResponse.getRequestId()).ifPresentOrElse(uilRequestDto -> manageResponse(notificationDto, uilRequestDto, uilResponse, content), () -> log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB));
-    }
-
-    @Override
-    public void updateRequestWithError(String exceptionMessage, UilRequestEntity request) {
-        ErrorEntity errorEntity = ErrorEntity.builder()
-                .errorCode(ErrorCodesEnum.XML_ERROR.name())
-                .errorDescription(exceptionMessage).build();
-        request.setError(errorEntity);
-        ControlEntity control = request.getControl();
-        if (control.isExternalAsk()) {
-            this.sendRequest(getMapperUtils().requestToRequestDto(request, UilRequestDto.class));
-        } else {
-            control.setStatus(StatusEnum.ERROR);
-            control.setError(errorEntity);
-            this.updateStatus(request, ERROR);
-        }
     }
 
     private void manageResponse(final NotificationDto notificationDto, final UilRequestDto uilRequestDto, final UILResponse uilResponse, final NotificationContentDto content) {
