@@ -14,8 +14,6 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
-import eu.efti.eftigate.entity.ControlEntity;
-import eu.efti.eftigate.entity.ErrorEntity;
 import eu.efti.eftigate.entity.NoteRequestEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
@@ -38,7 +36,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static eu.efti.commons.constant.EftiGateConstants.NOTES_TYPES;
-import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
 import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
 
@@ -171,21 +168,5 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     protected NoteRequestEntity findRequestByMessageIdOrThrow(final String eDeliveryMessageId) {
         return Optional.ofNullable(this.notesRequestRepository.findByEdeliveryMessageId(eDeliveryMessageId))
                 .orElseThrow(() -> new RequestNotFoundException("couldn't find Notes request for messageId: " + eDeliveryMessageId));
-    }
-
-    @Override
-    public void updateRequestWithError(String exceptionMessage, NoteRequestEntity request) {
-        ErrorEntity errorEntity = ErrorEntity.builder()
-                .errorCode(ErrorCodesEnum.XML_ERROR.name())
-                .errorDescription(exceptionMessage).build();
-        request.setError(errorEntity);
-        ControlEntity control = request.getControl();
-        if (control.isExternalAsk()) {
-            this.sendRequest(getMapperUtils().requestToRequestDto(request, NotesRequestDto.class));
-        } else {
-            control.setStatus(StatusEnum.ERROR);
-            control.setError(errorEntity);
-            this.updateStatus(request, ERROR);
-        }
     }
 }

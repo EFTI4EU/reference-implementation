@@ -78,8 +78,6 @@ public abstract class RequestService<T extends RequestEntity> {
 
     protected abstract T findRequestByMessageIdOrThrow(final String eDeliveryMessageId);
 
-    public abstract void updateRequestWithError(final String exceptionMessage, T request);
-
     public abstract List<T> findAllForControlId(final int controlId);
 
     public void createAndSendRequest(final ControlDto controlDto, final String destinationUrl) {
