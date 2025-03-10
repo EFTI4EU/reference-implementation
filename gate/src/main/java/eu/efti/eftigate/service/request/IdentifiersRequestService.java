@@ -147,9 +147,9 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 identifiersControlUpdateDelegateService.updateExistingControl(response, fromPartyId);
                 identifiersControlUpdateDelegateService.setControlNextStatus(requestId);
                 IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByControlRequestIdAndGateIdDest(requestId, fromPartyId);
-
+                ControlDto controlDto = getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl());
                 //log fti021
-                getLogManager().logReceivedMessage(getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl()), GATE, GATE, body, fromPartyId,
+                getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId,
                         getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
             }
         } catch (SAXException e) {
