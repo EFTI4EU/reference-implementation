@@ -100,9 +100,9 @@ batch:
       cron: {{ batch.identifier.cron }}
       activated: {{ batch.identifier.activated }}
       deactivation-delay:
-        three: {{ batch.identifier.deactivation-delay.three }}
-        other: {{ batch.identifier.deactivation-delay.other }}
-        null-delivery-date: {{ batch.identifier.deactivation-delay.null-delivery-date }}
+        three: {{ batch.identifier.deactivation_delay.three }}
+        other: {{ batch.identifier.deactivation_delay.other }}
+        null-delivery-date: {{ batch.identifier.deactivation_delay.null_delivery_date }}
 
 springdoc:
   swagger-ui:
