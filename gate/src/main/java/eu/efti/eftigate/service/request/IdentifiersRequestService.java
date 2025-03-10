@@ -8,6 +8,7 @@ import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.SearchParameter;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
+import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
@@ -19,6 +20,8 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
+import eu.efti.eftigate.entity.ControlEntity;
+import eu.efti.eftigate.entity.ErrorEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
@@ -49,6 +52,7 @@ import java.util.Optional;
 
 import static eu.efti.commons.constant.EftiGateConstants.IDENTIFIERS_TYPES;
 import static eu.efti.commons.enums.ErrorCodesEnum.XML_ERROR;
+import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
 import static eu.efti.commons.enums.RequestStatusEnum.RECEIVED;
 import static eu.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
@@ -119,13 +123,13 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
             super.sendRequest(updatedRequest);
         } catch (SAXException e) {
             log.error("Received invalid IdentifierQuery from {}, {}", content.getFromPartyId(), e.getMessage());
-            RequestDto errorRequestDto = this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, e.getMessage(), XML_ERROR.name());
+            RequestDto errorRequestDto = this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, e.getMessage(), XML_ERROR.name(), RequestType.IDENTIFIER);
             this.sendRequest(errorRequestDto);
             getLogManager().logReceivedMessage(errorRequestDto.getControl(), GATE, GATE, body, fromPartyId, StatusEnum.ERROR, LogManager.FTI_019);
 
         } catch (IllegalArgumentException | IOException e) {
             log.error("Something went wrong when validating IdentifierQuery from{}", content.getFromPartyId(), e);
-            RequestDto errorRequestDto = this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, e.getMessage(), XML_ERROR.name());
+            RequestDto errorRequestDto = this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, e.getMessage(), XML_ERROR.name(), RequestType.IDENTIFIER);
             this.sendRequest(errorRequestDto);
             getLogManager().logReceivedMessage(errorRequestDto.getControl(), GATE, GATE, body, fromPartyId, StatusEnum.ERROR, LogManager.FTI_019);
         }
@@ -149,11 +153,16 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                         getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
             }
         } catch (SAXException e) {
-            log.error("Received invalid IdentifierResponse from {}, {}", content.getFromPartyId(), e.getMessage());
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, e.getMessage(), XML_ERROR.name()));
+            String exceptionMessage = e.getMessage();
+            log.error("Received invalid IdentifierResponse from {}, {}", content.getFromPartyId(), exceptionMessage);
+            String conversationId = notificationDto.getContent().getConversationId();
+            IdentifiersRequestEntity request = identifiersRequestRepository.findByControlRequestIdAndGateIdDest(conversationId, notificationDto.getContent().getFromPartyId());
+            if (request != null) {
+                this.updateRequestWithError(exceptionMessage, request);
+            }
         } catch (IllegalArgumentException | IOException e) {
             log.error("Something went wrong when validating IdentifierResponse from{}", content.getFromPartyId(), e);
-            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, e.getMessage(), XML_ERROR.name()));
+            this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, e.getMessage(), XML_ERROR.name(), RequestType.IDENTIFIER));
         }
     }
 
@@ -217,6 +226,21 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     protected IdentifiersRequestEntity findRequestByMessageIdOrThrow(final String eDeliveryMessageId) {
         return Optional.ofNullable(this.identifiersRequestRepository.findByEdeliveryMessageId(eDeliveryMessageId))
                 .orElseThrow(() -> new RequestNotFoundException("couldn't find Consignment request for messageId: " + eDeliveryMessageId));
+    }
+
+    public void updateRequestWithError(String exceptionMessage, IdentifiersRequestEntity request) {
+        ErrorEntity errorEntity = ErrorEntity.builder()
+                .errorCode(ErrorCodesEnum.XML_ERROR.name())
+                .errorDescription(exceptionMessage).build();
+        request.setError(errorEntity);
+        ControlEntity control = request.getControl();
+        if (control.isExternalAsk()) {
+            this.sendRequest(getMapperUtils().requestToRequestDto(request, IdentifiersRequestDto.class));
+        } else {
+            control.setStatus(StatusEnum.ERROR);
+            control.setError(errorEntity);
+            this.updateStatus(request, ERROR);
+        }
     }
 
     @Override
