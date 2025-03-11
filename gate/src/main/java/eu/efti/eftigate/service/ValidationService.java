@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,56 +26,45 @@ import java.util.List;
 @Slf4j
 public class ValidationService {
 
-    Validator validator;
-
-    SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
     @Value("${gate.xsd.path:classpath:xsd/edelivery/gate.xsd}")
     private String gateXsd;
 
-    @PostConstruct
-    public void postConstruct() {
-        try {
-            validator = initValidator();
-        } catch (FileNotFoundException | SAXException e) {
-            log.error("can't initialize ValidationService", e);
-            throw new IllegalArgumentException();
-        }
-    }
-
     private File getFile() throws FileNotFoundException {
-        return ResourceUtils.getFile(gateXsd);
-    }
-
-    private Validator initValidator() throws FileNotFoundException, SAXException {
-        Source schemaFile = new StreamSource(getFile());
-
-        Schema schema = factory.newSchema(schemaFile);
-        return schema.newValidator();
+        File file = ResourceUtils.getFile(gateXsd);
+        if (!file.exists()) {
+            throw new FileNotFoundException(file.getAbsolutePath() + " not found");
+        }
+        return file;
     }
 
     public void validateXml(final String xml) throws SAXException, IOException {
+        File xsd = getFile();
+        final Source schemaFile = new StreamSource(xsd);
+        final Source xmlFile = new StreamSource(new StringReader(xml));
+        final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);//NOSONAR
+        Schema schema = schemaFactory.newSchema(schemaFile);
+        Validator validator = schema.newValidator();
         List<SAXParseException> exceptions = new ArrayList<>();
         validator.setErrorHandler(new ErrorHandler() {
-
             @Override
-            public void warning(final SAXParseException exception) throws SAXException {
+            public void warning(final SAXParseException exception) {
                 log.warn(exception.getMessage());
             }
 
             @Override
-            public void error(final SAXParseException exception) throws SAXException {
+            public void error(final SAXParseException exception) {
                 log.error(exception.getMessage());
                 exceptions.add(exception);
             }
 
             @Override
-            public void fatalError(final SAXParseException exception) throws SAXException {
+            public void fatalError(final SAXParseException exception) {//NOSONAR
                 log.error(exception.getMessage());
                 exceptions.add(exception);
             }
         });
-        validator.validate(new StreamSource(new StringReader(xml)));
+        validator.validate(xmlFile);
         if (CollectionUtils.isNotEmpty(exceptions)) {
             throw exceptions.get(0);
         }

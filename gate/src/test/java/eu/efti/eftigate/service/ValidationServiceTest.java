@@ -24,7 +24,6 @@ class ValidationServiceTest {
     void before() {
         validationService = new ValidationService();
         ReflectionTestUtils.setField(validationService, "gateXsd", "classpath:xsd/edelivery/gate.xsd");
-        validationService.postConstruct();
     }
 
     @ParameterizedTest
