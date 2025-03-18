@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:types="http://efti.eu/v1/types"
-            targetNamespace="http://efti.eu/v1/types" elementFormDefault="qualified">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:codes="http://efti.eu/v1/codes"
+            xmlns:types="http://efti.eu/v1/types" targetNamespace="http://efti.eu/v1/types"
+            elementFormDefault="qualified">
+  <xsd:import namespace="http://efti.eu/v1/codes" schemaLocation="../codes/codes.xsd"/>
   <xsd:simpleType name="Decimal16d6">
     <xsd:restriction base="xsd:decimal">
       <xsd:totalDigits value="16"/>
@@ -87,4 +89,39 @@
       <xsd:maxLength value="70"/>
     </xsd:restriction>
   </xsd:simpleType>
+  <xsd:complexType name="LocalizedString128">
+    <xsd:simpleContent>
+      <xsd:extension base="types:LimitedString128">
+        <xsd:attribute name="languageId" type="codes:LanguageCode"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="LocalizedString256">
+    <xsd:simpleContent>
+      <xsd:extension base="types:LimitedString256">
+        <xsd:attribute name="languageId" type="codes:LanguageCode"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="LocalizedString35">
+    <xsd:simpleContent>
+      <xsd:extension base="types:LimitedString35">
+        <xsd:attribute name="languageId" type="codes:LanguageCode"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="LocalizedString512">
+    <xsd:simpleContent>
+      <xsd:extension base="types:LimitedString512">
+        <xsd:attribute name="languageId" type="codes:LanguageCode"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="LocalizedString70">
+    <xsd:simpleContent>
+      <xsd:extension base="types:LimitedString70">
+        <xsd:attribute name="languageId" type="codes:LanguageCode"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
 </xsd:schema>
