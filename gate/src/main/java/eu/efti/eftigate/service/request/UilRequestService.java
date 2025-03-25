@@ -306,7 +306,8 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         if (responseStatus.isEmpty()) {
             throw new TechnicalException("status " + uilResponseStatus + " not found");
         }
-        switch (responseStatus.get()) {
+        EDeliveryStatus eDeliveryStatus = responseStatus.get();
+        switch (eDeliveryStatus) {
             case GATEWAY_TIMEOUT -> {
                 requestDto.setStatus(TIMEOUT);
                 controlDto.setStatus(StatusEnum.TIMEOUT);
@@ -318,10 +319,11 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                 requestDto.setStatus(RequestStatusEnum.SUCCESS);
                 controlDto.setStatus(COMPLETE);
             }
-            case BAD_REQUEST, NOT_FOUND -> {
+            case BAD_REQUEST, NOT_FOUND, BAD_GATEWAY -> {
                 requestDto.setStatus(ERROR);
-                requestDto.setError(setErrorFromResponse(uilResponse));
-                controlDto.setError(setErrorFromResponse(uilResponse));
+                ErrorDto errorFromResponse = getErrorFromResponse(uilResponse, eDeliveryStatus);
+                requestDto.setError(errorFromResponse);
+                controlDto.setError(errorFromResponse);
                 controlDto.setStatus(StatusEnum.ERROR);
             }
             default -> throw new TechnicalException("status " + uilResponseStatus + " not found");
@@ -333,21 +335,14 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         }
     }
 
-    private ErrorDto setErrorFromResponse(final UILResponse uilResponse) {
+    private ErrorDto getErrorFromResponse(final UILResponse uilResponse, EDeliveryStatus eDeliveryStatus) {
         String uilResponseDescription = uilResponse.getDescription();
         if (StringUtils.isBlank(uilResponseDescription)) {
             return ErrorDto.fromErrorCode(ErrorCodesEnum.DATA_NOT_FOUND);
         }
-        return getErrorCodeFromDescription(uilResponseDescription);
-    }
-
-    private ErrorDto getErrorCodeFromDescription(final String description) {
-        Optional<ErrorCodesEnum> errorCode = ErrorCodesEnum.fromMessage(description);
-        if (errorCode.isPresent()) {
-            return ErrorDto.fromErrorCode(errorCode.get());
-        } else {
-            return ErrorDto.fromAnyError(description);
-        }
+        return ErrorDto.builder()
+                .errorCode(eDeliveryStatus.name())
+                .errorDescription(uilResponseDescription).build();
     }
 
     public void updateStatus(final UilRequestDto uilRequestDto, final RequestStatusEnum status, final String eDeliveryMessageId) {

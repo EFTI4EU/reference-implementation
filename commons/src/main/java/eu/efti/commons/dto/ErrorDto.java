@@ -20,10 +20,4 @@ public class ErrorDto {
                 .errorCode(errorCode.name())
                 .errorDescription(errorCode.getMessage()).build();
     }
-
-    public static ErrorDto fromAnyError(final String errorDescription) {
-        return ErrorDto.builder()
-                .errorCode(ErrorCodesEnum.DEFAULT_ERROR.name())
-                .errorDescription(errorDescription).build();
-    }
 }
