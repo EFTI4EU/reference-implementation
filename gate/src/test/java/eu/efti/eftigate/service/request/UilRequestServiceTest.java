@@ -34,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import java.io.IOException;
 import java.util.List;
@@ -128,7 +129,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                 .build();
         final UilRequestEntity uilRequestEntityWithError = mapperUtils.requestDtoToRequestEntity(requestDtoWithError, UilRequestEntity.class);
 
-        Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityWithError);
+        when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityWithError);
 
         uilRequestService.manageSendError(requestDtoWithError);
 
@@ -161,8 +162,8 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
-        Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
+        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
+        when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
 
         uilRequestService.manageResponseReceived(notificationDto);
 
@@ -198,9 +199,9 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
-        Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
-        Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
+        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
+        when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
+        when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
 
         uilRequestService.manageResponseReceived(notificationDto);
 
@@ -236,15 +237,98 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
-        Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
-        Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
+        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
+        when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
+        when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
 
         uilRequestService.manageResponseReceived(notificationDto);
 
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
         verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
         assertEquals(ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
+    }
+
+    @Test
+    void manageResponseReceivedBadGatewayCodeTest() {
+        controlEntityError.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
+        savedControlDto.setStatus(StatusEnum.ERROR);
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
+        final String content = """
+                        <uilResponse
+                                xmlns="http://efti.eu/v1/edelivery"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                                status="502"
+                                requestId="42">
+                                <description>cvc-attribute.3: The value 'GRM' of attribute 'unitId' on element 'ns2:volumeMeasure' is not valid with respect to its type, 'VolumeUnit'.</description>
+                        </uilResponse>
+                """;
+
+        final NotificationDto notificationDto = NotificationDto.builder()
+                .notificationType(NotificationType.RECEIVED)
+                .content(NotificationContentDto.builder()
+                        .body(content)
+                        .contentType("application/json")
+                        .fromPartyId("http://efti.gate.listenbourg.eu")
+                        .messageId(messageId)
+                        .build())
+                .build();
+
+        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
+        when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
+        when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
+
+        uilRequestService.manageResponseReceived(notificationDto);
+
+        verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
+        assertEquals(ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
+        assertEquals("cvc-attribute.3: The value 'GRM' of attribute 'unitId' on element 'ns2:volumeMeasure' is not valid with respect to its type, 'VolumeUnit'.",
+                uilRequestEntityArgumentCaptor.getValue().getError().getErrorDescription());
+    }
+
+    @Test
+    void manageResponseReceivedOkayAndValidationFailsTest() throws IOException, SAXException {
+        controlEntityError.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
+        savedControlDto.setStatus(StatusEnum.ERROR);
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        final String messageId = "e94806cd-e52b-11ee-b7d3-0242ac120012@domibus.eu";
+        final String content = """
+                        <uilResponse
+                                xmlns="http://efti.eu/v1/edelivery"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+                                status="200"
+                                requestId="42">
+                        </uilResponse>
+                """;
+
+        final NotificationDto notificationDto = NotificationDto.builder()
+                .notificationType(NotificationType.RECEIVED)
+                .content(NotificationContentDto.builder()
+                        .body(content)
+                        .contentType("application/json")
+                        .fromPartyId("http://efti.gate.listenbourg.eu")
+                        .messageId(messageId)
+                        .build())
+                .build();
+
+        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
+        when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
+        when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
+        doThrow(new SAXParseException("cvc-enumeration-valid: Value 'KGM' is not facet-valid with respect to enumeration '[MTQ, LTR]'. It must be a value from the enumeration.", null, null, 1, 20))
+                .when(validationService).validateXml(content);
+
+        uilRequestService.manageResponseReceived(notificationDto);
+
+        verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
+        verify(logManager).logReceivedMessage(any(), any(), any(), any(), any(), any(), any());
+        assertEquals(ERROR, uilRequestEntityArgumentCaptor.getValue().getStatus());
+        assertEquals("cvc-enumeration-valid: Value 'KGM' is not facet-valid with respect to enumeration '[MTQ, LTR]'. It must be a value from the enumeration.", uilRequestEntityArgumentCaptor.getValue().getError().getErrorDescription());
+        assertEquals("BAD_GATEWAY", uilRequestEntityArgumentCaptor.getValue().getError().getErrorCode());
     }
 
     @Test
@@ -273,9 +357,9 @@ class UilRequestServiceTest extends BaseServiceTest {
                         .build())
                 .build();
 
-        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
-        Mockito.when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
-        Mockito.when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
+        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntityError);
+        when(uilRequestRepository.save(any())).thenReturn(uilRequestEntityError);
+        when(controlService.save(any(ControlDto.class))).thenReturn(savedControlDto);
 
         uilRequestService.manageResponseReceived(notificationDto);
 
@@ -343,7 +427,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                 .build();
 
         doThrow(new SAXException("Error occurred")).when(validationService).validateXml(anyString());
-        Mockito.when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
+        when(uilRequestRepository.findByControlRequestIdAndStatus(any(), any())).thenReturn(uilRequestEntity);
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
 
         uilRequestService.manageResponseReceived(notificationDto);
