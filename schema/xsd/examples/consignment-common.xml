@@ -594,8 +594,8 @@
     <hazardTypeCode>token</hazardTypeCode>
     <includedFuel>
       <typeCode>token</typeCode>
-      <volumeMeasure unitId="TNE">1000.000000000000</volumeMeasure>
-      <weightMeasure unitId="LTR">1000.000000000000</weightMeasure>
+      <volumeMeasure unitId="MTQ">1000.000000000000</volumeMeasure>
+      <weightMeasure unitId="TNE">1000.000000000000</weightMeasure>
       <workingPressureMeasure unitId="token">1000.000000000000</workingPressureMeasure>
     </includedFuel>
     <information>string</information>
@@ -826,7 +826,7 @@
     <requestedOccurrenceDateTime formatId="102">202401010000</requestedOccurrenceDateTime>
     <scheduledOccurrenceDateTime formatId="203">202401010000</scheduledOccurrenceDateTime>
     <scheduledOccurrencePeriod>
-      <durationMeasure unitId="token">1000.000000000000</durationMeasure>
+      <durationMeasure unitId="DAY">1000.000000000000</durationMeasure>
       <endDateTime formatId="102">202401010000</endDateTime>
       <maximumDurationMeasure unitId="DAY">1000.00</maximumDurationMeasure>
       <startDateTime formatId="102">202401010000</startDateTime>
@@ -1043,8 +1043,8 @@
       <hazardTypeCode>token</hazardTypeCode>
       <includedFuel>
         <typeCode>token</typeCode>
-        <volumeMeasure unitId="KGM">1000.000000000000</volumeMeasure>
-        <weightMeasure unitId="MTQ">1000.000000000000</weightMeasure>
+        <volumeMeasure unitId="LTR">1000.000000000000</volumeMeasure>
+        <weightMeasure unitId="TNE">1000.000000000000</weightMeasure>
         <workingPressureMeasure unitId="token">1000.000000000000</workingPressureMeasure>
       </includedFuel>
       <information>string</information>
