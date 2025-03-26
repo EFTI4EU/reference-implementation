@@ -40,7 +40,6 @@ public class ValidationService {
 
     public void validateXml(final String xml) throws SAXException, IOException {
         File xsd = getFile();
-        log.debug("Validating XML with xsd {}", xsd.getAbsolutePath());
         final Source schemaFile = new StreamSource(xsd);
         final Source xmlFile = new StreamSource(new StringReader(xml));
         final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);//NOSONAR
@@ -67,10 +66,7 @@ public class ValidationService {
         });
         validator.validate(xmlFile);
         if (CollectionUtils.isNotEmpty(exceptions)) {
-            log.debug("Validation exceptions found: {}", exceptions.size());
             throw exceptions.get(0);
-        } else {
-            log.debug("Validation successful");
         }
     }
 }
