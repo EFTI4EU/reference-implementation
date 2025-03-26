@@ -40,7 +40,7 @@
         <dependency>
             <groupId>eu.efti.datatools</groupId>
             <artifactId>schema</artifactId>
-            <version>0.1.0</version>
+            <version>0.3.1</version>
         </dependency>
 
 
