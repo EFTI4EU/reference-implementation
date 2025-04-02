@@ -6,6 +6,7 @@ import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
+import eu.efti.eftilogger.service.ReportingRegistryLogService;
 import eu.efti.identifiersregistry.IdentifiersMapper;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.Notification;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -35,6 +37,7 @@ public class IdentifiersService {
     private final IdentifiersMapper mapper;
     private final AuditRegistryLogService auditRegistryLogService;
     private final SerializeUtils serializeUtils;
+    private final ReportingRegistryLogService reportingRegistryLogService;
 
     @Value("${gate.owner}")
     private String gateOwner;
@@ -79,6 +82,8 @@ public class IdentifiersService {
             log.info("creating new entry for dataset id {}", identifiers.getDatasetId());
         }
         identifiersRepository.save(consignment);
+        //log reporting Upload Identifiiers
+        reportingRegistryLogService.logRegistryRequest(gateOwner, gateCountry, ComponentType.GATE, gateOwner, gateCountry, identifiersDto);
         //log fti005
         auditRegistryLogService.log(identifiersDto, gateOwner, gateCountry, ComponentType.GATE, ComponentType.GATE, null, gateOwner, bodyBase64, FTI_005);
     }

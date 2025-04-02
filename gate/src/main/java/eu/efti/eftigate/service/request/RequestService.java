@@ -16,6 +16,7 @@ import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.entity.RequestEntity;
+import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Optional;
 
 import static eu.efti.commons.constant.EftiGateConstants.EXTERNAL_REQUESTS_TYPES;
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
@@ -65,6 +67,8 @@ public abstract class RequestService<T extends RequestEntity> {
     public abstract boolean supports(final RequestTypeEnum requestTypeEnum);
 
     public abstract boolean supports(final String requestType);
+
+    public abstract Optional<RequestDto> findRequestDtoByRequestType(ControlDto controlDto);
 
     public abstract RequestDto createRequest(final ControlDto controlDto);
 
@@ -200,5 +204,4 @@ public abstract class RequestService<T extends RequestEntity> {
         requestDto.setGateIdDest(requestDto.getControl().getFromGateId());
         sendRequest(requestDto);
     }
-
 }

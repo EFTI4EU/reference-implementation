@@ -29,12 +29,14 @@ import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.AmbiguousIdentifierException;
+import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.ControlRepository;
 import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.IdentifiersRequestService;
 import eu.efti.eftigate.service.request.NotesRequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.edelivery.Identifier;
 import eu.efti.v1.edelivery.IdentifierQuery;
@@ -93,6 +95,9 @@ class ControlServiceTest extends AbstractServiceTest {
     private LogManager logManager;
 
     @Mock
+    private ReportingRequestLogService reportingRequestLogService;
+
+    @Mock
     private RequestServiceFactory requestServiceFactory;
 
     @Mock
@@ -140,7 +145,7 @@ class ControlServiceTest extends AbstractServiceTest {
                         .password(PASSWORD)
                         .username(USERNAME).build()).build();
         controlService = new ControlService(controlRepository, eftiGateIdResolver, identifiersService, mapperUtils,
-                requestServiceFactory, logManager, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
+                requestServiceFactory, logManager, reportingRequestLogService, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
                 gateProperties, serializeUtils);
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
         final StatusEnum status = StatusEnum.PENDING;
@@ -372,6 +377,8 @@ class ControlServiceTest extends AbstractServiceTest {
         controlEntity.setStatus(StatusEnum.COMPLETE);
         controlEntity.setRequests(Collections.singletonList(uilRequestEntity));
         when(controlRepository.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
+        when(controlRepository.save(any())).thenReturn(controlEntity);
 
         final RequestIdDto requestIdDtoResult = controlService.getControlEntity(requestId);
 
@@ -386,6 +393,8 @@ class ControlServiceTest extends AbstractServiceTest {
     void getControlEntitySuccessTestWhenStatusComplete() {
         controlEntity.setStatus(StatusEnum.COMPLETE);
         when(controlRepository.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
+         when(controlRepository.save(any())).thenReturn(controlEntity);
 
         final RequestIdDto requestIdDtoResult = controlService.getControlEntity(requestId);
 
@@ -399,6 +408,8 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void getControlEntityNotFoundTest() {
         when(controlRepository.findByRequestId(any())).thenReturn(Optional.empty());
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
+        when(controlRepository.save(any())).thenReturn(controlEntity);
 
         final RequestIdDto requestIdDtoResult = controlService.getControlEntity(requestId);
 

@@ -18,15 +18,21 @@ import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.generator.id.MessageIdGenerator;
 import eu.efti.eftigate.mapper.MapperUtils;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftilogger.model.ComponentType;
+import eu.efti.eftilogger.model.RequestTypeLog;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.time.OffsetDateTime;
+import java.util.Objects;
 
 import static eu.efti.eftilogger.model.ComponentType.GATE;
 import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
@@ -43,7 +49,9 @@ public class RabbitListenerService {
     private final ApIncomingService apIncomingService;
     private final MapperUtils mapperUtils;
     private final LogManager logManager;
+    private final ReportingRequestLogService reportingRequestLogService;
     private final MessageIdGenerator messageIdGenerator;
+    private final EftiGateIdResolver eftiGateIdResolver;
 
 
     @RabbitListener(queues = "${spring.rabbitmq.queues.eftiReceiveMessageQueue:efti.receive-messages.q}")
@@ -79,12 +87,18 @@ public class RabbitListenerService {
                 getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, eDeliveryMessageId);
             }
             this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto, eDeliveryMessageId));
+            requestDto.setSentDate(OffsetDateTime.now());
+            getRequestService(requestDto.getRequestType()).save(requestDto);
         } catch (final SendRequestException e) {
             log.error("error while sending request" + e);
             getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
             logSentMessage(rabbitRequestDto, requestTypeEnum, requestDto, receiver);
+            ControlDto controlDto = requestDto.getControl();
+            if (RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH.equals(controlDto.getRequestType()) && !gateProperties.isCurrentGate(requestDto.getGateIdDest()) && !RequestType.NOTE.equals(requestDto.getRequestType())) {
+                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.UIL_ACK, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), GATE, gateProperties.getOwner(), gateProperties.getCountry(), false);
+            }
         }
     }
 

@@ -22,6 +22,8 @@ import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.NotesRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
 import eu.efti.eftigate.service.ValidationService;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,6 +72,10 @@ class NotesRequestServiceTest extends BaseServiceTest {
     private final NoteRequestEntity noteRequestEntity = new NoteRequestEntity();
     private final UilRequestEntity uilRequestEntity = new UilRequestEntity();
     private final NotesRequestDto notesRequestDto = new NotesRequestDto();
+
+    @Mock
+    private ReportingRequestLogService reportingRequestLogService;
+
     @Mock
     private ValidationService validationService;
 
@@ -82,7 +88,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
         super.setEntityRequestCommonAttributes(uilRequestEntity);
 
         controlEntity.setRequests(List.of(uilRequestEntity, noteRequestEntity));
-        notesRequestService = new NotesRequestService(notesRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager, validationService);
+        notesRequestService = new NotesRequestService(notesRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager, validationService, reportingRequestLogService, eftiGateIdResolver);
         final Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(NotesRequestService.class);
         memoryAppender = MemoryAppender.createInitializedMemoryAppender(Level.INFO, memoryAppenderTestLogger);
     }

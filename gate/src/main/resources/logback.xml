@@ -20,7 +20,9 @@
 
     <property name="LOG_STATS_NAME" value="${HOSTNAME}-stats"/>
     <property name="LOG_REQUEST_NAME" value="${HOSTNAME}-request"/>
+    <property name="LOG_REPORTING_REQUEST_NAME" value="${HOSTNAME}-reporting-request"/>
     <property name="LOG_REGISTRY_NAME" value="${HOSTNAME}-registry"/>
+    <property name="LOG_REPORTING_REGISTRY_NAME" value="${HOSTNAME}-reporting-registry"/>
 
 
     <appender name="RollingFile-Appender"
@@ -85,6 +87,29 @@
         </encoder>
     </appender>
 
+    <!-- Appender for Reporting-Requests -->
+    <appender name="RollingFile-Reporting-Request-Appender"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                <marker>REPORTING_REQUEST</marker>
+            </evaluator>
+            <OnMismatch>DENY</OnMismatch>
+            <OnMatch>ACCEPT</OnMatch>
+        </filter>
+        <file>${LOG_PATH}/reporting-requests/${LOG_REPORTING_REQUEST_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_ARCHIVE}/${LOG_REPORTING_REQUEST_NAME}-%i-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxFileSize>${LOG_MAX_FILE_SIZE}</maxFileSize>
+            <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${LOG_TOTAL_SIZE}</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
     <!-- Appender for Registry -->
     <appender name="RollingFile-Registry-Appender"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -98,6 +123,29 @@
         <file>${LOG_PATH}/registry/${LOG_REGISTRY_NAME}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_ARCHIVE}/${LOG_REGISTRY_NAME}-%i-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxFileSize>${LOG_MAX_FILE_SIZE}</maxFileSize>
+            <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${LOG_TOTAL_SIZE}</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender for REPORTING_REGISTRY -->
+    <appender name="RollingFile-Reporting-Registry-Appender"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                <marker>REPORTING_REGISTRY</marker>
+            </evaluator>
+            <OnMismatch>DENY</OnMismatch>
+            <OnMatch>ACCEPT</OnMatch>
+        </filter>
+        <file>${LOG_PATH}/reporting-registry/${LOG_REPORTING_REGISTRY_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_ARCHIVE}/${LOG_REPORTING_REGISTRY_NAME}-%i-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxFileSize>${LOG_MAX_FILE_SIZE}</maxFileSize>
             <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
             <totalSizeCap>${LOG_TOTAL_SIZE}</totalSizeCap>
@@ -125,9 +173,17 @@
             <OnMismatch>NEUTRAL</OnMismatch>
             <OnMatch>DENY</OnMatch>
         </filter>
+
         <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
             <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
-                <marker>STATS</marker>
+                <marker>REPORTING_REQUEST</marker>
+            </evaluator>
+            <OnMismatch>NEUTRAL</OnMismatch>
+            <OnMatch>DENY</OnMatch>
+        </filter>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                <marker>REPORTING_REGISTRY</marker>
             </evaluator>
             <OnMismatch>NEUTRAL</OnMismatch>
             <OnMatch>DENY</OnMatch>
@@ -142,14 +198,18 @@
         <appender-ref ref="RollingFile-Appender"/>
         <appender-ref ref="RollingFile-Stats-Appender"/>
         <appender-ref ref="RollingFile-Request-Appender"/>
+        <appender-ref ref="RollingFile-Reporting-Request-Appender"/>
         <appender-ref ref="RollingFile-Registry-Appender"/>
+        <appender-ref ref="RollingFile-Reporting-Registry-Appender"/>
     </appender>
 
 
     <root level="INFO" additivity="false">
         <appender-ref ref="RollingFile-Stats-Appender"/>
         <appender-ref ref="RollingFile-Request-Appender"/>
+        <appender-ref ref="RollingFile-Reporting-Request-Appender"/>
         <appender-ref ref="RollingFile-Registry-Appender"/>
+        <appender-ref ref="RollingFile-Reporting-Registry-Appender"/>
         <appender-ref ref="Console-Appender"/>
     </root>
 

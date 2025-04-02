@@ -4,6 +4,8 @@ import eu.efti.commons.dto.UilDto;
 import eu.efti.eftigate.controller.api.ControlControllerApi;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.service.ControlService;
+import eu.efti.eftilogger.dto.LogRequestDto;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ControlController implements ControlControllerApi {
 
     private final ControlService controlService;
-
     @Override
     public ResponseEntity<RequestIdDto> requestUil(@RequestBody final UilDto uilDto) {
         log.info("POST on /control/uil with params gateId: {}, datasetId: {}, platformId: {}", uilDto.getGateId(), uilDto.getDatasetId(), uilDto.getPlatformId());

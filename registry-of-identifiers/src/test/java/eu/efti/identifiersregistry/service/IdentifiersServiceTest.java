@@ -2,6 +2,7 @@ package eu.efti.identifiersregistry.service;
 
 import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
+import eu.efti.eftilogger.service.ReportingRegistryLogService;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
@@ -47,11 +48,13 @@ class IdentifiersServiceTest extends AbstractServiceTest {
 
     private SaveIdentifiersRequestWrapper saveIdentifiersRequestWrapper;
     private Consignment consignment;
+    @Mock
+    private ReportingRegistryLogService reportingRegistryLogService;
 
     @BeforeEach
     public void before() {
         openMocks = MockitoAnnotations.openMocks(this);
-        service = new IdentifiersService(repository, mapperUtils, auditRegistryLogService, serializeUtils);
+        service = new IdentifiersService(repository, mapperUtils, auditRegistryLogService, serializeUtils,reportingRegistryLogService);
 
         ReflectionTestUtils.setField(service, "gateOwner", "france");
         ReflectionTestUtils.setField(service, "nullDeliveryDateMaxDayPassed", 90);

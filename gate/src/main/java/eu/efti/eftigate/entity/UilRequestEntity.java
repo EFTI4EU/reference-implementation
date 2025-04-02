@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-public class UilRequestEntity extends RequestEntity{
+public class UilRequestEntity extends RequestEntity {
     @Column(name = "reponsedata")
     private byte[] reponseData;
 }

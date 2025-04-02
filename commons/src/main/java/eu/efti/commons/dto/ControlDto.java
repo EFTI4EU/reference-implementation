@@ -35,6 +35,7 @@ public class ControlDto {
     private StatusEnum status;
     private String platformId;
     private String gateId;
+    private boolean isLogged;
     @Builder.Default
     private List<String> subsetIds = new ArrayList<>();
     private LocalDateTime createdDate;

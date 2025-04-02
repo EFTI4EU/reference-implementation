@@ -18,6 +18,8 @@ import eu.efti.eftigate.repository.IdentifiersRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
 import eu.efti.eftigate.service.IdentifiersControlUpdateDelegateService;
 import eu.efti.eftigate.service.ValidationService;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.codes.TransportEquipmentCategoryCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,6 +86,12 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     @Mock
     private final ValidationService validationService = new ValidationService();
 
+    @Mock
+    private EftiGateIdResolver eftiGateIdResolver;
+
+    @Mock
+    private ReportingRequestLogService reportingRequestLogService;
+
 
     @Override
     @BeforeEach
@@ -106,7 +114,7 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
                 .build();
 
         identifiersRequestService = new IdentifiersRequestService(identifiersRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties,
-                identifiersService, requestUpdaterService, serializeUtils, logManager, identifiersControlUpdateDelegateService, validationService);
+                identifiersService, requestUpdaterService, serializeUtils, logManager, identifiersControlUpdateDelegateService, validationService, reportingRequestLogService, eftiGateIdResolver);
     }
 
     @Test
