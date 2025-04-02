@@ -22,6 +22,8 @@ import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.UilRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
 import eu.efti.eftigate.service.ValidationService;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,7 +74,7 @@ class UilRequestServiceTest extends BaseServiceTest {
     private final UilRequestEntity uilRequestEntity = new UilRequestEntity();
     private final UilRequestEntity uilRequestEntityError = new UilRequestEntity();
     private final UilRequestEntity secondUilRequestEntity = new UilRequestEntity();
-
+    private final ReportingRequestLogService reportingRequestLogService = new ReportingRequestLogService(serializeUtils);
     @Mock
     private ValidationService validationService;
 
@@ -85,7 +87,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         super.setEntityRequestCommonAttributes(secondUilRequestEntity);
         controlEntity.setRequests(List.of(uilRequestEntity, secondUilRequestEntity));
         uilRequestService = new UilRequestService(uilRequestRepository, mapperUtils, rabbitSenderService, controlService,
-                gateProperties, requestUpdaterService, serializeUtils, validationService, logManager);
+                gateProperties, requestUpdaterService, serializeUtils, validationService, logManager, reportingRequestLogService, eftiGateIdResolver);
     }
 
     @Test

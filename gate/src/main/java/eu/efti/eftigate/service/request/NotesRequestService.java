@@ -23,7 +23,10 @@ import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
 import eu.efti.eftigate.service.ValidationService;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftilogger.model.ComponentType;
+import eu.efti.eftilogger.model.RequestTypeLog;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import eu.efti.v1.edelivery.PostFollowUpRequest;
 import eu.efti.v1.edelivery.UIL;
 import jakarta.xml.bind.JAXBElement;
@@ -46,7 +49,10 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     public static final String NOTE = "NOTE";
     private final NotesRequestRepository notesRequestRepository;
 
+    private final ReportingRequestLogService reportingRequestLogService;
     private final ValidationService validationService;
+
+    private final EftiGateIdResolver eftiGateIdResolver;
 
     public NotesRequestService(final NotesRequestRepository notesRequestRepository,
                                final MapperUtils mapperUtils,
@@ -56,10 +62,19 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
                                final RequestUpdaterService requestUpdaterService,
                                final SerializeUtils serializeUtils,
                                final LogManager logManager,
-                               final ValidationService validationService) {
+                               final ValidationService validationService,
+                               final ReportingRequestLogService reportingRequestLogService,
+                               final EftiGateIdResolver eftiGateIdResolver) {
         super(mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
         this.notesRequestRepository = notesRequestRepository;
         this.validationService = validationService;
+        this.reportingRequestLogService = reportingRequestLogService;
+        this.eftiGateIdResolver = eftiGateIdResolver;
+    }
+
+    @Override
+    public Optional<RequestDto> findRequestDtoByRequestType(ControlDto controlDto) {
+        throw new UnsupportedOperationException("Method not supported");
     }
 
     @Override
@@ -108,6 +123,8 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
             getControlService().getByRequestId(messageBody.getRequestId()).ifPresent(controlEntity -> {
                 final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(controlEntity);
                 sendLogNote(controlDto, false, body);
+                //log reporting note
+                reportingRequestLogService.logReportingRequest(controlDto, null, getGateProperties().getOwner(), getGateProperties().getCountry(), RequestTypeLog.NOTE, controlDto.getFromGateId() != null ? ComponentType.GATE : ComponentType.CA_APP, controlDto.getFromGateId(), controlDto.getFromGateId() != null ? eftiGateIdResolver.resolve(controlDto.getFromGateId()) : null, ComponentType.GATE, getGateProperties().getOwner(), getGateProperties().getCountry(), false);
                 controlDto.setNotes(messageBody.getMessage());
                 createAndSendRequest(controlDto, messageBody.getUil().getPlatformId());
                 markMessageAsDownloaded(notificationDto.getMessageId());

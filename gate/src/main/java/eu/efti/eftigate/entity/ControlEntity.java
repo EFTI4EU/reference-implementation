@@ -66,6 +66,9 @@ public class ControlEntity extends AbstractModel implements Serializable {
     @Column(name = "platformid")
     private String platformId;
 
+    @Column(name = "islogged")
+    private boolean isLogged;
+
     @Column(name = "gateid")
     private String gateId;
 

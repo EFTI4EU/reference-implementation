@@ -28,6 +28,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -59,6 +60,9 @@ public class RequestEntity extends AbstractModel implements Serializable {
 
     @Column(name = "gateiddest")
     private String gateIdDest;
+
+    @Column(name = "sent_date")
+    private OffsetDateTime sentDate;
 
     @ManyToOne
     @JoinColumn(name = "control")

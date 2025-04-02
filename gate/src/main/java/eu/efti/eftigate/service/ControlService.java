@@ -33,6 +33,8 @@ import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.utils.ControlUtils;
 import eu.efti.eftigate.utils.SubsetsCheckerUtils;
 import eu.efti.eftilogger.model.ComponentType;
+import eu.efti.eftilogger.model.RequestTypeLog;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.edelivery.IdentifierQuery;
 import jakarta.validation.ConstraintViolation;
@@ -85,6 +87,7 @@ public class ControlService {
     private final MapperUtils mapperUtils;
     private final RequestServiceFactory requestServiceFactory;
     private final LogManager logManager;
+    private final ReportingRequestLogService reportingRequestLogService;
     private final Function<List<String>, RequestTypeEnum> gateToRequestTypeFunction;
     private final EftiAsyncCallsProcessor eftiAsyncCallsProcessor;
     private final GateProperties gateProperties;
@@ -121,6 +124,8 @@ public class ControlService {
     public NoteResponseDto createNoteRequestForControl(final PostFollowUpRequestDto postFollowUpRequestDto) {
         log.info("create Note Request for control with requestId : {}", postFollowUpRequestDto.getRequestId());
         final ControlDto savedControl = getControlByRequestId(postFollowUpRequestDto.getRequestId());
+        //log reporting intern notes
+        reportingRequestLogService.logReportingRequest(savedControl, null, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.NOTE, savedControl.getFromGateId() != null ? ComponentType.GATE : ComponentType.CA_APP, savedControl.getFromGateId(), savedControl.getFromGateId() != null ? eftiGateIdResolver.resolve(savedControl.getFromGateId()) : null, ComponentType.GATE, gateProperties.getOwner(), gateProperties.getCountry(), false);
         //log FTI024
         logManager.logReceivedNote(savedControl, postFollowUpRequestDto, gateProperties.getOwner(), ComponentType.CA_APP, ComponentType.GATE, true, LogManager.FTI_024);
         if (savedControl.isFound()) {
@@ -177,6 +182,7 @@ public class ControlService {
         log.info("get ControlEntity with request id : {}", requestId);
         final Optional<ControlEntity> optionalControlEntity = getByRequestId(requestId);
         if (optionalControlEntity.isPresent()) {
+
             return mapperUtils.controlEntityToControlDto(optionalControlEntity.get());
         } else {
             return buildNotFoundControlEntity();
@@ -361,6 +367,24 @@ public class ControlService {
 
     public RequestIdDto getControlEntity(final String requestId) {
         final ControlDto controlDto = getControlByRequestId(requestId);
+        if (controlDto.getStatus() != PENDING && !controlDto.isLogged()) {
+            final Optional<RequestDto> requestDto = getRequestService(RequestTypeEnum.LOCAL_UIL_SEARCH).findRequestDtoByRequestType(controlDto);
+            //log reporting LOCAL_UIL_SEARCH EXTERNAL_UIL_SEARCH log lors du premier get
+            requestDto.ifPresent(dto -> reportingRequestLogService.logReportingRequest(controlDto,
+                    dto,
+                    gateProperties.getOwner(),
+                    gateProperties.getCountry(),
+                    RequestTypeLog.UIL,
+                    ComponentType.CA_APP,
+                    null,
+                    null,
+                    ComponentType.GATE,
+                    gateProperties.getOwner(),
+                    gateProperties.getCountry(),
+                    false));
+            controlDto.setLogged(true);
+            this.save(controlDto);
+        }
         return buildResponse(controlDto);
     }
 
@@ -399,6 +423,12 @@ public class ControlService {
         final ControlDto controlDto = getControlByRequestId(requestId);
         final List<IdentifiersRequestEntity> requestEntities = requestServiceFactory.getRequestServiceByRequestType(RequestType.IDENTIFIER.name()).findAllForControlId(controlDto.getId());
         final List<IdentifiersRequestDto> requestDtos = requestEntities.stream().map(r -> mapperUtils.requestToRequestDto(r, IdentifiersRequestDto.class)).toList();
+
+        //log reporting LOCAL_IDENTIFIERS_SEARCH log lors du premier get
+        RequestDto requestDto = new RequestDto();
+        requestDto.setCreatedDate(controlDto.getCreatedDate());
+        reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(),RequestTypeLog.IDENTIFIERS, ComponentType.CA_APP, null, null, ComponentType.GATE, gateProperties.getOwner(), gateProperties.getCountry(), false);
+
         return buildIdentifiersResponse(controlDto, requestDtos);
     }
 
@@ -442,6 +472,7 @@ public class ControlService {
     }
 
     public ControlDto updateControlStatus(final ControlDto controlDto, final StatusEnum status) {
+        //LOCAL_UIL_SEARCH
         controlDto.setStatus(status);
         return this.save(controlDto);
     }

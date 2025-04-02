@@ -4,6 +4,8 @@ import eu.efti.eftilogger.model.ComponentType;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
+import java.time.OffsetDateTime;
+
 @SuperBuilder(toBuilder = true)
 @Data
 public class LogCommonDto {
@@ -23,4 +25,6 @@ public class LogCommonDto {
     private String statusMessage;
     private String errorCodeMessage;
     private String errorDescriptionMessage;
+    private OffsetDateTime sentDate;
+    private Long responseDelay;
 }
