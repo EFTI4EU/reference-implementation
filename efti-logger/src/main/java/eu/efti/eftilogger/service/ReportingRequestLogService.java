@@ -62,7 +62,7 @@ public class ReportingRequestLogService implements LogService<LogRequestDto> {
                 .statusMessage(controlDto.getStatus().name())
                 .errorCodeMessage(controlDto.getError() != null ? controlDto.getError().getErrorCode() : null)
                 .errorDescriptionMessage(controlDto.getError() != null ? controlDto.getError().getErrorDescription() : null)
-                .sentDate(OffsetDateTime.now())
+                .sentDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
                 .responseDelay(responseDelay)
                 .requestId(controlDto.getRequestId())
                 .subsetIds(controlDto.getSubsetIds())
