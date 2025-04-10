@@ -43,8 +43,10 @@ public class ReportingRequestLogService implements LogService<LogRequestDto> {
                                                final boolean isSendDate) {
 
         final OffsetDateTime offsetDateTimeNow = OffsetDateTime.now();
+        LocalDateTime sendDate = LocalDateTime.now();
         Long responseDelay = null;
         if (isSendDate && requestDto != null && requestDto.getSentDate() != null) {
+            sendDate = requestDto.getSentDate().toLocalDateTime();
             responseDelay = offsetDateTimeNow.toInstant().toEpochMilli() - requestDto.getSentDate().toInstant().toEpochMilli();
         } else if (!isSendDate && requestDto != null) {
             responseDelay = offsetDateTimeNow.toInstant().toEpochMilli() - requestDto.getCreatedDate().toInstant(offsetDateTimeNow.getOffset()).toEpochMilli();
@@ -62,10 +64,9 @@ public class ReportingRequestLogService implements LogService<LogRequestDto> {
                 .statusMessage(controlDto.getStatus().name())
                 .errorCodeMessage(controlDto.getError() != null ? controlDto.getError().getErrorCode() : null)
                 .errorDescriptionMessage(controlDto.getError() != null ? controlDto.getError().getErrorDescription() : null)
-                .sentDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
+                .sentDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(sendDate))
                 .responseDelay(responseDelay)
                 .requestId(controlDto.getRequestId())
-                .subsetIds(controlDto.getSubsetIds())
                 .respondingComponentType(respondingComponentType)
                 .respondingComponentId(respondingComponentId)
                 .respondingComponentCountry(respondingComponentCountry)

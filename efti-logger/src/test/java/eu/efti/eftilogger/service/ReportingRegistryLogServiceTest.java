@@ -59,8 +59,8 @@ class ReportingRegistryLogServiceTest extends AbstractTestService {
 
     @Test
     void logRegistryRequestSendDateTest() throws JSONException {
-        final String expected = "{\"messageDate\":\"2025-03-27 14:46:11.848\",\"name\":null,\"componentType\":\"GATE\",\"componentId\":\"currentGateId\",\"componentCountry\":\"currentGateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"respondingComponentId\",\"requestingComponentCountry\":\"respondingComponentCountry\",\"respondingComponentType\":null,\"respondingComponentId\":null,\"respondingComponentCountry\":null,\"messageContent\":null,\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":null,\"errorDescriptionMessage\":null,\"sentDate\":null,\"responseDelay\":null,\"eFTIDataId\":null,\"interfaceType\":\"EDELIVERY\",\"platformId\":\"platformId\"}";
-        reportingRegistryLogService.logRegistryRequest("currentGateId", "currentGateCountry", GATE, "respondingComponentId", "respondingComponentCountry", new SaveIdentifiersRequestWrapper("platformId", new SaveIdentifiersRequest()));
+        final String expected = "{\"messageDate\":\"2025-04-10 11:59:15.477\",\"name\":null,\"componentType\":\"GATE\",\"componentId\":\"currentGateId\",\"componentCountry\":\"currentGateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"respondingComponentId\",\"requestingComponentCountry\":\"respondingComponentCountry\",\"respondingComponentType\":null,\"respondingComponentId\":null,\"respondingComponentCountry\":null,\"messageContent\":null,\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":null,\"errorDescriptionMessage\":null,\"sentDate\":\"2025-04-10 11:59:15.477\",\"responseDelay\":null,\"eFTIDataId\":null,\"interfaceType\":\"EDELIVERY\",\"platformId\":null,\"registryType\":null,\"eftidataId\":null}";
+        reportingRegistryLogService.logRegistryRequest("currentGateId", "currentGateCountry", GATE, "respondingComponentId", "respondingComponentCountry", new SaveIdentifiersRequestWrapper("platformId", new SaveIdentifiersRequest()), null);
         JSONAssert.assertEquals(expected, logWatcher.list.get(0).getFormattedMessage(), messageDateComparator);
     }
 }
