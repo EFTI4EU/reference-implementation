@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 @Service
@@ -43,7 +44,7 @@ public class ReportingRequestLogService implements LogService<LogRequestDto> {
                                                final boolean isSendDate) {
 
         final OffsetDateTime offsetDateTimeNow = OffsetDateTime.now();
-        LocalDateTime sendDate = LocalDateTime.now();
+        LocalDateTime sendDate = LocalDateTime.now(ZoneOffset.UTC);
         Long responseDelay = null;
         if (isSendDate && requestDto != null && requestDto.getSentDate() != null) {
             sendDate = requestDto.getSentDate().toLocalDateTime();
@@ -54,7 +55,7 @@ public class ReportingRequestLogService implements LogService<LogRequestDto> {
 
         return LogRequestDto
                 .builder()
-                .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
+                .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now(ZoneOffset.UTC)))
                 .componentType(ComponentType.GATE)
                 .componentId(currentGateId)
                 .componentCountry(currentGateCountry)
