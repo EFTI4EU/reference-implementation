@@ -3,6 +3,7 @@ package eu.efti.identifiersregistry.service;
 import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
+import eu.efti.commons.enums.RegistryType;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
@@ -64,7 +65,7 @@ public class IdentifiersService {
         final String bodyBase64 = serializeUtils.mapObjectToBase64String(identifiersDto);
 
         //log fti004
-        auditRegistryLogService.log(identifiersDto, gateOwner, gateCountry, ComponentType.PLATFORM, ComponentType.GATE, gateOwner, identifiersDto.getPlatformId(), bodyBase64, FTI_004);
+        auditRegistryLogService.log(identifiersDto, gateOwner, gateCountry, ComponentType.PLATFORM, ComponentType.GATE, identifiersDto.getPlatformId(), gateOwner, bodyBase64, FTI_004);
         final SaveIdentifiersRequest identifiers = identifiersDto.getSaveIdentifiersRequest();
 
         final Optional<Consignment> entityOptional = identifiersRepository.findByUil(gateOwner,
@@ -83,7 +84,7 @@ public class IdentifiersService {
         }
         identifiersRepository.save(consignment);
         //log reporting Upload Identifiiers
-        reportingRegistryLogService.logRegistryRequest(gateOwner, gateCountry, ComponentType.GATE, gateOwner, gateCountry, identifiersDto);
+        reportingRegistryLogService.logRegistryRequest(gateOwner, gateCountry, ComponentType.GATE, gateOwner, gateCountry, identifiersDto, entityOptional.isPresent() ? RegistryType.UPDATE : RegistryType.UPLOAD);
         //log fti005
         auditRegistryLogService.log(identifiersDto, gateOwner, gateCountry, ComponentType.GATE, ComponentType.GATE, null, gateOwner, bodyBase64, FTI_005);
     }
@@ -99,15 +100,15 @@ public class IdentifiersService {
     }
 
     public Consignment setDisabledDate(final Consignment consignment) {
-            final List<Integer> resultList = new java.util.ArrayList<>(List.of());
-            consignment.getMainCarriageTransportMovements().forEach(mainCarriageTransportMovement -> {
-                if (THREE_MODE_CODE.equals(mainCarriageTransportMovement.getModeCode())) {
-                    resultList.add(deliveryDateChecker(consignment, modeCodeThreeMaxDayPassed));
-                } else {
-                    resultList.add(deliveryDateChecker(consignment, modeCodeOtherMaxDayPassed));
-                }
-            });
-            return updateCheckerConsignment(consignment, resultList);
+        final List<Integer> resultList = new java.util.ArrayList<>(List.of());
+        consignment.getMainCarriageTransportMovements().forEach(mainCarriageTransportMovement -> {
+            if (THREE_MODE_CODE.equals(mainCarriageTransportMovement.getModeCode())) {
+                resultList.add(deliveryDateChecker(consignment, modeCodeThreeMaxDayPassed));
+            } else {
+                resultList.add(deliveryDateChecker(consignment, modeCodeOtherMaxDayPassed));
+            }
+        });
+        return updateCheckerConsignment(consignment, resultList);
     }
 
     private Consignment updateCheckerConsignment(final Consignment consignment, final List<Integer> resultList) {

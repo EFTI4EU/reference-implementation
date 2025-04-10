@@ -2,6 +2,7 @@ package eu.efti.eftilogger.service;
 
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
+import eu.efti.commons.enums.RegistryType;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftilogger.LogMarkerEnum;
@@ -35,7 +36,8 @@ public class ReportingRegistryLogService implements LogService<LogRegistryDto> {
                                                  final ComponentType requestComponentType,
                                                  final String requestComponentId,
                                                  final String requestComponentCountry,
-                                                 final SaveIdentifiersRequestWrapper saveIdentifiersRequestWrapper) {
+                                                 final SaveIdentifiersRequestWrapper saveIdentifiersRequestWrapper,
+                                                 final RegistryType registryType) {
 
         return LogRegistryDto
                 .builder()
@@ -49,9 +51,10 @@ public class ReportingRegistryLogService implements LogService<LogRegistryDto> {
                 .statusMessage(StatusEnum.COMPLETE.name())
                 .errorCodeMessage(null)
                 .errorDescriptionMessage(null)
-                .eFTIDataId(saveIdentifiersRequestWrapper.getSaveIdentifiersRequest().getRequestId())
+                .eFTIDataId(saveIdentifiersRequestWrapper.getSaveIdentifiersRequest().getDatasetId())
                 .interfaceType(EDELIVERY)
-                .platformId(saveIdentifiersRequestWrapper.getPlatformId())
+                .sentDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
+                .registryType(registryType)
                 .build();
     }
 
@@ -60,13 +63,15 @@ public class ReportingRegistryLogService implements LogService<LogRegistryDto> {
                                    final ComponentType respondingComponentType,
                                    final String respondingComponentId,
                                    final String respondingComponentCountry,
-                                   final SaveIdentifiersRequestWrapper saveIdentifiersRequestWrapper) {
+                                   final SaveIdentifiersRequestWrapper saveIdentifiersRequestWrapper,
+                                   final RegistryType registryType) {
         final LogRegistryDto logRegistryDto = logRegistryDtoBuilder(currentGateId,
                 currentGateCountry,
                 respondingComponentType,
                 respondingComponentId,
                 respondingComponentCountry,
-                saveIdentifiersRequestWrapper);
+                saveIdentifiersRequestWrapper,
+                registryType);
         this.log(logRegistryDto);
     }
 
