@@ -11,6 +11,7 @@ import org.slf4j.MarkerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 @Service
@@ -32,7 +33,7 @@ public class AuditRegistryLogService implements LogService<LogRegistryDto> {
                     final String name) {
         String datasetId = requestWrapper.getSaveIdentifiersRequest().getDatasetId();
         this.log(LogRegistryDto.builder()
-                .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
+                .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now(ZoneOffset.UTC)))
                 .name(name)
                 .componentType(ComponentType.GATE)
                 .componentId(currentGateId)

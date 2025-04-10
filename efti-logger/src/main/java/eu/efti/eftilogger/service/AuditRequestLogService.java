@@ -14,6 +14,7 @@ import org.slf4j.MarkerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import static eu.efti.commons.constant.EftiGateConstants.IDENTIFIERS_TYPES;
@@ -54,7 +55,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                 .requestId(control.getRequestId())
                 .subsetIds(control.getSubsetIds())
                 .eftidataId(control.getDatasetId())
-                .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
+                .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now(ZoneOffset.UTC)))
                 .messageContent(body)
                 .statusMessage(status.name())
                 .componentType(GATE)
