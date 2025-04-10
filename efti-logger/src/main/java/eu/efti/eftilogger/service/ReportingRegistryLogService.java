@@ -60,16 +60,16 @@ public class ReportingRegistryLogService implements LogService<LogRegistryDto> {
 
     public void logRegistryRequest(final String currentGateId,
                                    final String currentGateCountry,
-                                   final ComponentType respondingComponentType,
-                                   final String respondingComponentId,
-                                   final String respondingComponentCountry,
+                                   final ComponentType requestingComponentType,
+                                   final String requestingComponentId,
+                                   final String requestingComponentCountry,
                                    final SaveIdentifiersRequestWrapper saveIdentifiersRequestWrapper,
                                    final RegistryType registryType) {
         final LogRegistryDto logRegistryDto = logRegistryDtoBuilder(currentGateId,
                 currentGateCountry,
-                respondingComponentType,
-                respondingComponentId,
-                respondingComponentCountry,
+                requestingComponentType,
+                requestingComponentId,
+                requestingComponentCountry,
                 saveIdentifiersRequestWrapper,
                 registryType);
         this.log(logRegistryDto);
