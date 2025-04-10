@@ -84,7 +84,7 @@ public class IdentifiersService {
         }
         identifiersRepository.save(consignment);
         //log reporting Upload Identifiiers
-        reportingRegistryLogService.logRegistryRequest(gateOwner, gateCountry, ComponentType.GATE, gateOwner, gateCountry, identifiersDto, entityOptional.isPresent() ? RegistryType.UPDATE : RegistryType.UPLOAD);
+        reportingRegistryLogService.logRegistryRequest(gateOwner, gateCountry, ComponentType.PLATFORM, identifiersDto.getPlatformId(), gateCountry, identifiersDto, entityOptional.isPresent() ? RegistryType.UPDATE : RegistryType.UPLOAD);
         //log fti005
         auditRegistryLogService.log(identifiersDto, gateOwner, gateCountry, ComponentType.GATE, ComponentType.GATE, null, gateOwner, bodyBase64, FTI_005);
     }
