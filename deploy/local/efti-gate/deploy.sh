@@ -1,8 +1,20 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Stop on fail
 set -e
 cd $(dirname $0)
+
+ARG=${1:-}
+
+if [[ "$ARG" == "skip-tests" ]]; then
+  SKIP_TESTS="-DskipTests"
+elif [[ "$ARG" == "" ]]; then
+  # no-op
+  SKIP_TESTS=""
+else
+  echo "Unsupported parameter $1"
+  exit 1
+fi
 
 projectPomFile=../../../implementation/pom.xml
 
@@ -10,7 +22,7 @@ echo "Cleaning up..."
 mvn -B clean --file $projectPomFile
 
 echo "Building..."
-mvn -B package --file $projectPomFile
+mvn -B package --file $projectPomFile $SKIP_TESTS
 
 echo "Copying apps..."
 cp -rf ../../../implementation/gate/target/gate-*.jar ./gate/efti-gate.jar
@@ -18,6 +30,7 @@ cp -rf ../../../implementation/platform-gate-simulator/target/platform-gate-simu
 
 echo "Starting up docker compose"
 docker compose up -d
+docker compose restart efti-gate-BO efti-gate-LI efti-gate-SY
 
 wait_for_gate() {
     gate_port=$1
@@ -40,4 +53,3 @@ for schema in eftibo eftili eftisy; do
   echo 'Configuring gate with initial data for database: ' $schema
   sed "1iset search_path to $schema;" ./gate-db/gate-config.sql | docker exec -i reference-gate-shared-db psql -U efti -d efti
 done
-$SHELL

@@ -28,9 +28,17 @@ docker network create efti-network
 <h3> Run the project </h3>
 
 The project includes all the required components to properly run the gates and the platforms (Postgres, RabbitMQ, Keycloak, ...).
-To run the project, use the `deploy.sh` script. It will build the project and run `docker compose`.
+To run the project, use the deploy script to build and deploy all services:
 
-this will launch 12 containers:
+```shell
+# Build with tests
+./deploy.sh
+
+# ...or build without tests
+./deploy.sh skip-tests
+```
+
+This will launch 12 containers:
 <ul>
   <li>rabbitmq</li>
   <li>platform-ACME</li>
