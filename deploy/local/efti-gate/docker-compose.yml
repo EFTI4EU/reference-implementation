@@ -171,6 +171,8 @@ services:
       - ./httpd/config/conf.d:/usr/local/apache2/conf.d
     networks:
       efti:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 networks:
   efti:
