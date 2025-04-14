@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -69,6 +71,18 @@ public class SerializeUtils {
             return jaxbElement.getValue();
         } catch (final JAXBException e) {
             throw new TechnicalException(ERROR_WHILE_WRITING_CONTENT, e);
+        }
+    }
+
+    public <U> U mapXmlStringToJaxbObject(final String content, Class<U> clazz) {
+        try {
+            final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+            final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            final StreamSource source = new StreamSource(new ByteArrayInputStream(content.getBytes()));
+            final JAXBElement<U> jaxbElement = unmarshaller.unmarshal(source, clazz);
+            return jaxbElement.getValue();
+        } catch (final JAXBException e) {
+            throw new TechnicalException("Could not unmarshal", e);
         }
     }
 
