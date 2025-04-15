@@ -23,6 +23,8 @@ services:
     ports:
       - "8070:8070"
       - "8893:5005"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       efti:
 
@@ -38,6 +40,8 @@ services:
     ports:
       - "8071:8071"
       - "8894:5005"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       efti:
   
@@ -53,6 +57,8 @@ services:
     ports:
       - "8072:8072"
       - "8895:5005"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       efti:
 

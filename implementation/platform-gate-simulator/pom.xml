@@ -167,6 +167,13 @@
             <artifactId>modelmapper</artifactId>
         </dependency>
 
+        <!-- Required by gate client generated with openapi-generator -->
+        <dependency>
+            <groupId>io.github.threeten-jaxb</groupId>
+            <artifactId>threeten-jaxb-core</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -240,6 +247,7 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>generate-api-for-gate</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate</goal>
@@ -254,12 +262,29 @@
                                 <useBeanValidation>false</useBeanValidation>
                                 <openApiNullable>false</openApiNullable>
                                 <useSpringBoot3>true</useSpringBoot3>
-                                // Using ${project.build.directory} fails the build on Windows
-                                <sourceFolder>build/generated-sources/src/main/java</sourceFolder>
                                 <withXml>true</withXml>
                                 <skipDefaultInterface>true</skipDefaultInterface>
                             </configOptions>
                             <apiPackage>eu.efti.platformgatesimulator.controller.api</apiPackage>
+                            <modelPackage>eu.efti.platformgatesimulator.dto</modelPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-client-for-gate</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/../../schema/api-schemas/gate-api-for-platform.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <configOptions>
+                                <openApiNullable>false</openApiNullable>
+                                <useJakartaEe>true</useJakartaEe>
+                                <withXml>true</withXml>
+                            </configOptions>
+                            <apiPackage>eu.efti.platformgatesimulator.service.client</apiPackage>
                             <modelPackage>eu.efti.platformgatesimulator.dto</modelPackage>
                         </configuration>
                     </execution>

@@ -10,3 +10,6 @@ spring:
   output:
     ansi:
       enabled: always
+
+gate:
+  restApiBaseUrl: http://host.docker.internal:83/api/platform
