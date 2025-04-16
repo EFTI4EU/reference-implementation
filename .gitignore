@@ -7,4 +7,5 @@ target/
 
 #Deploy
 /**/*.log
+/deploy/local/domibus/mariadb/**/data
 /deploy/local/efti-gate/**/*.jar
