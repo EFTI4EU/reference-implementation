@@ -137,8 +137,6 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
             //log fti016
             getLogManager().logRequestRegistry(controlDto, getSerializeUtils().mapObjectToBase64String(identifiersDtoList), REGISTRY, GATE, LogManager.FTI_016);
             final RequestDto request = createReceivedRequest(controlDto, identifiersDtoList);
-            //log reporting EXTERNAL_ASK_IDENTIFIERS_SEARCH
-            reportingRequestLogService.logReportingRequest(controlDto, request, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.IDENTIFIERS, GATE, fromPartyId, eftiGateIdResolver.resolve(fromPartyId), GATE, fromPartyId, eftiGateIdResolver.resolve(fromPartyId), false);
             final RequestDto updatedRequest = this.updateStatus(request, RESPONSE_IN_PROGRESS);
             super.sendRequest(updatedRequest);
         } catch (SAXException e) {
@@ -172,8 +170,6 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 //log fti021
                 getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId,
                         getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
-                //log reporting external_identifiers_search (réception de réponse)
-                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.IDENTIFIERS, GATE, notificationDto.getContent().getFromPartyId(), eftiGateIdResolver.resolve(notificationDto.getContent().getFromPartyId()), CA_APP, null, null, true);
             }
         } catch (SAXException e) {
             String exceptionMessage = e.getMessage();
@@ -194,9 +190,13 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         final IdentifiersRequestEntity externalRequest = identifiersRequestRepository.findByControlRequestTypeAndStatusAndEdeliveryMessageId(EXTERNAL_ASK_IDENTIFIERS_SEARCH,
                 RESPONSE_IN_PROGRESS, eDeliveryMessageId);
         if (externalRequest == null) {
-            log.info(" sent message {} successfully", eDeliveryMessageId);
+            log.info("sent message {} successfully", eDeliveryMessageId);
         } else {
             externalRequest.getControl().setStatus(StatusEnum.COMPLETE);
+            ControlDto controlDto = getMapperUtils().controlEntityToControlDto(externalRequest.getControl());
+            //log reporting external_identifiers_search (réception de réponse)
+            RequestDto requestDto = getMapperUtils().identifiersRequestEntityToRequestDto(externalRequest, RequestDto.class);
+            reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), CA_APP, null, null, true);
             this.updateStatus(externalRequest, SUCCESS);
         }
     }

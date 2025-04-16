@@ -1,16 +1,21 @@
 package eu.efti.eftigate.service.request;
 
 import eu.efti.commons.constant.EftiGateConstants;
+import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
+import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.RequestRepository;
 import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
+import eu.efti.eftilogger.model.RequestTypeLog;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static eu.efti.commons.enums.RequestStatusEnum.SEND_ERROR;
+import static eu.efti.eftilogger.model.ComponentType.CA_APP;
 import static eu.efti.eftilogger.model.ComponentType.GATE;
 
 @Slf4j
@@ -31,9 +37,13 @@ public class EftiRequestUpdater {
 
     private final RequestRepository<?> requestRepository;
     private final ControlService controlService;
+    private final ReportingRequestLogService reportingRequestLogService;
     private final RequestServiceFactory requestServiceFactory;
     private final LogManager logManager;
     private final MapperUtils mapperUtils;
+    private final GateProperties gateProperties;
+    private final EftiGateIdResolver eftiGateIdResolver;
+
 
 
     public void manageSendFailure(final NotificationDto notificationDto, final String name) {
@@ -42,6 +52,11 @@ public class EftiRequestUpdater {
             RequestDto request = requestDto.get();
             this.updateStatus(request, SEND_ERROR);
             logManager.logAckMessage(request.getControl(), GATE, false, request, name);
+            if (List.of(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, RequestTypeEnum.EXTERNAL_UIL_SEARCH, RequestTypeEnum.LOCAL_UIL_SEARCH).contains(request.getControl().getRequestType())) {
+                //log reporting external_identifiers_search (réception de réponse)
+                ControlDto controlDto = request.getControl();
+                reportingRequestLogService.logReportingRequest(controlDto, request,gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), CA_APP, null, null, false);
+            }
         }
     }
 
