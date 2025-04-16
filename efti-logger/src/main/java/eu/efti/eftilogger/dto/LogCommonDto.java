@@ -1,5 +1,6 @@
 package eu.efti.eftilogger.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.efti.eftilogger.model.ComponentType;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
@@ -25,5 +26,6 @@ public class LogCommonDto {
     private String errorDescriptionMessage;
     private String sentDate;
     private Long responseDelay;
-    public final String eFTIDataId;
+    @JsonProperty("eFTIDataId")
+    private String eFTIDataId;
 }
