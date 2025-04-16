@@ -9,6 +9,7 @@ import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.repository.RequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,8 @@ class EftiRequestUpdaterTest extends BaseServiceTest {
     private RequestServiceFactory requestServiceFactory;
     @Mock
     private UilRequestService uilRequestService;
+    @Mock
+    private ReportingRequestLogService reportingRequestLogService;
     @InjectMocks
     private EftiRequestUpdater eftiRequestUpdater;
 

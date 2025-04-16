@@ -13,8 +13,6 @@ import java.util.List;
 public class LogRequestDto extends LogCommonDto {
 
     private String requestId;
-    @JsonProperty("eFTIDataId")
-    private String eftidataId;
     private List<String> subsetIds;
     private String requestType;
 }
