@@ -1,6 +1,8 @@
-package eu.efti.eftigate.config.security;
+package eu.efti.eftigate.config.security.converters;
 
+import eu.efti.eftigate.config.security.Roles;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,7 +18,6 @@ import java.util.stream.Collectors;
 
 /**
  * Keycloak realm roles converter
- *
  */
 @Component
 public class KeycloakResourceRolesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
@@ -24,12 +25,18 @@ public class KeycloakResourceRolesConverter implements Converter<Jwt, Collection
     private static final String REALM_ROLES_BASE_CLAIM_NAME = "realm_access";
     private static final String ROLES_CLAIM_NAME = "roles";
 
+    @Value("${spring.security.oauth2.resourceserver.issuers}")
+    List<String> issuers;
+
     @Override
     public Collection<GrantedAuthority> convert(final Jwt jwt) {
-        final List<GrantedAuthority> authorities = new ArrayList<>();
-        addRealmRoles(jwt, authorities);
-        addResourcesRoles(jwt, authorities);
-        return authorities;
+        if (canConvert(jwt)) {
+            final List<GrantedAuthority> authorities = new ArrayList<>();
+            addRealmRoles(jwt, authorities);
+            addResourcesRoles(jwt, authorities);
+            return authorities;
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -42,7 +49,7 @@ public class KeycloakResourceRolesConverter implements Converter<Jwt, Collection
     private void addRealmRoles(final Jwt jwt, final List<GrantedAuthority> authorities) {
         Optional.ofNullable(jwt).ifPresent(jwtToken -> {
             final Map<String, Object> realmAccess = jwtToken.getClaimAsMap(REALM_ROLES_BASE_CLAIM_NAME);
-            List<String> roles = null;
+            List<String> roles;
             if (realmAccess != null && (roles = (List<String>) realmAccess.get(ROLES_CLAIM_NAME)) != null) {
                 authorities.addAll(roles.stream().map(role -> new SimpleGrantedAuthority(Roles.ROLE_PREFIX + role))
                         .collect(Collectors.toSet()));
@@ -65,11 +72,17 @@ public class KeycloakResourceRolesConverter implements Converter<Jwt, Collection
             final Collection<String> resourceRoles;
             if (resourcesAccess != null
                     && (StringUtils.isNotBlank((resourceId))
-                            && (resource = (Map<String, Object>) resourcesAccess.get(resourceId)) != null)
+                    && (resource = (Map<String, Object>) resourcesAccess.get(resourceId)) != null)
                     && (resourceRoles = (Collection<String>) resource.get(ROLES_CLAIM_NAME)) != null) {
                 authorities.addAll(resourceRoles.stream().map(role -> new SimpleGrantedAuthority(Roles.ROLE_PREFIX + role))
                         .collect(Collectors.toSet()));
             }
         });
+    }
+
+    private boolean canConvert(final Jwt jwt) {
+        String keyCloackIssuerUri = issuers.get(0);
+        String issuerClaimAsString = jwt.getClaimAsString("iss");
+        return StringUtils.isNotBlank(issuerClaimAsString) && issuerClaimAsString.equalsIgnoreCase(keyCloackIssuerUri);
     }
 }

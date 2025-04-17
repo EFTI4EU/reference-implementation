@@ -13,8 +13,9 @@ spring:
   security:
     oauth2:
       resourceserver:
-        jwt:
-          issuer-uri: http://auth.gate.listenbourg.eu:8080/realms/eFTI_LI
+        issuers:
+          http://auth.gate.listenbourg.eu:8080/realms/eFTI_LI,
+          https://identite-sandbox.proconnect.gouv.fr
   jpa:
     properties:
       hibernate:

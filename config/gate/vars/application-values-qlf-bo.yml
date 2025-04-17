@@ -13,8 +13,9 @@ spring:
   security:
     oauth2:
       resourceserver:
-        jwt:
-          issuer_uri: https://auth.qualif.efti-ingroupe.com/realms/eFTI_BO
+        issuers:
+          https://auth.qualif.efti-ingroupe.com/realms/eFTI_BO,
+          https://fca.integ01.dev-agentconnect.fr/api/v2
   jpa:
     properties:
       hibernate:

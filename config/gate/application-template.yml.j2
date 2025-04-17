@@ -54,8 +54,7 @@ spring:
   security:
     oauth2:
       resourceserver:
-        jwt:
-          issuer-uri: {{ spring.security.oauth2.resourceserver.jwt.issuer_uri}}
+        issuers: {{ spring.security.oauth2.resourceserver.issuers}}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect 
     properties:

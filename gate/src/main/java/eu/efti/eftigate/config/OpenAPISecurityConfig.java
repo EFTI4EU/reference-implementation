@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Configuration
 public class OpenAPISecurityConfig {
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-    String authURL;
+    @Value("${spring.security.oauth2.resourceserver.issuers}")
+    List<String> authURL;
 
     private static final String OAUTH_SCHEME_NAME = "login";
 
@@ -42,6 +44,6 @@ public class OpenAPISecurityConfig {
 
     private OAuthFlow createAuthorizationCodeFlow() {
         return new OAuthFlow()
-                .authorizationUrl(authURL + "/protocol/openid-connect/auth");
+                .authorizationUrl(authURL.get(1) + "/protocol/openid-connect/auth");
     }
 }
