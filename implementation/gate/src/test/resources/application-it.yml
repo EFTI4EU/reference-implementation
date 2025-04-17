@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    control:
+      driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+      jdbc-url: jdbc:tc:postgresql:15.4:///gate-test?user=efti&TC_DAEMON=true
+      liquibase:
+        change-log: classpath:db.changelog/db.gate.changelog-master.xml
+    identifiers:
+      driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+      jdbc-url: jdbc:tc:postgresql:15.4:///gate-test?user=efti&TC_DAEMON=true
+      liquibase:
+        change-log: classpath:db.changelog/db.identifiers.changelog-master.xml
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    properties:
+      hibernate:
+        control_schema: "efti-it"
+        identifiers_schema: "efti-it"
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost
+
+batch:
+  update:
+    cron: "0 */1 * ? * *"
+
+gate:
+  owner: it-tests
+  country: IT
+
+logging:
+  level:
+    reactor:
+      netty:
+        http:
+          client: DEBUG

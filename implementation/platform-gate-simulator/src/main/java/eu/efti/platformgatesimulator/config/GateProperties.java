@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.net.URI;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -14,6 +16,7 @@ public class GateProperties {
     private String cdaPath;
     private String gate;
     private ApConfig ap;
+    private URI restApiBaseUrl;
     private int minSleep;
     private int maxSleep;
 

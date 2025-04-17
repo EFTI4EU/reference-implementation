@@ -1,9 +1,10 @@
 package eu.efti.platformgatesimulator.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.platformgatesimulator.exception.UploadException;
 import eu.efti.platformgatesimulator.service.ApIncomingService;
-import eu.efti.platformgatesimulator.service.IdentifierService;
+import eu.efti.platformgatesimulator.service.GateIntegrationService;
 import eu.efti.platformgatesimulator.service.ReaderService;
 import eu.efti.v1.json.Consignment;
 import eu.efti.v1.json.SaveIdentifiersRequest;
@@ -45,13 +46,16 @@ class IdentifiersControllerTest {
     private ReaderService readerService;
 
     @Mock
-    private IdentifierService identifierService;
+    private SerializeUtils serializeUtils;
+
+    @Mock
+    private GateIntegrationService gateIntegrationService;
 
     private final SaveIdentifiersRequest saveIdentifiersRequest = new SaveIdentifiersRequest();
 
     @BeforeEach
     void before() {
-        identifiersController = new IdentifiersController(apIncomingService, readerService, identifierService);
+        identifiersController = new IdentifiersController(apIncomingService, readerService, serializeUtils, gateIntegrationService);
         saveIdentifiersRequest.setRequestId("requestId");
         saveIdentifiersRequest.setConsignment(new Consignment());
         saveIdentifiersRequest.setDatasetId("datasetId");

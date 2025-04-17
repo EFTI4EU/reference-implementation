@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "110cd8cc-a7f9-4cb4-836b-b5748fbee108",
+		"_postman_id": "bfa23f25-89cf-4251-ab9a-5955ea954be0",
 		"name": "eFTI",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "30836777"
+		"_exporter_id": "43604470"
 	},
 	"item": [
 		{
@@ -556,6 +556,46 @@
 									"path": [
 										"identifiers",
 										"upload"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upload Consignment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "consignmentFile",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{simulator_bo_url}}/identifiers/upload/consignment/{{datasetId}}",
+									"host": [
+										"{{simulator_bo_url}}"
+									],
+									"path": [
+										"identifiers",
+										"upload",
+										"consignment",
+										"{{datasetId}}"
 									]
 								}
 							},
