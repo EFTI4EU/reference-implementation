@@ -13,8 +13,9 @@ spring:
   security:
     oauth2:
       resourceserver:
-        jwt:
-          issuer-uri: http://auth.gate.borduria.eu:8080/realms/eFTI_BO
+        issuers:
+          http://auth.gate.borduria.eu:8080/realms/eFTI_BO,
+          https://identite-sandbox.proconnect.gouv.fr
   jpa:
     properties:
       hibernate:

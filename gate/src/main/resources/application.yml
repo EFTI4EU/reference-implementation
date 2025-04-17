@@ -28,9 +28,9 @@ spring:
     name: efti-gate
   datasource:
     control:
-      jdbc-url: jdbc:postgresql://localhost:9001/efti
-      url: jdbc:postgresql://localhost:9001/efti
-      username: efti
+      jdbc-url: jdbc:postgresql://localhost:9000/efti
+      url: jdbc:postgresql://localhost:9000/efti
+      username: ingroup
       password: root
       driverClassName: org.postgresql.Driver
       liquibase:

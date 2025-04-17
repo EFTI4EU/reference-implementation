@@ -13,8 +13,9 @@ spring:
   security:
     oauth2:
       resourceserver:
-        jwt:
-          issuer_uri: https://auth.efti-ingroupe.com/realms/eFTI_FR
+        issuers:
+          https://auth.efti-ingroupe.com/realms/eFTI_FR,
+          https://auth.agentconnect.gouv.fr/api/v2
   jpa:
     properties:
       hibernate:

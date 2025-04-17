@@ -1,13 +1,20 @@
 package eu.efti.eftigate.config.security;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import eu.efti.eftigate.config.security.converters.KeycloakResourceRolesConverter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Spy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.Jwt.Builder;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -17,12 +24,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KeycloakResourceRolesConverterTest {
 
+    @Spy
     private final KeycloakResourceRolesConverter converter = new KeycloakResourceRolesConverter();
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(converter, "issuers", List.of("http://auth.gate.borduria.eu:8080/realms/eFTI_BO", "https://identite-sandbox.proconnect.gouv.fr"));
+    }
 
     @Test
     @SuppressWarnings("unchecked")
     void convert() {
-        final String keycloakToken = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJQS3Q4NU5YVzhjMnF2bEFiODBaN2otY1pZQWFlRWljX0gtY1lJN2hmVkwwIn0.eyJleHAiOjE2NjY3MjAwNjQsImlhdCI6MTY2NjcxOTc2NCwianRpIjoiZjUxMjY5MWQtODY4My00NmNjLWFhMTEtYWIzNDE1MGZlNmFjIiwiaXNzIjoiaHR0cDovL2hvc3QuZG9ja2VyLmludGVybmFsOjgwODUvcmVhbG1zL1NDRk4iLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiNzg2YWI4NmUtOTI2ZS00ZWI5LTgzYjEtZThmYWEyNWFkNzY2IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY2ZuLXBvcnRhbCIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiTVlfQkVBVVRJRlVMX1JPTEUiLCJkZWZhdWx0LXJvbGVzLWNmbiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJjZm4tcG9ydGFsIjp7InJvbGVzIjpbIkNGTl9VU0VSIiwidW1hX3Byb3RlY3Rpb24iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicHJvZmlsZSBlbWFpbCIsImNsaWVudElkIjoiY2ZuLXBvcnRhbCIsImNsaWVudEhvc3QiOiIxNzIuMTguMC4xIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZXJ2aWNlLWFjY291bnQtY2ZuLXBvcnRhbCIsImNsaWVudEFkZHJlc3MiOiIxNzIuMTguMC4xIn0.Q8MuI3dvzkwU8plp9VheJSoTKxdTFh9_CdmYepaLlxUmZhxQr2jTfXFOfIQlTojjLdI25nLRm0ReV40NPjnG6eg5k4BtE0GXjvcAU0RkkfW5mCpo6VgCSCT3lMBghDKxerdOaTatykCUotFUPrHTgIw38VQEpPPAGANHhssJ7yUVN_fvt2BcrdgJF5cslsgz9AEyvdqNIBnGDl_2b1pFGJO7fL8ZCRaHo_enWElexNM4Gxz_lVohhU6Eg2Fh2b-dwDGJfJ3sY-tob1vsFlkuHsZ0Q-Kedhb4W120N9dukAfAcnGSt9vfSO75LhhwpqXb-YS9cdukBiXUOkP2Rs6Guw";
+        final String keycloakToken = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIwT0FDN0MybDBZMXhRd1VWZTlFYVpZSWtQR1NDaVRLV25BWXJPcVd0cWx3In0.eyJleHAiOjE3NDQ4MDcwNjcsImlhdCI6MTc0NDgwNjQ2NywianRpIjoiNGMwM2YxOTQtZjMyNi00MTQ2LTg2MTctNzhkZDI1OTAxNDE2IiwiaXNzIjoiaHR0cDovL2F1dGguZ2F0ZS5ib3JkdXJpYS5ldTo4MDgwL3JlYWxtcy9lRlRJX0JPIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjNiZWJkMDMzLTZiZGItNGNjNy1hMDc0LWNlOWY4MjMxNzU1MiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImdhdGUiLCJzZXNzaW9uX3N0YXRlIjoiNzA4ZTgzZmMtN2I5NS00ZjQyLTk0OTUtNjMzYzhiODRmYzU5IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsIlJPQURfQ09OVFJPTEVSIiwiZGVmYXVsdC1yb2xlcy1lZnRpX2JvIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwic2lkIjoiNzA4ZTgzZmMtN2I5NS00ZjQyLTk0OTUtNjMzYzhiODRmYzU5IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInByZWZlcnJlZF91c2VybmFtZSI6InVzZXJfYm8ifQ.YFc8Xnm4o36eogCrq_U2PFucOqFE04i5DXI14P6Wvi5f__KD8CE5Q-qB0ufe9re7q3g0jOyU7FyEP908T85jimxk3-vb6BKFb5JupXmdpjAh_YVZMbp54G_WqCMLEuZL5mlFyz6y2CA3sU9SgICcJZaqdH69O-5Rhan6xntf-JHR96PmeBs582SeeH-j6wokdLf7uiS4_KaFcwCdTOx2a1TTTHh0tKxdfxz2mm8NnsWdsmDhhuD2Fw6QLqqzJgIukx575G0mcIRBXcPh-sP0Yoa1rVjRhJnHM8YnvQkggHV8-w8B7o9gUa3bFwDfb-wff7U7KIPgeJqLQp_E8bGk7w";
         final DecodedJWT decoded = JWT.decode(keycloakToken);
         final Builder jwtBuilder = Jwt.withTokenValue(keycloakToken);
 
@@ -30,16 +43,27 @@ class KeycloakResourceRolesConverterTest {
 
         final Jwt jwtToken = jwtBuilder.claim("azp", decoded.getClaim("azp").asString())
                 .claim("realm_access", decoded.getClaim("realm_access").asMap())
-                .claim("resource_access", decoded.getClaim("resource_access").asMap()).build();
+                .claim("resource_access", decoded.getClaim("resource_access").asMap())
+                .claim("iss", decoded.getClaim("iss").asString())
+                .build();
 
         final Collection<GrantedAuthority> authorities = converter.convert(jwtToken);
 
         final List<String> realmRoles = (List<String>) decoded.getClaim("realm_access").asMap().get("roles");
-        final List<String> ressourceAccessRoles = (List<String>) ((Map<String, Object>) decoded.getClaim("resource_access").asMap().get(jwtToken.getClaim("azp"))).get("roles");
+        final List<String> resourceAccessRoles = getResourceAccessRoles(decoded, jwtToken);
         assertTrue(CollectionUtils.isNotEmpty(authorities));
-        assertEquals(realmRoles.size() + ressourceAccessRoles.size(), authorities.size());
+        assertEquals(realmRoles.size() + resourceAccessRoles.size(), authorities.size());
         final List<String> authoritiesAsStringList = authorities.stream().map(GrantedAuthority::getAuthority).toList();
         realmRoles.forEach(role -> assertTrue(authoritiesAsStringList.contains(Roles.ROLE_PREFIX + role)));
-        ressourceAccessRoles.forEach(role -> assertTrue(authoritiesAsStringList.contains(Roles.ROLE_PREFIX + role)));
+        resourceAccessRoles.forEach(role -> assertTrue(authoritiesAsStringList.contains(Roles.ROLE_PREFIX + role)));
+    }
+
+    private static List<String> getResourceAccessRoles(DecodedJWT decoded, Jwt jwtToken) {
+        String azpClaim = jwtToken.getClaim("azp");
+        Claim resourceAccessClaim = decoded.getClaim("resource_access");
+        if (resourceAccessClaim != null && StringUtils.isNotBlank(azpClaim) && resourceAccessClaim.asMap().get(azpClaim) != null) {
+            return (List<String>) ((Map<String, Object>) resourceAccessClaim.asMap().get(azpClaim)).get("roles");
+        }
+        return new ArrayList<>();
     }
 }
