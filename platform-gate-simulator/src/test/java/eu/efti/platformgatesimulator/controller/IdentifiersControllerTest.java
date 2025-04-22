@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.nio.charset.StandardCharsets;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @WebMvcTest(IdentifiersController.class)
 @ContextConfiguration(classes = {IdentifiersController.class})
@@ -105,6 +106,46 @@ class IdentifiersControllerTest {
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         Assertions.assertEquals("No identifiers sent, error in JSON process", result.getBody());
+    }
+
+    @Test
+    void deleteAllTest() {
+        Mockito.when(readerService.deleteAllFile()).thenReturn(true);
+
+        final ResponseEntity<String> result = identifiersController.deleteAll();
+
+        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
+        Assertions.assertEquals("All file deleted", result.getBody());
+    }
+
+    @Test
+    void deleteAllFalseTest() {
+        Mockito.when(readerService.deleteAllFile()).thenReturn(false);
+
+        final ResponseEntity<String> result = identifiersController.deleteAll();
+
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        Assertions.assertEquals("Error when try to delete all files", result.getBody());
+    }
+
+    @Test
+    void deleteFileTest() {
+        Mockito.when(readerService.deleteFile(anyString())).thenReturn(true);
+
+        final ResponseEntity<String> result = identifiersController.deleteFile("deleteFile");
+
+        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
+        Assertions.assertEquals("File with uuid deleteFile deleted", result.getBody());
+    }
+
+    @Test
+    void deleteFileFalseTest() {
+        Mockito.when(readerService.deleteFile(anyString())).thenReturn(false);
+
+        final ResponseEntity<String> result = identifiersController.deleteFile("deleteFile");
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        Assertions.assertEquals("Error file deleteFile does not exist", result.getBody());
     }
 
 }
