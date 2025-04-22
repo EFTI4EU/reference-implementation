@@ -27,12 +27,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ReaderService {
     public static final String XML_FILE_TYPE = "xml";
+    public static final String XML_ENDING = ".xml";
+    public static final char CHAR_DOT = '.';
+    public static final String EMPTY_STRING = "";
     private final GateProperties gateProperties;
 
     public void uploadFile(final MultipartFile file) throws UploadException {
@@ -92,8 +96,59 @@ public class ReaderService {
 
     private void checkDestinationFolder() throws UploadException {
         final File folderDest = new File(gateProperties.getCdaPath());
-        if(!folderDest.exists() && !folderDest.mkdirs()) {
+        if (!folderDest.exists() && !folderDest.mkdirs()) {
             throw new UploadException("destination folder could not be created");
         }
+    }
+
+    private String checkStringXml(final String fileName) {
+        int lenghtString = fileName.length();
+        final String xmlName = fileName.substring(lenghtString - 4, lenghtString);
+        if (CHAR_DOT == fileName.charAt(0)) {
+            return EMPTY_STRING;
+        }
+        if (XML_ENDING.equals(xmlName)) {
+            return fileName.substring(0, lenghtString - 4);
+        }
+        return fileName;
+    }
+
+    public boolean deleteFile(final String fileName) {
+        log.info("Try to delete file: {}", fileName);
+        try {
+            checkDestinationFolder();
+        } catch (Exception e) {
+            log.error("Error path destination is not good", e);
+            return false;
+        }
+        final String finalName = checkStringXml(fileName);
+        final File file = new File(gateProperties.getCdaPath() + File.separator + finalName + XML_ENDING);
+        return deleteFile(file);
+    }
+
+    public boolean deleteAllFile() {
+        try {
+            checkDestinationFolder();
+            final File folderDest = new File(gateProperties.getCdaPath());
+            List<File> files = List.of(Objects.requireNonNull(folderDest.listFiles()));
+            files.forEach(this::deleteFile);
+        } catch (Exception e) {
+            log.error("Error when try to delete all file", e);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean deleteFile(File file) {
+        log.info("try to delete: {}", file.getName());
+        boolean result = false;
+        try {
+            result = Files.deleteIfExists(file.toPath());
+        } catch (IOException e) {
+            log.error("Error can't delete file {}: ", file.getName(), e);
+        }
+        log.info(result ? "file {} deleted" : "Error when try to delete file: {}", file.getName());
+        log.info("-------------------------------------------------------------------");
+        return result;
     }
 }
