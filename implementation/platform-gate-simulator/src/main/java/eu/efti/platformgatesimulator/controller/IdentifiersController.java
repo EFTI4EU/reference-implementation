@@ -8,7 +8,7 @@ import eu.efti.platformgatesimulator.exception.UploadException;
 import eu.efti.platformgatesimulator.service.ApIncomingService;
 import eu.efti.platformgatesimulator.service.GateIntegrationService;
 import eu.efti.platformgatesimulator.service.ReaderService;
-import eu.efti.platformgatesimulator.utils.EftiSchemaUtils;
+import eu.efti.platformgatesimulator.utils.PlatformEftiSchemaUtils;
 import eu.efti.v1.json.SaveIdentifiersRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,7 +88,7 @@ public class IdentifiersController {
         var commonXml = readFileAsString(consignmentFile);
         try {
             var common = serializeUtils.mapXmlStringToJaxbObject(commonXml, eu.efti.v1.consignment.common.SupplyChainConsignment.class, EftiSchemas.getJavaCommonSchema());
-            var identifiers = EftiSchemaUtils.commonToIdentifiers(serializeUtils, common);
+            var identifiers = PlatformEftiSchemaUtils.commonToIdentifiers(serializeUtils, common);
             gateIntegrationService.uploadIdentifiers(datasetId, identifiers);
         } catch (SerializeUtils.MappingException e) {
             log.error("Could not map xml object", e);

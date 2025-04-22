@@ -2,20 +2,24 @@ spring:
   datasource:
     control:
       driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-      jdbc-url: jdbc:tc:postgresql:15.4:///gate-test?user=efti&TC_DAEMON=true
+      jdbc-url: jdbc:tc:postgresql:15.4:///test?user=efti&TC_DAEMON=true&TC_INITSCRIPT=sql/init-test-schema.sql
       liquibase:
         change-log: classpath:db.changelog/db.gate.changelog-master.xml
+        default-schema: "eftiit"
     identifiers:
       driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-      jdbc-url: jdbc:tc:postgresql:15.4:///gate-test?user=efti&TC_DAEMON=true
+      jdbc-url: jdbc:tc:postgresql:15.4:///test?user=efti&TC_DAEMON=true&TC_INITSCRIPT=sql/init-test-schema.sql
       liquibase:
         change-log: classpath:db.changelog/db.identifiers.changelog-master.xml
+        default-schema: "eftiit"
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
   jpa:
     properties:
       hibernate:
-        control_schema: "efti-it"
-        identifiers_schema: "efti-it"
+        control_schema: "eftiit"
+        identifiers_schema: "eftiit"
+        connection:
+          url: jdbc:tc:postgresql:15.4:///test?user=efti&TC_DAEMON=true&TC_INITSCRIPT=sql/init-test-schema.sql
   security:
     oauth2:
       resourceserver:
@@ -27,7 +31,7 @@ batch:
     cron: "0 */1 * ? * *"
 
 gate:
-  owner: it-tests
+  owner: gate-it
   country: IT
 
 logging:

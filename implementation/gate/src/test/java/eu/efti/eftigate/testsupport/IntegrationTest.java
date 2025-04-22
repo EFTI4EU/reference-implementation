@@ -1,5 +1,7 @@
 package eu.efti.eftigate.testsupport;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,4 +19,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
 @Import(TestConfig.class)
 public class IntegrationTest {
+    @Autowired
+    private TestConfig.DbCleaner dbCleaner;
+
+    @BeforeEach
+    void clearDbTables() {
+        dbCleaner.clearTables();
+    }
 }

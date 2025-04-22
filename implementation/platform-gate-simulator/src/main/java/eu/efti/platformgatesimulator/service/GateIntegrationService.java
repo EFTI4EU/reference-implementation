@@ -1,9 +1,9 @@
 package eu.efti.platformgatesimulator.service;
 
+import eu.efti.commons.utils.EftiSchemaUtils;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.platformgatesimulator.config.GateProperties;
 import eu.efti.platformgatesimulator.service.client.DefaultApi;
-import eu.efti.platformgatesimulator.utils.EftiSchemaUtils;
 import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;

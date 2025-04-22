@@ -6,10 +6,12 @@ import io.netty.handler.logging.LogLevel;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.transport.logging.AdvancedByteBufFormat;
 
@@ -20,8 +22,12 @@ import java.util.function.Consumer;
 @Component
 public class RestApiCallerFactory {
     public record RestApiCaller(WebTestClient webTestClient) {
-        public <T> EntityExchangeResult<T> get(String url, Class<T> clazz) {
-            return webTestClient.get().uri(url).exchange().expectBody(clazz).returnResult();
+        public <O> EntityExchangeResult<O> get(String url, Class<O> responseType) {
+            return webTestClient.get().uri(url).exchange().expectBody(responseType).returnResult();
+        }
+
+        public <I, O> EntityExchangeResult<O> put(String url, I body, MediaType contentType, Class<O> responseType) {
+            return webTestClient.put().uri(url).contentType(contentType).body(BodyInserters.fromValue(body)).exchange().expectBody(responseType).returnResult();
         }
     }
 
@@ -29,7 +35,8 @@ public class RestApiCallerFactory {
     private int port;
 
     public RestApiCaller createUnauthenticated() {
-        return getRestApiCaller(h -> {});
+        return getRestApiCaller(h -> {
+        });
     }
 
     public RestApiCaller createAuthenticatedForPlatformApi(String platformId) {
