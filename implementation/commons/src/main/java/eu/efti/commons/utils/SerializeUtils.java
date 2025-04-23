@@ -3,7 +3,6 @@ package eu.efti.commons.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import eu.efti.commons.exception.TechnicalException;
 import eu.efti.v1.edelivery.ObjectFactory;
 import jakarta.xml.bind.JAXBContext;
@@ -87,13 +86,17 @@ public class SerializeUtils {
     }
 
     public String mapDocToXmlString(Document doc) {
+        return mapDocToXmlString(doc, false);
+    }
+
+    public String mapDocToXmlString(Document doc, boolean prettyPrint) {
         try {
             var registry = DOMImplementationRegistry.newInstance();
             var domImplLS = (DOMImplementationLS) registry.getDOMImplementation("LS");
 
             var lsSerializer = domImplLS.createLSSerializer();
             var domConfig = lsSerializer.getDomConfig();
-            domConfig.setParameter("format-pretty-print", false);
+            domConfig.setParameter("format-pretty-print", prettyPrint);
 
             var byteArrayOutputStream = new ByteArrayOutputStream();
             var lsOutput = domImplLS.createLSOutput();
@@ -101,12 +104,11 @@ public class SerializeUtils {
             lsOutput.setByteStream(byteArrayOutputStream);
 
             lsSerializer.write(doc, lsOutput);
-            return byteArrayOutputStream.toString(Charsets.UTF_8);
+            return byteArrayOutputStream.toString(StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new TechnicalException("Could not serialize", e);
         }
     }
-
 
     @SuppressWarnings("unchecked")
     public <U> U mapXmlStringToJaxbObject(final String content) {
