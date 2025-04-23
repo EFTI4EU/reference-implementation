@@ -17,7 +17,6 @@ import eu.efti.v1.edelivery.Consignment;
 import eu.efti.v1.edelivery.UIL;
 import eu.efti.v1.types.DateTime;
 import eu.efti.v1.types.Identifier17;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,9 +28,13 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Random;
 import java.util.UUID;
 
+import static eu.efti.eftigate.testsupport.TestData.random;
+import static eu.efti.eftigate.testsupport.TestData.randomBoolean;
+import static eu.efti.eftigate.testsupport.TestData.randomFutureInstant;
+import static eu.efti.eftigate.testsupport.TestData.randomIdentifier;
+import static eu.efti.eftigate.testsupport.TestData.randomPastInstant;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -52,16 +55,16 @@ public class PlatformApiIT extends RestIntegrationTest {
     @Test
     public void whoamiShouldReturnCallingPlatformId() {
         // Arrange
-        var somePlatformId = "some-platform";
+        var platformId = randomIdentifier();
 
         // Act
-        var res = restApiCallerFactory.createAuthenticatedForPlatformApi(somePlatformId).get("/api/platform/v0/whoami", String.class);
+        var res = restApiCallerFactory.createAuthenticatedForPlatformApi(platformId).get("/api/platform/v0/whoami", String.class);
 
         // Assert
         assertAll(
                 () -> assertEquals(HttpStatus.OK, res.getStatus()),
                 () -> assertEquals(
-                        "<whoamiResponse><appId>" + somePlatformId + "</appId><role>PLATFORM</role></whoamiResponse>",
+                        "<whoamiResponse><appId>" + platformId + "</appId><role>PLATFORM</role></whoamiResponse>",
                         res.getResponseBody())
         );
     }
@@ -69,11 +72,11 @@ public class PlatformApiIT extends RestIntegrationTest {
     @Test
     public void invalidIdentifiersShouldBeRejected() {
         // Arrange
-        var somePlatformId = "some-platform";
+        var platformId = randomIdentifier();
         var datasetId = UUID.randomUUID().toString();
 
         // Act
-        var res = restApiCallerFactory.createAuthenticatedForPlatformApi(somePlatformId)
+        var res = restApiCallerFactory.createAuthenticatedForPlatformApi(platformId)
                 .put("/api/platform/v0/consignments/" + datasetId, "<some-invalid-element/>", MediaType.APPLICATION_XML, Void.class);
 
         // Assert
@@ -83,7 +86,7 @@ public class PlatformApiIT extends RestIntegrationTest {
     @Test
     public void validIdentifiersShouldBeAddedToGateDatabase() {
         // Arrange
-        var platformId = "some-platform";
+        var platformId = randomIdentifier();
         var platformConsignment = newRandomSupplyChainConsignment();
         var platformXml = serializeUtils.mapDocToXmlString(EftiSchemaUtils.mapIdentifiersObjectToDoc(serializeUtils, platformConsignment), true);
         var datasetId = UUID.randomUUID().toString();
@@ -105,7 +108,7 @@ public class PlatformApiIT extends RestIntegrationTest {
     @Test
     public void validIdentifiersShouldBeUpdatedToGateDatabase() {
         // Arrange
-        var platformId = "some-platform";
+        var platformId = randomIdentifier();
         var datasetId = UUID.randomUUID().toString();
         identifiersRepository.save(toEntity(GATE_ID, platformId, datasetId, newRandomSupplyChainConsignment()));
         var originalConsignment = toConsignmentIdentifier(identifiersRepository.findByUil(GATE_ID, datasetId, platformId).get());
@@ -158,38 +161,38 @@ public class PlatformApiIT extends RestIntegrationTest {
     private static SupplyChainConsignment newRandomSupplyChainConsignment() {
         SupplyChainConsignment c = new SupplyChainConsignment();
 
-        c.setCarrierAcceptanceDateTime(newDateTime(Instant.now().plus(-1, ChronoUnit.DAYS)));
+        c.setCarrierAcceptanceDateTime(newDateTime(randomPastInstant()));
 
         c.setDeliveryEvent(new TransportEvent());
-        c.getDeliveryEvent().setActualOccurrenceDateTime(newDateTime(Instant.now().plus(1, ChronoUnit.DAYS)));
+        c.getDeliveryEvent().setActualOccurrenceDateTime(newDateTime(randomFutureInstant()));
 
         var ltmo = new LogisticsTransportMovement();
-        ltmo.setDangerousGoodsIndicator(new Random().nextBoolean());
-        ltmo.setModeCode("1");
+        ltmo.setDangerousGoodsIndicator(randomBoolean());
+        ltmo.setModeCode(random("1", "2", "3", "4"));
         ltmo.setUsedTransportMeans(new LogisticsTransportMeans());
-        ltmo.getUsedTransportMeans().setId(newIdentifier17(RandomStringUtils.randomAlphanumeric(8)));
-        ltmo.getUsedTransportMeans().setRegistrationCountry(newTradeCountry(CountryCode.AD));
+        ltmo.getUsedTransportMeans().setId(newIdentifier17());
+        ltmo.getUsedTransportMeans().setRegistrationCountry(newTradeCountry());
         c.getMainCarriageTransportMovement().add(ltmo);
 
         var lte = new LogisticsTransportEquipment();
-        lte.setId(newIdentifier17(RandomStringUtils.randomAlphanumeric(8)));
-        lte.setCategoryCode(TransportEquipmentCategoryCode.AE);
-        lte.setRegistrationCountry(newTradeCountry(CountryCode.AE));
+        lte.setId(newIdentifier17());
+        lte.setCategoryCode(random(TransportEquipmentCategoryCode.class));
+        lte.setRegistrationCountry(newTradeCountry());
         lte.setSequenceNumber(BigInteger.ONE);
         c.getUsedTransportEquipment().add(lte);
 
         return c;
     }
 
-    private static TradeCountry newTradeCountry(CountryCode countryCode) {
+    private static TradeCountry newTradeCountry() {
         TradeCountry tc = new TradeCountry();
-        tc.setCode(countryCode);
+        tc.setCode(random(CountryCode.class));
         return tc;
     }
 
-    private static Identifier17 newIdentifier17(String idValue) {
+    private static Identifier17 newIdentifier17() {
         Identifier17 id = new Identifier17();
-        id.setValue(idValue);
+        id.setValue(randomIdentifier());
         return id;
     }
 

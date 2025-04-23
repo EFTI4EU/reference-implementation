@@ -36,7 +36,5 @@ gate:
 
 logging:
   level:
-    reactor:
-      netty:
-        http:
-          client: DEBUG
+    eu.efti.eftigate.testsupport.TestDataRandomSeedResettingTestExecutionListener: TRACE
+    reactor.netty.http.client: DEBUG
