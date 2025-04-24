@@ -1,6 +1,7 @@
 package eu.efti.eftigate.config.security.converters;
 
 import eu.efti.eftigate.config.security.Roles;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
@@ -36,8 +37,11 @@ public class ProconnectResourceRolesConverter implements Converter<Jwt, Collecti
     }
 
     private boolean canConvert(final Jwt jwt) {
-        String keyCloackIssuerUri = issuers.get(1);
-        String issuerClaimAsString = jwt.getClaimAsString("iss");
-        return issuerClaimAsString.equalsIgnoreCase(keyCloackIssuerUri);
+        if (CollectionUtils.isNotEmpty(issuers) && issuers.size() > 1) {
+            String proconnectIssuerUri = issuers.get(1);
+            String issuerClaimAsString = jwt.getClaimAsString("iss");
+            return issuerClaimAsString.equalsIgnoreCase(proconnectIssuerUri);
+        }
+        return false;
     }
 }
