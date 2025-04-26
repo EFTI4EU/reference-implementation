@@ -2,6 +2,7 @@ package eu.efti.platformgatesimulator.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.commons.exception.TechnicalException;
+import eu.efti.commons.utils.MappingException;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.datatools.schema.EftiSchemas;
 import eu.efti.platformgatesimulator.exception.UploadException;
@@ -80,17 +81,18 @@ public class IdentifiersController {
         if (consignmentFile == null || consignmentFile.isEmpty()) {
             return new ResponseEntity<>("File is missing", HttpStatus.BAD_REQUEST);
         }
-        if (!datasetIdPattern.matcher(datasetId).matches()) {
+        if (datasetId == null || !datasetIdPattern.matcher(datasetId).matches()) {
             return new ResponseEntity<>("Dataset ID is not valid", HttpStatus.BAD_REQUEST);
         }
 
+        // TODO: save common
         log.info("Upload consignment {}", datasetId);
         var commonXml = readFileAsString(consignmentFile);
         try {
             var common = serializeUtils.mapXmlStringToJaxbObject(commonXml, eu.efti.v1.consignment.common.SupplyChainConsignment.class, EftiSchemas.getJavaCommonSchema());
             var identifiers = PlatformEftiSchemaUtils.commonToIdentifiers(serializeUtils, common);
             gateIntegrationService.uploadIdentifiers(datasetId, identifiers);
-        } catch (SerializeUtils.MappingException e) {
+        } catch (MappingException e) {
             log.error("Could not map xml object", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid file: " + e.getMessage());
         } catch (Exception e) {

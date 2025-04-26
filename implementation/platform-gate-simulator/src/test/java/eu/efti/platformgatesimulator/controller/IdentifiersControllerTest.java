@@ -115,4 +115,35 @@ class IdentifiersControllerTest {
         Assertions.assertEquals("No identifiers sent, error in JSON process", result.getBody());
     }
 
+    @Test
+    void uploadConsignmentNullFileTest() {
+        final ResponseEntity<String> result = identifiersController.uploadConsignment(null, null);
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode()),
+                () -> Assertions.assertEquals("File is missing", result.getBody())
+        );
+    }
+
+    @Test
+    void uploadConsignmentNullDatasetIdTest() {
+        MockMultipartFile file = new MockMultipartFile("data", "other-file-name.xml", "application/xml", "some other type".getBytes(StandardCharsets.UTF_8));
+        final ResponseEntity<String> result = identifiersController.uploadConsignment(null, file);
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode()),
+                () -> Assertions.assertEquals("Dataset ID is not valid", result.getBody())
+        );
+    }
+
+    @Test
+    void uploadConsignmentInvalidDatasetIdTest() {
+        MockMultipartFile file = new MockMultipartFile("data", "other-file-name.xml", "application/xml", "some other type".getBytes(StandardCharsets.UTF_8));
+        final ResponseEntity<String> result = identifiersController.uploadConsignment("sone-invalid-dataset-id", file);
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode()),
+                () -> Assertions.assertEquals("Dataset ID is not valid", result.getBody())
+        );
+    }
 }

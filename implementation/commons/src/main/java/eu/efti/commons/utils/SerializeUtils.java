@@ -34,12 +34,6 @@ import java.util.Base64;
 @RequiredArgsConstructor
 @Slf4j
 public class SerializeUtils {
-    public static class MappingException extends RuntimeException {
-        public MappingException(String message, Exception cause) {
-            super(message, cause);
-        }
-    }
-
     private static final String ERROR_WHILE_WRITING_CONTENT = "error while writing content";
     private final ObjectMapper objectMapper;
 
