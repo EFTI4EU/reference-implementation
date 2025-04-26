@@ -85,6 +85,13 @@
         </dependency>
 
         <dependency>
+            <groupId>eu.efti</groupId>
+            <artifactId>test-support</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>

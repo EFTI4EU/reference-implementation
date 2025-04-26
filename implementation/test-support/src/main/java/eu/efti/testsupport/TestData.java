@@ -1,4 +1,4 @@
-package eu.efti.eftigate.testsupport;
+package eu.efti.testsupport;
 
 import org.apache.commons.lang3.RandomStringUtils;
 

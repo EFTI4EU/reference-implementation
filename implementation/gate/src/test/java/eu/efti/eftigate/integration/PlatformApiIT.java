@@ -5,36 +5,18 @@ import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.eftigate.testsupport.RestIntegrationTest;
 import eu.efti.identifiersregistry.IdentifiersMapper;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
-import eu.efti.v1.codes.CountryCode;
-import eu.efti.v1.codes.TransportEquipmentCategoryCode;
-import eu.efti.v1.consignment.identifier.LogisticsTransportEquipment;
-import eu.efti.v1.consignment.identifier.LogisticsTransportMeans;
-import eu.efti.v1.consignment.identifier.LogisticsTransportMovement;
 import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
-import eu.efti.v1.consignment.identifier.TradeCountry;
-import eu.efti.v1.consignment.identifier.TransportEvent;
 import eu.efti.v1.edelivery.Consignment;
 import eu.efti.v1.edelivery.UIL;
-import eu.efti.v1.types.DateTime;
-import eu.efti.v1.types.Identifier17;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import java.math.BigInteger;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
-import static eu.efti.eftigate.testsupport.TestData.random;
-import static eu.efti.eftigate.testsupport.TestData.randomBoolean;
-import static eu.efti.eftigate.testsupport.TestData.randomFutureInstant;
-import static eu.efti.eftigate.testsupport.TestData.randomIdentifier;
-import static eu.efti.eftigate.testsupport.TestData.randomPastInstant;
+import static eu.efti.testsupport.TestData.randomIdentifier;
+import static eu.efti.testsupport.EntityFactory.newConsignmentIdentifier;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -87,7 +69,7 @@ public class PlatformApiIT extends RestIntegrationTest {
     public void validIdentifiersShouldBeAddedToGateDatabase() {
         // Arrange
         var platformId = randomIdentifier();
-        var platformConsignment = newRandomSupplyChainConsignment();
+        var platformConsignment = newConsignmentIdentifier();
         var platformXml = serializeUtils.mapDocToXmlString(EftiSchemaUtils.mapIdentifiersObjectToDoc(serializeUtils, platformConsignment), true);
         var datasetId = UUID.randomUUID().toString();
 
@@ -110,11 +92,11 @@ public class PlatformApiIT extends RestIntegrationTest {
         // Arrange
         var platformId = randomIdentifier();
         var datasetId = UUID.randomUUID().toString();
-        identifiersRepository.save(toEntity(GATE_ID, platformId, datasetId, newRandomSupplyChainConsignment()));
+        identifiersRepository.save(toEntity(GATE_ID, platformId, datasetId, newConsignmentIdentifier()));
         var originalConsignment = toConsignmentIdentifier(identifiersRepository.findByUil(GATE_ID, datasetId, platformId).get());
 
         // Act
-        var updatedPlatformXml = serializeUtils.mapDocToXmlString(EftiSchemaUtils.mapIdentifiersObjectToDoc(serializeUtils, newRandomSupplyChainConsignment()), true);
+        var updatedPlatformXml = serializeUtils.mapDocToXmlString(EftiSchemaUtils.mapIdentifiersObjectToDoc(serializeUtils, newConsignmentIdentifier()), true);
         var res = restApiCallerFactory.createAuthenticatedForPlatformApi(platformId)
                 .put("/api/platform/v0/consignments/" + datasetId, updatedPlatformXml, MediaType.APPLICATION_XML, Void.class);
 
@@ -156,52 +138,5 @@ public class PlatformApiIT extends RestIntegrationTest {
         ci.getUsedTransportEquipment().addAll(edeliveryConsignment.getUsedTransportEquipment());
 
         return ci;
-    }
-
-    private static SupplyChainConsignment newRandomSupplyChainConsignment() {
-        SupplyChainConsignment c = new SupplyChainConsignment();
-
-        c.setCarrierAcceptanceDateTime(newDateTime(randomPastInstant()));
-
-        c.setDeliveryEvent(new TransportEvent());
-        c.getDeliveryEvent().setActualOccurrenceDateTime(newDateTime(randomFutureInstant()));
-
-        var ltmo = new LogisticsTransportMovement();
-        ltmo.setDangerousGoodsIndicator(randomBoolean());
-        ltmo.setModeCode(random("1", "2", "3", "4"));
-        ltmo.setUsedTransportMeans(new LogisticsTransportMeans());
-        ltmo.getUsedTransportMeans().setId(newIdentifier17());
-        ltmo.getUsedTransportMeans().setRegistrationCountry(newTradeCountry());
-        c.getMainCarriageTransportMovement().add(ltmo);
-
-        var lte = new LogisticsTransportEquipment();
-        lte.setId(newIdentifier17());
-        lte.setCategoryCode(random(TransportEquipmentCategoryCode.class));
-        lte.setRegistrationCountry(newTradeCountry());
-        lte.setSequenceNumber(BigInteger.ONE);
-        c.getUsedTransportEquipment().add(lte);
-
-        return c;
-    }
-
-    private static TradeCountry newTradeCountry() {
-        TradeCountry tc = new TradeCountry();
-        tc.setCode(random(CountryCode.class));
-        return tc;
-    }
-
-    private static Identifier17 newIdentifier17() {
-        Identifier17 id = new Identifier17();
-        id.setValue(randomIdentifier());
-        return id;
-    }
-
-    private static DateTime newDateTime(Instant instant) {
-        var dateTime = new DateTime();
-        dateTime.setFormatId("205");
-        dateTime.setValue(OffsetDateTime
-                .ofInstant(instant.truncatedTo(ChronoUnit.MINUTES), ZoneOffset.UTC)
-                .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmZ")));
-        return dateTime;
     }
 }

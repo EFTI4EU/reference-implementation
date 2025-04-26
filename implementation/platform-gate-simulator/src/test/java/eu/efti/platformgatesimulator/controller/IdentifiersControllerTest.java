@@ -1,6 +1,8 @@
 package eu.efti.platformgatesimulator.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.efti.commons.utils.EftiSchemaUtils;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.platformgatesimulator.exception.UploadException;
 import eu.efti.platformgatesimulator.service.ApIncomingService;
@@ -25,8 +27,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
+import static eu.efti.testsupport.EntityFactory.newConsignmentCommon;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @WebMvcTest(IdentifiersController.class)
 @ContextConfiguration(classes = {IdentifiersController.class})
@@ -52,6 +60,15 @@ class IdentifiersControllerTest {
     private GateIntegrationService gateIntegrationService;
 
     private final SaveIdentifiersRequest saveIdentifiersRequest = new SaveIdentifiersRequest();
+
+    private static MockMultipartFile randomXmlMultipartFile() {
+        return xmlMultipartFile("<some-xml/>");
+    }
+
+    private static MockMultipartFile xmlMultipartFile(String content) {
+        return new MockMultipartFile("some-file.xml", "some-original-filename.xml",
+                "application/xml", content.getBytes(StandardCharsets.UTF_8));
+    }
 
     @BeforeEach
     void before() {
@@ -116,6 +133,36 @@ class IdentifiersControllerTest {
     }
 
     @Test
+    void uploadConsignmentHappyPathTest() {
+        var actualSerializeUtils = new SerializeUtils(new ObjectMapper());
+
+        var common = newConsignmentCommon();
+        var file = xmlMultipartFile(actualSerializeUtils.mapDocToXmlString(EftiSchemaUtils.mapCommonObjectToDoc(actualSerializeUtils, common), true));
+        var datasetId = UUID.randomUUID().toString();
+
+        // Testing happy path requires actual serialization implementation
+        ResponseEntity<String> result = new IdentifiersController(apIncomingService, readerService, actualSerializeUtils, gateIntegrationService)
+                .uploadConsignment(datasetId, file);
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(HttpStatus.OK, result.getStatusCode()),
+                () -> Assertions.assertEquals("Consignment saved and identifiers uploaded to gate", result.getBody())
+        );
+
+        try {
+            verify(gateIntegrationService, times(1)).uploadIdentifiers(
+                    eq(datasetId),
+                    argThat(identifier -> {
+                        // Make some minimal assertion that verifies the identifier object is created from common object.
+                        return identifier.getCarrierAcceptanceDateTime().getValue().equals(common.getCarrierAcceptanceDateTime().getValue());
+                    }));
+            verify(readerService, times(1)).uploadFile(file, "%s.xml".formatted(datasetId));
+        } catch (GateIntegrationService.GateIntegrationServiceException | UploadException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
     void uploadConsignmentNullFileTest() {
         final ResponseEntity<String> result = identifiersController.uploadConsignment(null, null);
 
@@ -127,8 +174,7 @@ class IdentifiersControllerTest {
 
     @Test
     void uploadConsignmentNullDatasetIdTest() {
-        MockMultipartFile file = new MockMultipartFile("data", "other-file-name.xml", "application/xml", "some other type".getBytes(StandardCharsets.UTF_8));
-        final ResponseEntity<String> result = identifiersController.uploadConsignment(null, file);
+        final ResponseEntity<String> result = identifiersController.uploadConsignment(null, randomXmlMultipartFile());
 
         Assertions.assertAll(
                 () -> Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode()),
@@ -138,8 +184,7 @@ class IdentifiersControllerTest {
 
     @Test
     void uploadConsignmentInvalidDatasetIdTest() {
-        MockMultipartFile file = new MockMultipartFile("data", "other-file-name.xml", "application/xml", "some other type".getBytes(StandardCharsets.UTF_8));
-        final ResponseEntity<String> result = identifiersController.uploadConsignment("sone-invalid-dataset-id", file);
+        final ResponseEntity<String> result = identifiersController.uploadConsignment("sone-invalid-dataset-id", randomXmlMultipartFile());
 
         Assertions.assertAll(
                 () -> Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode()),

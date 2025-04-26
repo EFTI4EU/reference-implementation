@@ -85,16 +85,18 @@ public class IdentifiersController {
             return new ResponseEntity<>("Dataset ID is not valid", HttpStatus.BAD_REQUEST);
         }
 
-        // TODO: save common
         log.info("Upload consignment {}", datasetId);
         var commonXml = readFileAsString(consignmentFile);
         try {
             var common = serializeUtils.mapXmlStringToJaxbObject(commonXml, eu.efti.v1.consignment.common.SupplyChainConsignment.class, EftiSchemas.getJavaCommonSchema());
             var identifiers = PlatformEftiSchemaUtils.commonToIdentifiers(serializeUtils, common);
             gateIntegrationService.uploadIdentifiers(datasetId, identifiers);
+            readerService.uploadFile(consignmentFile, "%s.xml".formatted(datasetId));
         } catch (MappingException e) {
             log.error("Could not map xml object", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid file: " + e.getMessage());
+        } catch (UploadException e) {
+            return new ResponseEntity<>("Error while uploading file " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             log.error("Unhandled error", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

@@ -50,6 +50,7 @@ More detailed documentation of different elements of this repository can be foun
     - [Common library](implementation/commons/README.md)
     - [Logger](implementation/efti-logger/README.md)
     - [Platform and gate simulator](implementation/platform-gate-simulator/README.md)
+    - [Test support](implementation/test-support/README.md)
 - [Schemas](schema/README.md)
     - [Data models](schema/xsd/README.md)
     - [API definitions](schema/api-schemas/README.md)

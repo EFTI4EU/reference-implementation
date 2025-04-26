@@ -134,6 +134,7 @@
         <module>gate</module>
         <module>platform-gate-simulator</module>
         <module>efti-ws-plugin</module>
+        <module>test-support</module>
     </modules>
 
     <dependencyManagement>

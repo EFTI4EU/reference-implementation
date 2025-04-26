@@ -35,13 +35,17 @@ public class ReaderService {
     private final ResourceLoader resourceLoader;
 
     public void uploadFile(final MultipartFile file) throws UploadException {
+        uploadFile(file, file.getOriginalFilename());
+    }
+
+    public void uploadFile(final MultipartFile file, final String filenameOverride) throws UploadException {
         try {
             if (file == null) {
                 throw new NullPointerException("No file send");
             }
-            log.info("Try to upload file in {} with name {}", gateProperties.getCdaPath(), file.getOriginalFilename());
-            file.transferTo(new File(resourceLoader.getResource(gateProperties.getCdaPath()).getURI().getPath() + file.getOriginalFilename()));
-            log.info("File uploaded in {}", gateProperties.getCdaPath() + file.getOriginalFilename());
+            log.info("Try to upload file in {} with name {}", gateProperties.getCdaPath(), filenameOverride);
+            file.transferTo(new File(resourceLoader.getResource(gateProperties.getCdaPath()).getURI().getPath() + filenameOverride));
+            log.info("File uploaded in {}", gateProperties.getCdaPath() + filenameOverride);
         } catch (final IOException e) {
             log.error("Error when try to upload file to server", e);
             throw new UploadException(e);

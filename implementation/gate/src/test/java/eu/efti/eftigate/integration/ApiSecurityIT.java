@@ -4,7 +4,7 @@ import eu.efti.eftigate.testsupport.RestIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import static eu.efti.eftigate.testsupport.TestData.randomIdentifier;
+import static eu.efti.testsupport.TestData.randomIdentifier;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
