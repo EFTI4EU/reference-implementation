@@ -46,10 +46,13 @@ public class ReportingRequestLogService implements LogService<LogRequestDto> {
         final OffsetDateTime offsetDateTimeNow = OffsetDateTime.now();
         LocalDateTime sendDate = LocalDateTime.now(ZoneOffset.UTC);
         Long responseDelay = null;
+        String sentDateString = DateTimeFormatter.ofPattern(DATE_FORMAT).format(sendDate);
         if (isSendDate && requestDto != null && requestDto.getSentDate() != null) {
             sendDate = requestDto.getSentDate().toLocalDateTime();
+            sentDateString = DateTimeFormatter.ofPattern(DATE_FORMAT).format(sendDate);
             responseDelay = offsetDateTimeNow.toInstant().toEpochMilli() - requestDto.getSentDate().toInstant().toEpochMilli();
         } else if (!isSendDate && requestDto != null) {
+            sentDateString = requestDto.getCreatedDate().atOffset(ZoneOffset.UTC).toString();
             responseDelay = offsetDateTimeNow.toInstant().toEpochMilli() - requestDto.getCreatedDate().toInstant(offsetDateTimeNow.getOffset()).toEpochMilli();
         }
 
@@ -65,7 +68,7 @@ public class ReportingRequestLogService implements LogService<LogRequestDto> {
                 .statusMessage(controlDto.getStatus().name())
                 .errorCodeMessage(controlDto.getError() != null ? controlDto.getError().getErrorCode() : null)
                 .errorDescriptionMessage(controlDto.getError() != null ? controlDto.getError().getErrorDescription() : null)
-                .sentDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(sendDate))
+                .sentDate(sentDateString)
                 .responseDelay(responseDelay)
                 .requestId(controlDto.getRequestId())
                 .respondingComponentType(respondingComponentType)

@@ -1,6 +1,5 @@
 package eu.efti.eftilogger.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.efti.commons.enums.RegistryType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

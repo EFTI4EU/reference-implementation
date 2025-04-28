@@ -33,7 +33,7 @@ class ReaderServiceTest {
 
     private ReaderService readerService;
 
-    private final String pathTu = "/tmp/cda";
+    private static final String pathTu = "/tmp/cda";
 
     @BeforeEach
     public void before() {
@@ -55,18 +55,6 @@ class ReaderServiceTest {
     @AfterEach
     void tearDown() throws Exception {
         openMocks.close();
-    }
-
-    @Test
-    @Disabled("disabled temporarily")
-    void uploadFileTest() throws UploadException {
-        final MockMultipartFile mockMultipartFile = new MockMultipartFile(
-                "teest.xml",
-                "teest.xml",
-                "text/plain",
-                "content".getBytes(StandardCharsets.UTF_8));
-
-        readerService.uploadFile(mockMultipartFile);
     }
 
     @Test
