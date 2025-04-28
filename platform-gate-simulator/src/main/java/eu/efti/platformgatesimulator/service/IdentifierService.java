@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.UUID;
 
 import static java.lang.Thread.sleep;
@@ -70,7 +70,7 @@ public class IdentifierService {
 
     private final SerializeUtils serializeUtils;
 
-    private final Random random = new Random();
+    private final SecureRandom random = new SecureRandom();
 
     public void sendResponseUil(final String requestId, final SupplyChainConsignment consignment) {
         final ApRequestDto apRequestDto = ApRequestDto.builder()
