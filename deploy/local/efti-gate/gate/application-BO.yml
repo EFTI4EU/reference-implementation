@@ -28,3 +28,7 @@ gate:
     url: http://efti.gate.borduria.eu:81/domibus/services/wsplugin
     username: borduria_service_account
     password: Azerty59*1234567
+  platforms:
+    - platformId: "acme"
+      useRestApi: true
+      restApiBaseUrl: "http://platform-ACME:8070/api/gate-api"

@@ -56,6 +56,7 @@ public class ReaderService {
     public SupplyChainConsignment readFromFile(final String file, final List<String> subsets) throws IOException {
         Resource resource = tryOpenFile(file, XML_FILE_TYPE);
         if (resource.exists()) {
+            log.info("file exists");
             Optional<String> str;
             if (subsets.isEmpty() || subsets.contains("full")) {
                 str = Optional.of(resource.getContentAsString(Charset.defaultCharset()));
@@ -72,8 +73,10 @@ public class ReaderService {
             } catch (JAXBException e) {
                 throw new TechnicalException("error while writing content", e);
             }
+        } else {
+            log.info("file does not exist");
+            return null;
         }
-        return null;
     }
 
     private Resource tryOpenFile(final String path, final String ext) {

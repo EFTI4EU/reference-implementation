@@ -46,7 +46,8 @@ class RabbitListenerServiceTest extends BaseServiceTest {
     private LogManager logManager;
     @Mock
     private MessageIdGenerator messageIdGenerator;
-
+    @Mock
+    private PlatformIntegrationService platformIntegrationService;
 
     private static final String URL = "url";
     private static final String PASSWORD = "password";
@@ -72,7 +73,8 @@ class RabbitListenerServiceTest extends BaseServiceTest {
                         .username(USERNAME).build()).build();
 
         rabbitListenerService = new RabbitListenerService(gateProperties, serializeUtils, requestSendingService,
-                requestServiceFactory, apIncomingService, mapperUtils, logManager, messageIdGenerator);
+                requestServiceFactory, apIncomingService, mapperUtils, logManager, messageIdGenerator, platformIntegrationService,
+                uilRequestService);
         memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
         memoryAppender = MemoryAppender.createInitializedMemoryAppender(
                 Level.TRACE, memoryAppenderTestLogger);

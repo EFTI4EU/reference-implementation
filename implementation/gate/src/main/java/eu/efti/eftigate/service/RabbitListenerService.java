@@ -16,14 +16,18 @@ import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.generator.id.MessageIdGenerator;
 import eu.efti.eftigate.mapper.MapperUtils;
+import eu.efti.eftigate.service.PlatformIntegrationService.PlatformInfo;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
+import eu.efti.eftigate.service.request.UilRequestService;
 import eu.efti.eftilogger.model.ComponentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
@@ -38,7 +42,8 @@ public class RabbitListenerService {
     private final MapperUtils mapperUtils;
     private final LogManager logManager;
     private final MessageIdGenerator messageIdGenerator;
-
+    private final PlatformIntegrationService platformIntegrationService;
+    private final UilRequestService uilRequestService;
 
     @RabbitListener(queues = "${spring.rabbitmq.queues.eftiReceiveMessageQueue:efti.receive-messages.q}")
     public void listenReceiveMessage(final String message) {
@@ -62,28 +67,44 @@ public class RabbitListenerService {
     private void trySendDomibus(final RabbitRequestDto rabbitRequestDto) {
 
         final RequestTypeEnum requestTypeEnum = rabbitRequestDto.getControl().getRequestType();
-        final boolean isCurrentGate = gateProperties.isCurrentGate(rabbitRequestDto.getGateIdDest());
-        final String receiver = isCurrentGate ? rabbitRequestDto.getControl().getPlatformId() : rabbitRequestDto.getGateIdDest();
-        final RequestDto requestDto = mapperUtils.rabbitRequestDtoToRequestDto(rabbitRequestDto, EftiGateConstants.REQUEST_TYPE_CLASS_MAP.get(rabbitRequestDto.getRequestType()));
-        String previousEdeliveryMessageId = rabbitRequestDto.getEdeliveryMessageId();
-        try {
-            String eDeliveryMessageId = messageIdGenerator.generateMessageId();
-            if (rabbitRequestDto.getError() == null || !ErrorCodesEnum.REQUESTID_MISSING.name().equals(rabbitRequestDto.getError().getErrorCode())) {
-                getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, eDeliveryMessageId);
+        final ComponentType target = gateProperties.isCurrentGate(rabbitRequestDto.getGateIdDest()) ? ComponentType.PLATFORM : ComponentType.GATE;
+
+        if (ComponentType.PLATFORM.equals(target) && platformIntegrationService.getPlatformInfo(rabbitRequestDto.getControl().getPlatformId()).map(PlatformInfo::useRestApi).orElse(false)) {
+            var platformId = rabbitRequestDto.getControl().getPlatformId();
+            var platformInfo = platformIntegrationService.getPlatformInfo(platformId);
+            if (platformInfo.isEmpty()) {
+                throw new IllegalArgumentException("platform " + platformId + " does not exist");
             }
-            this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto, eDeliveryMessageId));
-        } catch (final SendRequestException e) {
-            log.error("error while sending request" + e);
-            getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
-            throw new TechnicalException("Error when try to send message to domibus", e);
-        } finally {
-            final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
-            if (RequestType.UIL.equals(requestDto.getRequestType())) {
-                //log fti020 and fti009
-                logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, isCurrentGate ? ComponentType.PLATFORM : ComponentType.GATE, true, LogManager.FTI_009_FTI_020);
-            } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
-                //log fti019
-                logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, ComponentType.GATE, true, LogManager.FTI_019);
+            try {
+                uilRequestService.manageRestRequestInProgress(rabbitRequestDto.getControl().getRequestId());
+                var res = platformIntegrationService.callGetConsignmentSubsets(platformId, rabbitRequestDto.getControl().getDatasetId(), Set.copyOf(rabbitRequestDto.getControl().getSubsetIds()));
+                uilRequestService.manageRestResponseReceived(rabbitRequestDto.getControl().getRequestId(), res);
+            } catch (PlatformIntegrationServiceException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            final RequestDto requestDto = mapperUtils.rabbitRequestDtoToRequestDto(rabbitRequestDto, EftiGateConstants.REQUEST_TYPE_CLASS_MAP.get(rabbitRequestDto.getRequestType()));
+            String previousEdeliveryMessageId = rabbitRequestDto.getEdeliveryMessageId();
+            try {
+                String eDeliveryMessageId = messageIdGenerator.generateMessageId();
+                if (rabbitRequestDto.getError() == null || !ErrorCodesEnum.REQUESTID_MISSING.name().equals(rabbitRequestDto.getError().getErrorCode())) {
+                    getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, eDeliveryMessageId);
+                }
+                this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto, eDeliveryMessageId));
+            } catch (final SendRequestException e) {
+                log.error("error while sending request" + e);
+                getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
+                throw new TechnicalException("Error when try to send message to domibus", e);
+            } finally {
+                final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
+                final String receiver = ComponentType.PLATFORM.equals(target) ? rabbitRequestDto.getControl().getPlatformId() : rabbitRequestDto.getGateIdDest();
+                if (RequestType.UIL.equals(requestDto.getRequestType())) {
+                    //log fti020 and fti009
+                    logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, target, true, LogManager.FTI_009_FTI_020);
+                } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
+                    //log fti019
+                    logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, ComponentType.GATE, true, LogManager.FTI_019);
+                }
             }
         }
     }

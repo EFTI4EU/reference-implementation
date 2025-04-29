@@ -286,6 +286,27 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>
+                                    ${project.build.directory}/generated-sources/openapi/src/test/java
+                                </source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <executions>
@@ -310,6 +331,25 @@
                                 <skipDefaultInterface>true</skipDefaultInterface>
                             </configOptions>
                             <apiPackage>eu.efti.eftigate.controller.api.platform</apiPackage>
+                            <modelPackage>eu.efti.eftigate.dto</modelPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-client-for-platform</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/../../schema/api-schemas/platform-api-for-gate.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <configOptions>
+                                <openApiNullable>false</openApiNullable>
+                                <useJakartaEe>true</useJakartaEe>
+                                <withXml>true</withXml>
+                            </configOptions>
+                            <apiPackage>eu.efti.eftigate.service.client</apiPackage>
                             <modelPackage>eu.efti.eftigate.dto</modelPackage>
                         </configuration>
                     </execution>

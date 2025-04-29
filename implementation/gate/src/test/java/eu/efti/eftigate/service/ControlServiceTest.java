@@ -104,6 +104,9 @@ class ControlServiceTest extends AbstractServiceTest {
     @Mock
     private SerializeUtils serializeUtils;
 
+    @Mock
+    private PlatformIntegrationService platformIntegrationService;
+
     @Captor
     private ArgumentCaptor<ControlEntity> controlEntityArgumentCaptor;
 
@@ -141,7 +144,7 @@ class ControlServiceTest extends AbstractServiceTest {
                         .username(USERNAME).build()).build();
         controlService = new ControlService(controlRepository, eftiGateIdResolver, identifiersService, mapperUtils,
                 requestServiceFactory, logManager, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
-                gateProperties, serializeUtils);
+                gateProperties, serializeUtils, platformIntegrationService);
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
         final StatusEnum status = StatusEnum.PENDING;
         final AuthorityDto authorityDto = AuthorityDto.builder()
@@ -243,6 +246,7 @@ class ControlServiceTest extends AbstractServiceTest {
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
         when(identifiersService.findByUIL(any(), any(), any())).thenReturn(new ConsignmentDto());
+        when(platformIntegrationService.platformExists(uilDto.getPlatformId())).thenReturn(true);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
 
@@ -833,6 +837,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(identifiersService.findByUIL(any(), any(), any())).thenReturn(null);
+        when(platformIntegrationService.platformExists(uilDto.getPlatformId())).thenReturn(true);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
 
