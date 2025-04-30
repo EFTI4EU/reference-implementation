@@ -50,6 +50,9 @@ public class IdentifiersService {
     private int modeCodeOtherMaxDayPassed;
     @Value("${batch.identifier.deactivation-delay.null-delivery-date:90}")
     private int nullDeliveryDateMaxDayPassed;
+    @Value("${batch.identifier.activated:false}")
+    private boolean batchIdentifiersActivated;
+
 
     @Transactional("identifiersTransactionManager")
     public int deleteOldConsignment() {
@@ -96,7 +99,7 @@ public class IdentifiersService {
 
     @Transactional("identifiersTransactionManager")
     public List<ConsignmentDto> search(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
-        return mapper.entityToDto(this.identifiersRepository.searchByCriteria(identifiersRequestDto));
+        return mapper.entityToDto(this.identifiersRepository.searchByCriteria(identifiersRequestDto, batchIdentifiersActivated));
     }
 
     public Consignment setDisabledDate(final Consignment consignment) {
