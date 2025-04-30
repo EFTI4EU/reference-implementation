@@ -251,7 +251,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
     void shouldSearch() {
         final SearchWithIdentifiersRequestDto identifiersRequestDto = SearchWithIdentifiersRequestDto.builder().build();
         service.search(identifiersRequestDto);
-        verify(repository).searchByCriteria(identifiersRequestDto);
+        verify(repository).searchByCriteria(identifiersRequestDto, false);
     }
 
     @AfterEach

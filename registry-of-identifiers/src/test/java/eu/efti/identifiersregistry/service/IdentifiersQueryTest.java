@@ -127,7 +127,7 @@ class IdentifiersQueryTest {
         var query = toQuery(testCase.testCaseSpec.getQuery());
         var expectedDatasetIds = new HashSet<>(testCase.testCaseSpec.getResult());
 
-        var results = identifiersRepository.searchByCriteria(query.build());
+        var results = identifiersRepository.searchByCriteria(query.build(), true);
         var resultIds = results.stream().map(Consignment::getDatasetId).collect(Collectors.toSet());
 
         assertEquals(expectedDatasetIds, resultIds);

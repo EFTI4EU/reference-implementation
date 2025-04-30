@@ -244,7 +244,7 @@ class IdentifiersRepositoryTest {
                 .registrationCountryCode("FR")
                 .identifierType(List.of("means"))
                 .eftiGateIndicator(List.of("FR"))
-                .build());
+                .build(), true);
 
         assertEquals(2, foundConsignments.size());
         assertTrue(foundConsignments.stream().anyMatch(c -> c.getDatasetId().equals("67676767-6767-6767-6767-11180123be5b")));
@@ -256,7 +256,7 @@ class IdentifiersRepositoryTest {
         List<Consignment> foundConsignments = identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
                 .identifier("ASB-123")
                 .identifierType(List.of("means"))
-                .build());
+                .build(), true);
 
         assertEquals(2, foundConsignments.size());
         assertTrue(CollectionUtils.isEqualCollection(foundConsignments, List.of(fourthConsignment, fifthConsignment)));
@@ -268,7 +268,7 @@ class IdentifiersRepositoryTest {
                 .identifier("ASB-123")
                 .identifierType(List.of("means"))
                 .registrationCountryCode("FI")
-                .build());
+                .build(), true);
 
         assertEquals(1, foundConsignments.size());
         assertEquals("67676767-6767-6767-6767-44480123be5b", foundConsignments.iterator().next().getDatasetId());
@@ -280,7 +280,7 @@ class IdentifiersRepositoryTest {
                 .identifier("ASB-123")
                 .identifierType(List.of("means", "equipment"))
                 .registrationCountryCode("FI")
-                .build());
+                .build(), true);
 
         assertEquals(2, foundConsignments.size());
         assertTrue(CollectionUtils.isEqualCollection(foundConsignments, List.of(fourthConsignment, sixthConsignment)));
@@ -292,7 +292,7 @@ class IdentifiersRepositoryTest {
                 .identifier("ASB-123")
                 .identifierType(List.of("means", "carried", "equipment"))
                 .registrationCountryCode("FI")
-                .build());
+                .build(), true);
 
         assertEquals(3, foundConsignments.size());
         assertTrue(CollectionUtils.isEqualCollection(foundConsignments, List.of(fourthConsignment, fifthConsignment, sixthConsignment)));
@@ -303,7 +303,7 @@ class IdentifiersRepositoryTest {
         List<Consignment> foundConsignments = identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
                 .identifier("FMC888")
                 .registrationCountryCode("FR")
-                .build());
+                .build(), true);
 
         assertEquals(2, foundConsignments.size());
         assertTrue(CollectionUtils.isEqualCollection(foundConsignments, List.of(firstConsignment, secondConsignment)));
