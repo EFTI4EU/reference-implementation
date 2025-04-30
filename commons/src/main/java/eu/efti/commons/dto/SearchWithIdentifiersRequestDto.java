@@ -26,7 +26,7 @@ public class SearchWithIdentifiersRequestDto implements ValidableDto {
     private String modeCode;
     @NotBlank(message = "IDENTIFIER_MISSING")
     @Length(max = 17, message = "IDENTIFIER_TOO_LONG")
-    @Pattern(regexp = "^[A-Za-z0-9]*$", message = "IDENTIFIER_INCORRECT_FORMAT")
+    @Pattern(regexp = "^[\\w\\u00C0-\\u024F\\u1E00-\\u1EFF\\-_ ]*$", message = "IDENTIFIER_INCORRECT_FORMAT")
     private String identifier;
     private List<@Valid @ValueOfEnum(enumClass = IdentifierType.class, message = "IDENTIFIER_TYPE_INCORRECT") String> identifierType;
     @ValueOfEnum(enumClass = CountryCode.class, message = "REGISTRATION_COUNTRY_INCORRECT")
