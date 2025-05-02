@@ -13,7 +13,7 @@ variables:
   MAVEN_ARTIFACTID: platform-gate-simulator
   MAVEN_EXTENSION: jar
   VERSION_ARTEFACT_SNAPSHOT: 0.6.0-SNAPSHOT
-  VERSION_ARTEFACT_RELEASE: 0.5.6
+  VERSION_ARTEFACT_RELEASE: 0.5.7
 
 "$[[ inputs.job-prefix | expand_vars ]]_build_and_deploy_microservices":
   stage: $[[ inputs.job-stage ]]
