@@ -17,8 +17,8 @@
   <xsd:simpleType name="ResponseStatus">
     <xsd:annotation>
       <xsd:documentation>
-        Duration units used in Efti from UNECE Recommendation 20 (UNECE (UN/EDIFACT) codes 6411)
-        See https://unece.org/trade/uncefact/cl-recommendations
+        Status codes for response. Status codes are based on http status codes
+        where some semantics are adapted for our purpose.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:token">
