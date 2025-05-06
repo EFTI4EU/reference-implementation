@@ -25933,6 +25933,62 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
+      <xsd:element name="technicalNameNote" type="efti:Note" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <unCefact unId="UN01015780" id="Transport_ Dangerous Goods. Technical Name Related. Note"/>
+            <efti id="ASBIE1140" format=""
+                  definition="Additional information relating to the technical name of this dangerous goods cargo item."
+                  parentId="ASBIE1066">
+              <subset id="AT05" status="SI"/>
+              <subset id="AT06" status="SI"/>
+              <subset id="AT07" status="SI"/>
+              <subset id="AT12" status="SI"/>
+              <subset id="AT13" status="SI"/>
+              <subset id="AT14" status="SI"/>
+              <subset id="AT16" status="SI"/>
+              <subset id="BE01" status="SI"/>
+              <subset id="BE02" status="SI"/>
+              <subset id="BE05" status="SI"/>
+              <subset id="BE06" status="SI"/>
+              <subset id="BE07" status="SI"/>
+              <subset id="BE08" status="SI"/>
+              <subset id="BE09" status="SI"/>
+              <subset id="BE10" status="SI"/>
+              <subset id="BG05" status="SI"/>
+              <subset id="BG06" status="SI"/>
+              <subset id="BG07" status="SI"/>
+              <subset id="BG08" status="SI"/>
+              <subset id="CZ05" status="SI"/>
+              <subset id="DE03a" status="SI"/>
+              <subset id="DE03b" status="SI"/>
+              <subset id="DE03c" status="SI"/>
+              <subset id="EU05a" status="SI"/>
+              <subset id="EU05b" status="SI"/>
+              <subset id="EU05c" status="SI"/>
+              <subset id="HR05B" status="SI"/>
+              <subset id="HR05a" status="SI"/>
+              <subset id="HR05c" status="SI"/>
+              <subset id="IT03a" status="SI"/>
+              <subset id="IT03b" status="SI"/>
+              <subset id="IT03c" status="SI"/>
+              <subset id="LV05" status="SI"/>
+              <subset id="MT02" status="SI"/>
+              <subset id="NL05" status="SI"/>
+              <subset id="NL06" status="SI"/>
+              <subset id="PL04a" status="SI"/>
+              <subset id="PL04b" status="SI"/>
+              <subset id="PL04c" status="SI"/>
+              <subset id="PT02" status="SI"/>
+              <subset id="RO05b" status="SI"/>
+              <subset id="RO05c" status="SI"/>
+              <subset id="SI05" status="SI"/>
+            </efti>
+          </xsd:appinfo>
+          <xsd:documentation>A note related to the technical name of these transported dangerous goods.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
       <xsd:element name="tunnelRestrictionCode" type="xsd:token" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
           <xsd:appinfo>
