@@ -32,7 +32,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.Objects;
 
 import static eu.efti.eftilogger.model.ComponentType.GATE;
 import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
@@ -94,12 +93,15 @@ public class RabbitListenerService {
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
             ControlDto controlDto = requestDto.getControl();
+            String currentGateCountry = gateProperties.getCountry();
+            String owner = gateProperties.getOwner();
             if (RequestType.NOTE.equals(requestDto.getRequestType())) {
-                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.NOTE_ACK, GATE, gateProperties.getOwner(), gateProperties.getCountry(), eftiGateIdResolver.resolve(receiver) == null ? PLATFORM : GATE, receiver, eftiGateIdResolver.resolve(controlDto.getGateId()),false);
+                reportingRequestLogService.logReportingRequest(controlDto, requestDto, owner, currentGateCountry, RequestTypeLog.NOTE_ACK, GATE, owner, currentGateCountry, eftiGateIdResolver.resolve(receiver) == null ? PLATFORM : GATE, receiver, eftiGateIdResolver.resolve(controlDto.getGateId()), false);
             }
             logSentMessage(rabbitRequestDto, requestTypeEnum, requestDto, receiver);
             if (RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH.equals(controlDto.getRequestType()) && !gateProperties.isCurrentGate(requestDto.getGateIdDest()) && !RequestType.NOTE.equals(requestDto.getRequestType())) {
-                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.UIL_ACK, GATE, gateProperties.getOwner(), gateProperties.getCountry(), GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()),false);
+                String fromGateId = controlDto.getFromGateId();
+                reportingRequestLogService.logReportingRequest(controlDto, requestDto, owner, currentGateCountry, RequestTypeLog.UIL_ACK, GATE, owner, currentGateCountry, GATE, fromGateId, eftiGateIdResolver.resolve(fromGateId), false);
             }
         }
     }

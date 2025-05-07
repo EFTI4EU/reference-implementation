@@ -45,7 +45,6 @@ public class EftiRequestUpdater {
     private final EftiGateIdResolver eftiGateIdResolver;
 
 
-
     public void manageSendFailure(final NotificationDto notificationDto, final String name) {
         final Optional<RequestDto> requestDto = getRequestDtoFromMessageId(notificationDto.getMessageId());
         if (requestDto.isPresent()) {
@@ -55,7 +54,8 @@ public class EftiRequestUpdater {
             if (List.of(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, RequestTypeEnum.EXTERNAL_UIL_SEARCH, RequestTypeEnum.LOCAL_UIL_SEARCH).contains(request.getControl().getRequestType())) {
                 //log reporting external_identifiers_search (réception de réponse)
                 ControlDto controlDto = request.getControl();
-                reportingRequestLogService.logReportingRequest(controlDto, request,gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), CA_APP, null, null, false);
+                String currentGateCountry = gateProperties.getCountry();
+                reportingRequestLogService.logReportingRequest(controlDto, request, gateProperties.getOwner(), currentGateCountry, RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), CA_APP, null, null, false);
             }
         }
     }

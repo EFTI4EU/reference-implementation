@@ -124,7 +124,10 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
                 final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(controlEntity);
                 sendLogNote(controlDto, false, body);
                 //log reporting note
-                reportingRequestLogService.logReportingRequest(controlDto, null, getGateProperties().getOwner(), getGateProperties().getCountry(), RequestTypeLog.NOTE, controlDto.getFromGateId() != null ? ComponentType.GATE : ComponentType.CA_APP, controlDto.getFromGateId(), controlDto.getFromGateId() != null ? eftiGateIdResolver.resolve(controlDto.getFromGateId()) : null, ComponentType.GATE, getGateProperties().getOwner(), getGateProperties().getCountry(), false);
+                String currentGateId = getGateProperties().getOwner();
+                String currentGateCountry = getGateProperties().getCountry();
+                String fromGateId = controlDto.getFromGateId();
+                reportingRequestLogService.logReportingRequest(controlDto, null, currentGateId, currentGateCountry, RequestTypeLog.NOTE, fromGateId != null ? ComponentType.GATE : ComponentType.CA_APP, fromGateId, fromGateId != null ? eftiGateIdResolver.resolve(fromGateId) : null, ComponentType.GATE, currentGateId, currentGateCountry, false);
                 controlDto.setNotes(messageBody.getMessage());
                 createAndSendRequest(controlDto, messageBody.getUil().getPlatformId());
                 markMessageAsDownloaded(notificationDto.getMessageId());

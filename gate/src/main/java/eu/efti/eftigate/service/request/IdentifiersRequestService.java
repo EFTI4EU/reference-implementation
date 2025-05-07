@@ -24,7 +24,6 @@ import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.ErrorEntity;
 import eu.efti.eftigate.entity.IdentifiersRequestEntity;
 import eu.efti.eftigate.entity.RequestEntity;
-import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.IdentifiersRequestRepository;
@@ -34,7 +33,6 @@ import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
 import eu.efti.eftigate.service.ValidationService;
 import eu.efti.eftigate.service.gate.EftiGateIdResolver;
-import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.eftilogger.model.RequestTypeLog;
 import eu.efti.eftilogger.service.ReportingRequestLogService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
@@ -167,7 +165,9 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByControlRequestIdAndGateIdDest(requestId, fromPartyId);
                 ControlDto controlDto = getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl());
                 RequestDto requestDto = getMapperUtils().identifiersRequestEntityToRequestDto(identifiersRequestEntity, RequestDto.class);
-                reportingRequestLogService.logReportingRequest(controlDto, requestDto, getGateProperties().getOwner(), getGateProperties().getCountry(), RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), GATE, getGateProperties().getOwner(), getGateProperties().getCountry(), true);
+                String currentGateCountry = getGateProperties().getCountry();
+                String owner = getGateProperties().getOwner();
+                reportingRequestLogService.logReportingRequest(controlDto, requestDto, owner, currentGateCountry, RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), GATE, owner, currentGateCountry, true);
                 //log fti021
                 getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId,
                         getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
@@ -197,10 +197,11 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
             ControlDto controlDto = getMapperUtils().controlEntityToControlDto(externalRequest.getControl());
             //log reporting external_identifiers_search (réception de réponse)
             RequestDto requestDto = getMapperUtils().identifiersRequestEntityToRequestDto(externalRequest, RequestDto.class);
+            String currentGateCountry = gateProperties.getCountry();
             if (requestDto.getControl().isExternalAsk()) {
-                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.IDENTIFIERS, GATE, gateProperties.getOwner(), gateProperties.getCountry(), GATE, requestDto.getControl().getFromGateId(), eftiGateIdResolver.resolve(requestDto.getControl().getFromGateId()), true);
+                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), currentGateCountry, RequestTypeLog.IDENTIFIERS, GATE, gateProperties.getOwner(), currentGateCountry, GATE, requestDto.getControl().getFromGateId(), eftiGateIdResolver.resolve(requestDto.getControl().getFromGateId()), true);
             } else {
-                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), CA_APP, null, null, true);
+                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), currentGateCountry, RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), CA_APP, null, null, true);
             }
             this.updateStatus(externalRequest, SUCCESS);
         }
