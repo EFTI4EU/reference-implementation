@@ -1,5 +1,6 @@
 package eu.efti.eftigate.service.request;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.ls.LSInput;
@@ -19,6 +20,9 @@ import java.util.Optional;
 public class ValidationService {
 
     private static final String GATE_XSD = "xsd/edelivery/gate.xsd";
+
+    @Getter
+    private Schema gateSchema;
 
     Validator validator;
 
@@ -57,8 +61,8 @@ public class ValidationService {
             return null;
         });
         Source schemaFile = new StreamSource(getClass().getClassLoader().getResourceAsStream(GATE_XSD));
-        Schema schema = factory.newSchema(schemaFile);
-        return schema.newValidator();
+        gateSchema = factory.newSchema(schemaFile);
+        return gateSchema.newValidator();
     }
 
     public Optional<String> isXmlValid(String body) {

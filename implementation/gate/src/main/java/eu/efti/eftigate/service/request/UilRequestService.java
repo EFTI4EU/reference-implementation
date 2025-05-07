@@ -10,6 +10,7 @@ import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.exception.TechnicalException;
+import eu.efti.commons.utils.EftiSchemaUtils;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.edeliveryapconnector.constant.EDeliveryStatus;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
@@ -50,6 +51,7 @@ import static eu.efti.commons.constant.EftiGateConstants.REQUEST_STATUS_ENUM_STA
 import static eu.efti.commons.constant.EftiGateConstants.UIL_TYPES;
 import static eu.efti.commons.enums.ErrorCodesEnum.DATA_NOT_FOUND_ON_REGISTRY;
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
+import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
 import static eu.efti.commons.enums.RequestStatusEnum.TIMEOUT;
@@ -122,6 +124,30 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             }
         } else {
             log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB);
+        }
+    }
+
+    public void manageRestRequestInProgress(String requestId) {
+        Optional.ofNullable(uilRequestRepository.findByControlRequestIdAndStatus(requestId, RequestStatusEnum.RECEIVED))
+                .ifPresentOrElse(
+                        uilRequest -> updateStatus(uilRequest, IN_PROGRESS),
+                        () -> log.error("Not found UIL request with requestId {}", requestId));
+    }
+
+    public void manageRestResponseReceived(String requestId, SupplyChainConsignment consignment) {
+        final Optional<UilRequestDto> maybeUilRequestDto = this.findByRequestId(requestId);
+        if (maybeUilRequestDto.isPresent()) {
+            if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(maybeUilRequestDto.get().getControl().getRequestType())) {
+                String responseData = serializeUtils.mapDocToXmlString(EftiSchemaUtils.mapCommonObjectToDoc(serializeUtils, consignment));
+                UilRequestDto uilRequestDto = maybeUilRequestDto.get();
+                uilRequestDto.setReponseData(responseData.getBytes(Charset.defaultCharset()));
+                updateStatus(uilRequestDto, RequestStatusEnum.SUCCESS);
+                getControlService().updateControlStatus(uilRequestDto.getControl(), COMPLETE);
+            } else {
+                throw new IllegalStateException("should only be called for local platform requests");
+            }
+        } else {
+            log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB + ": {}", requestId);
         }
     }
 

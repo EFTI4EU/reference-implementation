@@ -2,6 +2,7 @@ package eu.efti.platformgatesimulator.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,6 +32,25 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Order(1)
+    public SecurityFilterChain platformApiFilterChain(final HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
+                .securityMatcher("/api/gate-api/**")
+                .sessionManagement(
+                        management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                                .sessionFixation().changeSessionId()
+                )
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/gate-api/**").permitAll()
+                        .anyRequest().denyAll()
+                )
+                .formLogin(AbstractHttpConfigurer::disable);
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain filterChain(final HttpSecurity http, final JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(
