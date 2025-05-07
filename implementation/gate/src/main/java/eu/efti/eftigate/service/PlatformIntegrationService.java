@@ -71,6 +71,14 @@ public class PlatformIntegrationService {
         }
     }
 
+    public void callPostConsignmentFollowup(String platformId, String datasetId, String body) throws PlatformIntegrationServiceException {
+        try {
+            getApi(platformId).postConsignmentFollowup(datasetId, body);
+        } catch (HttpClientErrorException e) {
+            throw new PlatformIntegrationServiceException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);
+        }
+    }
+
     private DefaultApi getApi(String platformId) {
         var properties = getPlatformProperties(platformId)
                 .orElseThrow(() ->

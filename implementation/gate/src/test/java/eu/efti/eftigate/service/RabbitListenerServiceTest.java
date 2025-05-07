@@ -9,6 +9,7 @@ import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.generator.id.MessageIdGenerator;
+import eu.efti.eftigate.service.request.NotesRequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,8 @@ class RabbitListenerServiceTest extends BaseServiceTest {
     private MessageIdGenerator messageIdGenerator;
     @Mock
     private PlatformIntegrationService platformIntegrationService;
+    @Mock
+    private NotesRequestService notesRequestService;
 
     private static final String URL = "url";
     private static final String PASSWORD = "password";
@@ -74,7 +77,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
         rabbitListenerService = new RabbitListenerService(gateProperties, serializeUtils, requestSendingService,
                 requestServiceFactory, apIncomingService, mapperUtils, logManager, messageIdGenerator, platformIntegrationService,
-                uilRequestService);
+                uilRequestService, notesRequestService);
         memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
         memoryAppender = MemoryAppender.createInitializedMemoryAppender(
                 Level.TRACE, memoryAppenderTestLogger);

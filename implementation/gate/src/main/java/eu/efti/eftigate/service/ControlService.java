@@ -128,14 +128,18 @@ public class ControlService {
         logManager.logNoteReceiveFromAapMessage(savedControl, serializeUtils.mapObjectToBase64String(postFollowUpRequestDto), receiver, ComponentType.CA_APP, ComponentType.GATE, true, RequestTypeEnum.NOTE_SEND, LogManager.FTI_023);
         if (savedControl.isFound()) {
             log.info("sending note to platform {}", savedControl.getPlatformId());
-            return createNoteRequestForControl(savedControl, postFollowUpRequestDto);
+            return createNoteRequestForControl(
+                    savedControl,
+                    postFollowUpRequestDto,
+                    dto -> validateControl(dto)
+                            .or(() -> isCurrentGate ? (platformIntegrationService.platformExists(savedControl.getPlatformId()) ? Optional.empty() : Optional.of(ErrorDto.fromErrorCode(ErrorCodesEnum.PLATFORM_ID_DOES_NOT_EXIST))) : Optional.empty()));
         } else {
             return new NoteResponseDto(NOTE_WAS_NOT_SENT, ID_NOT_FOUND.name(), ID_NOT_FOUND.getMessage());
         }
     }
 
-    private NoteResponseDto createNoteRequestForControl(final ControlDto controlDto, final PostFollowUpRequestDto notesDto) {
-        final Optional<ErrorDto> errorOptional = this.validateControl(notesDto);
+    private NoteResponseDto createNoteRequestForControl(final ControlDto controlDto, final PostFollowUpRequestDto notesDto, Function<PostFollowUpRequestDto, Optional<ErrorDto>> validate) {
+        final Optional<ErrorDto> errorOptional = validate.apply(notesDto);
         final boolean isCurrentGate = gateProperties.isCurrentGate(controlDto.getGateId());
         final String receiver = isCurrentGate ? controlDto.getPlatformId() : controlDto.getGateId();
         if (errorOptional.isPresent()) {

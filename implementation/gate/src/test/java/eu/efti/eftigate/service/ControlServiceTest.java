@@ -855,7 +855,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(notesRequestService);
         when(controlRepository.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
-
+        when(platformIntegrationService.platformExists(uilDto.getPlatformId())).thenReturn(true);
 
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
 

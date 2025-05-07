@@ -8,6 +8,7 @@ import eu.efti.platformgatesimulator.controller.api.V0Api;
 import eu.efti.platformgatesimulator.service.ReaderService;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.Set;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/gate-api")
@@ -44,7 +46,7 @@ public class GateApiController implements V0Api {
 
     @Override
     public ResponseEntity<Void> postConsignmentFollowup(String datasetId, String body) {
-        // TODO EREF-27: implement followup
-        return null;
+        log.info("note \"{}\" received for datasetId {}", body, datasetId);
+        return ResponseEntity.ok().build();
     }
 }

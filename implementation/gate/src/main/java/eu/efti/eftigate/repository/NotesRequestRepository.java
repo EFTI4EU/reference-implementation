@@ -5,4 +5,5 @@ import eu.efti.eftigate.entity.NoteRequestEntity;
 
 public interface NotesRequestRepository extends RequestRepository<NoteRequestEntity> {
     NoteRequestEntity findByStatusAndEdeliveryMessageId(RequestStatusEnum requestStatusEnum, String eDeliveryMessageId);
+    NoteRequestEntity findByControlRequestIdAndStatus(String requestId, RequestStatusEnum status);
 }
