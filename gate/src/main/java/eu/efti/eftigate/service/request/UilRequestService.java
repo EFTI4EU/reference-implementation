@@ -307,7 +307,11 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         NotificationContentDto content = notificationDto.getContent();
         getLogManager().logReceivedMessage(uilRequestDto.getControl(), ComponentType.PLATFORM, GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
         //log reporting LOCAL_UIL_SEARCH reception message from platform
-        reportingRequestLogService.logReportingRequest(uilRequestDto.getControl(), uilRequestDto, getGateProperties().getOwner(), getGateProperties().getCountry(), RequestTypeLog.UIL, ComponentType.PLATFORM, uilRequestDto.getControl().getPlatformId(),getGateProperties().getCountry(), GATE ,getGateProperties().getOwner(), getGateProperties().getCountry(), true);
+        if (uilRequestDto.getControl().isExternalAsk()) {
+            reportingRequestLogService.logReportingRequest(uilRequestDto.getControl(), uilRequestDto, getGateProperties().getOwner(), getGateProperties().getCountry(), RequestTypeLog.UIL, ComponentType.PLATFORM, uilRequestDto.getControl().getPlatformId(), getGateProperties().getCountry(), GATE, uilRequestDto.getControl().getFromGateId(), eftiGateIdResolver.resolve(uilRequestDto.getControl().getFromGateId()), true);
+        } else {
+            reportingRequestLogService.logReportingRequest(uilRequestDto.getControl(), uilRequestDto, getGateProperties().getOwner(), getGateProperties().getCountry(), RequestTypeLog.UIL, ComponentType.PLATFORM, uilRequestDto.getControl().getPlatformId(), getGateProperties().getCountry(), GATE, getGateProperties().getOwner(), getGateProperties().getCountry(), true);
+        }
     }
 
     private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, final NotificationContentDto content) {

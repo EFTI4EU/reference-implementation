@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +53,7 @@ public class ReportingRequestLogService implements LogService<LogRequestDto> {
             sentDateString = DateTimeFormatter.ofPattern(DATE_FORMAT).format(sendDate);
             responseDelay = offsetDateTimeNow.toInstant().toEpochMilli() - requestDto.getSentDate().toInstant().toEpochMilli();
         } else if (!isSendDate && requestDto != null) {
-            sentDateString = requestDto.getCreatedDate().atOffset(ZoneOffset.UTC).toString();
+            sentDateString = DateTimeFormatter.ofPattern(DATE_FORMAT).format(requestDto.getCreatedDate().atOffset(ZoneOffset.UTC));
             responseDelay = offsetDateTimeNow.toInstant().toEpochMilli() - requestDto.getCreatedDate().toInstant(offsetDateTimeNow.getOffset()).toEpochMilli();
         }
 

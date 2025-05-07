@@ -74,7 +74,6 @@ public class RabbitListenerService {
     }
 
     private void trySendDomibus(final RabbitRequestDto rabbitRequestDto) {
-
         final RequestTypeEnum requestTypeEnum = rabbitRequestDto.getControl().getRequestType();
         final boolean isCurrentGate = gateProperties.isCurrentGate(rabbitRequestDto.getGateIdDest());
         final String receiver = isCurrentGate ? rabbitRequestDto.getControl().getPlatformId() : rabbitRequestDto.getGateIdDest();
@@ -94,10 +93,13 @@ public class RabbitListenerService {
             getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
-            logSentMessage(rabbitRequestDto, requestTypeEnum, requestDto, receiver);
             ControlDto controlDto = requestDto.getControl();
+            if (RequestType.NOTE.equals(requestDto.getRequestType())) {
+                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.NOTE_ACK, GATE, gateProperties.getOwner(), gateProperties.getCountry(), eftiGateIdResolver.resolve(receiver) == null ? PLATFORM : GATE, receiver, eftiGateIdResolver.resolve(controlDto.getGateId()),false);
+            }
+            logSentMessage(rabbitRequestDto, requestTypeEnum, requestDto, receiver);
             if (RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH.equals(controlDto.getRequestType()) && !gateProperties.isCurrentGate(requestDto.getGateIdDest()) && !RequestType.NOTE.equals(requestDto.getRequestType())) {
-                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.UIL_ACK, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), GATE, gateProperties.getOwner(), gateProperties.getCountry(), false);
+                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.UIL_ACK, GATE, gateProperties.getOwner(), gateProperties.getCountry(), GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()),false);
             }
         }
     }

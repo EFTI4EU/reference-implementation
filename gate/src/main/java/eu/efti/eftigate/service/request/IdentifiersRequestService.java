@@ -167,6 +167,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByControlRequestIdAndGateIdDest(requestId, fromPartyId);
                 ControlDto controlDto = getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl());
                 RequestDto requestDto = getMapperUtils().identifiersRequestEntityToRequestDto(identifiersRequestEntity, RequestDto.class);
+                reportingRequestLogService.logReportingRequest(controlDto, requestDto, getGateProperties().getOwner(), getGateProperties().getCountry(), RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), GATE, getGateProperties().getOwner(), getGateProperties().getCountry(), true);
                 //log fti021
                 getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId,
                         getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
@@ -196,7 +197,11 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
             ControlDto controlDto = getMapperUtils().controlEntityToControlDto(externalRequest.getControl());
             //log reporting external_identifiers_search (réception de réponse)
             RequestDto requestDto = getMapperUtils().identifiersRequestEntityToRequestDto(externalRequest, RequestDto.class);
-            reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), CA_APP, null, null, true);
+            if (requestDto.getControl().isExternalAsk()) {
+                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.IDENTIFIERS, GATE, gateProperties.getOwner(), gateProperties.getCountry(), GATE, requestDto.getControl().getFromGateId(), eftiGateIdResolver.resolve(requestDto.getControl().getFromGateId()), true);
+            } else {
+                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), gateProperties.getCountry(), RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), CA_APP, null, null, true);
+            }
             this.updateStatus(externalRequest, SUCCESS);
         }
     }
