@@ -29,7 +29,6 @@ import eu.efti.eftigate.service.ValidationService;
 import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.utils.ControlUtils;
 import eu.efti.eftigate.utils.SubsetsCheckerUtils;
-import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.eftilogger.model.RequestTypeLog;
 import eu.efti.eftilogger.service.ReportingRequestLogService;
 import eu.efti.v1.consignment.common.ObjectFactory;
@@ -66,6 +65,7 @@ import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.BAD_GATEWAY;
 import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.INTERNAL_SERVER_ERROR;
 import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.isNotFound;
 import static eu.efti.eftilogger.model.ComponentType.GATE;
+import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
 
 @Slf4j
 @Component
@@ -305,9 +305,18 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         }
         //log fti010
         NotificationContentDto content = notificationDto.getContent();
-        getLogManager().logReceivedMessage(uilRequestDto.getControl(), ComponentType.PLATFORM, GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
+        ControlDto control = uilRequestDto.getControl();
+        getLogManager().logReceivedMessage(control, PLATFORM, GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
         //log reporting LOCAL_UIL_SEARCH reception message from platform
-        reportingRequestLogService.logReportingRequest(uilRequestDto.getControl(), uilRequestDto, getGateProperties().getOwner(), getGateProperties().getCountry(), RequestTypeLog.UIL, ComponentType.PLATFORM, uilRequestDto.getControl().getPlatformId(),getGateProperties().getCountry(), GATE ,getGateProperties().getOwner(), getGateProperties().getCountry(), true);
+        String currentGateId = getGateProperties().getOwner();
+        String currentGateCountry = getGateProperties().getCountry();
+        String platformId = control.getPlatformId();
+        if (control.isExternalAsk()) {
+            String fromGateId = control.getFromGateId();
+            reportingRequestLogService.logReportingRequest(control, uilRequestDto, currentGateId, currentGateCountry, RequestTypeLog.UIL, PLATFORM, platformId, currentGateCountry, GATE, fromGateId, eftiGateIdResolver.resolve(fromGateId), true);
+        } else {
+            reportingRequestLogService.logReportingRequest(control, uilRequestDto, currentGateId, currentGateCountry, RequestTypeLog.UIL, PLATFORM, platformId, currentGateCountry, GATE, currentGateId, currentGateCountry, true);
+        }
     }
 
     private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, final NotificationContentDto content) {
@@ -343,7 +352,10 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         ControlDto savedControl = getControlService().save(controlDto);
         if (!StatusEnum.PENDING.equals(savedControl.getStatus())) {
             getLogManager().logReceivedMessage(controlDto, GATE, GATE, content.getBody(), content.getFromPartyId(), savedControl.getStatus(), LogManager.FTI_022);
-            reportingRequestLogService.logReportingRequest(controlDto, requestDto, getGateProperties().getOwner(), getGateProperties().getCountry(), RequestTypeLog.UIL, GATE, controlDto.getGateId(), eftiGateIdResolver.resolve(controlDto.getGateId()), GATE, getGateProperties().getOwner(), getGateProperties().getCountry(), true);
+            String currentGateId = getGateProperties().getOwner();
+            String currentGateCountry = getGateProperties().getCountry();
+            String controlGateId = controlDto.getGateId();
+            reportingRequestLogService.logReportingRequest(controlDto, requestDto, currentGateId, currentGateCountry, RequestTypeLog.UIL, GATE, controlGateId, eftiGateIdResolver.resolve(controlGateId), GATE, currentGateId, currentGateCountry, true);
         }
     }
 
