@@ -10,6 +10,6 @@ public class GateIntegrationService {
     private final DomibusIntegrationService domibusIntegrationService;
 
     void handle(final RabbitRequestDto rabbitRequestDto) {
-        domibusIntegrationService.trySendDomibus(rabbitRequestDto, rabbitRequestDto.getControl());
+        domibusIntegrationService.trySendDomibus(rabbitRequestDto, rabbitRequestDto.getControl().getRequestType(), rabbitRequestDto.getGateIdDest());
     }
 }

@@ -15,6 +15,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
 @Slf4j
@@ -50,7 +52,7 @@ public class RabbitListenerService {
         final ComponentType target = gateProperties.isCurrentGate(rabbitRequestDto.getGateIdDest()) ? ComponentType.PLATFORM : ComponentType.GATE;
 
         if (ComponentType.PLATFORM.equals(target)) {
-            platformIntegrationService.handle(rabbitRequestDto);
+            platformIntegrationService.handle(rabbitRequestDto, rabbitRequestDto.getControl(), Optional.ofNullable(rabbitRequestDto.getNote()));
         } else {
             gateIntegrationService.handle(rabbitRequestDto);
         }

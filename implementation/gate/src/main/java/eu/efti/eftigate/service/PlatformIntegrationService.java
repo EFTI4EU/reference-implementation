@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -54,36 +55,35 @@ public class PlatformIntegrationService {
                 .map(platformProperties -> new PlatformInfo(platformProperties.restApiBaseUrl() != null, platformProperties.restApiBaseUrl()));
     }
 
-    void handle(final RabbitRequestDto rabbitRequestDto) {
-        final ControlDto control = rabbitRequestDto.getControl();
-        final RequestTypeEnum requestTypeEnum = control.getRequestType();
-//        final ComponentType target = gateProperties.isCurrentGate(rabbitRequestDto.getGateIdDest()) ? ComponentType.PLATFORM : ComponentType.GATE;
+    void handle(final RabbitRequestDto rabbitRequestDto, ControlDto control, Optional<String> note) {
+        Objects.requireNonNull(control.getPlatformId());
 
-//         TODO: assertion: if (ComponentType.PLATFORM.equals(target)
-        if (getPlatformInfo(control.getPlatformId()).map(PlatformInfo::useRestApi).orElse(false)) {
-            var platformId = control.getPlatformId();
-            var platformInfo = getPlatformInfo(platformId);
-            if (platformInfo.isEmpty()) {
-                throw new IllegalArgumentException("platform " + platformId + " does not exist");
-            }
-            var client = platformRestService.getClient(platformInfo.get().restApiBaseUrl());
-            try {
-                if (RequestTypeEnum.LOCAL_UIL_SEARCH.equals(requestTypeEnum)) {
-                    uilRequestService.manageRestRequestInProgress(control.getRequestId());
-                    var res = client.callGetConsignmentSubsets(control.getDatasetId(), Set.copyOf(control.getSubsetIds()));
-                    uilRequestService.manageRestResponseReceived(control.getRequestId(), res);
-                } else if (RequestTypeEnum.NOTE_SEND.equals(requestTypeEnum)) {
-                    notesRequestService.manageRestRequestInProgress(control.getRequestId());
-                    client.callPostConsignmentFollowup(control.getDatasetId(), rabbitRequestDto.getNote());
-                    notesRequestService.manageRestRequestDone(control.getRequestId());
-                } else {
-                    throw new TechnicalException("unexpected request type: " + requestTypeEnum);
-                }
-            } catch (PlatformIntegrationServiceException e) {
-                throw new RuntimeException(e);
-            }
+        var platformId = control.getPlatformId();
+        var platformInfo = getPlatformInfo(platformId);
+        if (platformInfo.isEmpty()) {
+            throw new IllegalArgumentException("platform " + platformId + " does not exist");
         } else {
-            domibusIntegrationService.trySendDomibus(rabbitRequestDto, rabbitRequestDto.getControl());
+            final RequestTypeEnum requestTypeEnum = control.getRequestType();
+            if (platformInfo.get().useRestApi()) {
+                var client = platformRestService.getClient(platformInfo.get().restApiBaseUrl());
+                try {
+                    if (RequestTypeEnum.LOCAL_UIL_SEARCH.equals(requestTypeEnum)) {
+                        uilRequestService.manageRestRequestInProgress(control.getRequestId());
+                        var res = client.callGetConsignmentSubsets(control.getDatasetId(), Set.copyOf(control.getSubsetIds()));
+                        uilRequestService.manageRestResponseReceived(control.getRequestId(), res);
+                    } else if (RequestTypeEnum.NOTE_SEND.equals(requestTypeEnum)) {
+                        notesRequestService.manageRestRequestInProgress(control.getRequestId());
+                        client.callPostConsignmentFollowup(control.getDatasetId(), note.orElseThrow());
+                        notesRequestService.manageRestRequestDone(control.getRequestId());
+                    } else {
+                        throw new TechnicalException("unexpected request type: " + requestTypeEnum);
+                    }
+                } catch (PlatformIntegrationServiceException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                domibusIntegrationService.trySendDomibus(rabbitRequestDto, requestTypeEnum, control.getPlatformId());
+            }
         }
     }
 }

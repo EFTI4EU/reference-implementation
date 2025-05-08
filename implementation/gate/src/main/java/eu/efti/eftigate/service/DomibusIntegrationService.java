@@ -1,7 +1,6 @@
 package eu.efti.eftigate.service;
 
 import eu.efti.commons.constant.EftiGateConstants;
-import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestType;
@@ -38,8 +37,7 @@ public class DomibusIntegrationService {
     private final LogManager logManager;
     private final MessageIdGenerator messageIdGenerator;
 
-    void trySendDomibus(final RabbitRequestDto rabbitRequestDto, ControlDto control) {
-        final RequestTypeEnum requestTypeEnum = control.getRequestType();
+    void trySendDomibus(final RabbitRequestDto rabbitRequestDto, RequestTypeEnum requestTypeEnum, String receiverLabel) {
         final ComponentType target = gateProperties.isCurrentGate(rabbitRequestDto.getGateIdDest()) ? ComponentType.PLATFORM : ComponentType.GATE;
 
         final RequestDto requestDto = mapperUtils.rabbitRequestDtoToRequestDto(rabbitRequestDto, EftiGateConstants.REQUEST_TYPE_CLASS_MAP.get(rabbitRequestDto.getRequestType()));
@@ -56,13 +54,12 @@ public class DomibusIntegrationService {
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
             final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
-            final String receiver = ComponentType.PLATFORM.equals(target) ? control.getPlatformId() : rabbitRequestDto.getGateIdDest();
             if (RequestType.UIL.equals(requestDto.getRequestType())) {
                 //log fti020 and fti009
-                logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, target, true, LogManager.FTI_009_FTI_020);
+                logManager.logSentMessage(requestDto.getControl(), body, receiverLabel, ComponentType.GATE, target, true, LogManager.FTI_009_FTI_020);
             } else if (RequestType.IDENTIFIER.equals(requestDto.getRequestType())) {
                 //log fti019
-                logManager.logSentMessage(requestDto.getControl(), body, receiver, ComponentType.GATE, ComponentType.GATE, true, LogManager.FTI_019);
+                logManager.logSentMessage(requestDto.getControl(), body, receiverLabel, ComponentType.GATE, ComponentType.GATE, true, LogManager.FTI_019);
             }
         }
     }
