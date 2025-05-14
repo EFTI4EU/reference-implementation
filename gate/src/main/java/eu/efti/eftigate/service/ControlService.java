@@ -395,7 +395,7 @@ public class ControlService {
                 RequestTypeLog.UIL,
                 CA_APP,
                 null,
-                null,
+                currentGateCountry,
                 GATE,
                 owner,
                 currentGateCountry,
@@ -488,7 +488,6 @@ public class ControlService {
     }
 
     public ControlDto updateControlStatus(final ControlDto controlDto, final StatusEnum status) {
-        //LOCAL_UIL_SEARCH
         controlDto.setStatus(status);
         return this.save(controlDto);
     }

@@ -74,6 +74,10 @@ public class MapperUtils {
         return modelMapper.map(identifiersRequestEntity, destinationClass);
     }
 
+    public <T extends RequestDto> T uilRequestEntityToRequestDto(final UilRequestEntity uilRequestEntity, final Class<T> destinationClass) {
+        return modelMapper.map(uilRequestEntity, destinationClass);
+    }
+
     public <T extends RequestDto> T rabbitRequestDtoToRequestDto(final RabbitRequestDto rabbitRequestDto, final Class<T> destinationClass) {
         return modelMapper.map(rabbitRequestDto, destinationClass);
     }

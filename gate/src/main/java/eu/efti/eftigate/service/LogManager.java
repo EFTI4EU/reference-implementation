@@ -3,11 +3,14 @@ package eu.efti.eftigate.service;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
 import eu.efti.commons.dto.RequestDto;
+import eu.efti.commons.dto.UilRequestDto;
 import eu.efti.commons.dto.ValidableDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
+import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
+import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.service.gate.EftiGateIdResolver;
@@ -16,11 +19,17 @@ import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.eftilogger.model.RequestTypeLog;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.eftilogger.service.AuditRequestLogService;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static eu.efti.commons.constant.EftiGateConstants.REQUEST_STATUS_ENUM_STATUS_ENUM_MAP;
+import static eu.efti.commons.enums.StatusEnum.COMPLETE;
+import static eu.efti.eftilogger.model.ComponentType.GATE;
+import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +39,7 @@ public class LogManager {
     private final EftiGateIdResolver eftiGateIdResolver;
     private final AuditRequestLogService auditRequestLogService;
     private final AuditRegistryLogService auditRegistryLogService;
+    private final ReportingRequestLogService reportingRequestLogService;
     private final SerializeUtils serializeUtils;
 
     public static final String FTI_ROOT_RESPONSE_SUCESS = "send sucess to domibus";
@@ -232,5 +242,16 @@ public class LogManager {
 
         final String body = serializeUtils.mapObjectToBase64String(requestIdDto);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, control.getStatus(), false, name);
+    }
+
+    public void logPlatformResponse(final NotificationDto notificationDto, final UilRequestDto uilRequestDto) {
+        final NotificationContentDto content = notificationDto.getContent();
+        final ControlDto control = uilRequestDto.getControl();
+
+        this.logReceivedMessage(control, PLATFORM, GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
+        final String currentGateId = gateProperties.getOwner();
+        final String currentGateCountry = gateProperties.getCountry();
+        final String platformId = control.getPlatformId();
+        reportingRequestLogService.logReportingRequest(control, uilRequestDto, currentGateId, currentGateCountry, RequestTypeLog.UIL, GATE, currentGateId, currentGateCountry, PLATFORM, platformId, currentGateCountry, true);
     }
 }
