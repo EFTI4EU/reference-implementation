@@ -5,6 +5,7 @@ import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.UilRequestDto;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
+import eu.efti.commons.utils.SerializeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ import static eu.efti.eftigate.EftiTestUtils.testFile;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class RabbitSenderServiceTest {
+class RabbitSenderServiceTest extends AbstractServiceTest{
     private RabbitSenderService rabbitSenderService;
 
     @Mock
@@ -25,7 +26,7 @@ class RabbitSenderServiceTest {
 
     @BeforeEach
     public void before() {
-        rabbitSenderService = new RabbitSenderService(rabbitTemplate);
+        rabbitSenderService = new RabbitSenderService(rabbitTemplate, serializeUtils);
     }
 
     @Test
