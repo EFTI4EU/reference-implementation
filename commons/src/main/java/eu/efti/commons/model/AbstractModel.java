@@ -17,12 +17,13 @@ public abstract class AbstractModel implements Serializable {
      * date that the data have been created
      */
     @CreatedDate
-    @Column(updatable = false)
+    @Column(updatable = false, name = "createddate")
     private LocalDateTime createdDate;
 
     /**
      * date that the data have been modified
      */
     @LastModifiedDate
+    @Column(name = "lastmodifieddate")
     private LocalDateTime lastModifiedDate;
 }

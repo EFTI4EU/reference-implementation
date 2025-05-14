@@ -3,6 +3,7 @@ package eu.efti.commons.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import eu.efti.commons.exception.TechnicalException;
 import eu.efti.v1.edelivery.ObjectFactory;
 import jakarta.xml.bind.JAXBContext;
@@ -75,6 +76,7 @@ public class SerializeUtils {
 
     public <T> String mapObjectToJsonString(final T content) {
         try {
+            objectMapper.registerModule(new Jdk8Module());
             return objectMapper.writeValueAsString(content);
         } catch (final JsonProcessingException e) {
             throw new TechnicalException(ERROR_WHILE_WRITING_CONTENT, e);
