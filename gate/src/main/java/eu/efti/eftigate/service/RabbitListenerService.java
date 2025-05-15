@@ -73,9 +73,9 @@ public class RabbitListenerService {
     }
 
     private void trySendDomibus(final RabbitRequestDto rabbitRequestDto) {
-        final RequestTypeEnum requestTypeEnum = rabbitRequestDto.getControl().getRequestType();
         final boolean isCurrentGate = gateProperties.isCurrentGate(rabbitRequestDto.getGateIdDest());
-        final String receiver = isCurrentGate ? rabbitRequestDto.getControl().getPlatformId() : rabbitRequestDto.getGateIdDest();
+        ControlDto control = rabbitRequestDto.getControl();
+        final String receiver = isCurrentGate ? control.getPlatformId() : rabbitRequestDto.getGateIdDest();
         final RequestDto requestDto = mapperUtils.rabbitRequestDtoToRequestDto(rabbitRequestDto, EftiGateConstants.REQUEST_TYPE_CLASS_MAP.get(rabbitRequestDto.getRequestType()));
         String previousEdeliveryMessageId = rabbitRequestDto.getEdeliveryMessageId();
         try {
@@ -92,6 +92,7 @@ public class RabbitListenerService {
             getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
+            final RequestTypeEnum requestTypeEnum = control.getRequestType();
             ControlDto controlDto = requestDto.getControl();
             String currentGateCountry = gateProperties.getCountry();
             String owner = gateProperties.getOwner();

@@ -27,7 +27,7 @@ class DeleteDisabledConsignmentTest {
     private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
-    public void init() {
+    void init() {
         deleteDisabledConsignment = new DeleteDisabledConsignment(identifiersService, jdbcTemplate, true);
         ReflectionTestUtils.setField(deleteDisabledConsignment, "deleteUilActivated", true);
     }

@@ -29,7 +29,6 @@ import eu.efti.eftigate.entity.IdentifiersResults;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.exception.AmbiguousIdentifierException;
-import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.ControlRepository;
 import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.IdentifiersRequestService;
@@ -136,7 +135,7 @@ class ControlServiceTest extends AbstractServiceTest {
     private static final String USERNAME = "username";
 
     @BeforeEach
-    public void before() {
+    void before() {
         final GateProperties gateProperties = GateProperties.builder()
                 .owner("france")
                 .country("FR")
@@ -247,7 +246,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
-        when(identifiersService.findByUIL(any(), any(), any())).thenReturn(new ConsignmentDto());
+        when(identifiersService.consignmentExistsByUIL(any(), any(), any())).thenReturn(true);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
 
@@ -394,7 +393,7 @@ class ControlServiceTest extends AbstractServiceTest {
         controlEntity.setStatus(StatusEnum.COMPLETE);
         when(controlRepository.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
-         when(controlRepository.save(any())).thenReturn(controlEntity);
+        when(controlRepository.save(any())).thenReturn(controlEntity);
 
         final RequestIdDto requestIdDtoResult = controlService.getControlEntity(requestId);
 
@@ -843,7 +842,7 @@ class ControlServiceTest extends AbstractServiceTest {
         uilDto.setGateId("france");
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
-        when(identifiersService.findByUIL(any(), any(), any())).thenReturn(null);
+        when(identifiersService.consignmentExistsByUIL(any(), any(), any())).thenReturn(false);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
 
@@ -933,7 +932,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         //Assert
         verify(uilRequestService, times(1)).createAndSendRequest(any(), any(), any());
-        verify(identifiersService, times(1)).findByUIL(any(), any(), any());
+        verify(identifiersService, times(1)).consignmentExistsByUIL(any(), any(), any());
     }
 
 

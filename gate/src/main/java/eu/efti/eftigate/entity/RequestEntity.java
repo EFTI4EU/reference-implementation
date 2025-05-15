@@ -11,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -68,7 +69,7 @@ public class RequestEntity extends AbstractModel implements Serializable {
     @JoinColumn(name = "control")
     ControlEntity control;
 
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "error", referencedColumnName = "id")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

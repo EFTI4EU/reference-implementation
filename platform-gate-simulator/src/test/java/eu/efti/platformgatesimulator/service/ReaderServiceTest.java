@@ -1,27 +1,17 @@
 package eu.efti.platformgatesimulator.service;
 
 import eu.efti.platformgatesimulator.config.GateProperties;
-import eu.efti.platformgatesimulator.exception.UploadException;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.io.Resource;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -33,22 +23,22 @@ class ReaderServiceTest {
 
     private ReaderService readerService;
 
-    private static final String pathTu = "/tmp/cda";
+    private static final String PATH_TU = "/tmp/cda";
 
     @BeforeEach
-    public void before() {
+    void before() {
         openMocks = MockitoAnnotations.openMocks(this);
         final GateProperties gateProperties = GateProperties.builder()
                 .owner("france")
                 .minSleep(1000)
                 .maxSleep(2000)
-                .cdaPath(pathTu)
+                .cdaPath(PATH_TU)
                 .ap(GateProperties.ApConfig.builder()
                         .url("url")
                         .password("password")
                         .username("username").build()).build();
         readerService = new ReaderService(gateProperties);
-        File dossier = new File(pathTu);
+        File dossier = new File(PATH_TU);
         dossier.mkdir();
     }
 
@@ -86,9 +76,9 @@ class ReaderServiceTest {
 
     @Test
     void deleteAllFileTest() throws IOException {
-        File file = new File(pathTu + "/test.xml");
-        File file2 = new File(pathTu + "/test2.xml");
-        File file3 = new File(pathTu + "/test3.xml");
+        File file = new File(PATH_TU + "/test.xml");
+        File file2 = new File(PATH_TU + "/test2.xml");
+        File file3 = new File(PATH_TU + "/test3.xml");
         file.createNewFile();
         file2.createNewFile();
         file3.createNewFile();
@@ -97,7 +87,7 @@ class ReaderServiceTest {
 
         Assertions.assertTrue(result);
 
-        Assertions.assertEquals(file.getParentFile().list().length, 0);
+        Assertions.assertEquals(0, file.getParentFile().list().length);
     }
 
     @Test
@@ -111,7 +101,7 @@ class ReaderServiceTest {
 
     @Test
     void deleteFileTest() throws IOException {
-        File file = new File(pathTu + "/test.xml");
+        File file = new File(PATH_TU + "/test.xml");
         file.createNewFile();
         final String fileString = "test";
 

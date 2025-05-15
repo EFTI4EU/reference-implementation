@@ -24,7 +24,7 @@ import static eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto.MESSAGE_I
 import static eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto.SENT_SUCCESS;
 
 @WebMvcTest(ApIncomingController.class)
-@ContextConfiguration(classes= {ApIncomingController.class})
+@ContextConfiguration(classes = {ApIncomingController.class})
 @ExtendWith(SpringExtension.class)
 class ApIncomingControllerTest {
 
@@ -35,7 +35,7 @@ class ApIncomingControllerTest {
     private RabbitSenderService rabbitSenderService;
 
     @BeforeEach
-    public void before() {
+    void before() {
         apIncomingController = new ApIncomingController(rabbitSenderService);
         ReflectionTestUtils.setField(apIncomingController, "eftiReceiveMessageExchange", "eftiReceiveMessageExchange");
         ReflectionTestUtils.setField(apIncomingController, "eftiKeySendMessage", "eftiKeySendMessage");

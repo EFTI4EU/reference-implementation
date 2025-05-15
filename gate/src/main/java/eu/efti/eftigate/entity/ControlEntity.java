@@ -87,13 +87,7 @@ public class ControlEntity extends AbstractModel implements Serializable {
     @EqualsAndHashCode.Exclude
     private List<RequestEntity> requests;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "authority", referencedColumnName = "id")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private AuthorityEntity authority;
-
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "error", referencedColumnName = "id")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

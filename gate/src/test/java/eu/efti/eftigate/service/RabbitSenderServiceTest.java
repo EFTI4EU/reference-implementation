@@ -25,7 +25,7 @@ class RabbitSenderServiceTest extends AbstractServiceTest{
     private RabbitTemplate rabbitTemplate;
 
     @BeforeEach
-    public void before() {
+    void before() {
         rabbitSenderService = new RabbitSenderService(rabbitTemplate, serializeUtils);
     }
 

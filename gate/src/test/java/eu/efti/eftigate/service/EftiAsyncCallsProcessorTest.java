@@ -38,7 +38,7 @@ class EftiAsyncCallsProcessorTest {
     ConsignmentDto consignmentDto = ConsignmentDto.builder().build();
 
     @BeforeEach
-    public void before() {
+    void before() {
         final AuthorityDto authorityDto = new AuthorityDto();
 
         consignmentDto.setGateId("gateId");

@@ -43,7 +43,7 @@ class LogManagerTest extends BaseServiceTest {
     private static final String RECEIVER = "receiver";
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         gateProperties = GateProperties.builder().owner("ownerId").country("ownerCountry").build();
         logManager = new LogManager(gateProperties, eftiGateIdResolver, auditRequestLogService, auditRegistryLogService, serializeUtils);
         controlDto = ControlDto.builder()

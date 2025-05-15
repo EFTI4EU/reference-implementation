@@ -87,7 +87,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
     }
 
     @AfterEach
-    public void cleanupLogAppenderForTest() {
+    void cleanupLogAppenderForTest() {
         MemoryAppender.shutdownMemoryAppender(memoryAppender, memoryAppenderTestLogger);
     }
 

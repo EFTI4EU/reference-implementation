@@ -56,11 +56,25 @@ spring:
       resourceserver:
         issuers: {{ spring.security.oauth2.resourceserver.issuers}}
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect 
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
         control_schema: "{{ spring.jpa.properties.hibernate.control_schema }}"
         identifiers_schema: "{{ spring.jpa.properties.hibernate.identifiers_schema }}"
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+        javax:
+          cache:
+            provider: com.hazelcast.cache.impl.HazelcastServerCachingProvider
+            uri: hazelcast.xml
+            missing_cache_strategy: create
+      jakarta:
+        persistence:
+          sharedCache:
+            mode: ENABLE_SELECTIVE
   servlet:
     multipart:
       max-file-size: 5MB

@@ -1,6 +1,5 @@
 package eu.efti.eftilogger.service;
 
-import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.enums.RegistryType;
 import eu.efti.commons.enums.StatusEnum;

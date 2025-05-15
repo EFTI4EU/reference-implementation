@@ -56,7 +56,7 @@ class ApIncomingServiceTest extends AbstractTest {
     private static final String LOGGER_NAME = ApIncomingService.class.getName();
 
     @BeforeEach
-    public void before() {
+    void before() {
         final GateProperties gateProperties = GateProperties.builder()
                 .owner("france")
                 .minSleep(1000)

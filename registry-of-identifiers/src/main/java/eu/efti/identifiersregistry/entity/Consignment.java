@@ -53,7 +53,7 @@ public class Consignment extends AbstractModel implements Serializable {
     @Column(name = "disabled_date")
     private OffsetDateTime disabledDate;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "consignment")
     @Builder.Default
     @ToString.Exclude
     private List<MainCarriageTransportMovement> mainCarriageTransportMovements = new ArrayList<>();
@@ -70,7 +70,7 @@ public class Consignment extends AbstractModel implements Serializable {
     @Builder.Default
     @ToString.Exclude
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "consignment")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "consignment")
     private List<UsedTransportEquipment> usedTransportEquipments = new ArrayList<>();
 
     public void setUsedTransportEquipments(final List<UsedTransportEquipment> usedTransportEquipments) {

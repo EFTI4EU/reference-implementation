@@ -38,7 +38,7 @@ class EDeliveryMessageRouterTest {
     private final Map<String, Consumer<NotificationDto>> casesMap = buildHashMap();
 
     @BeforeEach
-    public void before() {
+    void before() {
         router = new EDeliveryMessageRouter(uilRequestService, identifiersRequestService, notesRequestService);
     }
 

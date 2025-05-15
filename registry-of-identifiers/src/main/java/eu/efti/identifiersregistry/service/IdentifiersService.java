@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.management.Notification;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -92,9 +91,8 @@ public class IdentifiersService {
         auditRegistryLogService.log(identifiersDto, gateOwner, gateCountry, ComponentType.GATE, ComponentType.GATE, null, gateOwner, bodyBase64, FTI_005);
     }
 
-    public ConsignmentDto findByUIL(final String dataUuid, final String gate, final String platform) {
-        Optional<Consignment> consignment = this.identifiersRepository.findActiveByUil(gate, dataUuid, platform);
-        return consignment.map(mapper::entityToDto).orElse(null);
+    public boolean consignmentExistsByUIL(final String datasetId, final String gate, final String platform) {
+        return this.identifiersRepository.findActiveByUil(gate, datasetId, platform).isPresent();
     }
 
     @Transactional("identifiersTransactionManager")
