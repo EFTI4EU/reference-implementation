@@ -22,7 +22,6 @@ import eu.efti.eftigate.exception.RequestNotFoundException;
 import eu.efti.eftigate.repository.UilRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
 import eu.efti.eftigate.service.ValidationService;
-import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftilogger.service.ReportingRequestLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

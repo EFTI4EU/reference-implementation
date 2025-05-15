@@ -1,6 +1,7 @@
 package eu.efti.eftilogger.service;
 
 import eu.efti.commons.dto.ControlDto;
+import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -44,6 +45,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
     }
 
     private LogRequestDto getLogRequestDto(final ControlDto control, final MessagePartiesDto messagePartiesDto, final String currentGateId, final String currentGateCountry, final String body, final StatusEnum status, final boolean isAck, final String name) {
+        ErrorDto error = control.getError();
         return LogRequestDto.builder()
                 .name(name)
                 .requestingComponentType(messagePartiesDto.getRequestingComponentType())
@@ -62,8 +64,8 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                 .componentId(currentGateId)
                 .componentCountry(currentGateCountry)
                 .requestType(StringUtils.isNotBlank(messagePartiesDto.getRequestType()) ? messagePartiesDto.getRequestType() : getRequestTypeFromControl(control, isAck))
-                .errorCodeMessage(control.getError() != null ? control.getError().getErrorCode() : null)
-                .errorDescriptionMessage(control.getError() != null ? control.getError().getErrorDescription() : null)
+                .errorCodeMessage(error != null ? error.getErrorCode() : null)
+                .errorDescriptionMessage(error != null ? error.getErrorDescription() : null)
                 .build();
     }
 

@@ -31,7 +31,7 @@ class EftiGateIdResolverTest {
     GateEntity deGateEntity;
 
     @BeforeEach
-    public void before() {
+    void before() {
         eftiGateIdResolver = new EftiGateIdResolver(gateRepository);
 
         final AuthorityDto authorityDto = new AuthorityDto();

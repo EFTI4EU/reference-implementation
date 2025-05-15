@@ -44,7 +44,7 @@ class IdentifiersRepositoryTest {
 
 
     @BeforeEach
-    public void before() {
+    void before() {
 
         CarriedTransportEquipment firstCarriedTransportEquipment = CarriedTransportEquipment.builder()
                 .sequenceNumber(1)

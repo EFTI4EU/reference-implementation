@@ -6,7 +6,6 @@ import eu.efti.eftilogger.service.ReportingRegistryLogService;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.entity.MainCarriageTransportMovement;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
-import eu.efti.identifiersregistry.utils.OffsetDateTimeDeserializer;
 import eu.efti.v1.consignment.identifier.LogisticsTransportMovement;
 import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
 import eu.efti.v1.consignment.identifier.TransportEvent;
@@ -27,8 +26,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -52,9 +52,9 @@ class IdentifiersServiceTest extends AbstractServiceTest {
     private ReportingRegistryLogService reportingRegistryLogService;
 
     @BeforeEach
-    public void before() {
+    void before() {
         openMocks = MockitoAnnotations.openMocks(this);
-        service = new IdentifiersService(repository, mapperUtils, auditRegistryLogService, serializeUtils,reportingRegistryLogService);
+        service = new IdentifiersService(repository, mapperUtils, auditRegistryLogService, serializeUtils, reportingRegistryLogService);
 
         ReflectionTestUtils.setField(service, "gateOwner", "france");
         ReflectionTestUtils.setField(service, "nullDeliveryDateMaxDayPassed", 90);
@@ -218,17 +218,17 @@ class IdentifiersServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void shouldFindByUil() {
+    void shouldReturnTrueWhenConsignmentExistsByUil() {
         when(repository.findActiveByUil(GATE_ID, DATA_UUID, PLATFORM_ID)).thenReturn(Optional.of(new Consignment()));
 
-        assertNotNull(service.findByUIL(DATA_UUID, GATE_ID, PLATFORM_ID));
+        assertTrue(service.consignmentExistsByUIL(DATA_UUID, GATE_ID, PLATFORM_ID));
     }
 
     @Test
-    void shouldNotFindByUil() {
+    void shouldReturnFalseWhenConsignmentDoesNotExistByUil() {
         when(repository.findActiveByUil(GATE_ID, DATA_UUID, PLATFORM_ID)).thenReturn(Optional.empty());
 
-        assertNull(service.findByUIL(DATA_UUID, GATE_ID, PLATFORM_ID));
+        assertFalse(service.consignmentExistsByUIL(DATA_UUID, GATE_ID, PLATFORM_ID));
     }
 
     @Test

@@ -3,18 +3,7 @@ package eu.efti.eftilogger.service;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import eu.efti.commons.dto.AuthorityDto;
-import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.ErrorDto;
-import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
-import eu.efti.commons.enums.ErrorCodesEnum;
-import eu.efti.commons.enums.RequestStatusEnum;
-import eu.efti.commons.enums.RequestType;
-import eu.efti.commons.enums.RequestTypeEnum;
-import eu.efti.commons.enums.StatusEnum;
-import eu.efti.eftilogger.model.ComponentType;
-import eu.efti.eftilogger.model.RequestTypeLog;
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,10 +16,6 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.List;
-
 import static eu.efti.eftilogger.model.ComponentType.GATE;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +26,7 @@ class ReportingRegistryLogServiceTest extends AbstractTestService {
     private CustomComparator messageDateComparator;
 
     @BeforeEach
-    public void init() {
+    void init() {
         logWatcher = new ListAppender<>();
         logWatcher.start();
         ((Logger) LoggerFactory.getLogger(LogService.class)).addAppender(logWatcher);

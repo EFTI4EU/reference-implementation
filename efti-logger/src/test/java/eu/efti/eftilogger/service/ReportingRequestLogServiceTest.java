@@ -41,7 +41,7 @@ class ReportingRequestLogServiceTest extends AbstractTestService {
     private CustomComparator messageDateComparator;
 
     @BeforeEach
-    public void init() {
+    void init() {
         logWatcher = new ListAppender<>();
         logWatcher.start();
         ((Logger) LoggerFactory.getLogger(LogService.class)).addAppender(logWatcher);
@@ -82,14 +82,14 @@ class ReportingRequestLogServiceTest extends AbstractTestService {
     @Test
     void logReportingRequestSendDateTrueTest() throws JSONException {
         final String expected = "{\"messageDate\":\"2025-04-30 12:21:18.747\",\"componentType\":\"GATE\",\"componentId\":\"currentGateId\",\"componentCountry\":\"currentGateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"requestComponentId\",\"requestingComponentCountry\":\"requestComponentCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"respondingComponentId\",\"respondingComponentCountry\":\"respondingComponentCountry\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"DEFAULT_ERROR\",\"errorDescriptionMessage\":\"Error\",\"sentDate\":\"2025-04-30 14:21:18.746\",\"responseDelay\":0,\"requestId\":\"requestId\",\"requestType\":\"NOTE\"}";
-        reportingRequestLogService.logReportingRequest(controlDto, requestDto, "currentGateId", "currentGateCountry", RequestTypeLog.NOTE, GATE, "requestComponentId", "requestComponentCountry", GATE,"respondingComponentId", "respondingComponentCountry", true);
+        reportingRequestLogService.logReportingRequest(controlDto, requestDto, "currentGateId", "currentGateCountry", RequestTypeLog.NOTE, GATE, "requestComponentId", "requestComponentCountry", GATE, "respondingComponentId", "respondingComponentCountry", true);
         JSONAssert.assertEquals(expected, logWatcher.list.get(0).getFormattedMessage(), messageDateComparator);
     }
 
     @Test
     void logReportingRequestSendDateFalseTest() throws JSONException {
         final String expected = "{\"messageDate\":\"2025-04-30 12:21:18.737\",\"componentType\":\"GATE\",\"componentId\":\"currentGateId\",\"componentCountry\":\"currentGateCountry\",\"requestingComponentType\":\"GATE\",\"requestingComponentId\":\"requestComponentId\",\"requestingComponentCountry\":\"requestComponentCountry\",\"respondingComponentType\":\"GATE\",\"respondingComponentId\":\"respondingComponentId\",\"respondingComponentCountry\":\"respondingComponentCountry\",\"statusMessage\":\"COMPLETE\",\"errorCodeMessage\":\"DEFAULT_ERROR\",\"errorDescriptionMessage\":\"Error\",\"sentDate\":\"2025-04-30T14:21:18.735929600Z\",\"responseDelay\":1,\"requestId\":\"requestId\",\"requestType\":\"NOTE\"}";
-        reportingRequestLogService.logReportingRequest(controlDto, requestDto, "currentGateId", "currentGateCountry", RequestTypeLog.NOTE, GATE, "requestComponentId", "requestComponentCountry", GATE,"respondingComponentId", "respondingComponentCountry", false);
+        reportingRequestLogService.logReportingRequest(controlDto, requestDto, "currentGateId", "currentGateCountry", RequestTypeLog.NOTE, GATE, "requestComponentId", "requestComponentCountry", GATE, "respondingComponentId", "respondingComponentCountry", false);
         JSONAssert.assertEquals(expected, logWatcher.list.get(0).getFormattedMessage(), messageDateComparator);
     }
 }

@@ -38,7 +38,7 @@ class IdentifierServiceTest extends AbstractTest {
     private IdentifierService identifierService;
 
     @BeforeEach
-    public void before() {
+    void before() {
         openMocks = MockitoAnnotations.openMocks(this);
         final GateProperties gateProperties = GateProperties.builder()
                 .owner("france")

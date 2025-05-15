@@ -34,7 +34,7 @@ class RequestServiceFactoryTest {
     protected List<RequestService<? extends RequestEntity>> requestServices = new ArrayList<>();
 
     @BeforeEach
-    public void init() {
+    void init() {
 
         MockitoAnnotations.openMocks(this);
 

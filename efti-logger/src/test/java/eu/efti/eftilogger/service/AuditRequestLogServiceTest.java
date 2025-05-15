@@ -37,7 +37,7 @@ class AuditRequestLogServiceTest extends AbstractTestService {
     private CustomComparator messageDateComparator;
 
     @BeforeEach
-    public void init() {
+    void init() {
         logWatcher = new ListAppender<>();
         logWatcher.start();
         ((Logger) LoggerFactory.getLogger(LogService.class)).addAppender(logWatcher);

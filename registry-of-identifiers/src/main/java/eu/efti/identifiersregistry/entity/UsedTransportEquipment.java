@@ -58,7 +58,7 @@ public class UsedTransportEquipment implements Serializable {
     private Consignment consignment;
 
     @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "usedTransportEquipment", targetEntity = CarriedTransportEquipment.class)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "usedTransportEquipment", targetEntity = CarriedTransportEquipment.class)
     @ToString.Exclude
     private List<CarriedTransportEquipment> carriedTransportEquipments = new ArrayList<>();
 

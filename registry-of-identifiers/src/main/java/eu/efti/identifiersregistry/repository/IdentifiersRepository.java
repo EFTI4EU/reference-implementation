@@ -43,11 +43,11 @@ public interface IdentifiersRepository extends JpaRepository<Consignment, Long>,
     String USED_TRANSPORT_MEANS_REGISTRATION_COUNTRY = "usedTransportMeansRegistrationCountry";
     String USED_TRANSPORT_MEANS_ID = "usedTransportMeansId";
 
-    @Query(value = "SELECT c FROM Consignment c where c.gateId = :gate and c.datasetId = :uuid and c.platformId = :platform and CURRENT_TIMESTAMP <= c.disabledDate")
-    Optional<Consignment> findActiveByUil(final String gate, final String uuid, final String platform);
+    @Query(value = "SELECT c FROM Consignment c where c.gateId = :gate and c.datasetId = :datasetId and c.platformId = :platform and CURRENT_TIMESTAMP <= c.disabledDate")
+    Optional<Consignment> findActiveByUil(final String gate, final String datasetId, final String platform);
 
-    @Query(value = "SELECT c FROM Consignment c where c.gateId = :gate and c.datasetId = :uuid and c.platformId = :platform")
-    Optional<Consignment> findByUil(final String gate, final String uuid, final String platform);
+    @Query(value = "SELECT c FROM Consignment c where c.gateId = :gate and c.datasetId = :datasetId and c.platformId = :platform")
+    Optional<Consignment> findByUil(final String gate, final String datasetId, final String platform);
 
     @Modifying
     @Query(value = "DELETE from Consignment c where c.disabledDate <= current_timestamp")

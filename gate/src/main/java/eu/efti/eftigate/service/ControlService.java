@@ -10,7 +10,6 @@ import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.commons.dto.ValidableDto;
-import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.dto.identifiers.api.IdentifierRequestResultDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
@@ -325,10 +324,10 @@ public class ControlService {
         log.info("checking local registry for dataUuid {}", controlDto.getDatasetId());
         //log fti015
         logManager.logRequestRegistry(controlDto, null, GATE, ComponentType.REGISTRY, LogManager.FTI_015);
-        final ConsignmentDto consignmentDto = this.identifiersService.findByUIL(controlDto.getDatasetId(), controlDto.getGateId(), controlDto.getPlatformId());
+        boolean consignmentExists = this.identifiersService.consignmentExistsByUIL(controlDto.getDatasetId(), controlDto.getGateId(), controlDto.getPlatformId());
         //log fti016
-        logManager.logRequestRegistry(controlDto, serializeUtils.mapObjectToBase64String(consignmentDto), ComponentType.REGISTRY, GATE, LogManager.FTI_016);
-        return consignmentDto != null;
+        logManager.logRequestRegistry(controlDto, null, ComponentType.REGISTRY, ComponentType.GATE, LogManager.FTI_016);
+        return consignmentExists;
     }
 
     private void createIdentifiersControl(final ControlDto controlDto, final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {

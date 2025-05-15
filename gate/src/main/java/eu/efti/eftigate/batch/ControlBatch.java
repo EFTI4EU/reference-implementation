@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class ControlBatch {
     ControlService controlService;
+
     @Scheduled(cron = "${batch.update.cron}")
     @SchedulerLock(name = "TaskScheduler_scheduledTask",
             lockAtLeastFor = "PT19S", lockAtMostFor = "PT19S")
