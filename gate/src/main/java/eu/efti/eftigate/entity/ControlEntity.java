@@ -97,7 +97,4 @@ public class ControlEntity extends AbstractModel implements Serializable {
         return this.getRequestType() != null && this.getRequestType().isExternalAsk();
     }
 
-    public boolean isLocalAsk() {
-        return this.getRequestType() != null && this.getRequestType().isLocalAsk();
-    }
 }

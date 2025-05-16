@@ -87,3 +87,10 @@ efti:
   control:
     pending:
       timeout: 60
+logging:
+  level:
+    com:
+      hazelcast:
+        internal:
+          diagnostics:
+            HealthMonitor: OFF
