@@ -24,8 +24,8 @@ public class ApIncomingService {
 
     private void rootResponse(final NotificationDto notificationDto) {
         switch (notificationDto.getNotificationType()) {
-            case SEND_SUCCESS -> eftiRequestUpdater.manageSendSuccess(notificationDto, LogManager.FTI_ROOT_RESPONSE_SUCESS);
-            case SEND_FAILURE -> eftiRequestUpdater.manageSendFailure(notificationDto, LogManager.FTI_SEND_FAIL);
+            case SEND_SUCCESS -> eftiRequestUpdater.manageSendSuccess(notificationDto);
+            case SEND_FAILURE -> eftiRequestUpdater.manageSendFailure(notificationDto);
             case RECEIVED -> messageRouter.process(notificationDto);
             default -> log.error("Unhandled notification type: {}", notificationDto.getNotificationType());
         }

@@ -66,7 +66,7 @@ class EftiRequestUpdaterTest extends BaseServiceTest {
                 .build();
         when(requestRepository.findByEdeliveryMessageId(any())).thenReturn(requestEntity);
 
-        eftiRequestUpdater.manageSendFailure(notificationDto, "test");
+        eftiRequestUpdater.manageSendFailure(notificationDto);
 
         verify(controlService).save(any(ControlDto.class));
     }
@@ -84,7 +84,7 @@ class EftiRequestUpdaterTest extends BaseServiceTest {
         when(requestRepository.findByEdeliveryMessageId(any())).thenReturn(requestEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(String.class))).thenReturn(uilRequestService);
 
-        eftiRequestUpdater.manageSendSuccess(notificationDto, "test");
+        eftiRequestUpdater.manageSendSuccess(notificationDto);
 
         verify(uilRequestService).manageSendSuccess(messageId);
     }

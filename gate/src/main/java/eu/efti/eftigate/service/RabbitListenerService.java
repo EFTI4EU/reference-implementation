@@ -22,7 +22,6 @@ import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftilogger.model.ComponentType;
-import eu.efti.eftilogger.model.RequestTypeLog;
 import eu.efti.eftilogger.service.ReportingRequestLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -92,22 +91,12 @@ public class RabbitListenerService {
             getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
-            final RequestTypeEnum requestTypeEnum = control.getRequestType();
-            ControlDto controlDto = requestDto.getControl();
-            String currentGateCountry = gateProperties.getCountry();
-            String owner = gateProperties.getOwner();
-            if (RequestType.NOTE.equals(requestDto.getRequestType())) {
-                reportingRequestLogService.logReportingRequest(controlDto, requestDto, owner, currentGateCountry, RequestTypeLog.NOTE_ACK, GATE, owner, currentGateCountry, eftiGateIdResolver.resolve(receiver) == null ? PLATFORM : GATE, receiver, eftiGateIdResolver.resolve(controlDto.getGateId()), false);
-            }
-            logSentMessage(rabbitRequestDto, requestTypeEnum, requestDto, receiver);
-            if (RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH.equals(controlDto.getRequestType()) && !gateProperties.isCurrentGate(requestDto.getGateIdDest()) && !RequestType.NOTE.equals(requestDto.getRequestType())) {
-                String fromGateId = controlDto.getFromGateId();
-                reportingRequestLogService.logReportingRequest(controlDto, requestDto, owner, currentGateCountry, RequestTypeLog.UIL_ACK, GATE, owner, currentGateCountry, GATE, fromGateId, eftiGateIdResolver.resolve(fromGateId), false);
-            }
+            logSentMessage(rabbitRequestDto, requestDto, receiver);
         }
     }
 
-    private void logSentMessage(final RabbitRequestDto rabbitRequestDto, final RequestTypeEnum requestTypeEnum, final RequestDto requestDto, final String receiver) {
+    private void logSentMessage(final RabbitRequestDto rabbitRequestDto, final RequestDto requestDto, final String receiver) {
+        final RequestTypeEnum requestTypeEnum = rabbitRequestDto.getControl().getRequestType();
         final String body = getRequestService(requestDto.getRequestType()).buildRequestBody(rabbitRequestDto);
         ControlDto controlDto = requestDto.getControl();
         if (RequestType.UIL.equals(requestDto.getRequestType())) {

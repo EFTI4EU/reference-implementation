@@ -60,7 +60,6 @@ import static eu.efti.commons.enums.RequestStatusEnum.RECEIVED;
 import static eu.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH;
-import static eu.efti.eftilogger.model.ComponentType.CA_APP;
 import static eu.efti.eftilogger.model.ComponentType.GATE;
 import static eu.efti.eftilogger.model.ComponentType.REGISTRY;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
@@ -194,15 +193,6 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
             log.info("sent message {} successfully", eDeliveryMessageId);
         } else {
             externalRequest.getControl().setStatus(StatusEnum.COMPLETE);
-            ControlDto controlDto = getMapperUtils().controlEntityToControlDto(externalRequest.getControl());
-            //log reporting external_identifiers_search (réception de réponse)
-            RequestDto requestDto = getMapperUtils().identifiersRequestEntityToRequestDto(externalRequest, RequestDto.class);
-            String currentGateCountry = gateProperties.getCountry();
-            if (requestDto.getControl().isExternalAsk()) {
-                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), currentGateCountry, RequestTypeLog.IDENTIFIERS, GATE, gateProperties.getOwner(), currentGateCountry, GATE, requestDto.getControl().getFromGateId(), eftiGateIdResolver.resolve(requestDto.getControl().getFromGateId()), true);
-            } else {
-                reportingRequestLogService.logReportingRequest(controlDto, requestDto, gateProperties.getOwner(), currentGateCountry, RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), CA_APP, null, null, true);
-            }
             this.updateStatus(externalRequest, SUCCESS);
         }
     }

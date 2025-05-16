@@ -343,7 +343,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             String currentGateId = getGateProperties().getOwner();
             String currentGateCountry = getGateProperties().getCountry();
             String controlGateId = controlDto.getGateId();
-            reportingRequestLogService.logReportingRequest(controlDto, requestDto, currentGateId, currentGateCountry, RequestTypeLog.UIL, GATE, controlGateId, eftiGateIdResolver.resolve(controlGateId), GATE, currentGateId, currentGateCountry, true);
+            reportingRequestLogService.logReportingRequest(controlDto, requestDto, currentGateId, currentGateCountry, RequestTypeLog.UIL, GATE, currentGateId, currentGateCountry, GATE, controlGateId, eftiGateIdResolver.resolve(controlGateId), true);
         }
     }
 
