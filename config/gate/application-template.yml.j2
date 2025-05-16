@@ -126,3 +126,10 @@ springdoc:
     enabled: {{ springdoc.swagger_ui.enabled }}
   api-docs:
     enabled: {{ springdoc.api_docs.enabled }}
+logging:
+  level:
+    com:
+      hazelcast:
+        internal:
+          diagnostics:
+            HealthMonitor: OFF

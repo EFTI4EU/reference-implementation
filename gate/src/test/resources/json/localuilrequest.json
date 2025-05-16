@@ -47,31 +47,6 @@
     "transportIdentifiers": null,
     "fromGateId": null,
     "requests": null,
-    "authority": {
-      "id": 99,
-      "country": "SY",
-      "legalContact": {
-        "id": 197,
-        "email": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.A@63ccccccccccccccccccccccccccccccccccccccccccccccccccccccccgmail.63ccccccccccccccccccccccccccccccccccccccccccccccccccccccccgmail.commmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
-        "streetName": "rue des rossignols",
-        "buildingNumber": "12",
-        "city": "Acheville",
-        "additionalLine": null,
-        "postalCode": "62320"
-      },
-      "workingContact": {
-        "id": 198,
-        "email": "toto@gmail.com",
-        "streetName": "rue des cafés",
-        "buildingNumber": "14",
-        "city": "Lille",
-        "additionalLine": "osef",
-        "postalCode": "59000"
-      },
-      "isEmergencyService": null,
-      "name": "aaaa",
-      "nationalUniqueIdentifier": "aaa"
-    },
     "error": null,
     "identifiersResults": null
   },

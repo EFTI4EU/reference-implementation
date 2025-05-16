@@ -247,7 +247,7 @@
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-jcache</artifactId>
-            <version>6.4.9.Final</version>
+            <version>6.6.11.Final</version>
         </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>

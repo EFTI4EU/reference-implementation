@@ -43,7 +43,6 @@ public class ControlDto {
     private byte[] eftiData;
     private SearchParameter transportIdentifiers;
     private String fromGateId;
-    private AuthorityDto authority;
     private ErrorDto error;
     private List<ConsignmentDto> identifiersResults;
     private String notes;

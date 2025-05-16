@@ -1,7 +1,5 @@
 package eu.efti.eftigate.service;
 
-import eu.efti.commons.dto.AuthorityDto;
-import eu.efti.commons.dto.ContactInformationDto;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
@@ -148,23 +146,6 @@ class ControlServiceTest extends AbstractServiceTest {
                 gateProperties, serializeUtils);
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
         final StatusEnum status = StatusEnum.PENDING;
-        final AuthorityDto authorityDto = AuthorityDto.builder()
-                .nationalUniqueIdentifier("national identifier")
-                .name("Robert")
-                .workingContact(ContactInformationDto.builder()
-                        .email("toto@gmail.com")
-                        .city("Acheville")
-                        .buildingNumber("12")
-                        .postalCode("62320")
-                        .streetName("rue jean luc de la rue").build())
-                .country("FR")
-                .legalContact(ContactInformationDto.builder()
-                        .email("toto@gmail.com")
-                        .city("Acheville")
-                        .buildingNumber("12")
-                        .postalCode("62320")
-                        .streetName("rue jean luc de la rue").build())
-                .isEmergencyService(true).build();
 
         requestIdDto.setRequestId(requestId);
         requestIdDto.setStatus(status);
@@ -176,7 +157,6 @@ class ControlServiceTest extends AbstractServiceTest {
 
         this.searchWithIdentifiersRequestDto.setIdentifier("abc123");
         this.searchWithIdentifiersRequestDto.setRegistrationCountryCode("FR");
-        this.searchWithIdentifiersRequestDto.setAuthority(authorityDto);
         this.searchWithIdentifiersRequestDto.setModeCode("1");
 
         this.controlDto.setDatasetId(uilDto.getDatasetId());
@@ -188,12 +168,6 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlDto.setSubsetIds(List.of("oki"));
         this.controlDto.setCreatedDate(localDateTime);
         this.controlDto.setLastModifiedDate(localDateTime);
-        this.controlDto.setAuthority(AuthorityDto.builder()
-                .country("FR")
-                .isEmergencyService(true)
-                .legalContact(ContactInformationDto.builder().build())
-                .workingContact(ContactInformationDto.builder().build())
-                .nationalUniqueIdentifier("unique").build());
 
         this.controlEntity.setDatasetId(controlDto.getDatasetId());
         this.controlEntity.setRequestId(controlDto.getRequestId());
