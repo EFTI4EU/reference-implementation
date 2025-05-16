@@ -36,7 +36,6 @@
              endpoint="http://efti.gate.listenbourg.eu:81/domibus/services/msh?domain=listenbourg">
         <identifier partyId="listenbourg" partyIdType="partyTypeUrn"/>
       </party>
-      <!-- TODO EREF-25: should we remove this since acme is configured to uses REST api -->
       <party name="acme"
              endpoint="http://efti.platform.acme.com:81/domibus/services/msh?domain=acme">
         <identifier partyId="acme" partyIdType="partyTypeUrn"/>
