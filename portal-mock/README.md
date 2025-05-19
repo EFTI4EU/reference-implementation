@@ -1,8 +1,8 @@
-<h1> eFTI CA APP mock </h1>
+# eFTI CA APP mock 
 
 This project is the mock for the Competent Authority application.
 
-### Prerequisites
+## Prerequisites
 
 - NodeJs version 	^18.19, ^20.11 or ^22.0.0
 - The deploy/local docker project running
@@ -15,7 +15,7 @@ Open your host file (for windows C:\Windows\System32\drivers\etc\hosts) and add 
 127.0.0.1 portal.efti.fr
 ```
 
-### Run the project
+## Run the project
 
 move to the root of this project and run
 

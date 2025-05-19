@@ -1,31 +1,25 @@
-<h1>Local environment sample for the gate</h1>
-
+# Local environment sample for the gate
 
 The aim of this project is to provide a simple environment to make multiple gates and platforms communicate together. 
 
 In order to demonstrate this, we create a fictional ecosystem of 3 gates and 3 platforms.
-<ul>
-<li>Syldavia (platform: massivedynamic, uses eDelivery)</li>
-<li>Borduria (platform: acme, uses REST api)</li>
-<li>Listenbourg (platform: umbrellacorporation, uses eDelivery)</li>
-</ul>
-<br>
+* Syldavia (platform: massivedynamic, uses eDelivery)
+* Borduria (platform: acme, uses REST api)
+* Listenbourg (platform: umbrellacorporation, uses eDelivery)
 Each gate can communicate with its related platform as well as any other gate.
 
-<h3> Prerequisites </h3>
+## Prerequisites 
 
 Download
-<ul>
-  <li>Docker</li>
-  <li>Postman</li>
-  <li>This project</li>
-</ul>
+* Docker
+* Postman
+* This project
 
 To avoid conflicts, this project uses a custom docker network `efti-network`. Ensure that this network is available before starting. You can create it simply by running this command:
 ```
 docker network create efti-network
 ```
-<h3> Run the project </h3>
+## Run the project 
 
 The project includes all the required components to properly run the gates and the platforms (Postgres, RabbitMQ, Keycloak, ...).
 To run the project, use the deploy script to build and deploy all services:
@@ -39,18 +33,16 @@ To run the project, use the deploy script to build and deploy all services:
 ```
 
 This will launch 12 containers:
-<ul>
-  <li>rabbitmq</li>
-  <li>platform-ACME</li>
-  <li>platform-MASSIVE</li>
-  <li>platform-UMBRELLA</li>
-  <li>efti-gate-BO</li>
-  <li>efti-gate-LI</li>
-  <li>efti-gate-SY</li>
-  <li>psql</li>
-  <li>psql-meta</li>
-  <li>keycloak</li>
-</ul>
+* rabbitmq
+* platform-ACME
+* platform-MASSIVE
+* platform-UMBRELLA
+* efti-gate-BO
+* efti-gate-LI
+* efti-gate-SY
+* psql
+* psql-meta
+* keycloak
 
 To display logs of a container 
 ```
@@ -64,7 +56,7 @@ Finally, open your host file (for windows C:\Windows\System32\drivers\etc\hosts)
 127.0.0.1 auth.gate.listenbourg.eu
 ```
 
-<h3>Send a message</h3>
+### Send a message
 
 Now that domibus is ready, it is time to open Postman
 
