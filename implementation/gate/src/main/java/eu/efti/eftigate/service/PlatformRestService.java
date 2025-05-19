@@ -27,7 +27,7 @@ public class PlatformRestService {
     private final ValidationService validationService;
 
     private static DefaultApi createApi(URI restApiBaseUrl) {
-        // TODO EREF-25: is authentication required?
+        // TODO EREF-72: include authentication info
         return new DefaultApi(new ApiClient(restTemplate)
                 .setBasePath(restApiBaseUrl.toString()));
     }
