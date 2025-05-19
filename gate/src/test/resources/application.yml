@@ -1,17 +1,20 @@
 spring:
+  cache:
+    type: none
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: create-drop
     properties:
       hibernate:
+        cache:
+          use_second_level_cache: false
         default_schema: EFTI
         format_sql: true
         connection:
           url: jdbc:h2:mem:efti;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS EFTI;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
       username: sa
       password:
-    database-platform: org.hibernate.dialect.H2Dialect
   liquibase:
     enabled: false
   sql:
@@ -22,6 +25,3 @@ spring:
       enabled: true
   datasource:
     driver-class-name: org.h2.Driver
-logging:
-  level:
-    root: trace
