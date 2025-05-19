@@ -47,6 +47,9 @@ spring:
   jackson:
     default-property-inclusion: NON_NULL
 
+logging:
+  config: classpath:logback-default.xml
+
 server:
   port: ${PORT}
 

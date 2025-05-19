@@ -21,6 +21,9 @@ spring:
         control_schema: "eftili"
         identifiers_schema: "eftili"
 
+logging:
+  config: classpath:logback-dev.xml
+
 gate:
   country: LI
   owner: listenbourg

@@ -21,6 +21,9 @@ spring:
         control_schema: "eftibo"
         identifiers_schema: "eftibo"
 
+logging:
+  config: classpath:logback-dev.xml
+
 gate:
   country: BO
   owner: borduria

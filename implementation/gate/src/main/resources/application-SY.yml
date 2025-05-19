@@ -21,6 +21,9 @@ spring:
         control_schema: "eftisy"
         identifiers_schema: "eftisy"
 
+logging:
+  config: classpath:logback-dev.xml
+
 gate:
   country: SY
   owner: syldavia

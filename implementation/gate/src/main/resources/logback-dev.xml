@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <logger name="org.springframework.core " level="error"/>
+    <logger name="org.springframework.beans" level="error"/>
+    <logger name="org.springframework.context" level="error"/>
+    <logger name="org.springframework.transaction" level="error"/>
+    <logger name="org.springframework.web" level="error"/>
+    <logger name="org.springframework.test" level="error"/>
+    <logger name="org.hibernate" level="error"/>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <variable scope="context" name="logPattern"
+              value="%d{yyyy-MM-dd HH:mm:ss} [%thread %-5level %logger{36} %c{20}: %m%n"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                ${logPattern}
+            </Pattern>
+        </layout>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>

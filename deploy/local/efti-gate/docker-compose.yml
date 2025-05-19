@@ -8,6 +8,8 @@ services:
     volumes:
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - ./rabbitmq/rabbitmq-defs.json:/etc/rabbitmq/definitions.json
+    ports:
+      - "5672:5672"
     networks:
       efti:
 
