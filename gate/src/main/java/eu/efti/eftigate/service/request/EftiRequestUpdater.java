@@ -4,7 +4,6 @@ import eu.efti.commons.constant.EftiGateConstants;
 import eu.efti.commons.dto.RequestDto;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
-import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.mapper.MapperUtils;
@@ -19,6 +18,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static eu.efti.commons.enums.RequestStatusEnum.SEND_ERROR;
+import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH;
+import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH;
+import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_UIL_SEARCH;
+import static eu.efti.commons.enums.RequestTypeEnum.LOCAL_UIL_SEARCH;
 
 @Slf4j
 @Component
@@ -51,7 +54,7 @@ public class EftiRequestUpdater {
             return;
         }
         RequestDto req = requestDto.get();
-        if (List.of(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH, RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH, RequestTypeEnum.EXTERNAL_UIL_SEARCH, RequestTypeEnum.LOCAL_UIL_SEARCH).contains(req.getControl().getRequestType())) {
+        if (List.of(EXTERNAL_ASK_IDENTIFIERS_SEARCH, EXTERNAL_ASK_UIL_SEARCH, EXTERNAL_UIL_SEARCH, LOCAL_UIL_SEARCH).contains(req.getControl().getRequestType())) {
             getRequestService(req.getRequestType().name()).manageSendSuccess(notificationDto.getMessageId());
         } else {
             log.info(SENT_MESSAGE_SUCCESSFULLY, notificationDto.getMessageId());

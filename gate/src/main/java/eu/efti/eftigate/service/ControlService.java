@@ -435,16 +435,21 @@ public class ControlService {
 
     public IdentifiersResponseDto getIdentifiersResponse(final String requestId) {
         final ControlDto controlDto = getControlByRequestId(requestId);
-        final List<IdentifiersRequestEntity> requestEntities = requestServiceFactory.getRequestServiceByRequestType(RequestType.IDENTIFIER.name()).findAllForControlId(controlDto.getId());
+        final List<IdentifiersRequestEntity> requestEntities = requestServiceFactory
+                .getRequestServiceByRequestType(RequestType.IDENTIFIER.name())
+                .findAllForControlId(controlDto.getId());
         final List<IdentifiersRequestDto> requestDtos = requestEntities.stream().map(r -> mapperUtils.requestToRequestDto(r, IdentifiersRequestDto.class)).toList();
 
-        //log reporting LOCAL_IDENTIFIERS_SEARCH log lors du premier get
-        RequestDto requestDto = new RequestDto();
-        requestDto.setCreatedDate(controlDto.getCreatedDate());
-        String owner = gateProperties.getOwner();
-        String currentGateCountry = gateProperties.getCountry();
-        reportingRequestLogService.logReportingRequest(controlDto, requestDto, owner, currentGateCountry, RequestTypeLog.IDENTIFIERS, CA_APP, null, null, GATE, owner, currentGateCountry, false);
-
+        if (controlDto.getStatus() != PENDING && !controlDto.isLogged()) {
+            controlDto.setLogged(true);
+            this.save(controlDto);
+            //log reporting LOCAL_IDENTIFIERS_SEARCH log lors du premier get
+            RequestDto requestDto = new RequestDto();
+            requestDto.setCreatedDate(controlDto.getCreatedDate());
+            String owner = gateProperties.getOwner();
+            String currentGateCountry = gateProperties.getCountry();
+            reportingRequestLogService.logReportingRequest(controlDto, requestDto, owner, currentGateCountry, RequestTypeLog.IDENTIFIERS, CA_APP, null, null, GATE, owner, currentGateCountry, false);
+        }
         return buildIdentifiersResponse(controlDto, requestDtos);
     }
 

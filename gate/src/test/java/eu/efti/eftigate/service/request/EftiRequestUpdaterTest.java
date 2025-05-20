@@ -88,5 +88,4 @@ class EftiRequestUpdaterTest extends BaseServiceTest {
 
         verify(uilRequestService).manageSendSuccess(messageId);
     }
-
 }
