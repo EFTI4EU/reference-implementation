@@ -7,6 +7,7 @@ import eu.efti.commons.dto.UilRequestDto;
 import eu.efti.commons.dto.ValidableDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.enums.RequestStatusEnum;
+import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -265,6 +266,12 @@ public class LogManager {
             final RequestTypeLog requestTypeLog = controlDto.getRequestType() == EXTERNAL_ASK_IDENTIFIERS_SEARCH ? RequestTypeLog.IDENTIFIERS : RequestTypeLog.UIL;
             final String currentGateCountry = gateProperties.getCountry();
             reportingRequestLogService.logReportingRequest(controlDto, request, gateProperties.getOwner(), currentGateCountry, requestTypeLog, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), GATE, gateProperties.getOwner(), currentGateCountry, false);
+        }
+        if (RequestType.NOTE.equals(request.getRequestType())) {
+            final ControlDto controlDto = request.getControl();
+            final String currentGateCountry = gateProperties.getCountry();
+            reportingRequestLogService.logReportingRequest(controlDto, request, gateProperties.getOwner(), currentGateCountry, RequestTypeLog.NOTE, GATE, gateProperties.getOwner(), currentGateCountry, PLATFORM, controlDto.getPlatformId(), currentGateCountry, false);
+
         }
     }
 }
