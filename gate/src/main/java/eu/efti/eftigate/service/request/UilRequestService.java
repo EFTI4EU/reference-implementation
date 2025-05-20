@@ -52,7 +52,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static eu.efti.commons.constant.EftiGateConstants.REQUEST_STATUS_ENUM_STATUS_ENUM_MAP;
 import static eu.efti.commons.constant.EftiGateConstants.UIL_TYPES;
 import static eu.efti.commons.enums.ErrorCodesEnum.DATA_NOT_FOUND_ON_REGISTRY;
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
@@ -65,7 +64,6 @@ import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.BAD_GATEWAY;
 import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.INTERNAL_SERVER_ERROR;
 import static eu.efti.edeliveryapconnector.constant.EDeliveryStatus.isNotFound;
 import static eu.efti.eftilogger.model.ComponentType.GATE;
-import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
 
 @Slf4j
 @Component
@@ -79,6 +77,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     private final ValidationService validationService;
     private final ReportingRequestLogService reportingRequestLogService;
     private final EftiGateIdResolver eftiGateIdResolver;
+    private final LogManager logManager;
 
     public UilRequestService(final UilRequestRepository uilRequestRepository, final MapperUtils mapperUtils,
                              final RabbitSenderService rabbitSenderService,
@@ -96,6 +95,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         this.validationService = validationService;
         this.reportingRequestLogService = reportingRequestLogService;
         this.eftiGateIdResolver = eftiGateIdResolver;
+        this.logManager = logManager;
     }
 
 
@@ -142,7 +142,9 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         try {
             validationService.validateXml(body);
             final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(body);
-            this.findByRequestId(uilResponse.getRequestId()).ifPresentOrElse(uilRequestDto -> manageResponse(notificationDto, uilRequestDto, uilResponse, content), () -> log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB));
+            this.findByRequestId(uilResponse.getRequestId()).ifPresentOrElse(
+                    uilRequestDto -> manageResponse(notificationDto, uilRequestDto, uilResponse, content),
+                    () -> log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB));
         } catch (SAXException e) {
             String exceptionMessage = e.getMessage();
             log.error("Received invalid UILResponse from {}, {}", content.getFromPartyId(), exceptionMessage);
@@ -302,20 +304,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         if (uilRequestDto.getControl().isExternalAsk()) {
             respondToOtherGate(uilRequestDto, notificationDto.getContent().getBody());
         }
-        //log fti010
-        NotificationContentDto content = notificationDto.getContent();
-        ControlDto control = uilRequestDto.getControl();
-        getLogManager().logReceivedMessage(control, PLATFORM, GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
-        //log reporting LOCAL_UIL_SEARCH reception message from platform
-        String currentGateId = getGateProperties().getOwner();
-        String currentGateCountry = getGateProperties().getCountry();
-        String platformId = control.getPlatformId();
-        if (control.isExternalAsk()) {
-            String fromGateId = control.getFromGateId();
-            reportingRequestLogService.logReportingRequest(control, uilRequestDto, currentGateId, currentGateCountry, RequestTypeLog.UIL, PLATFORM, platformId, currentGateCountry, GATE, fromGateId, eftiGateIdResolver.resolve(fromGateId), true);
-        } else {
-            reportingRequestLogService.logReportingRequest(control, uilRequestDto, currentGateId, currentGateCountry, RequestTypeLog.UIL, PLATFORM, platformId, currentGateCountry, GATE, currentGateId, currentGateCountry, true);
-        }
+        logManager.logPlatformResponse(notificationDto, uilRequestDto);
     }
 
     private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, final NotificationContentDto content) {
@@ -354,7 +343,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             String currentGateId = getGateProperties().getOwner();
             String currentGateCountry = getGateProperties().getCountry();
             String controlGateId = controlDto.getGateId();
-            reportingRequestLogService.logReportingRequest(controlDto, requestDto, currentGateId, currentGateCountry, RequestTypeLog.UIL, GATE, controlGateId, eftiGateIdResolver.resolve(controlGateId), GATE, currentGateId, currentGateCountry, true);
+            reportingRequestLogService.logReportingRequest(controlDto, requestDto, currentGateId, currentGateCountry, RequestTypeLog.UIL, GATE, currentGateId, currentGateCountry, GATE, controlGateId, eftiGateIdResolver.resolve(controlGateId), true);
         }
     }
 

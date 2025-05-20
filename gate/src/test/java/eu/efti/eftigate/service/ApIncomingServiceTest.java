@@ -160,7 +160,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
         service.manageIncomingNotification(receivedNotificationDto);
 
         verify(notificationService).consume(receivedNotificationDto);
-        verify(eftiRequestUpdater, times(1)).manageSendSuccess(notificationDto, "send sucess to domibus");
+        verify(eftiRequestUpdater, times(1)).manageSendSuccess(notificationDto);
     }
 
     @Test
@@ -181,7 +181,7 @@ class ApIncomingServiceTest extends BaseServiceTest {
         service.manageIncomingNotification(receivedNotificationDto);
 
         verify(notificationService).consume(receivedNotificationDto);
-        verify(eftiRequestUpdater, times(1)).manageSendFailure(notificationDto, "send fail to domibus");
+        verify(eftiRequestUpdater, times(1)).manageSendFailure(notificationDto);
     }
 
     @Test

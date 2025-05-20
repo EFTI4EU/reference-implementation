@@ -4,8 +4,6 @@ import eu.efti.commons.dto.UilDto;
 import eu.efti.eftigate.controller.api.ControlControllerApi;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.service.ControlService;
-import eu.efti.eftilogger.dto.LogRequestDto;
-import eu.efti.eftilogger.service.ReportingRequestLogService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
