@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,11 +26,18 @@ public class IdentifiersController implements IdentifiersControllerApi {
     private final ControlService controlService;
 
     @Override
-    public ResponseEntity<RequestIdDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto) {
+    public ResponseEntity<RequestIdDto> getIdentifiers(final @RequestBody SearchWithIdentifiersRequestDto identifiersRequestDto, final @AuthenticationPrincipal Jwt principal) {
         log.info("POST on /control/identifiers on gates {} with params, identifier: {}, identifierType:{}, modeCode: {}, registrationCountryCode: {}, dangerousGoodsIndicator: {} ",
                 StringUtils.join(identifiersRequestDto.getEftiGateIndicator(), ","), identifiersRequestDto.getIdentifier(),
                 StringUtils.join(identifiersRequestDto.getIdentifierType(), ","), identifiersRequestDto.getModeCode(),
                 identifiersRequestDto.getRegistrationCountryCode(), identifiersRequestDto.getDangerousGoodsIndicator());
+        if(principal != null){
+            String nationalUniqueIdentifier = (String)  principal.getClaims().get("nationalUniqueIdentifier");
+            if(nationalUniqueIdentifier != null) {
+                identifiersRequestDto.setNationalUniqueIdentifier(nationalUniqueIdentifier);
+                log.info("POST on /control/uil with nationalUniqueIdentifier: {}",nationalUniqueIdentifier);
+            }
+        }
         return new ResponseEntity<>(controlService.createIdentifiersControl(identifiersRequestDto), HttpStatus.ACCEPTED);
     }
 

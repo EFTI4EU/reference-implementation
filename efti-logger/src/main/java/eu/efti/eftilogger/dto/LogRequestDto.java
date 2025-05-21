@@ -14,4 +14,5 @@ public class LogRequestDto extends LogCommonDto {
     private String requestId;
     private List<String> subsetIds;
     private String requestType;
+    private String nationalUniqueIdentifier;
 }

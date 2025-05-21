@@ -46,6 +46,7 @@ public class ControlDto {
     private ErrorDto error;
     private List<ConsignmentDto> identifiersResults;
     private String notes;
+    private String nationalUniqueIdentifier;
 
     public boolean isError() {
         return StatusEnum.ERROR == status;
