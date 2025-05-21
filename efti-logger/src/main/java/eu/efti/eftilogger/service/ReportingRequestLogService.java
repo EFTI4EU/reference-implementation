@@ -56,7 +56,6 @@ public class ReportingRequestLogService implements LogService<LogRequestDto> {
             sentDateString = DateTimeFormatter.ofPattern(DATE_FORMAT).format(requestDto.getCreatedDate().atOffset(ZoneOffset.UTC));
             responseDelay = offsetDateTimeNow.toInstant().toEpochMilli() - requestDto.getCreatedDate().toInstant(offsetDateTimeNow.getOffset()).toEpochMilli();
         }
-
         return LogRequestDto
                 .builder()
                 .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now(ZoneOffset.UTC)))
@@ -76,6 +75,7 @@ public class ReportingRequestLogService implements LogService<LogRequestDto> {
                 .respondingComponentId(respondingComponentId)
                 .respondingComponentCountry(respondingComponentCountry)
                 .requestType(requestTypeLog.name())
+                .nationalUniqueIdentifier(controlDto.getNationalUniqueIdentifier())
                 .build();
     }
 

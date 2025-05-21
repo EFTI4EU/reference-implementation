@@ -222,7 +222,8 @@ public class LogManager {
                 .requestingComponentCountry(gateProperties.getCountry())
                 .respondingComponentType(respondingComponentType)
                 .respondingComponentId(gateProperties.getOwner())
-                .respondingComponentCountry(gateProperties.getCountry()).build();
+                .respondingComponentCountry(gateProperties.getCountry())
+                .build();
 
         final String body = serializeUtils.mapObjectToBase64String(searchDto);
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, StatusEnum.COMPLETE, false, name);

@@ -9,6 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +24,14 @@ public class ControlController implements ControlControllerApi {
 
     private final ControlService controlService;
     @Override
-    public ResponseEntity<RequestIdDto> requestUil(@RequestBody final UilDto uilDto) {
+    public ResponseEntity<RequestIdDto> requestUil(@RequestBody final UilDto uilDto, final @AuthenticationPrincipal Jwt principal) {
+        if(principal != null){
+            String nationalUniqueIdentifier = (String)  principal.getClaims().get("nationalUniqueIdentifier");
+            if(nationalUniqueIdentifier != null) {
+                uilDto.setNationalUniqueIdentifier(nationalUniqueIdentifier);
+                log.info("POST on /control/uil with nationalUniqueIdentifier: {}",nationalUniqueIdentifier);
+            }
+        }
         log.info("POST on /control/uil with params gateId: {}, datasetId: {}, platformId: {}", uilDto.getGateId(), uilDto.getDatasetId(), uilDto.getPlatformId());
         return new ResponseEntity<>(controlService.createUilControl(uilDto), HttpStatus.ACCEPTED);
     }

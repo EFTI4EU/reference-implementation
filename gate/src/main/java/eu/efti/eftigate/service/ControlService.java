@@ -113,13 +113,16 @@ public class ControlService {
     @Transactional("controlTransactionManager")
     public RequestIdDto createUilControl(final UilDto uilDto) {
         log.info("create Uil control for dataset id : {}", uilDto.getDatasetId());
-        return createControl(uilDto, ControlUtils
-                .fromUilControl(uilDto, gateProperties.isCurrentGate(uilDto.getGateId()) ? RequestTypeEnum.LOCAL_UIL_SEARCH : RequestTypeEnum.EXTERNAL_UIL_SEARCH));
+        ControlDto control = ControlUtils.fromUilControl(uilDto, gateProperties.isCurrentGate(uilDto.getGateId()) ? RequestTypeEnum.LOCAL_UIL_SEARCH : RequestTypeEnum.EXTERNAL_UIL_SEARCH);
+        control.setNationalUniqueIdentifier(uilDto.getNationalUniqueIdentifier());
+        return createControl(uilDto, control);
     }
 
     public RequestIdDto createIdentifiersControl(final SearchWithIdentifiersRequestDto identifiersRequestDto) {
         log.info("create Consignment control for identifier : {}", identifiersRequestDto.getIdentifier());
-        return createControl(identifiersRequestDto, ControlUtils.fromLocalIdentifiersControl(identifiersRequestDto, RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH));
+        ControlDto control = ControlUtils.fromLocalIdentifiersControl(identifiersRequestDto, RequestTypeEnum.LOCAL_IDENTIFIERS_SEARCH);
+        control.setNationalUniqueIdentifier(identifiersRequestDto.getNationalUniqueIdentifier());
+        return createControl(identifiersRequestDto, control);
     }
 
     public NoteResponseDto createNoteRequestForControl(final PostFollowUpRequestDto postFollowUpRequestDto) {

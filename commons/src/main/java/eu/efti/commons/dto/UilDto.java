@@ -19,4 +19,5 @@ public class UilDto extends AbstractUilDto implements ValidableDto {
     private static final String REGEX_URI = "^[-@./#&+\\w\\s]*$";
     @Builder.Default
     private List<String> subsetIds = new ArrayList<>();
+    private String nationalUniqueIdentifier;
 }

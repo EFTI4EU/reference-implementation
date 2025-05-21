@@ -256,4 +256,5 @@
     <include file="/db.changelog/db.gate.changelog-7-adduniqueconstraint.xml"/>
     <include file="/db.changelog/db.gate.changelog-8-sendDateDomibus.xml"/>
     <include file="/db.changelog/db.gate.changelog-9-islogged.xml"/>
+    <include file="/db.changelog/db.gate.changelog-10-nationalUniqueIdentifier.xml"/>
 </databaseChangeLog>

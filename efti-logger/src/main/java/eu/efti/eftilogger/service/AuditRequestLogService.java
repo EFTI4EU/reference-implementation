@@ -54,6 +54,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                 .respondingComponentType(messagePartiesDto.getRespondingComponentType())
                 .respondingComponentId(messagePartiesDto.getRespondingComponentId())
                 .respondingComponentCountry(messagePartiesDto.getRespondingComponentCountry())
+                .nationalUniqueIdentifier(control.getNationalUniqueIdentifier())
                 .requestId(control.getRequestId())
                 .subsetIds(control.getSubsetIds())
                 .eFTIDataId(control.getDatasetId())

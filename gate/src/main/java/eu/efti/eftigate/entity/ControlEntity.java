@@ -75,6 +75,9 @@ public class ControlEntity extends AbstractModel implements Serializable {
     @Column(name = "subsetids")
     private List<String> subsetIds;
 
+    @Column(name = "nationaluniqueidentifier")
+    private String nationalUniqueIdentifier;
+
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "transportidentifiers")
     private SearchParameter transportIdentifiers;

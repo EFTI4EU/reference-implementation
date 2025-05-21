@@ -16,4 +16,6 @@ public class PostFollowUpRequestDto implements ValidableDto {
     @Size(max = 255, message = "NOTE_TOO_LONG")
     private String message;
     private String requestId;
+    private String nationalUniqueIdentifier;
+
 }
