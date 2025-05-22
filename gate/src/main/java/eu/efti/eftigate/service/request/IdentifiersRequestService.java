@@ -161,15 +161,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 String fromPartyId = content.getFromPartyId();
                 identifiersControlUpdateDelegateService.updateExistingControl(response, fromPartyId);
                 identifiersControlUpdateDelegateService.setControlNextStatus(requestId);
-                IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByControlRequestIdAndGateIdDest(requestId, fromPartyId);
-                ControlDto controlDto = getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl());
-                RequestDto requestDto = getMapperUtils().identifiersRequestEntityToRequestDto(identifiersRequestEntity, RequestDto.class);
-                String currentGateCountry = getGateProperties().getCountry();
-                String owner = getGateProperties().getOwner();
-                reportingRequestLogService.logReportingRequest(controlDto, requestDto, owner, currentGateCountry, RequestTypeLog.IDENTIFIERS, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), GATE, owner, currentGateCountry, true);
-                //log fti021
-                getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId,
-                        getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
+                this.logReceivedResponse(requestId, fromPartyId, body);
             }
         } catch (SAXException e) {
             String exceptionMessage = e.getMessage();
@@ -183,6 +175,18 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
             log.error("Something went wrong when validating IdentifierResponse from{}", content.getFromPartyId(), e);
             this.sendRequest(this.buildErrorRequestDto(notificationDto, EXTERNAL_ASK_IDENTIFIERS_SEARCH, e.getMessage(), XML_ERROR.name(), RequestType.IDENTIFIER));
         }
+    }
+
+    private void logReceivedResponse(final String requestId, final String fromPartyId, final String body) {
+        IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByControlRequestIdAndGateIdDest(requestId, fromPartyId);
+        ControlDto controlDto = getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl());
+        RequestDto requestDto = getMapperUtils().identifiersRequestEntityToRequestDto(identifiersRequestEntity, RequestDto.class);
+        final String currentGateCountry = getGateProperties().getCountry();
+        final String owner = getGateProperties().getOwner();
+        reportingRequestLogService.logReportingRequest(controlDto, requestDto, owner, currentGateCountry, RequestTypeLog.IDENTIFIERS, GATE, owner, currentGateCountry, GATE, requestDto.getGateIdDest(), eftiGateIdResolver.resolve(requestDto.getGateIdDest()), true);
+        //log fti021
+        getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId,
+                getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
     }
 
     @Override
