@@ -16,7 +16,6 @@ import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.entity.RequestEntity;
-import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;

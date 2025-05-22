@@ -26,7 +26,6 @@ import java.util.List;
 @Slf4j
 public class ValidationService {
 
-
     @Value("${gate.xsd.path:classpath:xsd/edelivery/gate.xsd}")
     private String gateXsd;
 

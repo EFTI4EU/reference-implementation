@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +38,8 @@ public class ControlDto {
     private boolean isLogged;
     @Builder.Default
     private List<String> subsetIds = new ArrayList<>();
-    private LocalDateTime createdDate;
-    private LocalDateTime lastModifiedDate;
+    private OffsetDateTime createdDate;
+    private OffsetDateTime lastModifiedDate;
     private byte[] eftiData;
     private SearchParameter transportIdentifiers;
     private String fromGateId;

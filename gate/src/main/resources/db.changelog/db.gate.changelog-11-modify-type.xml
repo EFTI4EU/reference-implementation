@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet  author="jthueux"  id="modifyDataTypeRequest">
+        <modifyDataType  catalogName="efti"
+                         columnName="createddate"
+                         newDataType="timestamptz"
+                         tableName="request"/>
+    </changeSet>
+    <changeSet  author="jthueux"  id="modifyDataTypeLastModifiedDateRequest">
+        <modifyDataType  catalogName="efti"
+                         columnName="lastmodifieddate"
+                         newDataType="timestamptz"
+                         tableName="request"/>
+    </changeSet>
+    <changeSet id="modifyDataTypeControl" author="jthueux">
+        <modifyDataType  catalogName="efti"
+                         columnName="createddate"
+                         newDataType="timestamptz"
+                         tableName="control"/>
+    </changeSet>
+    <changeSet id="modifyDataTypeLastModifiedDateControl" author="jthueux">
+        <modifyDataType  catalogName="efti"
+                         columnName="lastmodifieddate"
+                         newDataType="timestamptz"
+                         tableName="control"/>
+    </changeSet>
+</databaseChangeLog>

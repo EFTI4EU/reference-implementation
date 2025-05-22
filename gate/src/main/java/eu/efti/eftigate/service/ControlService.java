@@ -50,7 +50,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -227,7 +227,7 @@ public class ControlService {
     }
 
     private long getSecondsSinceCreation(final ControlEntity controlEntity) {
-        return ChronoUnit.SECONDS.between(controlEntity.getCreatedDate(), LocalDateTime.now());
+        return ChronoUnit.SECONDS.between(controlEntity.getCreatedDate(), OffsetDateTime.now());
     }
 
     private ControlDto handleExistingControlWithoutData(final ControlEntity controlEntity) {

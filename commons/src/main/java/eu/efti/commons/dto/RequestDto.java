@@ -27,8 +27,8 @@ public class RequestDto {
     private String edeliveryMessageId;
     private Integer retry;
     private LocalDateTime nextRetryDate;
-    private LocalDateTime createdDate;
-    private LocalDateTime lastModifiedDate;
+    private OffsetDateTime createdDate;
+    private OffsetDateTime lastModifiedDate;
     private OffsetDateTime sentDate;
     private String gateIdDest;
     private ControlDto control;

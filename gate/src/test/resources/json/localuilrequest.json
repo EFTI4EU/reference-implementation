@@ -5,16 +5,8 @@
   "retry": 0,
   "reponseData": null,
   "nextRetryDate": null,
-  "createdDate": [
-    2024,
-    3,
-    5,
-    15,
-    6,
-    52,
-    135892300
-  ],
-  "lastModifiedDate": null,
+  "createdDate": "2027-09-30T15:30:00+01:00",
+  "lastModifiedDate": "2027-09-30T15:30:00+01:00",
   "gateIdDest": "http://france.lol",
   "control": {
     "id": 102,
@@ -25,24 +17,8 @@
     "platformId": "acme",
     "gateId": "borduria",
     "subsetId": "full",
-    "createdDate": [
-      2024,
-      3,
-      5,
-      15,
-      6,
-      51,
-      987861600
-    ],
-    "lastModifiedDate": [
-      2024,
-      3,
-      5,
-      15,
-      6,
-      51,
-      987861600
-    ],
+    "createdDate": "2027-09-30T15:30:00+01:00",
+    "lastModifiedDate": "2027-09-30T15:30:00+01:00",
     "eftiData": null,
     "transportIdentifiers": null,
     "fromGateId": null,

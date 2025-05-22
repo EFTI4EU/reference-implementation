@@ -165,7 +165,7 @@ class IdentifiersServiceTest extends AbstractServiceTest {
         MainCarriageTransportMovement mainCarriageTransportMovement = new MainCarriageTransportMovement();
         mainCarriageTransportMovement.setModeCode("3");
         consignment.setMainCarriageTransportMovements(List.of(mainCarriageTransportMovement));
-        consignment.setCreatedDate(LocalDateTime.now());
+        consignment.setCreatedDate(OffsetDateTime.now());
 
         Consignment result = service.setDisabledDate(consignment);
 
