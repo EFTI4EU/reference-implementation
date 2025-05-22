@@ -257,4 +257,5 @@
     <include file="/db.changelog/db.gate.changelog-8-sendDateDomibus.xml"/>
     <include file="/db.changelog/db.gate.changelog-9-islogged.xml"/>
     <include file="/db.changelog/db.gate.changelog-10-nationalUniqueIdentifier.xml"/>
+    <include file="/db.changelog/db.gate.changelog-10-authoritydrop.xml"/>
 </databaseChangeLog>
