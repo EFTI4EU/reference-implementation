@@ -382,7 +382,7 @@ public class ControlService {
         String currentCountry = gateProperties.getCountry();
         String currentGateId = gateProperties.getOwner();
         String fromGateId = savedControl.getFromGateId();
-        reportingRequestLogService.logReportingRequest(savedControl, null, currentGateId, currentCountry, RequestTypeLog.NOTE, fromGateId != null ? GATE : CA_APP, fromGateId, fromGateId != null ? eftiGateIdResolver.resolve(fromGateId) : null, GATE, currentGateId, currentCountry, false);
+        reportingRequestLogService.logReportingRequest(savedControl, null, currentGateId, currentCountry, RequestTypeLog.NOTE, fromGateId != null ? GATE : CA_APP, fromGateId, fromGateId != null ? eftiGateIdResolver.resolve(fromGateId) : currentCountry, GATE, currentGateId, currentCountry, false);
     }
 
     private void logUilReportingRequest(RequestDto dto, ControlDto controlDto) {

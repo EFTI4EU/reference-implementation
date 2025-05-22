@@ -31,6 +31,7 @@ import java.util.List;
 import static eu.efti.commons.constant.EftiGateConstants.REQUEST_STATUS_ENUM_STATUS_ENUM_MAP;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH;
 import static eu.efti.commons.enums.StatusEnum.COMPLETE;
+import static eu.efti.commons.enums.StatusEnum.ERROR;
 import static eu.efti.eftilogger.model.ComponentType.GATE;
 import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
 
@@ -265,13 +266,17 @@ public class LogManager {
             final ControlDto controlDto = request.getControl();
             final RequestTypeLog requestTypeLog = controlDto.getRequestType() == EXTERNAL_ASK_IDENTIFIERS_SEARCH ? RequestTypeLog.IDENTIFIERS : RequestTypeLog.UIL;
             final String currentGateCountry = gateProperties.getCountry();
+            controlDto.setStatus(isSuccess ? COMPLETE : ERROR);
             reportingRequestLogService.logReportingRequest(controlDto, request, gateProperties.getOwner(), currentGateCountry, requestTypeLog, GATE, controlDto.getFromGateId(), eftiGateIdResolver.resolve(controlDto.getFromGateId()), GATE, gateProperties.getOwner(), currentGateCountry, false);
         }
         if (RequestType.NOTE.equals(request.getRequestType())) {
             final ControlDto controlDto = request.getControl();
             final String currentGateCountry = gateProperties.getCountry();
-            reportingRequestLogService.logReportingRequest(controlDto, request, gateProperties.getOwner(), currentGateCountry, RequestTypeLog.NOTE, GATE, gateProperties.getOwner(), currentGateCountry, PLATFORM, controlDto.getPlatformId(), currentGateCountry, false);
-
+            if(controlDto.getRequestType().equals(RequestTypeEnum.EXTERNAL_UIL_SEARCH)) { //gate to gate note
+                reportingRequestLogService.logReportingRequest(controlDto, request, gateProperties.getOwner(), currentGateCountry, RequestTypeLog.NOTE, GATE, gateProperties.getOwner(), currentGateCountry, GATE, request.getGateIdDest(), eftiGateIdResolver.resolve(request.getGateIdDest()), false);
+            } else {
+                reportingRequestLogService.logReportingRequest(controlDto, request, gateProperties.getOwner(), currentGateCountry, RequestTypeLog.NOTE, GATE, gateProperties.getOwner(), currentGateCountry, PLATFORM, controlDto.getPlatformId(), currentGateCountry, false);
+            }
         }
     }
 }
