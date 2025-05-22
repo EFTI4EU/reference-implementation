@@ -5,7 +5,6 @@ import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.UilRequestDto;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
-import eu.efti.commons.utils.SerializeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

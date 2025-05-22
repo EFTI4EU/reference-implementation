@@ -69,7 +69,7 @@ class ReportingRequestLogServiceTest extends AbstractTestService {
                 .control(controlDto)
                 .gateIdDest("borduria")
                 .edeliveryMessageId("edeliveryMessageId")
-                .createdDate(LocalDateTime.now())
+                .createdDate(OffsetDateTime.now())
                 .id(81)
                 .sentDate(OffsetDateTime.now())
                 .build();

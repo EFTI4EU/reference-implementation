@@ -130,7 +130,7 @@ public class IdentifiersService {
             finalDate = consignment.getCarrierAcceptanceDatetime();
         } else {
             if (consignment.getCreatedDate() != null) {
-                finalDate = consignment.getCreatedDate().atOffset(ZoneOffset.UTC);
+                finalDate = consignment.getCreatedDate();
             } else {
                 finalDate = OffsetDateTime.now();
             }

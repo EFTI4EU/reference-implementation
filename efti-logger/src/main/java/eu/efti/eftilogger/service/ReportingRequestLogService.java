@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -50,11 +49,11 @@ public class ReportingRequestLogService implements LogService<LogRequestDto> {
         String sentDateString = DateTimeFormatter.ofPattern(DATE_FORMAT).format(sendDate);
         if (isSendDate && requestDto != null && requestDto.getSentDate() != null) {
             sendDate = requestDto.getSentDate().toLocalDateTime();
-            sentDateString = DateTimeFormatter.ofPattern(DATE_FORMAT).format(sendDate);
+            sentDateString = DateTimeFormatter.ofPattern(DATE_FORMAT).format(sendDate.atOffset(ZoneOffset.UTC));
             responseDelay = offsetDateTimeNow.toInstant().toEpochMilli() - requestDto.getSentDate().toInstant().toEpochMilli();
         } else if (!isSendDate && requestDto != null) {
-            sentDateString = DateTimeFormatter.ofPattern(DATE_FORMAT).format(requestDto.getCreatedDate().atOffset(ZoneOffset.UTC));
-            responseDelay = offsetDateTimeNow.toInstant().toEpochMilli() - requestDto.getCreatedDate().toInstant(offsetDateTimeNow.getOffset()).toEpochMilli();
+            sentDateString = DateTimeFormatter.ofPattern(DATE_FORMAT).format(requestDto.getCreatedDate());
+            responseDelay = offsetDateTimeNow.toInstant().toEpochMilli() - requestDto.getCreatedDate().toInstant().toEpochMilli();
         }
         return LogRequestDto
                 .builder()

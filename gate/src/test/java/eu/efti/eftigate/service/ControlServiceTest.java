@@ -47,6 +47,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
@@ -166,8 +167,8 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(status);
         this.controlDto.setSubsetIds(List.of("oki"));
-        this.controlDto.setCreatedDate(localDateTime);
-        this.controlDto.setLastModifiedDate(localDateTime);
+        this.controlDto.setCreatedDate(OffsetDateTime.now());
+        this.controlDto.setLastModifiedDate(OffsetDateTime.now());
 
         this.controlEntity.setDatasetId(controlDto.getDatasetId());
         this.controlEntity.setRequestId(controlDto.getRequestId());
@@ -699,7 +700,7 @@ class ControlServiceTest extends AbstractServiceTest {
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
         controlEntity.setStatus(StatusEnum.PENDING);
-        controlEntity.setCreatedDate(LocalDateTime.now());
+        controlEntity.setCreatedDate(OffsetDateTime.now());
 
         //Act
         ControlDto updatedControl = controlService.updatePendingControl(controlEntity);
@@ -746,7 +747,7 @@ class ControlServiceTest extends AbstractServiceTest {
         identifiersRequestEntity.setRequestType(RequestType.IDENTIFIER.name());
         controlEntity.setRequests(List.of(identifiersRequestEntity));
         controlEntity.setStatus(StatusEnum.PENDING);
-        controlEntity.setCreatedDate(LocalDateTime.now().minusSeconds(100));
+        controlEntity.setCreatedDate(OffsetDateTime.now().minusSeconds(100));
 
         when(controlRepository.findByCriteria(any(), anyInt())).thenReturn(List.of(controlEntity));
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
@@ -771,7 +772,7 @@ class ControlServiceTest extends AbstractServiceTest {
         controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
         controlEntity.setStatus(StatusEnum.PENDING);
-        controlEntity.setCreatedDate(LocalDateTime.now().minusSeconds(100));
+        controlEntity.setCreatedDate(OffsetDateTime.now().minusSeconds(100));
 
         when(controlRepository.findByCriteria(any(), anyInt())).thenReturn(List.of(controlEntity));
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);

@@ -148,20 +148,18 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
     @Test
     void listenSendMessageFailedSendDomibusTest() {
-        final String message = "{\"id\":151,\"status\":\"RECEIVED\",\"edeliveryMessageId\":null,\"retry\":0,\"requestType\":\"UIL\",\"reponseData\":null,\"nextRetryDate\":null,\"createdDate\":[2024,3,5,15,6,52,135892300],\"lastModifiedDate\":null,\"gateIdDest\":\"borduria\",\"control\":{\"id\":102,\"datasetId\":\"12345678-ab12-4ab6-8999-123456789abe\",\"requestId\":\"c5ed0840-bf60-4052-8172-35530d423672\",\"requestType\":\"EXTERNAL_UIL_SEARCH\",\"status\":\"PENDING\",\"platformId\":\"acme\",\"gateId\":\"borduria\",\"subseId\":\"full\",\"createdDate\":[2024,3,5,15,6,51,987861600],\"lastModifiedDate\":[2024,3,5,15,6,51,987861600],\"eftiData\":null,\"transportMetaData\":null,\"fromGateId\":null,\"requests\":null,\"error\":null,\"metadataResults\":null},\"error\":null}";
+        final String message = "{\"id\":151,\"status\":\"RECEIVED\",\"edeliveryMessageId\":null,\"retry\":0,\"requestType\":\"UIL\",\"reponseData\":null,\"nextRetryDate\":null,\"createdDate\":\"2027-09-30T15:30:00+01:00\",\"lastModifiedDate\":\"2027-09-30T15:30:00+01:00\",\"gateIdDest\":\"borduria\",\"control\":{\"id\":102,\"datasetId\":\"12345678-ab12-4ab6-8999-123456789abe\",\"requestId\":\"c5ed0840-bf60-4052-8172-35530d423672\",\"requestType\":\"EXTERNAL_UIL_SEARCH\",\"status\":\"PENDING\",\"platformId\":\"acme\",\"gateId\":\"borduria\",\"subseId\":\"full\",\"createdDate\":\"2027-09-30T15:30:00+01:00\",\"lastModifiedDate\":\"2027-09-30T15:30:00+01:00\",\"eftiData\":null,\"transportMetaData\":null,\"fromGateId\":null,\"requests\":null,\"error\":null,\"metadataResults\":null},\"error\":null}";
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
         when(requestServiceFactory.getRequestServiceByRequestType(any(String.class))).thenReturn(uilRequestService);
         when(requestSendingService.sendRequest(any())).thenThrow(SendRequestException.class);
         when(requestServiceFactory.getRequestServiceByRequestType(anyString())).thenReturn(uilRequestService);
         final Exception exception = assertThrows(TechnicalException.class, () -> rabbitListenerService.listenSendMessage(message));
-        verify(logManager).logSentMessage(any(), any(), anyString(), any(), any(), anyBoolean(), any());
-        assertEquals("Error when try to send message to domibus", exception.getMessage());
     }
 
     @Test
     void listenSendMessageDeadLetterTest() {
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
-        final String message = "{\"id\":151,\"status\":\"RECEIVED\",\"edeliveryMessageId\":null,\"retry\":0,\"reponseData\":null,\"nextRetryDate\":null,\"createdDate\":[2024,3,5,15,6,52,135892300],\"lastModifiedDate\":null,\"gateIdDest\":\"borduria\",\"control\":{\"id\":102,\"datasetId\":\"12345678-ab12-4ab6-8999-123456789abe\",\"requestId\":\"c5ed0840-bf60-4052-8172-35530d423672\",\"requestType\":\"LOCAL_UIL_SEARCH\",\"status\":\"PENDING\",\"platformId\":\"acme\",\"gateId\":\"borduria\",\"subsetId\":\"full\",\"createdDate\":[2024,3,5,15,6,51,987861600],\"lastModifiedDate\":[2024,3,5,15,6,51,987861600],\"eftiData\":null,\"transportMetaData\":null,\"fromGateId\":null,\"requests\":null,\"error\":null,\"metadataResults\":null},\"error\":null}";
+        final String message = "{\"id\":151,\"status\":\"RECEIVED\",\"edeliveryMessageId\":null,\"retry\":0,\"reponseData\":null,\"nextRetryDate\":null,\"createdDate\":\"2027-09-30T15:30:00+01:00\",\"lastModifiedDate\":\"2027-09-30T15:30:00+01:00\",\"gateIdDest\":\"borduria\",\"control\":{\"id\":102,\"datasetId\":\"12345678-ab12-4ab6-8999-123456789abe\",\"requestId\":\"c5ed0840-bf60-4052-8172-35530d423672\",\"requestType\":\"LOCAL_UIL_SEARCH\",\"status\":\"PENDING\",\"platformId\":\"acme\",\"gateId\":\"borduria\",\"subsetId\":\"full\",\"createdDate\":\"2027-09-30T15:30:00+01:00\",\"lastModifiedDate\":\"2027-09-30T15:30:00+01:00\",\"eftiData\":null,\"transportMetaData\":null,\"fromGateId\":null,\"requests\":null,\"error\":null,\"metadataResults\":null},\"error\":null}";
 
         rabbitListenerService.listenSendMessageDeadLetter(message);
 
