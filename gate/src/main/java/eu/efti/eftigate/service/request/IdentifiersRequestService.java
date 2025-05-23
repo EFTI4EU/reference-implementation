@@ -183,6 +183,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         RequestDto requestDto = getMapperUtils().identifiersRequestEntityToRequestDto(identifiersRequestEntity, RequestDto.class);
         final String currentGateCountry = getGateProperties().getCountry();
         final String owner = getGateProperties().getOwner();
+        controlDto.setStatus(StatusEnum.COMPLETE); //for logging purpose only, the status should be given as param of the log call
         reportingRequestLogService.logReportingRequest(controlDto, requestDto, owner, currentGateCountry, RequestTypeLog.IDENTIFIERS, GATE, owner, currentGateCountry, GATE, requestDto.getGateIdDest(), eftiGateIdResolver.resolve(requestDto.getGateIdDest()), true);
         //log fti021
         getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId,
