@@ -3,7 +3,6 @@ package eu.efti.eftilogger.service;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import eu.efti.commons.dto.AuthorityDto;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
@@ -37,7 +36,7 @@ class AuditRequestLogServiceTest extends AbstractTestService {
     private CustomComparator messageDateComparator;
 
     @BeforeEach
-    public void init() {
+    void init() {
         logWatcher = new ListAppender<>();
         logWatcher.start();
         ((Logger) LoggerFactory.getLogger(LogService.class)).addAppender(logWatcher);
@@ -47,9 +46,6 @@ class AuditRequestLogServiceTest extends AbstractTestService {
 
         controlDto = ControlDto.builder()
                 .id(1)
-                .authority(AuthorityDto.builder()
-                        .name("name")
-                        .nationalUniqueIdentifier("nui").build())
                 .requestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH)
                 .requestId("requestId")
                 .subsetIds(List.of("full"))

@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,17 +35,18 @@ public class ControlDto {
     private StatusEnum status;
     private String platformId;
     private String gateId;
+    private boolean isLogged;
     @Builder.Default
     private List<String> subsetIds = new ArrayList<>();
-    private LocalDateTime createdDate;
-    private LocalDateTime lastModifiedDate;
+    private OffsetDateTime createdDate;
+    private OffsetDateTime lastModifiedDate;
     private byte[] eftiData;
     private SearchParameter transportIdentifiers;
     private String fromGateId;
-    private AuthorityDto authority;
     private ErrorDto error;
     private List<ConsignmentDto> identifiersResults;
     private String notes;
+    private String nationalUniqueIdentifier;
 
     public boolean isError() {
         return StatusEnum.ERROR == status;

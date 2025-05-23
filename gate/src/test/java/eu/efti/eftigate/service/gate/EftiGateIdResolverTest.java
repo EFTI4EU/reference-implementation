@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service.gate;
 
-import eu.efti.commons.dto.AuthorityDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.enums.CountryIndicator;
 import eu.efti.eftigate.entity.GateEntity;
@@ -31,14 +30,12 @@ class EftiGateIdResolverTest {
     GateEntity deGateEntity;
 
     @BeforeEach
-    public void before() {
+    void before() {
         eftiGateIdResolver = new EftiGateIdResolver(gateRepository);
 
-        final AuthorityDto authorityDto = new AuthorityDto();
 
         this.searchWithIdentifiersRequestDto.setIdentifier("abc123");
         this.searchWithIdentifiersRequestDto.setRegistrationCountryCode("FR");
-        this.searchWithIdentifiersRequestDto.setAuthority(authorityDto);
         this.searchWithIdentifiersRequestDto.setModeCode("ROAD");
 
         frGateEntity = GateEntity.builder().id(1L).gateId("https://efti.gate.fr.eu").country(CountryIndicator.FR).build();

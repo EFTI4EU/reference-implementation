@@ -16,7 +16,7 @@ class GateToRequestTypeFunctionTest {
     private GateToRequestTypeFunction gateToRequestTypeFunction;
 
     @BeforeEach
-    public void before() {
+    void before() {
         final GateProperties gateProperties = GateProperties.builder()
                 .owner("https://efti.gate.fr.eu")
                 .ap(GateProperties.ApConfig.builder()
@@ -26,7 +26,7 @@ class GateToRequestTypeFunctionTest {
     }
 
     @Test
-    void shouldGetRequestType_WhenMultipleGatesAreGiven(){
+    void shouldGetRequestType_WhenMultipleGatesAreGiven() {
         //Act
         final RequestTypeEnum requestType = gateToRequestTypeFunction.apply(List.of("https://efti.gate.fr.eu", "https://efti.gate.be.eu"));
 
@@ -35,7 +35,7 @@ class GateToRequestTypeFunctionTest {
     }
 
     @Test
-    void shouldGetRequestType_WhenSingleGateIsGivenAndIsEqualToLocalGate(){
+    void shouldGetRequestType_WhenSingleGateIsGivenAndIsEqualToLocalGate() {
         //Act
         final RequestTypeEnum requestType = gateToRequestTypeFunction.apply(List.of("https://efti.gate.fr.eu"));
 
@@ -44,7 +44,7 @@ class GateToRequestTypeFunctionTest {
     }
 
     @Test
-    void shouldGetRequestType_WhenSingleGateIsGivenAndIsDifferentFromLocalGate(){
+    void shouldGetRequestType_WhenSingleGateIsGivenAndIsDifferentFromLocalGate() {
         //Act
         final RequestTypeEnum requestType = gateToRequestTypeFunction.apply(List.of("https://efti.gate.be.eu"));
 

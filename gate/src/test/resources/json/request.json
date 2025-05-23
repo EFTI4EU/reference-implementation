@@ -6,6 +6,7 @@
   "nextRetryDate": null,
   "createdDate": null,
   "lastModifiedDate": null,
+  "sentDate": null,
   "gateIdDest": "https://efti.gate.be.eu",
   "control": {
     "id": 1,
@@ -21,10 +22,11 @@
     "eftiData": null,
     "transportIdentifiers": null,
     "fromGateId": null,
-    "authority": null,
     "error": null,
     "identifiersResults": null,
-    "notes": null
+    "notes": null,
+    "nationalUniqueIdentifier":null,
+    "logged": false
   },
   "error": null,
   "requestType": "UIL",

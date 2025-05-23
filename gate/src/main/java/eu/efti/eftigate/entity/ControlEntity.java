@@ -66,11 +66,17 @@ public class ControlEntity extends AbstractModel implements Serializable {
     @Column(name = "platformid")
     private String platformId;
 
+    @Column(name = "islogged")
+    private boolean isLogged;
+
     @Column(name = "gateid")
     private String gateId;
 
     @Column(name = "subsetids")
     private List<String> subsetIds;
+
+    @Column(name = "nationaluniqueidentifier")
+    private String nationalUniqueIdentifier;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "transportidentifiers")
@@ -84,13 +90,7 @@ public class ControlEntity extends AbstractModel implements Serializable {
     @EqualsAndHashCode.Exclude
     private List<RequestEntity> requests;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "authority", referencedColumnName = "id")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private AuthorityEntity authority;
-
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "error", referencedColumnName = "id")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -98,9 +98,5 @@ public class ControlEntity extends AbstractModel implements Serializable {
 
     public boolean isExternalAsk() {
         return this.getRequestType() != null && this.getRequestType().isExternalAsk();
-    }
-
-    public boolean isLocalAsk() {
-        return this.getRequestType() != null && this.getRequestType().isLocalAsk();
     }
 }

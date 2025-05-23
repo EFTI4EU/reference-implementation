@@ -1,4 +1,21 @@
 spring:
+  jpa:
+    properties:
+      hibernate:
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+        javax:
+          cache:
+            provider: com.hazelcast.cache.impl.HazelcastServerCachingProvider
+            uri: hazelcast.xml
+            missing_cache_strategy: create
+      jakarta:
+        persistence:
+          sharedCache:
+            mode: ENABLE_SELECTIVE
   servlet:
     multipart:
       max-file-size: 5MB
@@ -28,9 +45,9 @@ spring:
     name: efti-gate
   datasource:
     control:
-      jdbc-url: jdbc:postgresql://localhost:9001/efti
-      url: jdbc:postgresql://localhost:9001/efti
-      username: efti
+      jdbc-url: jdbc:postgresql://localhost:9000/efti
+      url: jdbc:postgresql://localhost:9000/efti
+      username: ingroup
       password: root
       driverClassName: org.postgresql.Driver
       liquibase:
@@ -52,6 +69,13 @@ server:
 batch:
   update:
     cron: "0 */1 * ? * *"
+  identifier:
+    cron: "0 0 1 ? * *"
+    activated: true
+    deactivation-delay:
+      three: 12
+      other: 0
+      null-delivery-date: 90
 
 springdoc:
   swagger-ui:
@@ -63,3 +87,10 @@ efti:
   control:
     pending:
       timeout: 60
+logging:
+  level:
+    com:
+      hazelcast:
+        internal:
+          diagnostics:
+            HealthMonitor: OFF

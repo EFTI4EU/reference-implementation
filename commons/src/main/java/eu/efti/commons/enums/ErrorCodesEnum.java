@@ -30,18 +30,6 @@ public enum ErrorCodesEnum {
 
     UIL_PLATFORM_MISSING("Missing parameter platformId"),
 
-    AUTHORITY_MISSING("Authority missing."),
-    AUTHORITY_COUNTRY_MISSING("Authority country missing."),
-    AUTHORITY_COUNTRY_TOO_LONG("Authority country too long."),
-    AUTHORITY_COUNTRY_UNKNOWN("Authority country unknown."),
-    AUTHORITY_LEGAL_CONTACT_MISSING("Authority legal contact missing."),
-    AUTHORITY_WORKING_CONTACT_MISSING("Authority working contact missing."),
-    AUTHORITY_IS_EMERGENCY_MISSING("Authority is emergency missing."),
-    AUTHORITY_NAME_MISSING("Authority name missing."),
-    AUTHORITY_NAME_TOO_LONG("Authority name too long."),
-    AUTHORITY_NATIONAL_IDENTIFIER_MISSING("Authority national identifier missing."),
-    AUTHORITY_NATIONAL_IDENTIFIER_TOO_LONG("Authority national identifier too long."),
-
     CONTACT_MAIL_MISSING("Missing parameter email."),
     CONTACT_MAIL_INCORRECT_FORMAT("Contact mail incorrect."),
     CONTACT_MAIL_TOO_LONG("Contact mail too long."),

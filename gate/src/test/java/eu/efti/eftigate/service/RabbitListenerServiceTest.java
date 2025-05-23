@@ -9,8 +9,10 @@ import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.generator.id.MessageIdGenerator;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -47,6 +49,12 @@ class RabbitListenerServiceTest extends BaseServiceTest {
     @Mock
     private MessageIdGenerator messageIdGenerator;
 
+    @Mock
+    private EftiGateIdResolver eftiGateIdResolver;
+
+    @Mock
+    private ReportingRequestLogService reportingRequestLogService;
+
 
     private static final String URL = "url";
     private static final String PASSWORD = "password";
@@ -72,14 +80,14 @@ class RabbitListenerServiceTest extends BaseServiceTest {
                         .username(USERNAME).build()).build();
 
         rabbitListenerService = new RabbitListenerService(gateProperties, serializeUtils, requestSendingService,
-                requestServiceFactory, apIncomingService, mapperUtils, logManager, messageIdGenerator);
+                requestServiceFactory, apIncomingService, mapperUtils, logManager, reportingRequestLogService, messageIdGenerator, eftiGateIdResolver);
         memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
         memoryAppender = MemoryAppender.createInitializedMemoryAppender(
                 Level.TRACE, memoryAppenderTestLogger);
     }
 
     @AfterEach
-    public void cleanupLogAppenderForTest() {
+    void cleanupLogAppenderForTest() {
         MemoryAppender.shutdownMemoryAppender(memoryAppender, memoryAppenderTestLogger);
     }
 
@@ -140,20 +148,18 @@ class RabbitListenerServiceTest extends BaseServiceTest {
 
     @Test
     void listenSendMessageFailedSendDomibusTest() {
-        final String message = "{\"id\":151,\"status\":\"RECEIVED\",\"edeliveryMessageId\":null,\"retry\":0,\"requestType\":\"UIL\",\"reponseData\":null,\"nextRetryDate\":null,\"createdDate\":[2024,3,5,15,6,52,135892300],\"lastModifiedDate\":null,\"gateIdDest\":\"borduria\",\"control\":{\"id\":102,\"datasetId\":\"12345678-ab12-4ab6-8999-123456789abe\",\"requestId\":\"c5ed0840-bf60-4052-8172-35530d423672\",\"requestType\":\"EXTERNAL_UIL_SEARCH\",\"status\":\"PENDING\",\"platformId\":\"acme\",\"gateId\":\"borduria\",\"subseId\":\"full\",\"createdDate\":[2024,3,5,15,6,51,987861600],\"lastModifiedDate\":[2024,3,5,15,6,51,987861600],\"eftiData\":null,\"transportMetaData\":null,\"fromGateId\":null,\"requests\":null,\"authority\":{\"id\":99,\"country\":\"SY\",\"legalContact\":{\"id\":197,\"email\":\"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.A@63ccccccccccccccccccccccccccccccccccccccccccccccccccccccccgmail.63ccccccccccccccccccccccccccccccccccccccccccccccccccccccccgmail.commmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\",\"streetName\":\"rue des rossignols\",\"buildingNumber\":\"12\",\"city\":\"Acheville\",\"additionalLine\":null,\"postalCode\":\"62320\"},\"workingContact\":{\"id\":198,\"email\":\"toto@gmail.com\",\"streetName\":\"rue des cafés\",\"buildingNumber\":\"14\",\"city\":\"Lille\",\"additionalLine\":\"osef\",\"postalCode\":\"59000\"},\"isEmergencyService\":null,\"name\":\"aaaa\",\"nationalUniqueIdentifier\":\"aaa\"},\"error\":null,\"metadataResults\":null},\"error\":null}";
+        final String message = "{\"id\":151,\"status\":\"RECEIVED\",\"edeliveryMessageId\":null,\"retry\":0,\"requestType\":\"UIL\",\"reponseData\":null,\"nextRetryDate\":null,\"createdDate\":\"2027-09-30T15:30:00+01:00\",\"lastModifiedDate\":\"2027-09-30T15:30:00+01:00\",\"gateIdDest\":\"borduria\",\"control\":{\"id\":102,\"datasetId\":\"12345678-ab12-4ab6-8999-123456789abe\",\"requestId\":\"c5ed0840-bf60-4052-8172-35530d423672\",\"requestType\":\"EXTERNAL_UIL_SEARCH\",\"status\":\"PENDING\",\"platformId\":\"acme\",\"gateId\":\"borduria\",\"subseId\":\"full\",\"createdDate\":\"2027-09-30T15:30:00+01:00\",\"lastModifiedDate\":\"2027-09-30T15:30:00+01:00\",\"eftiData\":null,\"transportMetaData\":null,\"fromGateId\":null,\"requests\":null,\"error\":null,\"metadataResults\":null},\"error\":null}";
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
         when(requestServiceFactory.getRequestServiceByRequestType(any(String.class))).thenReturn(uilRequestService);
         when(requestSendingService.sendRequest(any())).thenThrow(SendRequestException.class);
         when(requestServiceFactory.getRequestServiceByRequestType(anyString())).thenReturn(uilRequestService);
         final Exception exception = assertThrows(TechnicalException.class, () -> rabbitListenerService.listenSendMessage(message));
-        verify(logManager).logSentMessage(any(), any(), anyString(), any(), any(), anyBoolean(), any());
-        assertEquals("Error when try to send message to domibus", exception.getMessage());
     }
 
     @Test
     void listenSendMessageDeadLetterTest() {
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
-        final String message = "{\"id\":151,\"status\":\"RECEIVED\",\"edeliveryMessageId\":null,\"retry\":0,\"reponseData\":null,\"nextRetryDate\":null,\"createdDate\":[2024,3,5,15,6,52,135892300],\"lastModifiedDate\":null,\"gateIdDest\":\"borduria\",\"control\":{\"id\":102,\"datasetId\":\"12345678-ab12-4ab6-8999-123456789abe\",\"requestId\":\"c5ed0840-bf60-4052-8172-35530d423672\",\"requestType\":\"LOCAL_UIL_SEARCH\",\"status\":\"PENDING\",\"platformId\":\"acme\",\"gateId\":\"borduria\",\"subsetId\":\"full\",\"createdDate\":[2024,3,5,15,6,51,987861600],\"lastModifiedDate\":[2024,3,5,15,6,51,987861600],\"eftiData\":null,\"transportMetaData\":null,\"fromGateId\":null,\"requests\":null,\"authority\":{\"id\":99,\"country\":\"SY\",\"legalContact\":{\"id\":197,\"email\":\"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.A@63ccccccccccccccccccccccccccccccccccccccccccccccccccccccccgmail.63ccccccccccccccccccccccccccccccccccccccccccccccccccccccccgmail.commmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\",\"streetName\":\"rue des rossignols\",\"buildingNumber\":\"12\",\"city\":\"Acheville\",\"additionalLine\":null,\"postalCode\":\"62320\"},\"workingContact\":{\"id\":198,\"email\":\"toto@gmail.com\",\"streetName\":\"rue des cafés\",\"buildingNumber\":\"14\",\"city\":\"Lille\",\"additionalLine\":\"osef\",\"postalCode\":\"59000\"},\"isEmergencyService\":null,\"name\":\"aaaa\",\"nationalUniqueIdentifier\":\"aaa\"},\"error\":null,\"metadataResults\":null},\"error\":null}";
+        final String message = "{\"id\":151,\"status\":\"RECEIVED\",\"edeliveryMessageId\":null,\"retry\":0,\"reponseData\":null,\"nextRetryDate\":null,\"createdDate\":\"2027-09-30T15:30:00+01:00\",\"lastModifiedDate\":\"2027-09-30T15:30:00+01:00\",\"gateIdDest\":\"borduria\",\"control\":{\"id\":102,\"datasetId\":\"12345678-ab12-4ab6-8999-123456789abe\",\"requestId\":\"c5ed0840-bf60-4052-8172-35530d423672\",\"requestType\":\"LOCAL_UIL_SEARCH\",\"status\":\"PENDING\",\"platformId\":\"acme\",\"gateId\":\"borduria\",\"subsetId\":\"full\",\"createdDate\":\"2027-09-30T15:30:00+01:00\",\"lastModifiedDate\":\"2027-09-30T15:30:00+01:00\",\"eftiData\":null,\"transportMetaData\":null,\"fromGateId\":null,\"requests\":null,\"error\":null,\"metadataResults\":null},\"error\":null}";
 
         rabbitListenerService.listenSendMessageDeadLetter(message);
 

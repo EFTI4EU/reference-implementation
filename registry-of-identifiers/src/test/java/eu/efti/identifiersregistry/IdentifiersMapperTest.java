@@ -135,7 +135,7 @@ class IdentifiersMapperTest {
         request.setDatasetId("datasetId");
         SupplyChainConsignment consignment = new SupplyChainConsignment();
 
-        consignment.setCarrierAcceptanceDateTime(dateTimeOf("202107111200+0100", "205"));
+        consignment.setCarrierAcceptanceDateTime(dateTimeOf("202107111200", "203"));
 
         TransportEvent transportEvent = new TransportEvent();
         transportEvent.setActualOccurrenceDateTime(dateTimeOf("20210723", "102"));
@@ -167,7 +167,7 @@ class IdentifiersMapperTest {
 
         eu.efti.identifiersregistry.entity.Consignment internalConsignment = identifiersMapper.eDeliveryToEntity(request);
         assertEquals("datasetId", internalConsignment.getDatasetId());
-        assertEquals(OffsetDateTime.of(2021, 7, 11, 12, 0, 0, 0, ZoneOffset.ofHours(1)), internalConsignment.getCarrierAcceptanceDatetime());
+        assertEquals(OffsetDateTime.of(2021, 7, 11, 12, 0, 0, 0, ZoneOffset.ofHours(0)), internalConsignment.getCarrierAcceptanceDatetime());
         assertEquals(OffsetDateTime.of(2021, 7, 23, 0, 0, 0, 0, ZoneOffset.UTC), internalConsignment.getDeliveryEventActualOccurrenceDatetime());
 
         assertEquals(1, internalConsignment.getMainCarriageTransportMovements().size());

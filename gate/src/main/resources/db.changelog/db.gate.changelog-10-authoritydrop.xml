@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+    <changeSet author="osouley" id="080120251606-6">
+        <dropTable cascadeConstraints="true"
+                   catalogName="efti"
+                   tableName="authority"/>
+        <dropColumn tableName="control" columnName="authority"/>
+    </changeSet>
+</databaseChangeLog>

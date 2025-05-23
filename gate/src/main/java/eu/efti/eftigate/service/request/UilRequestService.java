@@ -26,9 +26,11 @@ import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
 import eu.efti.eftigate.service.ValidationService;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.utils.ControlUtils;
 import eu.efti.eftigate.utils.SubsetsCheckerUtils;
-import eu.efti.eftilogger.model.ComponentType;
+import eu.efti.eftilogger.model.RequestTypeLog;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import eu.efti.v1.consignment.common.ObjectFactory;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import eu.efti.v1.edelivery.UIL;
@@ -50,7 +52,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static eu.efti.commons.constant.EftiGateConstants.REQUEST_STATUS_ENUM_STATUS_ENUM_MAP;
 import static eu.efti.commons.constant.EftiGateConstants.UIL_TYPES;
 import static eu.efti.commons.enums.ErrorCodesEnum.DATA_NOT_FOUND_ON_REGISTRY;
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
@@ -74,6 +75,9 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     private final SerializeUtils serializeUtils;
     private final ObjectFactory objectFactory = new ObjectFactory();
     private final ValidationService validationService;
+    private final ReportingRequestLogService reportingRequestLogService;
+    private final EftiGateIdResolver eftiGateIdResolver;
+    private final LogManager logManager;
 
     public UilRequestService(final UilRequestRepository uilRequestRepository, final MapperUtils mapperUtils,
                              final RabbitSenderService rabbitSenderService,
@@ -82,11 +86,16 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
                              final RequestUpdaterService requestUpdaterService,
                              final SerializeUtils serializeUtils,
                              final ValidationService validationService,
-                             final LogManager logManager) {
+                             final LogManager logManager,
+                             final ReportingRequestLogService reportingRequestLogService,
+                             final EftiGateIdResolver eftiGateIdResolver) {
         super(mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
         this.uilRequestRepository = uilRequestRepository;
         this.serializeUtils = serializeUtils;
         this.validationService = validationService;
+        this.reportingRequestLogService = reportingRequestLogService;
+        this.eftiGateIdResolver = eftiGateIdResolver;
+        this.logManager = logManager;
     }
 
 
@@ -133,7 +142,9 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         try {
             validationService.validateXml(body);
             final UILResponse uilResponse = getSerializeUtils().mapXmlStringToJaxbObject(body);
-            this.findByRequestId(uilResponse.getRequestId()).ifPresentOrElse(uilRequestDto -> manageResponse(notificationDto, uilRequestDto, uilResponse, content), () -> log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB));
+            this.findByRequestId(uilResponse.getRequestId()).ifPresentOrElse(
+                    uilRequestDto -> manageResponse(notificationDto, uilRequestDto, uilResponse, content),
+                    () -> log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB));
         } catch (SAXException e) {
             String exceptionMessage = e.getMessage();
             log.error("Received invalid UILResponse from {}, {}", content.getFromPartyId(), exceptionMessage);
@@ -247,7 +258,6 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
 
     @Override
     public RequestDto save(final RequestDto requestDto) {
-        //todo voir pour changer la façon de mapper
         return getMapperUtils().requestToRequestDto(
                 uilRequestRepository.save(
                         getMapperUtils().requestDtoToRequestEntity(requestDto, UilRequestEntity.class)
@@ -294,9 +304,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         if (uilRequestDto.getControl().isExternalAsk()) {
             respondToOtherGate(uilRequestDto, notificationDto.getContent().getBody());
         }
-        //log fti010
-        NotificationContentDto content = notificationDto.getContent();
-        getLogManager().logReceivedMessage(uilRequestDto.getControl(), ComponentType.PLATFORM, GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
+        logManager.logPlatformResponse(notificationDto, uilRequestDto);
     }
 
     private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, final NotificationContentDto content) {
@@ -332,6 +340,10 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         ControlDto savedControl = getControlService().save(controlDto);
         if (!StatusEnum.PENDING.equals(savedControl.getStatus())) {
             getLogManager().logReceivedMessage(controlDto, GATE, GATE, content.getBody(), content.getFromPartyId(), savedControl.getStatus(), LogManager.FTI_022);
+            String currentGateId = getGateProperties().getOwner();
+            String currentGateCountry = getGateProperties().getCountry();
+            String controlGateId = controlDto.getGateId();
+            reportingRequestLogService.logReportingRequest(controlDto, requestDto, currentGateId, currentGateCountry, RequestTypeLog.UIL, GATE, currentGateId, currentGateCountry, GATE, controlGateId, eftiGateIdResolver.resolve(controlGateId), true);
         }
     }
 
@@ -381,5 +393,15 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         final Optional<UilRequestEntity> entity = Optional.ofNullable(
                 this.uilRequestRepository.findByControlRequestIdAndStatus(requestId, RequestStatusEnum.IN_PROGRESS));
         return entity.map(uilRequestEntity -> getMapperUtils().requestToRequestDto(uilRequestEntity, UilRequestDto.class));
+    }
+
+    @Override
+    public Optional<RequestDto> findRequestDtoByRequestType(ControlDto controlDto) {
+        List<UilRequestEntity> uilRequestEntityList = uilRequestRepository.findByControlId(controlDto.getId());
+
+        Optional<UilRequestEntity> uilRequestEntity = uilRequestEntityList.stream()
+                .filter(requestEntity -> RequestType.UIL.name().equals(requestEntity.getRequestType()))
+                .findFirst();
+        return uilRequestEntity.map(requestEntity -> getMapperUtils().requestToRequestDto(requestEntity, RequestDto.class));
     }
 }

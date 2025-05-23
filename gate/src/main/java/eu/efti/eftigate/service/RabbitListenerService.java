@@ -18,15 +18,19 @@ import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.generator.id.MessageIdGenerator;
 import eu.efti.eftigate.mapper.MapperUtils;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftilogger.model.ComponentType;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.time.OffsetDateTime;
 
 import static eu.efti.eftilogger.model.ComponentType.GATE;
 import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
@@ -43,7 +47,9 @@ public class RabbitListenerService {
     private final ApIncomingService apIncomingService;
     private final MapperUtils mapperUtils;
     private final LogManager logManager;
+    private final ReportingRequestLogService reportingRequestLogService;
     private final MessageIdGenerator messageIdGenerator;
+    private final EftiGateIdResolver eftiGateIdResolver;
 
 
     @RabbitListener(queues = "${spring.rabbitmq.queues.eftiReceiveMessageQueue:efti.receive-messages.q}")
@@ -66,10 +72,9 @@ public class RabbitListenerService {
     }
 
     private void trySendDomibus(final RabbitRequestDto rabbitRequestDto) {
-
-        final RequestTypeEnum requestTypeEnum = rabbitRequestDto.getControl().getRequestType();
         final boolean isCurrentGate = gateProperties.isCurrentGate(rabbitRequestDto.getGateIdDest());
-        final String receiver = isCurrentGate ? rabbitRequestDto.getControl().getPlatformId() : rabbitRequestDto.getGateIdDest();
+        ControlDto control = rabbitRequestDto.getControl();
+        final String receiver = isCurrentGate ? control.getPlatformId() : rabbitRequestDto.getGateIdDest();
         final RequestDto requestDto = mapperUtils.rabbitRequestDtoToRequestDto(rabbitRequestDto, EftiGateConstants.REQUEST_TYPE_CLASS_MAP.get(rabbitRequestDto.getRequestType()));
         String previousEdeliveryMessageId = rabbitRequestDto.getEdeliveryMessageId();
         try {
@@ -79,16 +84,19 @@ public class RabbitListenerService {
                 getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, eDeliveryMessageId);
             }
             this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto, eDeliveryMessageId));
+            requestDto.setSentDate(OffsetDateTime.now());
+            getRequestService(requestDto.getRequestType()).save(requestDto);
         } catch (final SendRequestException e) {
             log.error("error while sending request" + e);
             getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
-            logSentMessage(rabbitRequestDto, requestTypeEnum, requestDto, receiver);
+            logSentMessage(rabbitRequestDto, requestDto, receiver);
         }
     }
 
-    private void logSentMessage(final RabbitRequestDto rabbitRequestDto, final RequestTypeEnum requestTypeEnum, final RequestDto requestDto, final String receiver) {
+    private void logSentMessage(final RabbitRequestDto rabbitRequestDto, final RequestDto requestDto, final String receiver) {
+        final RequestTypeEnum requestTypeEnum = rabbitRequestDto.getControl().getRequestType();
         final String body = getRequestService(requestDto.getRequestType()).buildRequestBody(rabbitRequestDto);
         ControlDto controlDto = requestDto.getControl();
         if (RequestType.UIL.equals(requestDto.getRequestType())) {

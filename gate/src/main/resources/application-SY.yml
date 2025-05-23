@@ -13,8 +13,9 @@ spring:
   security:
     oauth2:
       resourceserver:
-        jwt:
-          issuer-uri: http://auth.gate.syldavia.eu:8080/realms/eFTI_SY
+        issuers:
+          http://auth.gate.syldavia.eu:8080/realms/eFTI_SY,
+          https://fca.integ01.dev-agentconnect.fr/api/v2
   jpa:
     properties:
       hibernate:

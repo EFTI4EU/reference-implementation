@@ -7,15 +7,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
 
@@ -23,21 +21,18 @@ import static eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto.MESSAGE_I
 import static eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto.SENT_SUCCESS;
 
 @WebMvcTest(ApIncomingController.class)
-@ContextConfiguration(classes= {ApIncomingController.class})
+@ContextConfiguration(classes = {ApIncomingController.class})
 @ExtendWith(SpringExtension.class)
 class ApIncomingControllerTest {
 
-    @MockBean
+    @MockitoBean
     private ApIncomingController apIncomingController;
-
-    @Autowired
-    protected MockMvc mockMvc;
 
     @Mock
     private RabbitSenderService rabbitSenderService;
 
     @BeforeEach
-    public void before() {
+    void before() {
         apIncomingController = new ApIncomingController(rabbitSenderService);
         ReflectionTestUtils.setField(apIncomingController, "eftiReceiveMessageExchange", "eftiReceiveMessageExchange");
         ReflectionTestUtils.setField(apIncomingController, "eftiKeySendMessage", "eftiKeySendMessage");

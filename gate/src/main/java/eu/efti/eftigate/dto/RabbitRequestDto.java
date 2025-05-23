@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 @Builder
@@ -28,8 +29,8 @@ public class RabbitRequestDto {
     private Integer retry;
     private byte[] reponseData;
     private LocalDateTime nextRetryDate;
-    private LocalDateTime createdDate;
-    private LocalDateTime lastModifiedDate;
+    private OffsetDateTime createdDate;
+    private OffsetDateTime lastModifiedDate;
     private String gateIdDest;
     private ControlDto control;
     private ErrorDto error;

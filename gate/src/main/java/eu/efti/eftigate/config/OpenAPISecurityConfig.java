@@ -7,15 +7,18 @@ import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Configuration
 public class OpenAPISecurityConfig {
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-    String authURL;
+    @Value("${spring.security.oauth2.resourceserver.issuers}")
+    List<String> authURLs;
 
     private static final String OAUTH_SCHEME_NAME = "login";
 
@@ -41,7 +44,9 @@ public class OpenAPISecurityConfig {
     }
 
     private OAuthFlow createAuthorizationCodeFlow() {
-        return new OAuthFlow()
-                .authorizationUrl(authURL + "/protocol/openid-connect/auth");
+        if (CollectionUtils.isNotEmpty(authURLs)) {
+            return new OAuthFlow()
+                    .authorizationUrl(authURLs.get(0) + "/protocol/openid-connect/auth");
+        } else return new OAuthFlow();
     }
 }

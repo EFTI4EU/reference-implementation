@@ -54,14 +54,27 @@ spring:
   security:
     oauth2:
       resourceserver:
-        jwt:
-          issuer-uri: {{ spring.security.oauth2.resourceserver.jwt.issuer_uri}}
+        issuers: {{ spring.security.oauth2.resourceserver.issuers}}
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect 
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
         control_schema: "{{ spring.jpa.properties.hibernate.control_schema }}"
         identifiers_schema: "{{ spring.jpa.properties.hibernate.identifiers_schema }}"
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+        javax:
+          cache:
+            provider: com.hazelcast.cache.impl.HazelcastServerCachingProvider
+            uri: hazelcast.xml
+            missing_cache_strategy: create
+      jakarta:
+        persistence:
+          sharedCache:
+            mode: ENABLE_SELECTIVE
   servlet:
     multipart:
       max-file-size: 5MB
@@ -96,9 +109,27 @@ gate:
 batch:
   update:
     cron: "0 */1 * ? * *"
+  retry:
+    cron: "*/20 * * * * *"
+    time: 20, 120, 300
+    size: 10
+  identifier:
+    cron: {{ batch.identifier.cron }}
+    activated: {{ batch.identifier.activated }}
+    deactivation-delay:
+      three: {{ batch.identifier.deactivation_delay.three }}
+      other: {{ batch.identifier.deactivation_delay.other }}
+      null-delivery-date: {{ batch.identifier.deactivation_delay.null_delivery_date }}
 
 springdoc:
   swagger-ui:
     enabled: {{ springdoc.swagger_ui.enabled }}
   api-docs:
     enabled: {{ springdoc.api_docs.enabled }}
+logging:
+  level:
+    com:
+      hazelcast:
+        internal:
+          diagnostics:
+            HealthMonitor: OFF

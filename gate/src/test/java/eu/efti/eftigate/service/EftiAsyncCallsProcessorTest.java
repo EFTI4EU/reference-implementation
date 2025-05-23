@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service;
 
-import eu.efti.commons.dto.AuthorityDto;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
@@ -38,8 +37,7 @@ class EftiAsyncCallsProcessorTest {
     ConsignmentDto consignmentDto = ConsignmentDto.builder().build();
 
     @BeforeEach
-    public void before() {
-        final AuthorityDto authorityDto = new AuthorityDto();
+    void before() {
 
         consignmentDto.setGateId("gateId");
         consignmentDto.setDatasetId("datasetId");
@@ -47,7 +45,6 @@ class EftiAsyncCallsProcessorTest {
 
         this.identifiersRequestDto.setIdentifier("abc123");
         this.identifiersRequestDto.setRegistrationCountryCode("FR");
-        this.identifiersRequestDto.setAuthority(authorityDto);
         this.identifiersRequestDto.setModeCode("ROAD");
     }
 

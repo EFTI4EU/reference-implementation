@@ -7,6 +7,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class MemoryAppender extends ListAppender<ILoggingEvent> {
@@ -38,6 +39,19 @@ public class MemoryAppender extends ListAppender<ILoggingEvent> {
 
     public boolean containsFormattedLogMessage(final String message) {
         return this.list.stream().anyMatch(event -> event.getFormattedMessage().contains(message));
+    }
+
+    public boolean containsGivenFieldAndValue(final String key, final String value, final String marker) {
+        return this.list.stream().anyMatch(event ->
+                event.getFormattedMessage().contains("\"" + key + "\":\"" + value + "\"") &&
+                event.getMarkerList().get(0).contains(marker));
+    }
+
+    public boolean containsGivenFieldAndValue(final Map<String, String> fieldsValuesMap, final String marker) {
+        return fieldsValuesMap
+                .entrySet()
+                .stream()
+                .allMatch((entry -> containsGivenFieldAndValue(entry.getKey(), entry.getValue(), marker)));
     }
 
     public void reset() {

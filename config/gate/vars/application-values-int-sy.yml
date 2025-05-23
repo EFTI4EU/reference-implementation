@@ -13,8 +13,9 @@ spring:
   security:
     oauth2:
       resourceserver:
-        jwt:
-          issuer_uri: https://keycloak.efti.int.k8s.groupein.local/realms/eFTI_SY
+        issuers:
+          https://keycloak.efti.int.k8s.groupein.local/realms/eFTI_SY,
+          https://fca.integ01.dev-agentconnect.fr/api/v2
   jpa:
     properties:
       hibernate:
@@ -36,6 +37,14 @@ batch:
     cron: "*/20 * * * * *"
     time: 20, 120, 300
     size: 10
+  identifier:
+    cron: "0 0 1 ? * *"
+    activated: false
+    deactivation_delay:
+      three: 12
+      other: 0
+      null_delivery_date: 90
+
 
 springdoc:
   swagger_ui:

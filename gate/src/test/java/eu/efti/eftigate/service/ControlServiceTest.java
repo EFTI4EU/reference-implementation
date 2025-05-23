@@ -1,7 +1,5 @@
 package eu.efti.eftigate.service;
 
-import eu.efti.commons.dto.AuthorityDto;
-import eu.efti.commons.dto.ContactInformationDto;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.IdentifiersResponseDto;
@@ -35,6 +33,7 @@ import eu.efti.eftigate.service.request.IdentifiersRequestService;
 import eu.efti.eftigate.service.request.NotesRequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.edelivery.Identifier;
 import eu.efti.v1.edelivery.IdentifierQuery;
@@ -48,6 +47,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
@@ -93,6 +93,9 @@ class ControlServiceTest extends AbstractServiceTest {
     private LogManager logManager;
 
     @Mock
+    private ReportingRequestLogService reportingRequestLogService;
+
+    @Mock
     private RequestServiceFactory requestServiceFactory;
 
     @Mock
@@ -131,7 +134,7 @@ class ControlServiceTest extends AbstractServiceTest {
     private static final String USERNAME = "username";
 
     @BeforeEach
-    public void before() {
+    void before() {
         final GateProperties gateProperties = GateProperties.builder()
                 .owner("france")
                 .country("FR")
@@ -140,27 +143,10 @@ class ControlServiceTest extends AbstractServiceTest {
                         .password(PASSWORD)
                         .username(USERNAME).build()).build();
         controlService = new ControlService(controlRepository, eftiGateIdResolver, identifiersService, mapperUtils,
-                requestServiceFactory, logManager, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
+                requestServiceFactory, logManager, reportingRequestLogService, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
                 gateProperties, serializeUtils);
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
         final StatusEnum status = StatusEnum.PENDING;
-        final AuthorityDto authorityDto = AuthorityDto.builder()
-                .nationalUniqueIdentifier("national identifier")
-                .name("Robert")
-                .workingContact(ContactInformationDto.builder()
-                        .email("toto@gmail.com")
-                        .city("Acheville")
-                        .buildingNumber("12")
-                        .postalCode("62320")
-                        .streetName("rue jean luc de la rue").build())
-                .country("FR")
-                .legalContact(ContactInformationDto.builder()
-                        .email("toto@gmail.com")
-                        .city("Acheville")
-                        .buildingNumber("12")
-                        .postalCode("62320")
-                        .streetName("rue jean luc de la rue").build())
-                .isEmergencyService(true).build();
 
         requestIdDto.setRequestId(requestId);
         requestIdDto.setStatus(status);
@@ -172,7 +158,6 @@ class ControlServiceTest extends AbstractServiceTest {
 
         this.searchWithIdentifiersRequestDto.setIdentifier("abc123");
         this.searchWithIdentifiersRequestDto.setRegistrationCountryCode("FR");
-        this.searchWithIdentifiersRequestDto.setAuthority(authorityDto);
         this.searchWithIdentifiersRequestDto.setModeCode("1");
 
         this.controlDto.setDatasetId(uilDto.getDatasetId());
@@ -182,14 +167,8 @@ class ControlServiceTest extends AbstractServiceTest {
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(status);
         this.controlDto.setSubsetIds(List.of("oki"));
-        this.controlDto.setCreatedDate(localDateTime);
-        this.controlDto.setLastModifiedDate(localDateTime);
-        this.controlDto.setAuthority(AuthorityDto.builder()
-                .country("FR")
-                .isEmergencyService(true)
-                .legalContact(ContactInformationDto.builder().build())
-                .workingContact(ContactInformationDto.builder().build())
-                .nationalUniqueIdentifier("unique").build());
+        this.controlDto.setCreatedDate(OffsetDateTime.now());
+        this.controlDto.setLastModifiedDate(OffsetDateTime.now());
 
         this.controlEntity.setDatasetId(controlDto.getDatasetId());
         this.controlEntity.setRequestId(controlDto.getRequestId());
@@ -242,7 +221,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
-        when(identifiersService.findByUIL(any(), any(), any())).thenReturn(new ConsignmentDto());
+        when(identifiersService.consignmentExistsByUIL(any(), any(), any())).thenReturn(true);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
 
@@ -372,6 +351,8 @@ class ControlServiceTest extends AbstractServiceTest {
         controlEntity.setStatus(StatusEnum.COMPLETE);
         controlEntity.setRequests(Collections.singletonList(uilRequestEntity));
         when(controlRepository.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
+        when(controlRepository.save(any())).thenReturn(controlEntity);
 
         final RequestIdDto requestIdDtoResult = controlService.getControlEntity(requestId);
 
@@ -386,6 +367,8 @@ class ControlServiceTest extends AbstractServiceTest {
     void getControlEntitySuccessTestWhenStatusComplete() {
         controlEntity.setStatus(StatusEnum.COMPLETE);
         when(controlRepository.findByRequestId(any())).thenReturn(Optional.of(controlEntity));
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(uilRequestService);
+        when(controlRepository.save(any())).thenReturn(controlEntity);
 
         final RequestIdDto requestIdDtoResult = controlService.getControlEntity(requestId);
 
@@ -399,6 +382,8 @@ class ControlServiceTest extends AbstractServiceTest {
     @Test
     void getControlEntityNotFoundTest() {
         when(controlRepository.findByRequestId(any())).thenReturn(Optional.empty());
+        when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
+        when(controlRepository.save(any())).thenReturn(controlEntity);
 
         final RequestIdDto requestIdDtoResult = controlService.getControlEntity(requestId);
 
@@ -625,6 +610,7 @@ class ControlServiceTest extends AbstractServiceTest {
         identifiersRequestEntity.setStatus(RequestStatusEnum.SUCCESS);
         identifiersRequestEntity.setIdentifiersResults(identifiersResults);
         when(identifiersRequestService.findAllForControlId(anyInt())).thenReturn(List.of(identifiersRequestEntity));
+        when(controlRepository.save(any())).thenReturn(controlEntity);
 
         final IdentifiersResponseDto expectedIdentifiersResponse = IdentifiersResponseDto.builder()
                 .status(StatusEnum.COMPLETE)
@@ -648,7 +634,7 @@ class ControlServiceTest extends AbstractServiceTest {
                 .build();
         when(controlService.getControlByRequestId(requestId)).thenReturn(expectedControl);
         when(requestServiceFactory.getRequestServiceByRequestType(anyString())).thenReturn(identifiersRequestService);
-
+        when(controlRepository.save(any())).thenReturn(controlEntity);
         final IdentifiersResponseDto expectedIdentifiersResponse = IdentifiersResponseDto.builder()
                 .status(StatusEnum.ERROR)
                 .errorDescription("Error requestId not found.")
@@ -714,7 +700,7 @@ class ControlServiceTest extends AbstractServiceTest {
         identifiersRequestEntity.setStatus(RequestStatusEnum.IN_PROGRESS);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
         controlEntity.setStatus(StatusEnum.PENDING);
-        controlEntity.setCreatedDate(LocalDateTime.now());
+        controlEntity.setCreatedDate(OffsetDateTime.now());
 
         //Act
         ControlDto updatedControl = controlService.updatePendingControl(controlEntity);
@@ -761,7 +747,7 @@ class ControlServiceTest extends AbstractServiceTest {
         identifiersRequestEntity.setRequestType(RequestType.IDENTIFIER.name());
         controlEntity.setRequests(List.of(identifiersRequestEntity));
         controlEntity.setStatus(StatusEnum.PENDING);
-        controlEntity.setCreatedDate(LocalDateTime.now().minusSeconds(100));
+        controlEntity.setCreatedDate(OffsetDateTime.now().minusSeconds(100));
 
         when(controlRepository.findByCriteria(any(), anyInt())).thenReturn(List.of(controlEntity));
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
@@ -786,7 +772,7 @@ class ControlServiceTest extends AbstractServiceTest {
         controlEntity.setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
         controlEntity.setRequests(List.of(identifiersRequestEntity));
         controlEntity.setStatus(StatusEnum.PENDING);
-        controlEntity.setCreatedDate(LocalDateTime.now().minusSeconds(100));
+        controlEntity.setCreatedDate(OffsetDateTime.now().minusSeconds(100));
 
         when(controlRepository.findByCriteria(any(), anyInt())).thenReturn(List.of(controlEntity));
         when(requestServiceFactory.getRequestServiceByRequestType(any(RequestTypeEnum.class))).thenReturn(identifiersRequestService);
@@ -832,7 +818,7 @@ class ControlServiceTest extends AbstractServiceTest {
         uilDto.setGateId("france");
 
         when(controlRepository.save(any())).thenReturn(controlEntity);
-        when(identifiersService.findByUIL(any(), any(), any())).thenReturn(null);
+        when(identifiersService.consignmentExistsByUIL(any(), any(), any())).thenReturn(false);
 
         final RequestIdDto requestIdDtoResult = controlService.createUilControl(uilDto);
 
@@ -922,7 +908,7 @@ class ControlServiceTest extends AbstractServiceTest {
 
         //Assert
         verify(uilRequestService, times(1)).createAndSendRequest(any(), any(), any());
-        verify(identifiersService, times(1)).findByUIL(any(), any(), any());
+        verify(identifiersService, times(1)).consignmentExistsByUIL(any(), any(), any());
     }
 
 

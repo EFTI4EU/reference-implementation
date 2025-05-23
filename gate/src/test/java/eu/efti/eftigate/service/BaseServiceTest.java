@@ -24,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
@@ -65,6 +66,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         gateProperties = GateProperties.builder().ap(GateProperties.ApConfig.builder().url("url").password("pwd").username("usr").build()).owner("owner").build();
 
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
+        final OffsetDateTime offsetDateTime = OffsetDateTime.now(ZoneOffset.UTC);
         final String requestId = "67fe38bd-6bf7-4b06-b20e-206264bd639c";
 
         this.uilDto.setGateId("gate");
@@ -82,8 +84,8 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         this.controlDto.setRequestType(RequestTypeEnum.LOCAL_UIL_SEARCH);
         this.controlDto.setStatus(StatusEnum.PENDING);
         this.controlDto.setSubsetIds(List.of("oki"));
-        this.controlDto.setCreatedDate(localDateTime);
-        this.controlDto.setLastModifiedDate(localDateTime);
+        this.controlDto.setCreatedDate(offsetDateTime);
+        this.controlDto.setLastModifiedDate(offsetDateTime);
 
         savedControlDto.setDatasetId(uilDto.getDatasetId());
         savedControlDto.setGateId(uilDto.getGateId());
@@ -91,15 +93,15 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
         savedControlDto.setRequestId("42");
         savedControlDto.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
         savedControlDto.setSubsetIds(List.of("oki"));
-        savedControlDto.setCreatedDate(LocalDateTime.now());
-        savedControlDto.setLastModifiedDate(LocalDateTime.now());
+        savedControlDto.setCreatedDate(offsetDateTime);
+        savedControlDto.setLastModifiedDate(OffsetDateTime.now());
 
         this.controlEntityError.setRequestId(requestId);
         this.controlEntityError.setRequestType(RequestTypeEnum.NOTE_SEND);
         this.controlEntityError.setStatus(StatusEnum.PENDING);
         this.controlDto.setSubsetIds(List.of("oki"));
-        this.controlEntityError.setCreatedDate(localDateTime);
-        this.controlEntityError.setLastModifiedDate(localDateTime);
+        this.controlEntityError.setCreatedDate(offsetDateTime);
+        this.controlEntityError.setLastModifiedDate(offsetDateTime);
 
         this.controlEntity.setDatasetId(controlDto.getDatasetId());
         this.controlEntity.setRequestId(controlDto.getRequestId());
@@ -131,7 +133,7 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
     protected <T extends RequestEntity> void setEntityRequestCommonAttributes(final T requestEntity) {
         requestEntity.setStatus(this.requestDto.getStatus());
         requestEntity.setRetry(this.requestDto.getRetry());
-        requestEntity.setCreatedDate(LocalDateTime.now());
+        requestEntity.setCreatedDate(OffsetDateTime.now(ZoneOffset.UTC));
         requestEntity.setGateIdDest(this.requestDto.getGateIdDest());
         requestEntity.setControl(controlEntity);
     }
@@ -139,14 +141,14 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
     protected <T extends RequestEntity> void setEntityRequestCommonAttributesError(final T requestEntity) {
         requestEntity.setStatus(this.requestDto.getStatus());
         requestEntity.setRetry(this.requestDto.getRetry());
-        requestEntity.setCreatedDate(LocalDateTime.now());
+        requestEntity.setCreatedDate(OffsetDateTime.now(ZoneOffset.UTC));
         requestEntity.setControl(controlEntityError);
     }
 
     protected <T extends RequestDto> void setDtoRequestCommonAttributes(final T requestDto) {
         requestDto.setStatus(RequestStatusEnum.RECEIVED);
         requestDto.setRetry(0);
-        requestDto.setCreatedDate(LocalDateTime.now());
+        requestDto.setCreatedDate(OffsetDateTime.now(ZoneOffset.UTC));
         requestDto.setGateIdDest(controlEntity.getGateId());
         requestDto.setControl(ControlDto.builder().id(1).build());
     }

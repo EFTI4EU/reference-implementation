@@ -1,6 +1,7 @@
 package eu.efti.eftilogger.service;
 
 import eu.efti.commons.dto.ControlDto;
+import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
@@ -14,6 +15,7 @@ import org.slf4j.MarkerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import static eu.efti.commons.constant.EftiGateConstants.IDENTIFIERS_TYPES;
@@ -43,6 +45,7 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
     }
 
     private LogRequestDto getLogRequestDto(final ControlDto control, final MessagePartiesDto messagePartiesDto, final String currentGateId, final String currentGateCountry, final String body, final StatusEnum status, final boolean isAck, final String name) {
+        ErrorDto error = control.getError();
         return LogRequestDto.builder()
                 .name(name)
                 .requestingComponentType(messagePartiesDto.getRequestingComponentType())
@@ -51,18 +54,19 @@ public class AuditRequestLogService implements LogService<LogRequestDto> {
                 .respondingComponentType(messagePartiesDto.getRespondingComponentType())
                 .respondingComponentId(messagePartiesDto.getRespondingComponentId())
                 .respondingComponentCountry(messagePartiesDto.getRespondingComponentCountry())
+                .nationalUniqueIdentifier(control.getNationalUniqueIdentifier())
                 .requestId(control.getRequestId())
                 .subsetIds(control.getSubsetIds())
-                .eftidataId(control.getDatasetId())
-                .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now()))
+                .eFTIDataId(control.getDatasetId())
+                .messageDate(DateTimeFormatter.ofPattern(DATE_FORMAT).format(LocalDateTime.now(ZoneOffset.UTC)))
                 .messageContent(body)
                 .statusMessage(status.name())
                 .componentType(GATE)
                 .componentId(currentGateId)
                 .componentCountry(currentGateCountry)
                 .requestType(StringUtils.isNotBlank(messagePartiesDto.getRequestType()) ? messagePartiesDto.getRequestType() : getRequestTypeFromControl(control, isAck))
-                .errorCodeMessage(control.getError() != null ? control.getError().getErrorCode() : null)
-                .errorDescriptionMessage(control.getError() != null ? control.getError().getErrorDescription() : null)
+                .errorCodeMessage(error != null ? error.getErrorCode() : null)
+                .errorDescriptionMessage(error != null ? error.getErrorDescription() : null)
                 .build();
     }
 

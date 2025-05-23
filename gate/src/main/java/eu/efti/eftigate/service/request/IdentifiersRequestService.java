@@ -32,6 +32,9 @@ import eu.efti.eftigate.service.IdentifiersControlUpdateDelegateService;
 import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
 import eu.efti.eftigate.service.ValidationService;
+import eu.efti.eftigate.service.gate.EftiGateIdResolver;
+import eu.efti.eftilogger.model.RequestTypeLog;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
 import eu.efti.v1.edelivery.Identifier;
 import eu.efti.v1.edelivery.IdentifierQuery;
@@ -73,6 +76,10 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     private final ValidationService validationService;
     private final GateProperties gateProperties;
 
+    private final ReportingRequestLogService reportingRequestLogService;
+
+    private final EftiGateIdResolver eftiGateIdResolver;
+
     public IdentifiersRequestService(final IdentifiersRequestRepository identifiersRequestRepository,
                                      final MapperUtils mapperUtils,
                                      final RabbitSenderService rabbitSenderService,
@@ -83,15 +90,23 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                                      final SerializeUtils serializeUtils,
                                      final LogManager logManager,
                                      final IdentifiersControlUpdateDelegateService identifiersControlUpdateDelegateService,
-                                     final ValidationService validationService) {
+                                     final ValidationService validationService,
+                                     final ReportingRequestLogService reportingRequestLogService,
+                                     final EftiGateIdResolver eftiGateIdResolver) {
         super(mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager);
         this.identifiersService = identifiersService;
         this.identifiersRequestRepository = identifiersRequestRepository;
         this.identifiersControlUpdateDelegateService = identifiersControlUpdateDelegateService;
         this.validationService = validationService;
         this.gateProperties = gateProperties;
+        this.reportingRequestLogService = reportingRequestLogService;
+        this.eftiGateIdResolver = eftiGateIdResolver;
     }
 
+    @Override
+    public Optional<RequestDto> findRequestDtoByRequestType(ControlDto controlDto) {
+        throw new UnsupportedOperationException("Method not supported");
+    }
 
     @Override
     public boolean allRequestsContainsData(final List<RequestEntity> controlEntityRequests) {
@@ -146,11 +161,7 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
                 String fromPartyId = content.getFromPartyId();
                 identifiersControlUpdateDelegateService.updateExistingControl(response, fromPartyId);
                 identifiersControlUpdateDelegateService.setControlNextStatus(requestId);
-                IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByControlRequestIdAndGateIdDest(requestId, fromPartyId);
-
-                //log fti021
-                getLogManager().logReceivedMessage(getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl()), GATE, GATE, body, fromPartyId,
-                        getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
+                this.logReceivedResponse(requestId, fromPartyId, body);
             }
         } catch (SAXException e) {
             String exceptionMessage = e.getMessage();
@@ -166,12 +177,25 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
         }
     }
 
+    private void logReceivedResponse(final String requestId, final String fromPartyId, final String body) {
+        IdentifiersRequestEntity identifiersRequestEntity = identifiersRequestRepository.findByControlRequestIdAndGateIdDest(requestId, fromPartyId);
+        ControlDto controlDto = getMapperUtils().controlEntityToControlDto(identifiersRequestEntity.getControl());
+        RequestDto requestDto = getMapperUtils().identifiersRequestEntityToRequestDto(identifiersRequestEntity, RequestDto.class);
+        final String currentGateCountry = getGateProperties().getCountry();
+        final String owner = getGateProperties().getOwner();
+        controlDto.setStatus(StatusEnum.COMPLETE); //for logging purpose only, the status should be given as param of the log call
+        reportingRequestLogService.logReportingRequest(controlDto, requestDto, owner, currentGateCountry, RequestTypeLog.IDENTIFIERS, GATE, owner, currentGateCountry, GATE, requestDto.getGateIdDest(), eftiGateIdResolver.resolve(requestDto.getGateIdDest()), true);
+        //log fti021
+        getLogManager().logReceivedMessage(controlDto, GATE, GATE, body, fromPartyId,
+                getStatusEnumOfRequest(identifiersRequestEntity), LogManager.FTI_021);
+    }
+
     @Override
     public void manageSendSuccess(final String eDeliveryMessageId) {
         final IdentifiersRequestEntity externalRequest = identifiersRequestRepository.findByControlRequestTypeAndStatusAndEdeliveryMessageId(EXTERNAL_ASK_IDENTIFIERS_SEARCH,
                 RESPONSE_IN_PROGRESS, eDeliveryMessageId);
         if (externalRequest == null) {
-            log.info(" sent message {} successfully", eDeliveryMessageId);
+            log.info("sent message {} successfully", eDeliveryMessageId);
         } else {
             externalRequest.getControl().setStatus(StatusEnum.COMPLETE);
             this.updateStatus(externalRequest, SUCCESS);

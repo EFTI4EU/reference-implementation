@@ -26,7 +26,9 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -51,6 +53,11 @@ public class IdentifiersMapper {
             case "102" -> {
                 LocalDate localDate = LocalDate.parse(dateTime.getValue(), DateTimeFormatter.ofPattern("yyyyMMdd"));
                 yield localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
+            }
+            case "203" -> {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+                LocalDateTime localDateTime = LocalDateTime.parse(dateTime.getValue(), formatter);
+                yield OffsetDateTime.of(localDateTime, ZoneId.of("UTC").getRules().getOffset(localDateTime));
             }
             case "205" -> OffsetDateTime.parse(dateTime.getValue(), DateTimeFormatter.ofPattern("yyyyMMddHHmmZ"));
             default -> throw new UnsupportedOperationException("Unsupported formatId: " + dateTime.getFormatId());

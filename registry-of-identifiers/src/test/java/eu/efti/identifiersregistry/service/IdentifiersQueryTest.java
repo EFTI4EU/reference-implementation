@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -126,7 +127,7 @@ class IdentifiersQueryTest {
         var query = toQuery(testCase.testCaseSpec.getQuery());
         var expectedDatasetIds = new HashSet<>(testCase.testCaseSpec.getResult());
 
-        var results = identifiersRepository.searchByCriteria(query.build());
+        var results = identifiersRepository.searchByCriteria(query.build(), true);
         var resultIds = results.stream().map(Consignment::getDatasetId).collect(Collectors.toSet());
 
         assertEquals(expectedDatasetIds, resultIds);
@@ -189,6 +190,7 @@ class IdentifiersQueryTest {
         consignment.setGateId("france");
         consignment.setPlatformId("acme");
         consignment.setDatasetId(datasetId);
+        consignment.setDisabledDate(OffsetDateTime.now().plusYears(10));
 
         return consignment;
     }

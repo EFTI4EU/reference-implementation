@@ -9,6 +9,7 @@ import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
 import eu.efti.eftigate.repository.RequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
+import eu.efti.eftilogger.service.ReportingRequestLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,8 @@ class EftiRequestUpdaterTest extends BaseServiceTest {
     private RequestServiceFactory requestServiceFactory;
     @Mock
     private UilRequestService uilRequestService;
+    @Mock
+    private ReportingRequestLogService reportingRequestLogService;
     @InjectMocks
     private EftiRequestUpdater eftiRequestUpdater;
 
@@ -63,7 +66,7 @@ class EftiRequestUpdaterTest extends BaseServiceTest {
                 .build();
         when(requestRepository.findByEdeliveryMessageId(any())).thenReturn(requestEntity);
 
-        eftiRequestUpdater.manageSendFailure(notificationDto, "test");
+        eftiRequestUpdater.manageSendFailure(notificationDto);
 
         verify(controlService).save(any(ControlDto.class));
     }
@@ -81,9 +84,8 @@ class EftiRequestUpdaterTest extends BaseServiceTest {
         when(requestRepository.findByEdeliveryMessageId(any())).thenReturn(requestEntity);
         when(requestServiceFactory.getRequestServiceByRequestType(any(String.class))).thenReturn(uilRequestService);
 
-        eftiRequestUpdater.manageSendSuccess(notificationDto, "test");
+        eftiRequestUpdater.manageSendSuccess(notificationDto);
 
         verify(uilRequestService).manageSendSuccess(messageId);
     }
-
 }

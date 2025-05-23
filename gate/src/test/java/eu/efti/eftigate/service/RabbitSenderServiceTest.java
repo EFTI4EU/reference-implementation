@@ -17,15 +17,15 @@ import static eu.efti.eftigate.EftiTestUtils.testFile;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class RabbitSenderServiceTest {
+class RabbitSenderServiceTest extends AbstractServiceTest{
     private RabbitSenderService rabbitSenderService;
 
     @Mock
     private RabbitTemplate rabbitTemplate;
 
     @BeforeEach
-    public void before() {
-        rabbitSenderService = new RabbitSenderService(rabbitTemplate);
+    void before() {
+        rabbitSenderService = new RabbitSenderService(rabbitTemplate, serializeUtils);
     }
 
     @Test

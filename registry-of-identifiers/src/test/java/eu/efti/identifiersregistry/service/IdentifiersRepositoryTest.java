@@ -18,6 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +44,7 @@ class IdentifiersRepositoryTest {
 
 
     @BeforeEach
-    public void before() {
+    void before() {
 
         CarriedTransportEquipment firstCarriedTransportEquipment = CarriedTransportEquipment.builder()
                 .sequenceNumber(1)
@@ -70,6 +71,7 @@ class IdentifiersRepositoryTest {
         firstConsignment.setDatasetId("67676767-6767-6767-6767-11180123be5b");
         firstConsignment.setMainCarriageTransportMovements(List.of(firstMainCarriageTransportMovement));
         firstConsignment.setUsedTransportEquipments(List.of(firstUsedTransportEquipment));
+        firstConsignment.setDisabledDate(OffsetDateTime.now().plusYears(1));
 
         identifiersRepository.save(firstConsignment);
 
@@ -99,7 +101,7 @@ class IdentifiersRepositoryTest {
         secondConsignment.setDatasetId("67676767-6767-6767-6767-22280123be5b");
         secondConsignment.setMainCarriageTransportMovements(List.of(secondMainCarriageTransportMovement));
         secondConsignment.setUsedTransportEquipments(List.of(secondUsedTransportEquipment));
-
+        secondConsignment.setDisabledDate(OffsetDateTime.now().plusYears(1));
         identifiersRepository.save(secondConsignment);
 
         CarriedTransportEquipment thirdCarriedTransportEquipment = CarriedTransportEquipment.builder()
@@ -128,6 +130,7 @@ class IdentifiersRepositoryTest {
         thirdConsignment.setDatasetId("67676767-6767-6767-6767-33380123be5b");
         thirdConsignment.setMainCarriageTransportMovements(List.of(thirdMainCarriageTransportMovement));
         thirdConsignment.setUsedTransportEquipments(List.of(thirdUsedTransportEquipment));
+        thirdConsignment.setDisabledDate(OffsetDateTime.now().plusYears(1));
         identifiersRepository.save(thirdConsignment);
 
         CarriedTransportEquipment fourthCarriedTransportEquipment = CarriedTransportEquipment.builder()
@@ -156,6 +159,7 @@ class IdentifiersRepositoryTest {
         fourthConsignment.setDatasetId("67676767-6767-6767-6767-44480123be5b");
         fourthConsignment.setMainCarriageTransportMovements(List.of(fourthMainCarriageTransportMovement));
         fourthConsignment.setUsedTransportEquipments(List.of(fourthUsedTransportEquipment));
+        fourthConsignment.setDisabledDate(OffsetDateTime.now().plusYears(1));
         identifiersRepository.save(fourthConsignment);
 
         CarriedTransportEquipment fifthCarriedTransportEquipment = CarriedTransportEquipment.builder()
@@ -185,6 +189,7 @@ class IdentifiersRepositoryTest {
         fifthConsignment.setDatasetId("67676767-6767-6767-6767-55580123be5b");
         fifthConsignment.setMainCarriageTransportMovements(List.of(fifthMainCarriageTransportMovement));
         fifthConsignment.setUsedTransportEquipments(List.of(fifthUsedTransportEquipment));
+        fifthConsignment.setDisabledDate(OffsetDateTime.now().plusYears(1));
         identifiersRepository.save(fifthConsignment);
 
         CarriedTransportEquipment sixthCarriedTransportEquipment = CarriedTransportEquipment.builder()
@@ -213,6 +218,7 @@ class IdentifiersRepositoryTest {
         sixthConsignment.setDatasetId("67676767-6767-6767-6767-66680123be5b");
         sixthConsignment.setMainCarriageTransportMovements(List.of(sixthMainCarriageTransportMovement));
         sixthConsignment.setUsedTransportEquipments(List.of(sixthUsedTransportEquipment));
+        sixthConsignment.setDisabledDate(OffsetDateTime.now().plusYears(1));
         identifiersRepository.save(sixthConsignment);
 
     }
@@ -220,9 +226,9 @@ class IdentifiersRepositoryTest {
     @Test
     void shouldGetDataByUil() {
 
-        final Optional<Consignment> result = identifiersRepository.findByUil("france", "67676767-6767-6767-6767-11180123be5b", "acme");
-        final Optional<Consignment> otherResult = identifiersRepository.findByUil("finland", "67676767-6767-6767-6767-44480123be5b", "syldavia");
-        final Optional<Consignment> emptyResult = identifiersRepository.findByUil("notgateid", "thedatauuid", "acme");
+        final Optional<Consignment> result = identifiersRepository.findActiveByUil("france", "67676767-6767-6767-6767-11180123be5b", "acme");
+        final Optional<Consignment> otherResult = identifiersRepository.findActiveByUil("finland", "67676767-6767-6767-6767-44480123be5b", "syldavia");
+        final Optional<Consignment> emptyResult = identifiersRepository.findActiveByUil("notgateid", "thedatauuid", "acme");
 
         assertTrue(result.isPresent());
         assertEquals("france", result.get().getGateId());
@@ -238,7 +244,7 @@ class IdentifiersRepositoryTest {
                 .registrationCountryCode("FR")
                 .identifierType(List.of("means"))
                 .eftiGateIndicator(List.of("FR"))
-                .build());
+                .build(), true);
 
         assertEquals(2, foundConsignments.size());
         assertTrue(foundConsignments.stream().anyMatch(c -> c.getDatasetId().equals("67676767-6767-6767-6767-11180123be5b")));
@@ -250,7 +256,7 @@ class IdentifiersRepositoryTest {
         List<Consignment> foundConsignments = identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
                 .identifier("ASB-123")
                 .identifierType(List.of("means"))
-                .build());
+                .build(), true);
 
         assertEquals(2, foundConsignments.size());
         assertTrue(CollectionUtils.isEqualCollection(foundConsignments, List.of(fourthConsignment, fifthConsignment)));
@@ -262,7 +268,7 @@ class IdentifiersRepositoryTest {
                 .identifier("ASB-123")
                 .identifierType(List.of("means"))
                 .registrationCountryCode("FI")
-                .build());
+                .build(), true);
 
         assertEquals(1, foundConsignments.size());
         assertEquals("67676767-6767-6767-6767-44480123be5b", foundConsignments.iterator().next().getDatasetId());
@@ -274,7 +280,7 @@ class IdentifiersRepositoryTest {
                 .identifier("ASB-123")
                 .identifierType(List.of("means", "equipment"))
                 .registrationCountryCode("FI")
-                .build());
+                .build(), true);
 
         assertEquals(2, foundConsignments.size());
         assertTrue(CollectionUtils.isEqualCollection(foundConsignments, List.of(fourthConsignment, sixthConsignment)));
@@ -286,7 +292,7 @@ class IdentifiersRepositoryTest {
                 .identifier("ASB-123")
                 .identifierType(List.of("means", "carried", "equipment"))
                 .registrationCountryCode("FI")
-                .build());
+                .build(), true);
 
         assertEquals(3, foundConsignments.size());
         assertTrue(CollectionUtils.isEqualCollection(foundConsignments, List.of(fourthConsignment, fifthConsignment, sixthConsignment)));
@@ -297,7 +303,7 @@ class IdentifiersRepositoryTest {
         List<Consignment> foundConsignments = identifiersRepository.searchByCriteria(SearchWithIdentifiersRequestDto.builder()
                 .identifier("FMC888")
                 .registrationCountryCode("FR")
-                .build());
+                .build(), true);
 
         assertEquals(2, foundConsignments.size());
         assertTrue(CollectionUtils.isEqualCollection(foundConsignments, List.of(firstConsignment, secondConsignment)));

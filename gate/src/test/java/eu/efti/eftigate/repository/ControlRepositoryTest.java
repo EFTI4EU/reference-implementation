@@ -1,11 +1,10 @@
-package eu.efti.eftigate.service.repository;
+package eu.efti.eftigate.repository;
 
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.entity.RequestEntity;
 import eu.efti.eftigate.entity.UilRequestEntity;
-import eu.efti.eftigate.repository.ControlRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,7 +60,7 @@ class ControlRepositoryTest {
         final RequestEntity secondRequest = new UilRequestEntity();
         secondRequest.setStatus(RequestStatusEnum.RECEIVED);
         final ControlEntity firstControl = ControlEntity.builder().requestId("67fe38bd-6bf7-4b06-b20e-206264bd639c").status(StatusEnum.PENDING).requests(List.of(firstRequest)).build();
-        firstControl.setCreatedDate(LocalDateTime.now());
+        firstControl.setCreatedDate(OffsetDateTime.now());
         firstRequest.setControl(firstControl);
         final ControlEntity firstSavedControl = controlRepository.save(firstControl);
         final ControlEntity secondControl = ControlEntity.builder().requestId("23fe38bd-6bf7-4b06-b20e-206264bd66c").status(StatusEnum.ERROR).requests(List.of(secondRequest)).build();
@@ -74,7 +73,6 @@ class ControlRepositoryTest {
         //Assert
         assertThat(controls).containsExactlyInAnyOrder(firstSavedControl);
     }
-
 
 
 }
