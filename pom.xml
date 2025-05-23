@@ -58,7 +58,6 @@
 
         <keycloak.version>22.0.5</keycloak.version>
         <java-jwt.version>4.4.0</java-jwt.version>
-        <tomcat.version>10.1.39</tomcat.version>
     </properties>
 
     <distributionManagement>
