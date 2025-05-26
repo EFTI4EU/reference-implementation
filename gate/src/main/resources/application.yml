@@ -98,6 +98,6 @@ hazelcast:
   network:
     join:
       multicast:
-        enabled: false
-      kubernetes:
         enabled: true
+      kubernetes:
+        enabled: false
