@@ -133,3 +133,10 @@ logging:
         internal:
           diagnostics:
             HealthMonitor: OFF
+hazelcast:
+  network:
+    join:
+      multicast:
+        enabled: false
+      kubernetes:
+        enabled: true
