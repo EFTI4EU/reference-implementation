@@ -1,14 +1,10 @@
 spring:
-  cache:
-    type: none
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: create-drop
     properties:
       hibernate:
-        cache:
-          use_second_level_cache: false
         default_schema: EFTI
         format_sql: true
         connection:
