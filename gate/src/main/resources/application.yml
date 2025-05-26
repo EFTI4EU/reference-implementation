@@ -1,21 +1,4 @@
 spring:
-  jpa:
-    properties:
-      hibernate:
-        cache:
-          use_second_level_cache: true
-          use_query_cache: true
-          region:
-            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
-        javax:
-          cache:
-            provider: com.hazelcast.cache.impl.HazelcastServerCachingProvider
-            uri: hazelcast.xml
-            missing_cache_strategy: create
-      jakarta:
-        persistence:
-          sharedCache:
-            mode: ENABLE_SELECTIVE
   servlet:
     multipart:
       max-file-size: 5MB
@@ -87,17 +70,3 @@ efti:
   control:
     pending:
       timeout: 60
-logging:
-  level:
-    com:
-      hazelcast:
-        internal:
-          diagnostics:
-            HealthMonitor: OFF
-hazelcast:
-  network:
-    join:
-      multicast:
-        enabled: true
-      kubernetes:
-        enabled: false
