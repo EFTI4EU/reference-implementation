@@ -1,6 +1,0 @@
-<hazelcast xmlns="http://www.hazelcast.com/schema/config">
-    <cache name="gates"/>
-    <map name="default">
-        <time-to-live-seconds>3600</time-to-live-seconds>
-    </map>
-</hazelcast>
