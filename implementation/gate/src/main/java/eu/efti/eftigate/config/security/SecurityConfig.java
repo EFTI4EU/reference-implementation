@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -13,12 +14,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
@@ -93,6 +92,33 @@ public class SecurityConfig {
         return jwtAuthenticationConverter;
     }
 
+    /**
+     * SecurityFilterChain for Client Authentication by Client Certificate.
+     */
+    @Profile("certAuth")
+    @Order(2)
+    @Bean
+    public SecurityFilterChain certAuthfilterChain(HttpSecurity http) throws Exception {
+        http.securityMatcher("/v1/aap/**").csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/v1/aap/**")
+                        .authenticated())
+                .x509(x509configurer -> x509configurer.subjectPrincipalRegex("CN=(.*?)(?:,|$)")
+                        .userDetailsService(X509userDetailsService()));
+        return http.build();
+    }
+
+    @Bean
+    public UserDetailsService X509userDetailsService() {
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                return new User(username, "",
+                        AuthorityUtils.createAuthorityList(Roles.ROLE_EXT_AAP));
+            }
+        };
+    }
+
+
     @Bean
     @Order(1)
     public SecurityFilterChain platformApiFilterChain(final HttpSecurity http) throws Exception {
@@ -117,7 +143,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Order(2)
+    @Order(3)
     public SecurityFilterChain defaultFilterChain(final HttpSecurity http, final JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(
