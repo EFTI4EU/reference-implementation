@@ -14,7 +14,7 @@ gate:
   minSleep: 1000
   maxSleep: 2000
   owner: roger
-  cda_path: /opt/javapp/config/cda
+  cda_path: /opt/javapp/cda
   gate: france
   ap:
     url: http://ileftimicr02in.service.groupein.local:8080/domibus/services/wsplugin
