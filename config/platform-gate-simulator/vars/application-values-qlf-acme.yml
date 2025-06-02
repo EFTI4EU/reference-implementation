@@ -14,7 +14,7 @@ gate:
   minSleep: 1000
   maxSleep: 2000
   owner: acme
-  cda_path: /opt/javapp/config/cda
+  cda_path: /opt/javapp/cda
   gate: borduria
   ap:
     url: https://edelivery-bo.qlf.efti.service.groupein.local/ap-mock/domibus/services/wsplugin
