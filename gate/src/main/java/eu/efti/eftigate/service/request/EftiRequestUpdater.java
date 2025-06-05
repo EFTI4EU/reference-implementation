@@ -13,6 +13,7 @@ import eu.efti.eftigate.service.LogManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class EftiRequestUpdater {
     private final LogManager logManager;
     private final MapperUtils mapperUtils;
 
-
+    @Transactional("controlTransactionManager")
     public void manageSendFailure(final NotificationDto notificationDto) {
         final Optional<RequestDto> requestDto = getRequestDtoFromMessageId(notificationDto.getMessageId());
         if (requestDto.isPresent()) {
@@ -47,6 +48,7 @@ public class EftiRequestUpdater {
         }
     }
 
+    @Transactional("controlTransactionManager")
     public void manageSendSuccess(final NotificationDto notificationDto) {
         final Optional<RequestDto> requestDto = getRequestDtoFromMessageId(notificationDto.getMessageId());
         if (requestDto.isEmpty()) {
