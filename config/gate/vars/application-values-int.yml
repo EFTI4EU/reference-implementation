@@ -39,7 +39,7 @@ batch:
     size: 10
   identifier:
     cron: "0 0 1 ? * *"
-    activated: false
+    activated: true
     deactivation_delay:
       three: 12
       other: 0
