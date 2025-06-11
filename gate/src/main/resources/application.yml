@@ -70,3 +70,7 @@ efti:
   control:
     pending:
       timeout: 60
+
+proconnect:
+  allowed:
+    sirets: 12000018700027, 12002301500031, 15700001900461
