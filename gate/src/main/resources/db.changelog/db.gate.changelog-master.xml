@@ -259,4 +259,5 @@
     <include file="/db.changelog/db.gate.changelog-10-nationalUniqueIdentifier.xml"/>
     <include file="/db.changelog/db.gate.changelog-10-authoritydrop.xml"/>
     <include file="/db.changelog/db.gate.changelog-11-modify-type.xml"/>
+    <include file="/db.changelog/db.gate.changelog-12-add-platforms.xml"/>
 </databaseChangeLog>

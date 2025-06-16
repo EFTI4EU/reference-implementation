@@ -2,8 +2,6 @@ package eu.efti.eftigate.service;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.UilRequestDto;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
@@ -47,7 +45,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-public class ReportingLogTest extends AbstractServiceTest {
+class ReportingLogTest extends AbstractServiceTest {
 
     @Mock
     private UilRequestRepository uilRequestRepository;
@@ -87,11 +85,9 @@ public class ReportingLogTest extends AbstractServiceTest {
     private final String requestId = UUID.randomUUID().toString();
     private final UilRequestEntity uilRequestEntity = new UilRequestEntity();
     private final ControlEntity controlEntity = new ControlEntity();
-    private ControlDto controlDto;
-    private UilRequestDto uilRequestDto;
 
     @BeforeEach
-    public void before() {
+    void before() {
         gateProperties = GateProperties.builder()
                 .ap(GateProperties.ApConfig.builder().build())
                 .country("BO")
@@ -103,7 +99,7 @@ public class ReportingLogTest extends AbstractServiceTest {
                 gateProperties, requestUpdaterService, serializeUtils, validationService, logManager, reportingRequestLogService, eftiGateIdResolver);
 
         notMockedControlService = new ControlService(controlRepository, eftiGateIdResolver, identifiersService, mapperUtils,
-                        requestServiceFactory, logManager, reportingRequestLogService, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
+                requestServiceFactory, logManager, reportingRequestLogService, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
                 gateProperties, serializeUtils);
         Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
         memoryAppender = MemoryAppender.createInitializedMemoryAppender(
@@ -114,13 +110,12 @@ public class ReportingLogTest extends AbstractServiceTest {
         controlEntity.setPlatformId("acme");
         controlEntity.setRequestId(requestId);
         controlEntity.setId(1);
-        controlDto = mapperUtils.controlEntityToControlDto(controlEntity);
 
         uilRequestEntity.setRequestType(RequestType.UIL.name());
         uilRequestEntity.setCreatedDate(OffsetDateTime.now());
         uilRequestEntity.setControl(controlEntity);
-        uilRequestDto = mapperUtils.uilRequestEntityToRequestDto(uilRequestEntity, UilRequestDto.class);
     }
+
     @Test
     void localUilSearch_receiveResponse() {
         final Map<String, String> expectedLogs = Map.ofEntries(

@@ -238,7 +238,7 @@ class IdentifiersMapperTest {
 
         internalConsignment.getUsedTransportEquipments().add(equipment);
 
-        var eDeliveryConsignment = identifiersMapper.entityToEdelivery(internalConsignment);
+        eu.efti.v1.edelivery.Consignment eDeliveryConsignment = identifiersMapper.entityToEdelivery(internalConsignment);
 
         assertEquals("datasetId", eDeliveryConsignment.getUil().getDatasetId());
         assertEquals("202107111200+0100", eDeliveryConsignment.getCarrierAcceptanceDateTime().getValue());

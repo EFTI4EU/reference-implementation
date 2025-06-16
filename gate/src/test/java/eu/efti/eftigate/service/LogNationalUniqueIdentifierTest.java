@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.UilRequestDto;
@@ -24,15 +23,15 @@ class LogNationalUniqueIdentifierTest {
 
     @Mock
     private RabbitTemplate rabbitTemplate;
-    private SerializeUtils serializeUtils = new SerializeUtils(new ObjectMapper());
+    private final SerializeUtils serializeUtils = new SerializeUtils(new ObjectMapper());
 
     @BeforeEach
-    public void before() {
-        rabbitSenderService = new RabbitSenderService(rabbitTemplate,serializeUtils);
+    void before() {
+        rabbitSenderService = new RabbitSenderService(rabbitTemplate, serializeUtils);
     }
 
     @Test
-    void verifyNationUniqueIdentifierNotSet() throws JsonProcessingException {
+    void verifyNationUniqueIdentifierNotSet() {
         final UilRequestDto requestDto = new UilRequestDto();
         requestDto.setStatus(RequestStatusEnum.RECEIVED);
         requestDto.setRetry(0);
@@ -49,7 +48,7 @@ class LogNationalUniqueIdentifierTest {
     }
 
     @Test
-    void verifyNationUniqueIdentifierSet() throws JsonProcessingException {
+    void verifyNationUniqueIdentifierSet() {
         final UilRequestDto requestDto = new UilRequestDto();
         requestDto.setStatus(RequestStatusEnum.RECEIVED);
         requestDto.setRetry(0);

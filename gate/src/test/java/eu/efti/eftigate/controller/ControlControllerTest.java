@@ -14,8 +14,10 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -23,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -70,6 +73,33 @@ class ControlControllerTest {
 
         mockMvc.perform(post("/v1/control/uil")
                         .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsBytes(uilDto)))
+                .andExpect(status().isAccepted())
+                .andReturn();
+    }
+
+    @Test
+    void requestUilTest_withPrincipal() throws Exception {
+        final UilDto uilDto = new UilDto();
+        uilDto.setPlatformId("platform");
+        uilDto.setDatasetId("uuid");
+        uilDto.setGateId("gate");
+        uilDto.setNationalUniqueIdentifier("nuid");
+
+        Jwt mockJwt = Jwt.withTokenValue("token")
+                .header("alg", "none")
+                .claim("sub", "username")
+                .claim("nationalUniqueIdentifier", "nuid")
+                .build();
+
+        SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequest = jwt().jwt(mockJwt);
+
+        Mockito.when(controlService.createUilControl(uilDto)).thenReturn(requestIdDto);
+
+        mockMvc.perform(post("/v1/control/uil")
+                        .with(csrf())
+                        .with(jwtRequest)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsBytes(uilDto)))
                 .andExpect(status().isAccepted())

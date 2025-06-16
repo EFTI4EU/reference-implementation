@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service.request;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.commons.dto.IdentifiersRequestDto;
 import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
@@ -147,13 +146,13 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void trySendDomibusSuccessTest() throws SendRequestException, JsonProcessingException {
+    void trySendDomibusSuccessTest() throws SendRequestException {
         identifiersRequestService.sendRequest(requestDto);
         verify(rabbitSenderService).sendMessageToRabbit(any(), any(), any());
     }
 
     @Test
-    void shouldManageMessageReceiveAndCreateNewControl_whenControlDoesNotExist() throws IOException {
+    void shouldManageMessageReceiveAndCreateNewControl_whenControlDoesNotExist() {
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()

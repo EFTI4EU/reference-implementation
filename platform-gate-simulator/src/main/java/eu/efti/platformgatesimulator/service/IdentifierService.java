@@ -2,6 +2,7 @@ package eu.efti.platformgatesimulator.service;
 
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
+import eu.efti.commons.exception.TechnicalException;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.edeliveryapconnector.constant.EDeliveryStatus;
 import eu.efti.edeliveryapconnector.dto.ApConfigDto;
@@ -10,6 +11,8 @@ import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.platformgatesimulator.config.GateProperties;
+import eu.efti.platformgatesimulator.exception.UploadException;
+import eu.efti.platformgatesimulator.utils.PlatformEftiSchemaUtils;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import eu.efti.v1.edelivery.Identifier;
 import eu.efti.v1.edelivery.IdentifierQuery;
@@ -21,11 +24,19 @@ import eu.efti.v1.edelivery.UILResponse;
 import jakarta.xml.bind.JAXBElement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.MappingException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import static java.lang.Thread.sleep;
 
@@ -68,9 +79,50 @@ public class IdentifierService {
 
     private final ObjectFactory objectFactory = new ObjectFactory();
 
+    private final eu.efti.v1.consignment.identifier.ObjectFactory identifiersObjectFactory = new eu.efti.v1.consignment.identifier.ObjectFactory();
+
+
     private final SerializeUtils serializeUtils;
 
     private final SecureRandom random = new SecureRandom();
+
+    private static final Pattern datasetIdPattern = Pattern.compile("[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}");
+
+    private final ReaderService readerService;
+
+    private final CallGateService callGateService;
+
+    public void sendBadResponseIllegalArgument(final String requestId, final String errorMessage) {
+        final ApRequestDto apRequestDto = ApRequestDto.builder()
+                .requestId(requestId)
+                .sender(gateProperties.getOwner())
+                .receiver(gateProperties.getGate())
+                .body(buildBodyBadResponseIllegalArgument(requestId, errorMessage))
+                .apConfig(ApConfigDto.builder()
+                        .username(gateProperties.getAp().getUsername())
+                        .password(gateProperties.getAp().getPassword())
+                        .url(gateProperties.getAp().getUrl())
+                        .build())
+                .build();
+        try {
+            requestSendingService.sendRequest(apRequestDto);
+        } catch (final SendRequestException e) {
+            log.error("SendRequestException received : ", e);
+        }
+    }
+
+    private String buildBodyBadResponseIllegalArgument(final String requestId, final String errorMessage) {
+        final UILResponse uilResponse = new UILResponse();
+
+        log.info("Bad request will be sent with IllegalArgument");
+        uilResponse.setRequestId(requestId);
+        uilResponse.setDescription(errorMessage);
+        uilResponse.setStatus(EDeliveryStatus.BAD_REQUEST.getCode());
+        uilResponse.setConsignment(null);
+
+        final JAXBElement<UILResponse> jaxbElement = objectFactory.createUilResponse(uilResponse);
+        return serializeUtils.mapJaxbObjectToXmlString(jaxbElement, UILResponse.class);
+    }
 
     public void sendResponseUil(final String requestId, final SupplyChainConsignment consignment) {
         final ApRequestDto apRequestDto = ApRequestDto.builder()
@@ -176,7 +228,8 @@ public class IdentifierService {
         return serializeUtils.mapJaxbObjectToXmlString(jaxBResponse, UILQuery.class);
     }
 
-    private String queryIdentifierString(final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto, final String requestId) {
+    private String queryIdentifierString(final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto,
+                                         final String requestId) {
         final IdentifierQuery identifierQuery = new IdentifierQuery();
 
         final Identifier identifier = new Identifier();
@@ -192,7 +245,8 @@ public class IdentifierService {
         return serializeUtils.mapJaxbObjectToXmlString(jaxBResponse, IdentifierQuery.class);
     }
 
-    private ApRequestDto buildApRequestQueryIdentifier(final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {
+    private ApRequestDto buildApRequestQueryIdentifier(
+            final SearchWithIdentifiersRequestDto searchWithIdentifiersRequestDto) {
         final String requestId = UUID.randomUUID().toString();
         return ApRequestDto.builder()
                 .requestId(requestId)
@@ -214,7 +268,8 @@ public class IdentifierService {
         requestSendingService.sendRequest(buildApRequestQueryIdentifier(searchWithIdentifiersRequestDto));
     }
 
-    public void sendResponseIdentifier(final IdentifierQuery identifierQuery, final NotificationDto notificationDto) {
+    public void sendResponseIdentifier(final IdentifierQuery identifierQuery,
+                                       final NotificationDto notificationDto) {
         final IdentifierResponse identifierResponse = buildIdentifierResponse(identifierQuery);
         if (isTimerActiveForIdentifierResponse) {
             makeGaussTime();
@@ -222,7 +277,8 @@ public class IdentifierService {
         requestSendingService.sendRequest(buildApRequestDtoIdentifierResponse(identifierResponse, notificationDto));
     }
 
-    private ApRequestDto buildApRequestDtoIdentifierResponse(final IdentifierResponse identifierResponse, final NotificationDto notificationDto) {
+    private ApRequestDto buildApRequestDtoIdentifierResponse(final IdentifierResponse identifierResponse,
+                                                             final NotificationDto notificationDto) {
         final String requestId = UUID.randomUUID().toString();
         return ApRequestDto.builder()
                 .requestId(requestId)
@@ -258,5 +314,45 @@ public class IdentifierService {
             identifierResponse.setStatus(statusIdentifierBadResponse);
         }
         return identifierResponse;
+    }
+
+    public ResponseEntity<String> uploadIdentifier(final String datasetId, final MultipartFile consignmentFile) {
+        if (consignmentFile == null || consignmentFile.isEmpty()) {
+            return new ResponseEntity<>("File is missing", HttpStatus.BAD_REQUEST);
+        }
+        if (datasetId == null || !datasetIdPattern.matcher(datasetId).matches()) {
+            return new ResponseEntity<>("Dataset ID is not valid", HttpStatus.BAD_REQUEST);
+        }
+
+        log.info("Upload consignment {}", datasetId);
+        String commonXml = readFileAsString(consignmentFile);
+        String result;
+        ResponseEntity<String> callResult;
+        try {
+            SupplyChainConsignment common = serializeUtils.mapXmlStringToJaxbObject(commonXml, SupplyChainConsignment.class);
+            eu.efti.v1.consignment.identifier.SupplyChainConsignment identifiers = PlatformEftiSchemaUtils.commonToIdentifiers(serializeUtils, common);
+            JAXBElement<eu.efti.v1.consignment.identifier.SupplyChainConsignment> consignment = identifiersObjectFactory.createConsignment(identifiers);
+            result = serializeUtils.mapJaxbObjectToXmlString(consignment, eu.efti.v1.consignment.identifier.SupplyChainConsignment.class);
+            readerService.uploadFile(consignmentFile, "%s.xml".formatted(datasetId));
+            callResult = callGateService.sendGate(result, datasetId);
+        } catch (MappingException e) {
+            log.error("Could not map xml object", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid file: " + e.getMessage());
+        } catch (UploadException e) {
+            return new ResponseEntity<>("Error while uploading file " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            log.error("Unhandled error", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
+        return new ResponseEntity<>(callResult.getBody(), callResult.getStatusCode());
+    }
+
+    private static String readFileAsString(MultipartFile file) {
+        try (InputStream inputStream = file.getInputStream()) {
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new TechnicalException("Error while reading attachment", e);
+        }
     }
 }

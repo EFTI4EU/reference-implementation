@@ -9,10 +9,9 @@ import eu.efti.edeliveryapconnector.exception.SendRequestException;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.generator.id.MessageIdGenerator;
-import eu.efti.eftigate.service.gate.EftiGateIdResolver;
+import eu.efti.eftigate.service.gate.EftiPlatformIdResolver;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
-import eu.efti.eftilogger.service.ReportingRequestLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -50,10 +49,10 @@ class RabbitListenerServiceTest extends BaseServiceTest {
     private MessageIdGenerator messageIdGenerator;
 
     @Mock
-    private EftiGateIdResolver eftiGateIdResolver;
+    private EftiPlatformIdResolver eftiPlatformIdResolver;
 
     @Mock
-    private ReportingRequestLogService reportingRequestLogService;
+    private PlatformIntegrationService platformIntegrationService;
 
 
     private static final String URL = "url";
@@ -80,7 +79,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
                         .username(USERNAME).build()).build();
 
         rabbitListenerService = new RabbitListenerService(gateProperties, serializeUtils, requestSendingService,
-                requestServiceFactory, apIncomingService, mapperUtils, logManager, reportingRequestLogService, messageIdGenerator, eftiGateIdResolver);
+                requestServiceFactory, apIncomingService, mapperUtils, logManager, messageIdGenerator, eftiPlatformIdResolver, platformIntegrationService);
         memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
         memoryAppender = MemoryAppender.createInitializedMemoryAppender(
                 Level.TRACE, memoryAppenderTestLogger);
@@ -153,7 +152,7 @@ class RabbitListenerServiceTest extends BaseServiceTest {
         when(requestServiceFactory.getRequestServiceByRequestType(any(String.class))).thenReturn(uilRequestService);
         when(requestSendingService.sendRequest(any())).thenThrow(SendRequestException.class);
         when(requestServiceFactory.getRequestServiceByRequestType(anyString())).thenReturn(uilRequestService);
-        final Exception exception = assertThrows(TechnicalException.class, () -> rabbitListenerService.listenSendMessage(message));
+        assertThrows(TechnicalException.class, () -> rabbitListenerService.listenSendMessage(message));
     }
 
     @Test

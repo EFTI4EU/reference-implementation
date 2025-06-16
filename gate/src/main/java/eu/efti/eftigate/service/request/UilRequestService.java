@@ -55,6 +55,7 @@ import java.util.Optional;
 import static eu.efti.commons.constant.EftiGateConstants.UIL_TYPES;
 import static eu.efti.commons.enums.ErrorCodesEnum.DATA_NOT_FOUND_ON_REGISTRY;
 import static eu.efti.commons.enums.RequestStatusEnum.ERROR;
+import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.RESPONSE_IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
 import static eu.efti.commons.enums.RequestStatusEnum.TIMEOUT;
@@ -305,6 +306,34 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
             respondToOtherGate(uilRequestDto, notificationDto.getContent().getBody());
         }
         logManager.logPlatformResponse(notificationDto, uilRequestDto);
+    }
+
+    public void manageRestResponseReceivedFromPlatform(String requestId, SupplyChainConsignment consignment) {
+        final Optional<UilRequestDto> maybeUilRequestDto = this.findByRequestId(requestId);
+        if (maybeUilRequestDto.isPresent()) {
+            UilRequestDto foundRequestDto = maybeUilRequestDto.get();
+            if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(foundRequestDto.getControl().getRequestType())) {
+                JAXBElement<SupplyChainConsignment> objectFactoryConsignment = objectFactory.createConsignment(consignment);
+                String responseData = serializeUtils.mapJaxbObjectToXmlString(objectFactoryConsignment, SupplyChainConsignment.class);
+                foundRequestDto.setReponseData(responseData.getBytes(Charset.defaultCharset()));
+                updateStatus(foundRequestDto, RequestStatusEnum.SUCCESS);
+                getControlService().updateControlStatus(foundRequestDto.getControl(), COMPLETE);
+                if (foundRequestDto.getControl().isExternalAsk()) {
+                    respondToOtherGate(foundRequestDto, responseData);
+                }
+            } else {
+                throw new IllegalStateException("should only be called for local platform requests");
+            }
+        } else {
+            log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB + ": {}", requestId);
+        }
+    }
+
+    public void manageRestRequestInProgress(String requestId) {
+        Optional.ofNullable(uilRequestRepository.findByControlRequestIdAndStatus(requestId, RequestStatusEnum.RECEIVED))
+                .ifPresentOrElse(
+                        uilRequest -> updateStatus(uilRequest, IN_PROGRESS),
+                        () -> log.error("Not found UIL request with requestId {}", requestId));
     }
 
     private void manageResponseFromOtherGate(final UilRequestDto requestDto, final UILResponse uilResponse, final NotificationContentDto content) {

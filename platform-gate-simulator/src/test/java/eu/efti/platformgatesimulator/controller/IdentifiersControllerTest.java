@@ -1,18 +1,18 @@
 package eu.efti.platformgatesimulator.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.platformgatesimulator.exception.UploadException;
 import eu.efti.platformgatesimulator.service.ApIncomingService;
+import eu.efti.platformgatesimulator.service.IdentifierService;
 import eu.efti.platformgatesimulator.service.ReaderService;
 import eu.efti.v1.json.Consignment;
 import eu.efti.v1.json.SaveIdentifiersRequest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +20,14 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 @WebMvcTest(IdentifiersController.class)
 @ContextConfiguration(classes = {IdentifiersController.class})
@@ -35,23 +37,35 @@ class IdentifiersControllerTest {
     @MockitoBean
     private IdentifiersController identifiersController;
 
-    @Autowired
-    protected MockMvc mockMvc;
-
     @Mock
     private ApIncomingService apIncomingService;
 
     @Mock
     private ReaderService readerService;
 
+    @Mock
+    private IdentifierService identifierService;
+
     private final SaveIdentifiersRequest saveIdentifiersRequest = new SaveIdentifiersRequest();
 
     @BeforeEach
     void before() {
-        identifiersController = new IdentifiersController(apIncomingService, readerService);
+        identifiersController = new IdentifiersController(apIncomingService, readerService, new SerializeUtils(new ObjectMapper()), identifierService);
         saveIdentifiersRequest.setRequestId("requestId");
         saveIdentifiersRequest.setConsignment(new Consignment());
         saveIdentifiersRequest.setDatasetId("datasetId");
+    }
+
+    @Test
+    void uploadConsignmentTest() {
+        byte[] inputArray = "Test String".getBytes();
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("tempFileName", inputArray);
+
+        when(identifierService.uploadIdentifier(anyString(), any())).thenReturn(new ResponseEntity<>("oki", HttpStatus.OK));
+
+        ResponseEntity<String> response = identifiersController.uploadConsignment("datasetId", mockMultipartFile);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -60,92 +74,92 @@ class IdentifiersControllerTest {
 
         ResponseEntity<String> result = identifiersController.uploadFile(file);
 
-        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
-        Assertions.assertEquals("File saved", result.getBody());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("File saved", result.getBody());
     }
 
     @Test
     void uploadFileNullTest() {
         ResponseEntity<String> result = identifiersController.uploadFile(null);
 
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        Assertions.assertEquals("Error, no file sent", result.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("Error, no file sent", result.getBody());
     }
 
     @Test
     void uploadFileThrowTest() throws UploadException {
         MockMultipartFile file = new MockMultipartFile("data", "other-file-name.data", "text/plain", "some other type".getBytes(StandardCharsets.UTF_8));
-        Mockito.doThrow(UploadException.class).when(readerService).uploadFile(file);
+        doThrow(UploadException.class).when(readerService).uploadFile(file);
 
         ResponseEntity<String> result = identifiersController.uploadFile(file);
 
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
-        Assertions.assertEquals("Error while uploading file null", result.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals("Error while uploading file null", result.getBody());
     }
 
     @Test
     void uploadIdentifiersTest() {
         final ResponseEntity<String> result = identifiersController.uploadIdentifiers(saveIdentifiersRequest);
 
-        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
-        Assertions.assertEquals("Identifiers uploaded", result.getBody());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("Identifiers uploaded", result.getBody());
     }
 
     @Test
     void uploadIdentifiersNullTest() {
         final ResponseEntity<String> result = identifiersController.uploadIdentifiers(null);
 
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        Assertions.assertEquals("No identifiers sent", result.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("No identifiers sent", result.getBody());
     }
 
     @Test
     void uploadIdentifiersThrowTest() throws JsonProcessingException {
-        Mockito.doThrow(JsonProcessingException.class).when(apIncomingService).uploadIdentifiers(any());
+        doThrow(JsonProcessingException.class).when(apIncomingService).uploadIdentifiers(any());
         final ResponseEntity<String> result = identifiersController.uploadIdentifiers(saveIdentifiersRequest);
 
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        Assertions.assertEquals("No identifiers sent, error in JSON process", result.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("No identifiers sent, error in JSON process", result.getBody());
     }
 
     @Test
     void deleteAllTest() {
-        Mockito.when(readerService.deleteAllFile()).thenReturn(true);
+        when(readerService.deleteAllFile()).thenReturn(true);
 
         final ResponseEntity<String> result = identifiersController.deleteAll();
 
-        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
-        Assertions.assertEquals("All file deleted", result.getBody());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("All file deleted", result.getBody());
     }
 
     @Test
     void deleteAllFalseTest() {
-        Mockito.when(readerService.deleteAllFile()).thenReturn(false);
+        when(readerService.deleteAllFile()).thenReturn(false);
 
         final ResponseEntity<String> result = identifiersController.deleteAll();
 
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
-        Assertions.assertEquals("Error when try to delete all files", result.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals("Error when try to delete all files", result.getBody());
     }
 
     @Test
     void deleteFileTest() {
-        Mockito.when(readerService.deleteFile(anyString())).thenReturn(true);
+        when(readerService.deleteFile(anyString())).thenReturn(true);
 
         final ResponseEntity<String> result = identifiersController.deleteFile("deleteFile");
 
-        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
-        Assertions.assertEquals("File with uuid deleteFile deleted", result.getBody());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("File with uuid deleteFile deleted", result.getBody());
     }
 
     @Test
     void deleteFileFalseTest() {
-        Mockito.when(readerService.deleteFile(anyString())).thenReturn(false);
+        when(readerService.deleteFile(anyString())).thenReturn(false);
 
         final ResponseEntity<String> result = identifiersController.deleteFile("deleteFile");
 
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        Assertions.assertEquals("Error file deleteFile does not exist", result.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("Error file deleteFile does not exist", result.getBody());
     }
 
 }

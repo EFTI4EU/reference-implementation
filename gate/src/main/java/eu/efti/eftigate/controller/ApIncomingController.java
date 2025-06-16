@@ -1,6 +1,5 @@
 package eu.efti.eftigate.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto;
 import eu.efti.eftigate.service.RabbitSenderService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -21,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApIncomingController {
 
     private static final String SOAP_RESULT = """
-            <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
-               <Body> domibus ws plugin require a response when it call our endpoint </Body>
-            </Envelope>
-           """;
+             <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+                <Body> domibus ws plugin require a response when it call our endpoint </Body>
+             </Envelope>
+            """;
 
     private final RabbitSenderService rabbitSenderService;
 
@@ -37,11 +36,7 @@ public class ApIncomingController {
     @PostMapping("/notification")
     public ResponseEntity<String> incoming(final @RequestBody ReceivedNotificationDto receivedNotificationDto) {
         log.info("receive notification from domibus");
-        try {
-            rabbitSenderService.sendMessageToRabbit(eftiReceiveMessageExchange, eftiKeySendMessage, receivedNotificationDto);
-        } catch (final JsonProcessingException e) {
-            log.error("Error when try to parse message and send it to the rabbitmq", e);
-        }
+        rabbitSenderService.sendMessageToRabbit(eftiReceiveMessageExchange, eftiKeySendMessage, receivedNotificationDto);
         return ResponseEntity.ok().body(SOAP_RESULT);
     }
 }

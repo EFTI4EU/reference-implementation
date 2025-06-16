@@ -13,6 +13,7 @@ import org.springframework.core.io.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -87,7 +88,7 @@ class ReaderServiceTest {
 
         Assertions.assertTrue(result);
 
-        Assertions.assertEquals(0, file.getParentFile().list().length);
+        Assertions.assertEquals(0, Objects.requireNonNull(file.getParentFile().list()).length);
     }
 
     @Test
