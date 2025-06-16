@@ -110,6 +110,23 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
         throw new UnsupportedOperationException("Operation not allowed for Note Request");
     }
 
+    public void manageRestRequestInProgress(String requestId) {
+        Optional.ofNullable(notesRequestRepository.findByControlRequestIdAndStatus(requestId, RequestStatusEnum.RECEIVED))
+                .ifPresentOrElse(
+                        noteRequestEntity -> updateStatus(noteRequestEntity, IN_PROGRESS),
+                        () -> log.error("Not found Note request with requestId {}", requestId));
+    }
+
+    public void manageRestRequestDone(String requestId) {
+        final Optional<NoteRequestEntity> maybeNoteRequestDto = Optional.ofNullable(notesRequestRepository.findByControlRequestIdAndStatus(requestId, IN_PROGRESS));
+        if (maybeNoteRequestDto.isPresent()) {
+            NoteRequestEntity uilRequestDto = maybeNoteRequestDto.get();
+            updateStatus(uilRequestDto, RequestStatusEnum.SUCCESS);
+        } else {
+            log.error("couldn't find Notes request for requestId" + ": {}", requestId);
+        }
+    }
+
     private void sendLogNote(final ControlDto controlDto, final boolean isError, final String messageBody) {
         getLogManager().logReceivedNoteMessage(controlDto, ComponentType.GATE, ComponentType.GATE, messageBody, controlDto.getFromGateId(), isError ? StatusEnum.ERROR : StatusEnum.COMPLETE, LogManager.FTI_026);
     }

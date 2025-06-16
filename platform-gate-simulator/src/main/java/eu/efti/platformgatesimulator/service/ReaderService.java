@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,22 +38,26 @@ public class ReaderService {
     private final GateProperties gateProperties;
 
     public void uploadFile(final MultipartFile file) throws UploadException {
-        checkDestinationFolder();
+        uploadFile(file, file.getOriginalFilename());
+    }
 
-        final String path = gateProperties.getCdaPath() + File.separator + file.getOriginalFilename();
-        log.info("Try to upload file in {} with name {}", gateProperties.getCdaPath(), file.getOriginalFilename());
-
+    public void uploadFile(final MultipartFile file, final String filenameOverride) throws UploadException {
         try {
-            Files.copy(file.getInputStream(), Paths.get(path), StandardCopyOption.REPLACE_EXISTING);
+            if (file == null) {
+                throw new IllegalArgumentException("No file provided or file is empty");
+            }
+            String targetDirectory = gateProperties.getCdaPath();
+            log.info("Try to upload file in {} with name {}", targetDirectory, filenameOverride);
+            file.transferTo(new File(targetDirectory + File.separator + filenameOverride).toPath());
+            log.info("File uploaded in {}", targetDirectory + filenameOverride);
         } catch (IOException ex) {
             log.error("Error when try to upload file to server", ex);
             throw new UploadException(ex);
         }
-        log.info("File uploaded in {}", gateProperties.getCdaPath() + file.getOriginalFilename());
     }
 
     @SuppressWarnings("unchecked")
-    public SupplyChainConsignment readFromFile(final String file, final List<String> subsets) throws IOException {
+    public SupplyChainConsignment readFromFile(final String file, final List<String> subsets) throws IOException, IllegalArgumentException {
         final String content;
         try {
             content = tryOpenFileOrThrow(file);
@@ -64,14 +66,15 @@ public class ReaderService {
             return null;
         }
 
-        final String contentFiltered = filterBySubset(content, subsets);
-
         try {
+            final String contentFiltered = filterBySubset(content, subsets);
             final Unmarshaller unmarshaller = JAXBContext.newInstance(ObjectFactory.class).createUnmarshaller();
             final JAXBElement<SupplyChainConsignment> jaxbElement = (JAXBElement<SupplyChainConsignment>) unmarshaller.unmarshal(new InputSource(new StringReader(contentFiltered)));
             return jaxbElement.getValue();
         } catch (JAXBException e) {
             throw new TechnicalException("error while writing content", e);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 
@@ -90,7 +93,12 @@ public class ReaderService {
         if (subsets.isEmpty() || subsets.contains("full")) {
             return content;
         } else {
-            return SubsetUtils.parseBySubsets(content, subsets).orElse(null);
+            try {
+                return SubsetUtils.parseBySubsets(content, subsets).orElse(null);
+            } catch (IllegalArgumentException e) {
+                log.error(e.getMessage());
+                throw new IllegalArgumentException(e.getMessage());
+            }
         }
     }
 

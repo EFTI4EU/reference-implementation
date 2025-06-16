@@ -1,8 +1,10 @@
 package eu.efti.platformgatesimulator.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.platformgatesimulator.exception.UploadException;
 import eu.efti.platformgatesimulator.service.ApIncomingService;
+import eu.efti.platformgatesimulator.service.IdentifierService;
 import eu.efti.platformgatesimulator.service.ReaderService;
 import eu.efti.v1.json.SaveIdentifiersRequest;
 import lombok.AllArgsConstructor;
@@ -12,11 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/identifiers")
@@ -27,6 +32,12 @@ public class IdentifiersController {
     private final ApIncomingService apIncomingService;
 
     private final ReaderService readerService;
+
+    private final SerializeUtils serializeUtils;
+
+    private static final Pattern datasetIdPattern = Pattern.compile("[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}");
+    private final IdentifierService identifierService;
+
 
     @PostMapping("/upload/file")
     public ResponseEntity<String> uploadFile(@RequestPart final MultipartFile file) {
@@ -69,5 +80,10 @@ public class IdentifiersController {
     public ResponseEntity<String> deleteFile(@PathVariable("uuid") String uuid) {
         boolean result = readerService.deleteFile(uuid);
         return new ResponseEntity<>(result ? "File with uuid " + uuid + " deleted" : "Error file " + uuid + " does not exist", result ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    }
+
+    @PutMapping("/upload/consignment/{datasetId}")
+    public ResponseEntity<String> uploadConsignment(@PathVariable String datasetId, @RequestPart final MultipartFile consignmentFile) {
+        return identifierService.uploadIdentifier(datasetId, consignmentFile);
     }
 }

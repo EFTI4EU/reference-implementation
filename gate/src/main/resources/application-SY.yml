@@ -34,5 +34,7 @@ efti:
     pending:
       timeout: 300
 
+feign-platform:
+  name: platform-client
 server:
   port: 8882

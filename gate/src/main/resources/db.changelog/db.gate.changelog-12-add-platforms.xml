@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet author="osouley" id="addplatform">
+        <createTable tableName="platform">
+            <column autoIncrement="true" name="id" startWith="56" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="platform_pkey"/>
+            </column>
+            <column name="url" type="VARCHAR(255)"/>
+            <column name="platformid" type="VARCHAR(255)"/>
+            <column name="communication_type" type="VARCHAR(255)"/>
+            <column name="clientid" type="VARCHAR(255)"/>
+            <column name="createddate" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastmodifieddate" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-31">
+        <insert tableName="platform">
+            <column name="id" value="1"/>
+            <column name="url" value="http://localhost:8070"/>
+            <column name="platformid" value="acme"/>
+            <column name="communication_type" value="REST"/>
+            <column name="clientid" value="platform-bo"/>
+            <column name="createddate" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-32">
+        <insert tableName="platform">
+            <column name="id" value="2"/>
+            <column name="url" value=""/>
+            <column name="platformid" value="massivedynamic"/>
+            <column name="communication_type" value="REST"/>
+            <column name="clientid" value="platform-sy"/>
+            <column name="createddate" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+    <changeSet author="osouley" id="1707315732219-33">
+        <insert tableName="platform">
+            <column name="id" value="3"/>
+            <column name="url" value=""/>
+            <column name="platformid" value="umbrellainc"/>
+            <column name="communication_type" value="REST"/>
+            <column name="clientid" value="platform-li"/>
+            <column name="createddate" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="lastmodifieddate" valueDate="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

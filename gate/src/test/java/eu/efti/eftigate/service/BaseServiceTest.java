@@ -23,7 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -65,7 +64,6 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
     public void before() {
         gateProperties = GateProperties.builder().ap(GateProperties.ApConfig.builder().url("url").password("pwd").username("usr").build()).owner("owner").build();
 
-        final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
         final OffsetDateTime offsetDateTime = OffsetDateTime.now(ZoneOffset.UTC);
         final String requestId = "67fe38bd-6bf7-4b06-b20e-206264bd639c";
 

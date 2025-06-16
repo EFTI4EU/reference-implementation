@@ -5,6 +5,8 @@ import eu.efti.identifiersregistry.IdentifiersMapper;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
 import eu.efti.v1.codes.CountryCode;
+import eu.efti.v1.consignment.identifier.AssociatedTransportEquipment;
+import eu.efti.v1.consignment.identifier.LogisticsTransportEquipment;
 import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
 import eu.efti.v1.consignment.identifier.TradeCountry;
 import eu.efti.v1.edelivery.IdentifierQuery;
@@ -44,6 +46,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -120,21 +123,21 @@ class IdentifiersQueryTest {
         logger.info("Using random seed {}", seed);
 
         testCase.datasetSpec.forEach(dataset -> {
-            var entity = toEntity(dataset.getConsignment(), dataset.getId(), random);
+            Consignment entity = toEntity(dataset.getConsignment(), dataset.getId(), random);
             identifiersRepository.save(entity);
         });
 
-        var query = toQuery(testCase.testCaseSpec.getQuery());
-        var expectedDatasetIds = new HashSet<>(testCase.testCaseSpec.getResult());
+        Set<String> expectedDatasetIds = new HashSet<>(testCase.testCaseSpec.getResult());
 
-        var results = identifiersRepository.searchByCriteria(query.build(), true);
-        var resultIds = results.stream().map(Consignment::getDatasetId).collect(Collectors.toSet());
+        SearchWithIdentifiersRequestDto query = toQuery(testCase.testCaseSpec.getQuery()).build();
+        List<Consignment> results = identifiersRepository.searchByCriteria(query, true);
+        Set<String> resultIds = results.stream().map(Consignment::getDatasetId).collect(Collectors.toSet());
 
         assertEquals(expectedDatasetIds, resultIds);
     }
 
     private static SearchWithIdentifiersRequestDto.SearchWithIdentifiersRequestDtoBuilder toQuery(final IdentifierQuery querySpec) {
-        var query = SearchWithIdentifiersRequestDto.builder()
+        SearchWithIdentifiersRequestDto.SearchWithIdentifiersRequestDtoBuilder query = SearchWithIdentifiersRequestDto.builder()
                 .identifier(querySpec.getIdentifier().getValue());
         if (querySpec.getIdentifier().getType() != null && !querySpec.getIdentifier().getType().isEmpty()) {
             query.identifierType(querySpec.getIdentifier().getType().stream().map(IdentifierType::value).toList());
@@ -168,19 +171,19 @@ class IdentifiersQueryTest {
      */
     private Consignment toEntity(final SupplyChainConsignment sourceConsignment, final String datasetId, final Random random) {
         IntStream.range(0, sourceConsignment.getUsedTransportEquipment().size()).forEach(uteIndex -> {
-            var ute = sourceConsignment.getUsedTransportEquipment().get(uteIndex);
+            LogisticsTransportEquipment ute = sourceConsignment.getUsedTransportEquipment().get(uteIndex);
             if (ute.getSequenceNumber() == null) {
                 ute.setSequenceNumber(BigInteger.valueOf(uteIndex));
             }
             if (ute.getRegistrationCountry() == null) {
-                var tc = new TradeCountry();
-                var cc = CountryCode.values()[random.nextInt(CountryCode.values().length)];
+                TradeCountry tc = new TradeCountry();
+                CountryCode cc = CountryCode.values()[random.nextInt(CountryCode.values().length)];
                 tc.setCode(cc);
                 ute.setRegistrationCountry(tc);
             }
 
             IntStream.range(0, ute.getCarriedTransportEquipment().size()).forEach(cteIndex -> {
-                var cte = ute.getCarriedTransportEquipment().get(cteIndex);
+                AssociatedTransportEquipment cte = ute.getCarriedTransportEquipment().get(cteIndex);
                 cte.setSequenceNumber(BigInteger.valueOf(cteIndex));
             });
         });

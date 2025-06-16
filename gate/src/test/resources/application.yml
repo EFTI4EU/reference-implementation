@@ -21,3 +21,5 @@ spring:
       enabled: true
   datasource:
     driver-class-name: org.h2.Driver
+feign-platform:
+  name: platform-client

@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service.request;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.efti.commons.dto.ControlDto;
@@ -526,13 +525,13 @@ class UilRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void trySendDomibusSuccessTest() throws SendRequestException, JsonProcessingException {
+    void trySendDomibusSuccessTest() throws SendRequestException {
         uilRequestService.sendRequest(requestDto);
         verify(rabbitSenderService).sendMessageToRabbit(any(), any(), any());
     }
 
     @Test
-    void sendTest() throws JsonProcessingException {
+    void sendTest() {
         when(uilRequestRepository.save(any())).thenReturn(uilRequestEntity);
 
         uilRequestService.createAndSendRequest(controlDto, null);

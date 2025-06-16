@@ -8,14 +8,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,8 +46,8 @@ class OidcHeaderFilterTest {
 
         oidcHeaderFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
 
-        verify(filterChain, Mockito.times(1)).doFilter(httpServletRequest, httpServletResponse);
-        verify(httpServletResponse, never()).sendError(any(), any());
+        verify(filterChain, times(1)).doFilter(httpServletRequest, httpServletResponse);
+        verify(httpServletResponse, never()).sendError(anyInt(), any());
     }
 
     @Test

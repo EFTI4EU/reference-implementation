@@ -31,11 +31,11 @@ public class IdentifiersController implements IdentifiersControllerApi {
                 StringUtils.join(identifiersRequestDto.getEftiGateIndicator(), ","), identifiersRequestDto.getIdentifier(),
                 StringUtils.join(identifiersRequestDto.getIdentifierType(), ","), identifiersRequestDto.getModeCode(),
                 identifiersRequestDto.getRegistrationCountryCode(), identifiersRequestDto.getDangerousGoodsIndicator());
-        if(principal != null){
-            String nationalUniqueIdentifier = (String)  principal.getClaims().get("nationalUniqueIdentifier");
-            if(nationalUniqueIdentifier != null) {
+        if (principal != null) {
+            String nationalUniqueIdentifier = principal.getClaimAsString("nationalUniqueIdentifier");
+            if (StringUtils.isNotBlank(nationalUniqueIdentifier)) {
                 identifiersRequestDto.setNationalUniqueIdentifier(nationalUniqueIdentifier);
-                log.info("POST on /control/uil with nationalUniqueIdentifier: {}",nationalUniqueIdentifier);
+                log.info("POST on /control/uil with nationalUniqueIdentifier: {}", nationalUniqueIdentifier);
             }
         }
         return new ResponseEntity<>(controlService.createIdentifiersControl(identifiersRequestDto), HttpStatus.ACCEPTED);

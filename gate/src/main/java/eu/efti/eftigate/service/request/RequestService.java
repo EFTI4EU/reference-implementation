@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service.request;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.RequestDto;
@@ -121,11 +120,7 @@ public abstract class RequestService<T extends RequestEntity> {
     }
 
     public void sendRequest(final RequestDto requestDto) {
-        try {
-            rabbitSenderService.sendMessageToRabbit(eftiSendMessageExchange, eftiKeySendMessage, requestDto);
-        } catch (final JsonProcessingException e) {
-            log.error("Error when try to parse object to json/string", e);
-        }
+        rabbitSenderService.sendMessageToRabbit(eftiSendMessageExchange, eftiKeySendMessage, requestDto);
     }
 
     public <R extends RequestDto> RequestDto updateStatus(final R requestDto, final RequestStatusEnum status) {

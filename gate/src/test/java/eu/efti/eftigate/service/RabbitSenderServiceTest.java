@@ -1,6 +1,5 @@
 package eu.efti.eftigate.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.UilRequestDto;
 import eu.efti.commons.enums.RequestStatusEnum;
@@ -17,7 +16,7 @@ import static eu.efti.eftigate.EftiTestUtils.testFile;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class RabbitSenderServiceTest extends AbstractServiceTest{
+class RabbitSenderServiceTest extends AbstractServiceTest {
     private RabbitSenderService rabbitSenderService;
 
     @Mock
@@ -29,7 +28,7 @@ class RabbitSenderServiceTest extends AbstractServiceTest{
     }
 
     @Test
-    void sendMessageToRabbitTest() throws JsonProcessingException {
+    void sendMessageToRabbitTest() {
         final UilRequestDto requestDto = new UilRequestDto();
         requestDto.setStatus(RequestStatusEnum.RECEIVED);
         requestDto.setRetry(0);

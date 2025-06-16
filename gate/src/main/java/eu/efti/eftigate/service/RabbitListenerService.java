@@ -18,11 +18,10 @@ import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RabbitRequestDto;
 import eu.efti.eftigate.generator.id.MessageIdGenerator;
 import eu.efti.eftigate.mapper.MapperUtils;
-import eu.efti.eftigate.service.gate.EftiGateIdResolver;
+import eu.efti.eftigate.service.gate.EftiPlatformIdResolver;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftilogger.model.ComponentType;
-import eu.efti.eftilogger.service.ReportingRequestLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 
+import static eu.efti.commons.enums.CommunicationTypeEnum.REST;
 import static eu.efti.eftilogger.model.ComponentType.GATE;
 import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
 
@@ -47,9 +47,9 @@ public class RabbitListenerService {
     private final ApIncomingService apIncomingService;
     private final MapperUtils mapperUtils;
     private final LogManager logManager;
-    private final ReportingRequestLogService reportingRequestLogService;
     private final MessageIdGenerator messageIdGenerator;
-    private final EftiGateIdResolver eftiGateIdResolver;
+    private final EftiPlatformIdResolver eftiPlatformIdResolver;
+    private final PlatformIntegrationService platformIntegrationService;
 
 
     @RabbitListener(queues = "${spring.rabbitmq.queues.eftiReceiveMessageQueue:efti.receive-messages.q}")
@@ -68,13 +68,26 @@ public class RabbitListenerService {
     public void listenSendMessage(final String message) {
 
         log.info("receive message from rabbimq queue");
-        trySendDomibus(serializeUtils.mapJsonStringToClass(message, RabbitRequestDto.class));
+        RabbitRequestDto rabbitRequestDto = serializeUtils.mapJsonStringToClass(message, RabbitRequestDto.class);
+        String gateIdDest = rabbitRequestDto.getGateIdDest();
+        boolean isCurrentGate = gateProperties.isCurrentGate(gateIdDest);
+        final ComponentType target = isCurrentGate ? PLATFORM : GATE;
+        if (PLATFORM.equals(target)) {
+            String communicationType = eftiPlatformIdResolver.getCommunicationType(rabbitRequestDto.getControl().getPlatformId());
+            if (StringUtils.isNotBlank(communicationType) && REST.name().equalsIgnoreCase(communicationType)) {
+                platformIntegrationService.handle(rabbitRequestDto);
+            } else {
+                trySendDomibus(rabbitRequestDto, isCurrentGate);
+            }
+        } else {
+            trySendDomibus(rabbitRequestDto, isCurrentGate);
+        }
     }
 
-    private void trySendDomibus(final RabbitRequestDto rabbitRequestDto) {
-        final boolean isCurrentGate = gateProperties.isCurrentGate(rabbitRequestDto.getGateIdDest());
+    private void trySendDomibus(final RabbitRequestDto rabbitRequestDto, boolean isCurrentGate) {
+        String gateIdDest = rabbitRequestDto.getGateIdDest();
         ControlDto control = rabbitRequestDto.getControl();
-        final String receiver = isCurrentGate ? control.getPlatformId() : rabbitRequestDto.getGateIdDest();
+        final String receiver = isCurrentGate ? control.getPlatformId() : gateIdDest;
         final RequestDto requestDto = mapperUtils.rabbitRequestDtoToRequestDto(rabbitRequestDto, EftiGateConstants.REQUEST_TYPE_CLASS_MAP.get(rabbitRequestDto.getRequestType()));
         String previousEdeliveryMessageId = rabbitRequestDto.getEdeliveryMessageId();
         try {
@@ -112,7 +125,7 @@ public class RabbitListenerService {
         final boolean isCurrentGate = gateProperties.isCurrentGate(control.getGateId());
 
         String logName = isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026;
-        logManager.logReceivedNote(control, body, receiver, ComponentType.GATE, LogManager.FTI_025.equalsIgnoreCase(logName) ? PLATFORM : GATE,
+        logManager.logReceivedNote(control, body, receiver, GATE, LogManager.FTI_025.equalsIgnoreCase(logName) ? PLATFORM : GATE,
                 true, logName);
     }
 
