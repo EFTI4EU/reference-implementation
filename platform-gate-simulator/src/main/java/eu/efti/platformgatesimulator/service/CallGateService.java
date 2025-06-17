@@ -22,6 +22,7 @@ public class CallGateService {
     public ResponseEntity<String> sendGate(final String result, final String datasetId) {
         Map<String, String> headers = new HashMap<>();
         KeycloakDto keycloakDto = keycloakConnector.getServiceAccountToken();
+        log.info("retrieved token is {}", keycloakDto.getAccessToken());
         headers.put("Authorization", "Bearer " + keycloakDto.getAccessToken());
         headers.put("Referer", "");
         headers.put("Content-Type", "application/xml");
