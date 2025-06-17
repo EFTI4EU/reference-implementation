@@ -33,7 +33,7 @@ mock:
     description: bad gateway
     status: 404
 
-feign-gate:
+feign_gate:
   name: call-gate-identifiers
   url: http://host.docker.internal:8880
   keycloak: http://auth.gate.borduria.eu:8080/realms/eFTI_BO/protocol/openid-connect/token

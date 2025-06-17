@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 
-@FeignClient(value = "${feign-gate.name}", url = "${feign-gate.url}")
+@FeignClient(value = "${feign_gate.name}", url = "${feign_gate.url}")
 public interface CallGateFeign {
 
     @PutMapping(value = "/v0/consignments/{datasetId}", consumes = APPLICATION_XML_VALUE, produces = APPLICATION_XML_VALUE)

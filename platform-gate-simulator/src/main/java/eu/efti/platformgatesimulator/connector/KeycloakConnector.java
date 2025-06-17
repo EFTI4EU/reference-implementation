@@ -25,13 +25,13 @@ public class KeycloakConnector {
 
     private final RestTemplate restTemplate;
 
-    @Value("${feign-gate.clientid}")
+    @Value("${feign_gate.clientid}")
     String clientId;
 
-    @Value("${feign-gate.clientsecret}")
+    @Value("${feign_gate.clientsecret}")
     String clientSecret;
 
-    @Value("${feign-gate.keycloak}")
+    @Value("${feign_gate.keycloak}")
     String keycloakUrl;
 
     public KeycloakConnector() {
