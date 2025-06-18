@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: efti-platform-acme
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer_uri: https://keycloak.efti.prd.k8s.groupein.local/realms/eFTI_BO
+
+server:
+  port: 8072
+
+gate:
+  minSleep: 1000
+  maxSleep: 2000
+  owner: borduria
+  cda_path: /opt/javapp/cda
+  gate: borduria
+  ap:
+    url: https://edelivery-fr.prd.efti.service.groupein.local/ap-mock/domibus/services/wsplugin
+    username: acme_service_account
+    password: tq9tQ6ykymK60zjBsDSO+

@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: efti-platform-ttf
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer_uri: https://keycloak.efti.prd.k8s.groupein.local/realms/eFTI_FR
+
+server:
+  port: 8072
+
+gate:
+  minSleep: 1000
+  maxSleep: 2000
+  owner: ttf
+  cda_path: /opt/javapp/cda
+  gate: france
+  ap:
+    url: https://edelivery-fr.prd.efti.service.groupein.local/ap-mock/domibus/services/wsplugin
+    username: ttf_service_account
+    password: tq9tQ6ykymK60zjBsDSO+
