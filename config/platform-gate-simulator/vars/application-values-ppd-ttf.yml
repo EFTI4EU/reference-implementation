@@ -20,3 +20,17 @@ gate:
     url: https://edelivery-fr.ppd.efti.service.groupein.local/ap-mock/domibus/services/wsplugin
     username: ttf_service_account
     password: tq9tQ6ykymK60zjBsDSO+
+
+mock:
+  badRequestPercentage: 0.0f
+  gaussWaitingTime:
+    average: 10
+    standardDeviation: 5
+    isActiveForIdentifierRequestTimer: false
+    isTimerActiveForIdentifierResponse: false
+  identifierReponseGoodResponse:
+    description: description
+    status: 200
+  identifierReponseBadResponse:
+    description: bad gateway
+    status: 404
