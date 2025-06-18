@@ -84,6 +84,7 @@ services:
       - ./domibus/sybo/domibus-sybo.properties:/opt/domibus/conf/domibus/domibus.properties
       - ./domibus/sh/setenv-node-1.sh:/opt/domibus/bin/setenv.sh
       - ./domibus/sybo/plugins-conf/:/opt/domibus/conf/domibus/plugins/config/domains/
+      - ./domibus/ca_cert:/opt/domibus/conf/ca_cert/
     depends_on:
       mariadb-sybo:
         condition: service_healthy

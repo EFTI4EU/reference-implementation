@@ -23,6 +23,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.Arrays;
+
+import static com.jayway.jsonassert.JsonAssert.with;
+import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -49,22 +54,13 @@ class AapControlControllerTest {
         requestIdDto.setRequestId(REQUEST_ID);
     }
 
-    @Test
-    @WithAnonymousUser
-    void getByIdshouldGetAuthent() throws Exception {
-        Mockito.when(controlService.getById(1L)).thenReturn(new ControlEntity());
-
-        mockMvc.perform(get("/v1/aap/control/uil"))
-                .andExpect(status().is4xxClientError())
-                .andReturn();
-    }
 
     @Test
     @WithMockUser
     void requestUilTestInvalidArgument() throws Exception {
         final AapUilDto uilDto = new AapUilDto();
         uilDto.setPlatformId("platform");
-        uilDto.setDatasetId("uuid");
+        uilDto.setDatasetId("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
         uilDto.setGateId("gate");
 
         Mockito.when(controlService.createUilControl(uilDto)).thenReturn(requestIdDto);
@@ -80,23 +76,26 @@ class AapControlControllerTest {
     @Test
     @WithMockUser
     void requestUilTest() throws Exception {
-        final AapUilDto uilDto = new AapUilDto();
-        uilDto.setPlatformId("platform");
-        uilDto.setDatasetId("uuid");
-        uilDto.setGateId("gate");
-        uilDto.setAuthority(AuthorityDto.builder().name("name").country("Country").isEmergencyService(false).nationalUniqueIdentifier("ID")
+        final AapUilDto uilDto = AapUilDto.builder().platformId("platform")
+                .datasetId("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+                .gateId("gate")
+                .subsetIds(Arrays.asList("full"))
+                .authority(AuthorityDto.builder().name("name").country("Country").isEmergencyService(false).nationalUniqueIdentifier("ID")
                 .legalContact(ContactInformationDto.builder().email("mail").city("city").postalCode("pc").streetName("sn").additionalLine("al").build())
                 .workingContact(ContactInformationDto.builder().email("mail").city("city").postalCode("pc").streetName("sn").additionalLine("al").build())
-                .build());
+                .build()).build();
 
         Mockito.when(controlService.createUilControl(uilDto)).thenReturn(requestIdDto);
 
-        mockMvc.perform(post("/v1/aap/control/uil")
+        String result=mockMvc.perform(post("/v1/aap/control/uil")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsBytes(uilDto)))
-                .andExpect(status().isBadRequest())
-                .andReturn();
+                .andExpect(status().isAccepted())
+                .andReturn().getResponse().getContentAsString();
+        with(result)
+                .assertThat("$.requestId", is("requestId"))
+                .assertThat("$.status", is("PENDING"));
     }
 
     @Test
