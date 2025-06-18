@@ -39,5 +39,5 @@ feign_gate:
   name: call-gate-identifiers
   url: https://gate-fr.efti.dev.k8s.groupein.local
   keycloak: https://keycloak.efti.dev.k8s.groupein.local/realms/eFTI_FR/protocol/openid-connect/token
-  clientid: platform-fr
+  clientid: platform-fr-ttf
   clientsecret: W6nIVNSACEAJzHSv2ub3cZfhG13xjxnX
