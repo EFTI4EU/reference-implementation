@@ -14,7 +14,7 @@ spring:
     oauth2:
       resourceserver:
         issuers:
-          https://auth.efti-ingroupe.com/realms/eFTI_FR,
+          https://keycloak.efti.prd.k8s.groupein.local/realms/eFTI_FR,
           https://auth.agentconnect.gouv.fr/api/v2
   jpa:
     properties:
