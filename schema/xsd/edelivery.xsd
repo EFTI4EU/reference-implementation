@@ -114,7 +114,7 @@
         <xsd:documentation>
           The unique identification number of the request (C(2024) 4572).
           This is the request id from the original client e.g. AAP or platform.
-          Gate retransmit request id to other gates and platform when making requests for AAP.
+          Gate retransmit the request id to other gates and platforms when completing the request for AAP.
           This identifies all the requests in the request chain from the original sender.
         </xsd:documentation>
       </xsd:annotation>
