@@ -11,15 +11,12 @@ import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
-import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
-import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftilogger.dto.MessagePartiesDto;
 import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.eftilogger.model.RequestTypeLog;
-import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.eftilogger.service.AuditRequestLogService;
 import eu.efti.eftilogger.service.ReportingRequestLogService;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +39,6 @@ public class LogManager {
     private final GateProperties gateProperties;
     private final EftiGateIdResolver eftiGateIdResolver;
     private final AuditRequestLogService auditRequestLogService;
-    private final AuditRegistryLogService auditRegistryLogService;
     private final ReportingRequestLogService reportingRequestLogService;
     private final SerializeUtils serializeUtils;
 
@@ -249,11 +245,10 @@ public class LogManager {
         this.auditRequestLogService.log(control, messagePartiesDto, gateProperties.getOwner(), gateProperties.getCountry(), body, control.getStatus(), false, name);
     }
 
-    public void logPlatformResponse(final NotificationDto notificationDto, final UilRequestDto uilRequestDto) {
-        final NotificationContentDto content = notificationDto.getContent();
+    public void logPlatformResponse(final String fromParty, final String content, final UilRequestDto uilRequestDto) {
         final ControlDto control = uilRequestDto.getControl();
 
-        this.logReceivedMessage(control, PLATFORM, GATE, content.getBody(), content.getFromPartyId(), REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
+        this.logReceivedMessage(control, PLATFORM, GATE, content, fromParty, REQUEST_STATUS_ENUM_STATUS_ENUM_MAP.getOrDefault(uilRequestDto.getStatus(), COMPLETE), LogManager.FTI_010);
         final String currentGateId = gateProperties.getOwner();
         final String currentGateCountry = gateProperties.getCountry();
         final String platformId = control.getPlatformId();

@@ -19,7 +19,6 @@ import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
 import eu.efti.eftilogger.LogMarkerEnum;
-import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.eftilogger.service.AuditRequestLogService;
 import eu.efti.eftilogger.service.LogService;
 import eu.efti.eftilogger.service.ReportingRequestLogService;
@@ -73,7 +72,6 @@ class ReportingLogTest extends AbstractServiceTest {
     private IdentifiersService identifiersService;
 
     private final AuditRequestLogService auditRequestLogService = new AuditRequestLogService(serializeUtils);
-    private final AuditRegistryLogService auditRegistryLogService = new AuditRegistryLogService(serializeUtils);
     private final ReportingRequestLogService reportingRequestLogService = new ReportingRequestLogService(serializeUtils);
 
     private UilRequestService uilRequestService;
@@ -93,7 +91,7 @@ class ReportingLogTest extends AbstractServiceTest {
                 .country("BO")
                 .owner("borduria").build();
 
-        final LogManager logManager = new LogManager(gateProperties, eftiGateIdResolver, auditRequestLogService, auditRegistryLogService, reportingRequestLogService, serializeUtils);
+        final LogManager logManager = new LogManager(gateProperties, eftiGateIdResolver, auditRequestLogService, reportingRequestLogService, serializeUtils);
 
         uilRequestService = new UilRequestService(uilRequestRepository, mapperUtils, rabbitSenderService, controlService,
                 gateProperties, requestUpdaterService, serializeUtils, validationService, logManager, reportingRequestLogService, eftiGateIdResolver);
