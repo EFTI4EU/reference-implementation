@@ -113,8 +113,8 @@
       <xsd:annotation>
         <xsd:documentation>
           The unique identification number of the request (C(2024) 4572).
-          This the request id from the original sender e.g. AAP or platform.
-          This identifies all the request in the request chain from the original sender.
+          This is the request id from the original sender e.g. AAP or platform.
+          This identifies all the requests in the request chain from the original sender.
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
