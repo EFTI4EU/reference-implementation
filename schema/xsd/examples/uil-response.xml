@@ -3,6 +3,7 @@
     xmlns:ed="http://efti.eu/v1/edelivery"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+    requestId="XXX"
     status="200">
 
   <consignment>

@@ -112,8 +112,9 @@
     <xsd:attribute name="requestId" type="xsd:token">
       <xsd:annotation>
         <xsd:documentation>
-          Client can define request id which is returned in the response.
-          Basically same as the conversation id in edelivery communication.
+          The unique identification number of the request (C(2024) 4572).
+          This the request id from the original sender e.g. AAP or platform.
+          This identifies all the request in the request chain from the original sender.
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
@@ -175,6 +176,13 @@
             </xsd:simpleType>
           </xsd:element>
         </xsd:sequence>
+        <xsd:attribute name="uilQueryRequestId" type="xsd:token" use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              This follow up message relates to the information retrieved using this uil query.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
