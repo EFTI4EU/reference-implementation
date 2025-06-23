@@ -168,7 +168,7 @@ class UilRequestServiceTest extends BaseServiceTest {
         uilRequestService.manageResponseReceived(notificationDto);
 
         verify(uilRequestRepository).save(uilRequestEntityArgumentCaptor.capture());
-        verify(logManager).logPlatformResponse(any(), any());
+        verify(logManager).logPlatformResponse(any(), any(), any());
         assertEquals(RequestStatusEnum.SUCCESS, uilRequestEntityArgumentCaptor.getValue().getStatus());
     }
 

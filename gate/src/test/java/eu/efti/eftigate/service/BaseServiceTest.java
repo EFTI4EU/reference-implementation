@@ -62,7 +62,10 @@ public abstract class BaseServiceTest extends AbstractServiceTest {
     protected final SearchParameter searchParameter = new SearchParameter();
 
     public void before() {
-        gateProperties = GateProperties.builder().ap(GateProperties.ApConfig.builder().url("url").password("pwd").username("usr").build()).owner("owner").build();
+        gateProperties = GateProperties.builder()
+                .ap(GateProperties.ApConfig.builder().url("url").password("pwd").username("usr").build())
+                .owner("owner")
+                .country("country").build();
 
         final OffsetDateTime offsetDateTime = OffsetDateTime.now(ZoneOffset.UTC);
         final String requestId = "67fe38bd-6bf7-4b06-b20e-206264bd639c";

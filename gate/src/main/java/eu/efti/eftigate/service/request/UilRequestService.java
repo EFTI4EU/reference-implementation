@@ -293,11 +293,7 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
     private void manageResponseFromPlatform(final UilRequestDto uilRequestDto, final UILResponse uilResponse, final NotificationDto notificationDto) {
         String messageId = notificationDto.getMessageId();
         if (uilResponse.getStatus().equals(EDeliveryStatus.OK.getCode())) {
-            JAXBElement<SupplyChainConsignment> consignment = objectFactory.createConsignment(uilResponse.getConsignment());
-            String responseData = serializeUtils.mapJaxbObjectToXmlString(consignment, SupplyChainConsignment.class);
-            uilRequestDto.setReponseData(responseData.getBytes(Charset.defaultCharset()));
-            this.updateStatus(uilRequestDto, RequestStatusEnum.SUCCESS, messageId);
-            getControlService().updateControlStatus(uilRequestDto.getControl(), COMPLETE);
+            this.saveReceivedDataAndUpdate(uilRequestDto,uilResponse.getConsignment());
         } else {
             this.updateStatus(uilRequestDto, ERROR, messageId);
             manageErrorReceived(uilRequestDto, uilResponse.getStatus(), uilResponse.getDescription());
@@ -305,28 +301,33 @@ public class UilRequestService extends RequestService<UilRequestEntity> {
         if (uilRequestDto.getControl().isExternalAsk()) {
             respondToOtherGate(uilRequestDto, notificationDto.getContent().getBody());
         }
-        logManager.logPlatformResponse(notificationDto, uilRequestDto);
+        logManager.logPlatformResponse(notificationDto.getContent().getFromPartyId(), notificationDto.getContent().getBody(), uilRequestDto);
     }
 
     public void manageRestResponseReceivedFromPlatform(String requestId, SupplyChainConsignment consignment) {
         final Optional<UilRequestDto> maybeUilRequestDto = this.findByRequestId(requestId);
-        if (maybeUilRequestDto.isPresent()) {
-            UilRequestDto foundRequestDto = maybeUilRequestDto.get();
-            if (List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(foundRequestDto.getControl().getRequestType())) {
-                JAXBElement<SupplyChainConsignment> objectFactoryConsignment = objectFactory.createConsignment(consignment);
-                String responseData = serializeUtils.mapJaxbObjectToXmlString(objectFactoryConsignment, SupplyChainConsignment.class);
-                foundRequestDto.setReponseData(responseData.getBytes(Charset.defaultCharset()));
-                updateStatus(foundRequestDto, RequestStatusEnum.SUCCESS);
-                getControlService().updateControlStatus(foundRequestDto.getControl(), COMPLETE);
-                if (foundRequestDto.getControl().isExternalAsk()) {
-                    respondToOtherGate(foundRequestDto, responseData);
-                }
-            } else {
-                throw new IllegalStateException("should only be called for local platform requests");
-            }
-        } else {
+        if (maybeUilRequestDto.isEmpty()) {
             log.error(UIL_REQUEST_DTO_NOT_FIND_IN_DB + ": {}", requestId);
+            return;
         }
+        UilRequestDto foundRequestDto = maybeUilRequestDto.get();
+        if (!List.of(RequestTypeEnum.LOCAL_UIL_SEARCH, EXTERNAL_ASK_UIL_SEARCH).contains(foundRequestDto.getControl().getRequestType())) {
+            throw new IllegalStateException("should only be called for local platform requests");
+        }
+        final String responseData = this.saveReceivedDataAndUpdate(foundRequestDto, consignment);
+        if (foundRequestDto.getControl().isExternalAsk()) {
+            respondToOtherGate(foundRequestDto, responseData);
+        }
+        logManager.logPlatformResponse(foundRequestDto.getControl().getPlatformId(), responseData, foundRequestDto);
+    }
+
+    private String saveReceivedDataAndUpdate(final UilRequestDto foundRequestDto, final SupplyChainConsignment consignment) {
+        final JAXBElement<SupplyChainConsignment> objectFactoryConsignment = objectFactory.createConsignment(consignment);
+        final String responseData = serializeUtils.mapJaxbObjectToXmlString(objectFactoryConsignment, SupplyChainConsignment.class);
+        foundRequestDto.setReponseData(responseData.getBytes(Charset.defaultCharset()));
+        updateStatus(foundRequestDto, RequestStatusEnum.SUCCESS);
+        getControlService().updateControlStatus(foundRequestDto.getControl(), COMPLETE);
+        return responseData;
     }
 
     public void manageRestRequestInProgress(String requestId) {

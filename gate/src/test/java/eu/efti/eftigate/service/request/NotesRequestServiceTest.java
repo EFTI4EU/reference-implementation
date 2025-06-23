@@ -52,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -276,6 +277,8 @@ class NotesRequestServiceTest extends BaseServiceTest {
         notesRequestService.manageRestRequestDone(MESSAGE_ID);
 
         verify(notesRequestRepository).save(noteRequestEntityArgumentCaptor.capture());
+        verify(reportingRequestLogService).logReportingRequest(any(), any(), anyString(), anyString(), any(), any(), anyString(), anyString(), any(), anyString(), anyString(), anyBoolean());
+
         assertEquals(SUCCESS, noteRequestEntityArgumentCaptor.getValue().getStatus());
     }
 

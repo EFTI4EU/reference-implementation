@@ -10,6 +10,7 @@ import eu.efti.eftigate.service.gate.EftiPlatformIdResolver;
 import eu.efti.eftigate.service.request.NotesRequestService;
 import eu.efti.eftigate.service.request.UilRequestService;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +19,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.util.List;
+
+import static eu.efti.eftigate.service.LogManager.FTI_025;
+import static eu.efti.eftilogger.model.ComponentType.GATE;
+import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
@@ -28,6 +34,7 @@ public class PlatformIntegrationService {
     private final NotesRequestService notesRequestService;
     private final SerializeUtils serializeUtils;
     private final EftiPlatformIdResolver eftiPlatformIdResolver;
+    private final LogManager logManager;
 
 
     void handle(final RabbitRequestDto rabbitRequestDto) {
@@ -40,9 +47,13 @@ public class PlatformIntegrationService {
                 notesRequestService.manageRestRequestInProgress(requestId);
                 platformClient.postConsignmentFollowUp(baseUri, control.getDatasetId(), rabbitRequestDto.getNote());
                 notesRequestService.manageRestRequestDone(requestId);
+                logManager.logReceivedNote(control, rabbitRequestDto.getNote(), rabbitRequestDto.getPlatformId(), GATE, PLATFORM,
+                        true, FTI_025);
             } else {
                 uilRequestService.manageRestRequestInProgress(requestId);
                 SupplyChainConsignment supplyChainConsignment = new SupplyChainConsignment();
+                final String requestBody = buildRequestBody(control.getDatasetId(), control.getSubsetIds());
+                logManager.logSentMessage(control, requestBody, rabbitRequestDto.getPlatformId(), GATE, PLATFORM, true, LogManager.FTI_009);
                 ResponseEntity<String> response = platformClient.sendUilQuery(baseUri, control.getDatasetId(), control.getSubsetIds());
                 String body = response.getBody();
                 if (StringUtils.isNotBlank(body)) {
@@ -53,5 +64,20 @@ public class PlatformIntegrationService {
         } else {
             throw new TechnicalException("Url not found for platform with Id: " + control.getPlatformId());
         }
+    }
+
+    private String buildRequestBody(final String datasetId, final List<String> subsetIds) {
+
+        return serializeUtils.mapObjectToJsonString(LogBody
+                .builder()
+                .subsetIds(subsetIds)
+                .datasetId(datasetId).build());
+
+    }
+
+    @Builder
+    static class LogBody {
+        public String datasetId;
+        public List<String> subsetIds;
     }
 }

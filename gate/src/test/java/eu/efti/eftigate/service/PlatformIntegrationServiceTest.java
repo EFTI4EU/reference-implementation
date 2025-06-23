@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import static eu.efti.commons.enums.RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH;
 import static eu.efti.commons.enums.RequestTypeEnum.LOCAL_UIL_SEARCH;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -43,11 +44,14 @@ class PlatformIntegrationServiceTest extends AbstractServiceTest {
     @Mock
     private EftiPlatformIdResolver eftiPlatformIdResolver;
 
+    @Mock
+    private LogManager logManager;
+
     private PlatformIntegrationService platformIntegrationService;
 
     @BeforeEach
     void before() {
-        platformIntegrationService = new PlatformIntegrationService(platformClient, uilRequestService, notesRequestService, serializeUtils, eftiPlatformIdResolver);
+        platformIntegrationService = new PlatformIntegrationService(platformClient, uilRequestService, notesRequestService, serializeUtils, eftiPlatformIdResolver, logManager);
     }
 
     @Test
@@ -63,6 +67,7 @@ class PlatformIntegrationServiceTest extends AbstractServiceTest {
         RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
         rabbitRequestDto.setControl(controlDto);
         rabbitRequestDto.setRequestType(RequestType.UIL);
+        rabbitRequestDto.setPlatformId("platformId");
 
         String responseBody = """
                 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -87,6 +92,7 @@ class PlatformIntegrationServiceTest extends AbstractServiceTest {
         //Assert
         verify(uilRequestService, times(1)).manageRestRequestInProgress("requestId");
         verify(platformClient, times(1)).sendUilQuery(URI.create("dummy-uri"), controlDto.getDatasetId(), controlDto.getSubsetIds());
+        verify(logManager, times(1)).logSentMessage(any(), anyString(), anyString(), any(), any(), anyBoolean(), anyString());
         verify(uilRequestService, times(1)).manageRestResponseReceivedFromPlatform(any(), any(SupplyChainConsignment.class));
         verify(notesRequestService, never()).manageRestRequestInProgress(anyString());
     }
@@ -105,6 +111,7 @@ class PlatformIntegrationServiceTest extends AbstractServiceTest {
         rabbitRequestDto.setControl(controlDto);
         rabbitRequestDto.setNote("Suspicious");
         rabbitRequestDto.setRequestType(RequestType.NOTE);
+        rabbitRequestDto.setPlatformId("platformId");
 
         when(platformClient.postConsignmentFollowUp(URI.create("baseUri"), "12345678-ab12-4ab6-8999-123456789abc", "Suspicious"))
                 .thenReturn(new ResponseEntity<>(HttpStatus.OK));
@@ -119,6 +126,8 @@ class PlatformIntegrationServiceTest extends AbstractServiceTest {
         verify(platformClient, times(1)).postConsignmentFollowUp(URI.create("baseUri"), controlDto.getDatasetId(), rabbitRequestDto.getNote());
         verify(notesRequestService, times(1)).manageRestRequestInProgress(anyString());
         verify(notesRequestService, times(1)).manageRestRequestDone(anyString());
+        verify(logManager, times(1)).logReceivedNote(any(), anyString(), anyString(), any(), any(),
+                anyBoolean(), anyString());
     }
 
 }
