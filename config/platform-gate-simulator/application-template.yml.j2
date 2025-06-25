@@ -58,3 +58,10 @@ management:
     web:
       exposure:
         include: info,health,metrics
+
+feign_gate:
+  name: {{ feign_gate.name }}
+  url: {{ feign_gate.url }}
+  keycloak: {{ feign_gate.keycloak }}
+  clientid: {{ feign_gate.clientid }}
+  clientsecret: {{ feign_gate.clientsecret }}

@@ -9,6 +9,7 @@ import eu.efti.platformgatesimulator.config.GateProperties;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import eu.efti.v1.edelivery.IdentifierQuery;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +17,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -35,6 +44,12 @@ class IdentifierServiceTest extends AbstractTest {
     @Mock
     private RequestSendingService requestSendingService;
 
+    @Mock
+    private ReaderService readerService;
+
+    @Mock
+    private CallGateService callGateService;
+
     private IdentifierService identifierService;
 
     @BeforeEach
@@ -49,7 +64,8 @@ class IdentifierServiceTest extends AbstractTest {
                         .url("url")
                         .password("password")
                         .username("username").build()).build();
-        identifierService = new IdentifierService(requestSendingService, gateProperties, serializeUtils);
+        identifierService = new IdentifierService(requestSendingService, gateProperties, serializeUtils,
+                readerService, callGateService);
         setField(identifierService, "average", 10);
         setField(identifierService, "standardDeviation", 5);
         setField(identifierService, "isActiveForIdentifierRequestTimer", false);
@@ -64,6 +80,57 @@ class IdentifierServiceTest extends AbstractTest {
     @AfterEach
     void tearDown() throws Exception {
         openMocks.close();
+    }
+
+    @Test
+    void uploadIdentifierBadDatasetIdTest() throws IOException {
+        final String datasetId = "bad datasetId";
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(Objects.requireNonNull(classLoader.getResource("b5f5c67e-5e5f-4646-b037-87b1abb9e486.xml")).getFile());
+        byte[] content = null;
+        content = Files.readAllBytes(file.toPath());
+        MultipartFile multi = new MockMultipartFile("b5f5c67e-5e5f-4646-b037-87b1abb9e486.xml",
+                "b5f5c67e-5e5f-4646-b037-87b1abb9e486.xml", "application/xml", content);
+
+        ResponseEntity<String> result = identifierService.uploadIdentifier(datasetId, multi);
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    void uploadIdentifierTest() throws IOException {
+        final String datasetId = "b5f5c67e-5e5f-4646-b037-87b1abb9e486";
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(Objects.requireNonNull(classLoader.getResource("b5f5c67e-5e5f-4646-b037-87b1abb9e486.xml")).getFile());
+        byte[] content;
+        content = Files.readAllBytes(file.toPath());
+        MultipartFile multi = new MockMultipartFile("b5f5c67e-5e5f-4646-b037-87b1abb9e486.xml",
+                "b5f5c67e-5e5f-4646-b037-87b1abb9e486.xml", "application/xml", content);
+
+        when(callGateService.sendGate(any(), any())).thenReturn(new ResponseEntity<>("sucess", HttpStatus.OK));
+
+        ResponseEntity<String> result = identifierService.uploadIdentifier(datasetId, multi);
+
+        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
+    }
+
+    @Test
+    void uploadIdentifierBadFileTest() {
+        final String datasetId = "b5f5c67e-5e5f-4646-b037-87b1abb9e486";
+
+        ResponseEntity<String> result = identifierService.uploadIdentifier(datasetId, null);
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    void sendResponseUilIllegalArgumentTest() {
+        setField(identifierService, "badRequestPercentage", 0f);
+        when(requestSendingService.sendRequest(any())).thenReturn(null);
+
+        identifierService.sendBadResponseIllegalArgument("requestId", "error");
+
+        verify(requestSendingService, Mockito.times(1)).sendRequest(any());
     }
 
     @Test

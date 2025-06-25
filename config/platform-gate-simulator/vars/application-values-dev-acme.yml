@@ -34,3 +34,10 @@ mock:
   identifierReponseBadResponse:
     description: bad gateway
     status: 404
+
+feign_gate:
+  name: call-gate-identifiers
+  url: https://mock.efti.dev.k8s.groupein.local/bo
+  keycloak: https://keycloak.efti.dev.k8s.groupein.local/realms/eFTI_BO/protocol/openid-connect/token
+  clientid: platform-bo
+  clientsecret: 7BR1TDshEvLMeVY5NReunHMBcCCPc5O2

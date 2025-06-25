@@ -109,6 +109,9 @@ public class ApIncomingService {
                 identifierService.sendResponseUil(uilQuery.getRequestId(), supplyChainConsignment);
             } catch (IOException e) {
                 log.error("Error can't read file");
+            } catch (IllegalArgumentException e) {
+                identifierService.sendBadResponseIllegalArgument(uilQuery.getRequestId(), e.getMessage());
+                throw new IllegalArgumentException(e.getMessage());
             }
         } else {
             final PostFollowUpRequest messageBody = serializeUtils.mapXmlStringToJaxbObject(notificationDto.get().getContent().getBody());

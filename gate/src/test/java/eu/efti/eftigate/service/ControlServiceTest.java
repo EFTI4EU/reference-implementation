@@ -46,9 +46,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -145,7 +143,6 @@ class ControlServiceTest extends AbstractServiceTest {
         controlService = new ControlService(controlRepository, eftiGateIdResolver, identifiersService, mapperUtils,
                 requestServiceFactory, logManager, reportingRequestLogService, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
                 gateProperties, serializeUtils);
-        final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
         final StatusEnum status = StatusEnum.PENDING;
 
         requestIdDto.setRequestId(requestId);

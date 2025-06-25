@@ -20,7 +20,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -74,14 +73,14 @@ class IdentifiersServiceTest extends AbstractServiceTest {
     }
 
     private static SaveIdentifiersRequest defaultSaveIdentifiersRequest() {
-        var occurenceDateTime = new DateTime();
+        DateTime occurenceDateTime = new DateTime();
         occurenceDateTime.setValue("202107111200+0100");
         occurenceDateTime.setFormatId("205");
 
         TransportEvent transportEvent = new TransportEvent();
         transportEvent.setActualOccurrenceDateTime(occurenceDateTime);
 
-        var acceptanceDate = new DateTime();
+        DateTime acceptanceDate = new DateTime();
         acceptanceDate.setValue("202107111200+0100");
         acceptanceDate.setFormatId("205");
 

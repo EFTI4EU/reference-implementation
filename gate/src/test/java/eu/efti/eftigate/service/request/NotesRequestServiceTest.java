@@ -1,15 +1,12 @@
 package eu.efti.eftigate.service.request;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.efti.commons.dto.ControlDto;
 import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.NotesRequestDto;
 import eu.efti.commons.enums.ErrorCodesEnum;
+import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
-import eu.efti.commons.utils.MemoryAppender;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.dto.NotificationType;
@@ -23,6 +20,7 @@ import eu.efti.eftigate.repository.NotesRequestRepository;
 import eu.efti.eftigate.service.BaseServiceTest;
 import eu.efti.eftigate.service.ValidationService;
 import eu.efti.eftilogger.service.ReportingRequestLogService;
+import nl.altindag.log.LogCaptor;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +33,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.ElementSelectors;
 import org.xmlunit.matchers.CompareMatcher;
@@ -54,7 +52,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -78,6 +78,9 @@ class NotesRequestServiceTest extends BaseServiceTest {
     @Mock
     private ValidationService validationService;
 
+    private LogCaptor logCaptor;
+
+
     @Override
     @BeforeEach
     public void before() {
@@ -88,8 +91,10 @@ class NotesRequestServiceTest extends BaseServiceTest {
 
         controlEntity.setRequests(List.of(uilRequestEntity, noteRequestEntity));
         notesRequestService = new NotesRequestService(notesRequestRepository, mapperUtils, rabbitSenderService, controlService, gateProperties, requestUpdaterService, serializeUtils, logManager, validationService, reportingRequestLogService, eftiGateIdResolver);
-        final Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(NotesRequestService.class);
-        memoryAppender = MemoryAppender.createInitializedMemoryAppender(Level.INFO, memoryAppenderTestLogger);
+
+        logCaptor = LogCaptor.forClass(NotesRequestService.class);
+        logCaptor.setLogLevelToTrace();
+        logCaptor.clearLogs();
     }
 
     @Test
@@ -111,7 +116,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void sendTest() throws JsonProcessingException {
+    void sendTest() {
         when(notesRequestRepository.save(any())).thenReturn(noteRequestEntity);
 
         notesRequestService.createAndSendRequest(controlDto, null);
@@ -174,8 +179,7 @@ class NotesRequestServiceTest extends BaseServiceTest {
 
         verify(notesRequestRepository).save(noteRequestEntityArgumentCaptor.capture());
         assertEquals(SUCCESS, noteRequestEntityArgumentCaptor.getValue().getStatus());
-        assertTrue(memoryAppender.containsFormattedLogMessage("sent note message messageId successfully"));
-        assertEquals(1, memoryAppender.countEventsForLogger(NotesRequestService.class.getName(), Level.INFO));
+        assertTrue(logCaptor.getInfoLogs().stream().anyMatch(log -> log.contains("sent note message messageId successfully")));
     }
 
     @Test
@@ -239,6 +243,64 @@ class NotesRequestServiceTest extends BaseServiceTest {
     @Test
     void findAllForControlId_notSupported() {
         assertThrows(UnsupportedOperationException.class, () -> notesRequestService.findAllForControlId(1));
+    }
+
+    @Test
+    void test_SaveRequest() {
+        //Act
+        notesRequestService.saveRequest(requestDto);
+        //Assert
+        verify(notesRequestRepository).save(noteRequestEntityArgumentCaptor.capture());
+    }
+
+    @Test
+    void test_SupportsRequestType() {
+        assertTrue(notesRequestService.supports("NOTE"));
+    }
+
+    @Test
+    void testManageRestRequestInProgress() {
+        noteRequestEntity.setStatus(RECEIVED);
+        when(notesRequestRepository.findByControlRequestIdAndStatus(anyString(), any(RequestStatusEnum.class))).thenReturn(noteRequestEntity);
+
+        notesRequestService.manageRestRequestInProgress(MESSAGE_ID);
+
+        verify(notesRequestRepository).save(noteRequestEntityArgumentCaptor.capture());
+        assertEquals(IN_PROGRESS, noteRequestEntityArgumentCaptor.getValue().getStatus());
+    }
+
+    @Test
+    void testManageRestRequestDone() {
+        noteRequestEntity.setStatus(IN_PROGRESS);
+        when(notesRequestRepository.findByControlRequestIdAndStatus(anyString(), any(RequestStatusEnum.class))).thenReturn(noteRequestEntity);
+
+        notesRequestService.manageRestRequestDone(MESSAGE_ID);
+
+        verify(notesRequestRepository).save(noteRequestEntityArgumentCaptor.capture());
+        verify(reportingRequestLogService).logReportingRequest(any(), any(), anyString(), anyString(), any(), any(), anyString(), anyString(), any(), anyString(), anyString(), anyBoolean());
+
+        assertEquals(SUCCESS, noteRequestEntityArgumentCaptor.getValue().getStatus());
+    }
+
+    @Test
+    void manageMessageReceiveTest_whenThrowException() throws IOException, SAXException {
+
+        doThrow(new SAXException("Error occurred")).when(validationService).validateXml(anyString());
+
+        final NotificationDto notificationDto = NotificationDto.builder()
+                .notificationType(NotificationType.RECEIVED)
+                .messageId("")
+                .content(NotificationContentDto.builder()
+                        .messageId(MESSAGE_ID)
+                        .body(EftiTestUtils.testFile("/xml/FTI026.xml"))
+                        .fromPartyId("gate")
+                        .build())
+                .build();
+        //Act
+        notesRequestService.manageMessageReceive(notificationDto);
+
+        //assert
+        assertTrue(logCaptor.getErrorLogs().stream().anyMatch(log -> log.contains("Received invalid PostFollowUpRequest from gate")));
     }
 }
 

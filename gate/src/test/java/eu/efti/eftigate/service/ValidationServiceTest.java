@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.xml.sax.SAXParseException;
 
@@ -33,6 +34,7 @@ class ValidationServiceTest {
     }
 
     @Test
+    @WithMockUser
     void testNotValidPostFollowUpRequest() {
         String body = """
                 <postFollowUpRequest xmlns="http://efti.eu/v1/edelivery" xmlns:ns2="http://efti.eu/v1/consignment/identifier">

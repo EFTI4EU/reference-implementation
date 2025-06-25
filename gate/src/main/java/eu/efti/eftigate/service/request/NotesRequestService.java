@@ -41,6 +41,8 @@ import java.util.Optional;
 import static eu.efti.commons.constant.EftiGateConstants.NOTES_TYPES;
 import static eu.efti.commons.enums.RequestStatusEnum.IN_PROGRESS;
 import static eu.efti.commons.enums.RequestStatusEnum.SUCCESS;
+import static eu.efti.eftilogger.model.ComponentType.GATE;
+import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
 
 @Slf4j
 @Component
@@ -53,6 +55,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     private final ValidationService validationService;
 
     private final EftiGateIdResolver eftiGateIdResolver;
+    private final MapperUtils mapperUtils;
 
     public NotesRequestService(final NotesRequestRepository notesRequestRepository,
                                final MapperUtils mapperUtils,
@@ -70,6 +73,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
         this.validationService = validationService;
         this.reportingRequestLogService = reportingRequestLogService;
         this.eftiGateIdResolver = eftiGateIdResolver;
+        this.mapperUtils = mapperUtils;
     }
 
     @Override
@@ -108,6 +112,27 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
     @Override
     public List<NoteRequestEntity> findAllForControlId(final int controlId) {
         throw new UnsupportedOperationException("Operation not allowed for Note Request");
+    }
+
+    public void manageRestRequestInProgress(String requestId) {
+        Optional.ofNullable(notesRequestRepository.findByControlRequestIdAndStatus(requestId, RequestStatusEnum.RECEIVED))
+                .ifPresentOrElse(
+                        noteRequestEntity -> updateStatus(noteRequestEntity, IN_PROGRESS),
+                        () -> log.error("Not found Note request with requestId {}", requestId));
+    }
+
+    public void manageRestRequestDone(String requestId) {
+        final Optional<NoteRequestEntity> maybeNoteRequestDto = Optional.ofNullable(notesRequestRepository.findByControlRequestIdAndStatus(requestId, IN_PROGRESS));
+        if (maybeNoteRequestDto.isPresent()) {
+            NoteRequestEntity uilRequestEntity = maybeNoteRequestDto.get();
+            updateStatus(uilRequestEntity, RequestStatusEnum.SUCCESS);
+            final RequestDto requestDto = mapperUtils.requestToRequestDto(uilRequestEntity, NotesRequestDto.class);
+            final String currentGateCountry = getGateProperties().getCountry();
+            final String gateOwner = getGateProperties().getOwner();
+            reportingRequestLogService.logReportingRequest(requestDto.getControl(), requestDto, gateOwner, currentGateCountry, RequestTypeLog.NOTE, GATE, gateOwner, currentGateCountry, PLATFORM, requestDto.getControl().getPlatformId(), currentGateCountry, false);
+        } else {
+            log.error("couldn't find Notes request for requestId" + ": {}", requestId);
+        }
     }
 
     private void sendLogNote(final ControlDto controlDto, final boolean isError, final String messageBody) {

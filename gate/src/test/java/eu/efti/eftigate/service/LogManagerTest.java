@@ -12,7 +12,6 @@ import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.config.GateProperties;
 import eu.efti.eftigate.dto.RequestIdDto;
 import eu.efti.eftilogger.dto.MessagePartiesDto;
-import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.eftilogger.service.AuditRequestLogService;
 import eu.efti.eftilogger.service.ReportingRequestLogService;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,9 +33,6 @@ class LogManagerTest extends BaseServiceTest {
     private LogManager logManager;
     @Mock
     private AuditRequestLogService auditRequestLogService;
-
-    @Mock
-    private AuditRegistryLogService auditRegistryLogService;
     @Mock
     private ReportingRequestLogService reportingRequestLogService;
 
@@ -48,7 +44,7 @@ class LogManagerTest extends BaseServiceTest {
     @BeforeEach
     void setUp() {
         gateProperties = GateProperties.builder().owner("ownerId").country("ownerCountry").build();
-        logManager = new LogManager(gateProperties, eftiGateIdResolver, auditRequestLogService, auditRegistryLogService, reportingRequestLogService, serializeUtils);
+        logManager = new LogManager(gateProperties, eftiGateIdResolver, auditRequestLogService, reportingRequestLogService, serializeUtils);
         controlDto = ControlDto.builder()
                 .requestType(RequestTypeEnum.LOCAL_UIL_SEARCH)
                 .platformId("platformId")

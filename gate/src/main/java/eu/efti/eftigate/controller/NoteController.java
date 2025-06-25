@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +23,6 @@ public class NoteController implements NoteControllerApi {
 
     @Override
     public ResponseEntity<NoteResponseDto> createNote(final @RequestBody PostFollowUpRequestDto notesDto) {
-        log.info("logs to check encoding @éèçàùäËÜÏêâîôÖ");
         log.info("POST on /control/uil/follow-up with param requestId {} and value {}", notesDto.getRequestId(), notesDto.getMessage());
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
         return new ResponseEntity<>(noteResponseDto, StringUtils.isNotBlank(noteResponseDto.getErrorCode()) ? HttpStatus.BAD_REQUEST : HttpStatus.ACCEPTED);

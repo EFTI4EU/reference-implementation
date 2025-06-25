@@ -32,3 +32,10 @@ mock:
   identifierReponseBadResponse:
     description: bad gateway
     status: 404
+
+feign_gate:
+  name: call-gate-identifiers
+  url: http://host.docker.internal:8881
+  keycloak: http://auth.gate.syldavia.eu:8080/realms/eFTI_LI/protocol/openid-connect/token
+  clientid: platform-li
+  clientsecret: 58mMDEIs9OAcwqrn3gMrwAIU7tPc0msC

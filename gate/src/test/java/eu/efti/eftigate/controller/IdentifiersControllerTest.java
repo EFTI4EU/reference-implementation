@@ -15,7 +15,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -28,6 +30,7 @@ import static com.jayway.jsonassert.JsonAssert.with;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -73,6 +76,37 @@ class IdentifiersControllerTest {
 
         String result = mockMvc.perform(post("/v1/control/identifiers")
                         .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsBytes(identifiersRequestDto)))
+                .andExpect(status().isAccepted())
+                .andReturn().getResponse().getContentAsString();
+
+        with(result)
+                .assertThat("$.requestId", is("requestId"))
+                .assertThat("$.status", is("PENDING"));
+    }
+
+    @Test
+    void requestIdentifiersTest_withPrincipal() throws Exception {
+        final SearchWithIdentifiersRequestDto identifiersRequestDto = SearchWithIdentifiersRequestDto.builder()
+                .identifier("abc123")
+                .nationalUniqueIdentifier("nuid").build();
+        Jwt mockJwt = Jwt.withTokenValue("token")
+                .header("alg", "none")
+                .claim("sub", "username")
+                .claim("nationalUniqueIdentifier", "nuid")
+                .build();
+
+        SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequest = jwt().jwt(mockJwt);
+        Mockito.when(controlService.createIdentifiersControl(identifiersRequestDto)).thenReturn(
+                RequestIdDto.builder()
+                        .status(StatusEnum.PENDING)
+                        .requestId(REQUEST_ID)
+                        .build());
+
+        String result = mockMvc.perform(post("/v1/control/identifiers")
+                        .with(csrf())
+                        .with(jwtRequest)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsBytes(identifiersRequestDto)))
                 .andExpect(status().isAccepted())

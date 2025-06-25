@@ -7,9 +7,9 @@ import eu.efti.eftigate.service.ControlService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,13 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ControlController implements ControlControllerApi {
 
     private final ControlService controlService;
+
     @Override
     public ResponseEntity<RequestIdDto> requestUil(@RequestBody final UilDto uilDto, final @AuthenticationPrincipal Jwt principal) {
-        if(principal != null){
-            String nationalUniqueIdentifier = (String)  principal.getClaims().get("nationalUniqueIdentifier");
-            if(nationalUniqueIdentifier != null) {
+        if (principal != null) {
+            String nationalUniqueIdentifier = principal.getClaimAsString("nationalUniqueIdentifier");
+            if (StringUtils.isNotBlank(nationalUniqueIdentifier)) {
                 uilDto.setNationalUniqueIdentifier(nationalUniqueIdentifier);
-                log.info("POST on /control/uil with nationalUniqueIdentifier: {}",nationalUniqueIdentifier);
+                log.info("POST on /control/uil with nationalUniqueIdentifier: {}", nationalUniqueIdentifier);
             }
         }
         log.info("POST on /control/uil with params gateId: {}, datasetId: {}, platformId: {}", uilDto.getGateId(), uilDto.getDatasetId(), uilDto.getPlatformId());

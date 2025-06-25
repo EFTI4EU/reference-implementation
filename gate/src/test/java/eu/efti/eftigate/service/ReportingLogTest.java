@@ -2,8 +2,6 @@ package eu.efti.eftigate.service;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import eu.efti.commons.dto.ControlDto;
-import eu.efti.commons.dto.UilRequestDto;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
@@ -21,7 +19,6 @@ import eu.efti.eftigate.service.gate.EftiGateIdResolver;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.service.request.UilRequestService;
 import eu.efti.eftilogger.LogMarkerEnum;
-import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.eftilogger.service.AuditRequestLogService;
 import eu.efti.eftilogger.service.LogService;
 import eu.efti.eftilogger.service.ReportingRequestLogService;
@@ -47,7 +44,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-public class ReportingLogTest extends AbstractServiceTest {
+class ReportingLogTest extends AbstractServiceTest {
 
     @Mock
     private UilRequestRepository uilRequestRepository;
@@ -75,7 +72,6 @@ public class ReportingLogTest extends AbstractServiceTest {
     private IdentifiersService identifiersService;
 
     private final AuditRequestLogService auditRequestLogService = new AuditRequestLogService(serializeUtils);
-    private final AuditRegistryLogService auditRegistryLogService = new AuditRegistryLogService(serializeUtils);
     private final ReportingRequestLogService reportingRequestLogService = new ReportingRequestLogService(serializeUtils);
 
     private UilRequestService uilRequestService;
@@ -87,23 +83,21 @@ public class ReportingLogTest extends AbstractServiceTest {
     private final String requestId = UUID.randomUUID().toString();
     private final UilRequestEntity uilRequestEntity = new UilRequestEntity();
     private final ControlEntity controlEntity = new ControlEntity();
-    private ControlDto controlDto;
-    private UilRequestDto uilRequestDto;
 
     @BeforeEach
-    public void before() {
+    void before() {
         gateProperties = GateProperties.builder()
                 .ap(GateProperties.ApConfig.builder().build())
                 .country("BO")
                 .owner("borduria").build();
 
-        final LogManager logManager = new LogManager(gateProperties, eftiGateIdResolver, auditRequestLogService, auditRegistryLogService, reportingRequestLogService, serializeUtils);
+        final LogManager logManager = new LogManager(gateProperties, eftiGateIdResolver, auditRequestLogService, reportingRequestLogService, serializeUtils);
 
         uilRequestService = new UilRequestService(uilRequestRepository, mapperUtils, rabbitSenderService, controlService,
                 gateProperties, requestUpdaterService, serializeUtils, validationService, logManager, reportingRequestLogService, eftiGateIdResolver);
 
         notMockedControlService = new ControlService(controlRepository, eftiGateIdResolver, identifiersService, mapperUtils,
-                        requestServiceFactory, logManager, reportingRequestLogService, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
+                requestServiceFactory, logManager, reportingRequestLogService, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
                 gateProperties, serializeUtils);
         Logger memoryAppenderTestLogger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
         memoryAppender = MemoryAppender.createInitializedMemoryAppender(
@@ -114,13 +108,12 @@ public class ReportingLogTest extends AbstractServiceTest {
         controlEntity.setPlatformId("acme");
         controlEntity.setRequestId(requestId);
         controlEntity.setId(1);
-        controlDto = mapperUtils.controlEntityToControlDto(controlEntity);
 
         uilRequestEntity.setRequestType(RequestType.UIL.name());
         uilRequestEntity.setCreatedDate(OffsetDateTime.now());
         uilRequestEntity.setControl(controlEntity);
-        uilRequestDto = mapperUtils.uilRequestEntityToRequestDto(uilRequestEntity, UilRequestDto.class);
     }
+
     @Test
     void localUilSearch_receiveResponse() {
         final Map<String, String> expectedLogs = Map.ofEntries(

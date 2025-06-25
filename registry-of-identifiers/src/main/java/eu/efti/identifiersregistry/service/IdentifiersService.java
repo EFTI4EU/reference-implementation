@@ -11,6 +11,7 @@ import eu.efti.eftilogger.service.ReportingRegistryLogService;
 import eu.efti.identifiersregistry.IdentifiersMapper;
 import eu.efti.identifiersregistry.entity.Consignment;
 import eu.efti.identifiersregistry.repository.IdentifiersRepository;
+import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
 import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -93,6 +93,14 @@ public class IdentifiersService {
 
     public boolean consignmentExistsByUIL(final String datasetId, final String gate, final String platform) {
         return this.identifiersRepository.findActiveByUil(gate, datasetId, platform).isPresent();
+    }
+
+    public void createOrUpdateConsignment(final String body, final String datasetId, final String platformId) {
+        SupplyChainConsignment consignment = serializeUtils.mapXmlStringToJaxbObject(body, SupplyChainConsignment.class);
+        SaveIdentifiersRequest saveIdentifiersRequest = new SaveIdentifiersRequest();
+        saveIdentifiersRequest.setDatasetId(datasetId);
+        saveIdentifiersRequest.setConsignment(consignment);
+        this.createOrUpdate(new SaveIdentifiersRequestWrapper(platformId, saveIdentifiersRequest));
     }
 
     @Transactional("identifiersTransactionManager")
