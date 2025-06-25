@@ -5,7 +5,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer_uri: https://auth.ppd.efti-ingroupe.com/realms/eFTI_FR
+          issuer_uri: https://keycloak.efti.prd.k8s.groupein.local/realms/eFTI_FR
 
 server:
   port: 8072
@@ -17,7 +17,7 @@ gate:
   cda_path: /opt/javapp/cda
   gate: france
   ap:
-    url: https://edelivery-fr.ppd.efti.service.groupein.local/ap-mock/domibus/services/wsplugin
+    url: https://edelivery-fr.prd.efti.service.groupein.local/ap-mock/domibus/services/wsplugin
     username: ttf_service_account
     password: tq9tQ6ykymK60zjBsDSO+
 
