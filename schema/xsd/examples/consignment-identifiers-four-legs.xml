@@ -4,11 +4,11 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://efti.eu/v1/consignment/identifier ../consignment-identifier.xsd">
   
-  <carrierAcceptanceDateTime>202410220000</carrierAcceptanceDateTime>
+  <carrierAcceptanceDateTime formatId="205">202410220000</carrierAcceptanceDateTime>
 
   <!-- delivery event populated when consignment is delivered to destination -->
   <deliveryEvent>
-    <actualOccurrenceDateTime>202410230000</actualOccurrenceDateTime>
+    <actualOccurrenceDateTime formatId="205">202410230000</actualOccurrenceDateTime>
   </deliveryEvent>
 
   <!-- fourth and final leg, truck -->
