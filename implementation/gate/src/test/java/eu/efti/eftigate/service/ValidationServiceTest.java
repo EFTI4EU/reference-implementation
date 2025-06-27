@@ -80,14 +80,14 @@ class ValidationServiceTest {
                 
                  <!-- eFTI39 -->
                 
-                 <carrierAcceptanceDateTime>202401010000</carrierAcceptanceDateTime>
+                 <carrierAcceptanceDateTime formatId="205">202401010000</carrierAcceptanceDateTime>
                 
                                
                  <deliveryEvent>
                 
                    <!-- eFTI188 -->
                 
-                   <actualOccurrenceDateTime>202401020000</actualOccurrenceDateTime>
+                   <actualOccurrenceDateTime formatId="205">202401020000</actualOccurrenceDateTime>
                 
                  </deliveryEvent>
                 
@@ -181,7 +181,7 @@ class ValidationServiceTest {
                 
                  <!-- eFTI39 -->
                 
-                 <carrierAcceptanceDateTime>202402010000</carrierAcceptanceDateTime>
+                 <carrierAcceptanceDateTime formatId="205">202402010000</carrierAcceptanceDateTime>
                 
                                
                                
@@ -189,7 +189,7 @@ class ValidationServiceTest {
                 
                    <!-- eFTI188 -->
                 
-                   <actualOccurrenceDateTime>202402020000+0000</actualOccurrenceDateTime>
+                   <actualOccurrenceDateTime formatId="205">202402020000+0000</actualOccurrenceDateTime>
                 
                  </deliveryEvent>
                 

@@ -34,7 +34,7 @@
   <xsd:complexType name="DateTime">
     <xsd:simpleContent>
       <xsd:extension base="types:DateTimeValue">
-        <xsd:attribute name="formatId" type="types:DateTimeFormat"/>
+        <xsd:attribute name="formatId" type="types:DateTimeFormat" use="required"/>
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
