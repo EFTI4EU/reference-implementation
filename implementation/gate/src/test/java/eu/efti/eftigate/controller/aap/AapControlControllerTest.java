@@ -54,6 +54,15 @@ class AapControlControllerTest {
         requestIdDto.setRequestId(REQUEST_ID);
     }
 
+    @Test
+    @WithAnonymousUser
+    void getByIdshouldFailWhenUnauthenticatedTest() throws Exception {
+        Mockito.when(controlService.getById(1L)).thenReturn(new ControlEntity());
+
+        mockMvc.perform(get("/v1/aap/control/uil"))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+    }
 
     @Test
     @WithMockUser
