@@ -1,0 +1,16 @@
+#dev defaults
+gate-keystore: /usr/src/myapp/gate.pfx
+gate-keystore-password: changeit
+gate-truststore: /usr/src/myapp/root_ca.pfx
+gate-truststore-password: changeit
+#ssl settings
+server:
+  ssl:
+    key-store: ${gate-keystore}
+    key-store-password: ${gate-keystore-password}
+    key-alias: gate (root)
+    key-password: changeit
+    enabled: true
+    trust-store: ${gate-truststore}
+    trust-store-password: ${gate-truststore-password}
+    client-auth: want
