@@ -1,7 +1,8 @@
 <uilQuery
     xmlns="http://efti.eu/v1/edelivery"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd">
+    xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
+    requestId="XXX">
   <uil>
     <gateId>FI1</gateId>
     <platformId>xxx</platformId>
