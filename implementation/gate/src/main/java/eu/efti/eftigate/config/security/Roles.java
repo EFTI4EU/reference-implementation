@@ -10,4 +10,6 @@ public final class Roles {
 
     public static final String ROLE_PREFIX = "ROLE_";
     public static final String ROLE_ROAD_CONTROLER = ROLE_PREFIX + "ROAD_CONTROLER";
+    public static final String ROLE_EXT_AAP = ROLE_PREFIX + "EXT_AAP";
+
 }
