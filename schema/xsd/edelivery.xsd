@@ -109,11 +109,15 @@
         Any edelivery payload request
       </xsd:documentation>
     </xsd:annotation>
-    <xsd:attribute name="requestId" type="xsd:token">
+    <xsd:attribute name="requestId" type="xsd:token" use="required">
       <xsd:annotation>
         <xsd:documentation>
-          Client can define request id which is returned in the response.
-          Basically same as the conversation id in edelivery communication.
+          The unique identification number of the request [C(2024) 4572].
+          This is the request id from the original client e.g. AAP or platform.
+          Gate should retransmit the request id to other gates and platforms when completing the request for AAP.
+          This identifies all the requests in the request chain from the original sender and is used for auditing purposes.
+          For connecting edelivery response to edelivery request the gates should use
+          the standard edelivery fields: "RefToMessageId" and "ConversationId" [ebMS 3.0].
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
@@ -175,6 +179,13 @@
             </xsd:simpleType>
           </xsd:element>
         </xsd:sequence>
+        <xsd:attribute name="uilQueryRequestId" type="xsd:token" use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              This follow up message relates to the information retrieved using this uil query.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

@@ -286,7 +286,9 @@ class ValidationServiceTest {
         String body = """
                                   <postFollowUpRequest requestId="67fe38bd-6bf7-4b06-b20e-206264bd639c" xmlns="http://efti.eu/v1/edelivery"
                 
-                                  xmlns:ns2="http://efti.eu/v1/consignment/identifier">
+                                  xmlns:ns2="http://efti.eu/v1/consignment/identifier"
+                                  
+                                  uilQueryRequestId="d59ba2f6-494c-4cde-8f78-140ab07d6760">
                 
                  <uil>
                 

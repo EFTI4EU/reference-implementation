@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "bfa23f25-89cf-4251-ab9a-5955ea954be0",
+		"_postman_id": "4a2e367a-78e6-4f34-8edf-42e5af467373",
 		"name": "eFTI",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "43604470"
+		"_exporter_id": "39288808"
 	},
 	"item": [
 		{
@@ -384,6 +384,314 @@
 					]
 				},
 				{
+					"name": "AAP",
+					"item": [
+						{
+							"name": "POST UIL Control",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let responseData = pm.response.json();\r",
+											"pm.globals.set(\"requestId\", responseData.requestId);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"strictSSL": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"gateId\": \"borduria\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"acme\",\r\n    \"subsetId\": \"full\",\r\n       \"authority\": {\r\n      \"country\":\"DE\",\r\n      \"isEmergencyService\":\"yes\",\r\n      \"legalContact\":{\r\n      \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"\r\n      },\r\n      \"name\":\"BALM\",\r\n      \"nationalUniqueIdentifier\":\"BALM\",\r\n      \"workingContact\":{ \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"}\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gate_bo_url}}/v1/aap/control/uil",
+									"host": [
+										"{{gate_bo_url}}"
+									],
+									"path": [
+										"v1",
+										"aap",
+										"control",
+										"uil"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET UIL Control",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"strictSSL": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{gate_bo_url}}/v1/aap/control/uil?requestId={{requestId}}",
+									"host": [
+										"{{gate_bo_url}}"
+									],
+									"path": [
+										"v1",
+										"aap",
+										"control",
+										"uil"
+									],
+									"query": [
+										{
+											"key": "requestId",
+											"value": "{{requestId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST Identifiers Control",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let responseData = pm.response.json();\r",
+											"pm.globals.set(\"requestId\", responseData.requestId);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"strictSSL": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"BO\", \"SY\"],\r\n         \"authority\": {\r\n      \"country\":\"DE\",\r\n      \"isEmergencyService\":\"yes\",\r\n      \"legalContact\":{\r\n      \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"\r\n      },\r\n      \"name\":\"BALM\",\r\n      \"nationalUniqueIdentifier\":\"BALM\",\r\n      \"workingContact\":{ \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"}\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gate_bo_url}}/v1/aap/control/identifiers",
+									"host": [
+										"{{gate_bo_url}}"
+									],
+									"path": [
+										"v1",
+										"aap",
+										"control",
+										"identifiers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET Identifiers Control",
+							"protocolProfileBehavior": {
+								"strictSSL": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{gate_bo_url}}/v1/aap/control/identifiers?requestId={{requestId}}",
+									"host": [
+										"{{gate_bo_url}}"
+									],
+									"path": [
+										"v1",
+										"aap",
+										"control",
+										"identifiers"
+									],
+									"query": [
+										{
+											"key": "requestId",
+											"value": "{{requestId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Gate to Gate UIL",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let responseData = pm.response.json();\r",
+											"pm.globals.set(\"requestId\", responseData.requestId);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"gateId\": \"syldavia\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"massivedynamic\",\r\n    \"subsetId\": \"full\",\r\n       \"authority\": {\r\n      \"country\":\"DE\",\r\n      \"isEmergencyService\":\"yes\",\r\n      \"legalContact\":{\r\n      \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"\r\n      },\r\n      \"name\":\"BALM\",\r\n      \"nationalUniqueIdentifier\":\"BALM\",\r\n      \"workingContact\":{ \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"}\r\n    }\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gate_bo_url}}/v1/aap/control/uil",
+									"host": [
+										"{{gate_bo_url}}"
+									],
+									"path": [
+										"v1",
+										"aap",
+										"control",
+										"uil"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Gate to Gate Note",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"message\" : \"LENS > PSG\",\r\n    \"requestId\": \"{{requestId}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gate_bo_url}}/v1/aap/control/uil/follow-up",
+									"host": [
+										"{{gate_bo_url}}"
+									],
+									"path": [
+										"v1",
+										"aap",
+										"control",
+										"uil",
+										"follow-up"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Simulator",
 					"item": [
 						{
@@ -473,6 +781,13 @@
 										"type": "text/javascript",
 										"packages": {}
 									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -494,7 +809,7 @@
 										{
 											"key": "file",
 											"type": "file",
-											"src": "/C:/Users/dfourmaux/Desktop/jdd_efti/12345678-ab12-4ab6-8999-123456789abe.xml"
+											"src": "/C:/Users/kahlj/Desktop/12345678-ab12-4ab6-8999-123456789abc.xml"
 										}
 									]
 								},
@@ -556,46 +871,6 @@
 									"path": [
 										"identifiers",
 										"upload"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Upload Consignment",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "consignmentFile",
-											"type": "file",
-											"src": []
-										}
-									]
-								},
-								"url": {
-									"raw": "{{simulator_bo_url}}/identifiers/upload/consignment/{{datasetId}}",
-									"host": [
-										"{{simulator_bo_url}}"
-									],
-									"path": [
-										"identifiers",
-										"upload",
-										"consignment",
-										"{{datasetId}}"
 									]
 								}
 							},

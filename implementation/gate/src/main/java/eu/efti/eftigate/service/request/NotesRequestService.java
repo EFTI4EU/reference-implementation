@@ -74,6 +74,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
         postFollowUpRequest.setUil(uil);
         postFollowUpRequest.setMessage(requestDto.getNote());
         postFollowUpRequest.setRequestId(requestDto.getControl().getRequestId());
+        postFollowUpRequest.setUilQueryRequestId(requestDto.getControl().getRequestId());
 
 
         final JAXBElement<PostFollowUpRequest> note = getObjectFactory().createPostFollowUpRequest(postFollowUpRequest);
@@ -106,7 +107,7 @@ public class NotesRequestService extends RequestService<NoteRequestEntity> {
             return;
         }
         final PostFollowUpRequest messageBody = getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody());
-        getControlService().getByRequestId(messageBody.getRequestId()).ifPresent(controlEntity -> {
+        getControlService().getByRequestId(messageBody.getUilQueryRequestId()).ifPresent(controlEntity -> {
             final ControlDto controlDto = getMapperUtils().controlEntityToControlDto(controlEntity);
             sendLogNote(controlDto, false, notificationDto.getContent().getBody());
             controlDto.setNotes(messageBody.getMessage());

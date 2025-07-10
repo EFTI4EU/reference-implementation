@@ -3,7 +3,8 @@
     xmlns:ed="http://efti.eu/v1/edelivery"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/platform.xsd"
-    datasetId="12331232">
+    datasetId="12331232"
+    requestId="X">
 
   <consignment>
     <!-- eFTI39 -->
