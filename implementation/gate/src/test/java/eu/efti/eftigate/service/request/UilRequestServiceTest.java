@@ -145,7 +145,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                                 status="200"
-                                requestId="42">
+                                requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                         </uilResponse>
                 """;
 
@@ -181,7 +181,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                                 status="200"
-                                requestId="42">
+                                requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                         </uilResponse>
                 """;
         savedControlDto.setStatus(COMPLETE);
@@ -222,7 +222,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                                 status="400"
-                                requestId="42">
+                                requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                         </uilResponse>
                 """;
 
@@ -260,7 +260,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                                 status="504"
-                                requestId="42">
+                                requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                         </uilResponse>
                 """;
 
@@ -298,7 +298,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                                 status="503"
-                                requestId="42">
+                                requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                         </uilResponse>
                 """;
 
@@ -330,7 +330,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                                 status="999"
-                                requestId="42">
+                                requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                         </uilResponse>
                 """;
 
@@ -362,7 +362,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                                 status="ERROR"
-                                requestId="42">
+                                requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                         </uilResponse>
                 """;
         final NotificationDto notificationDto = NotificationDto.builder()
@@ -393,7 +393,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                                 status="ERROR"
-                                requestId="42">
+                                requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                         </uilResponse>
                 """;
         final NotificationDto notificationDto = NotificationDto.builder()
@@ -423,7 +423,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                 xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                                 status="COMPLETE"
-                                requestId="42">
+                                requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                            <uil>
                            </uil>
                         </uilQuery>
@@ -472,7 +472,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                         status="200"
-                        requestId="42">
+                        requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                 </uilResponse>
                 """;
         this.uilRequestEntity.getControl().setRequestType(RequestTypeEnum.EXTERNAL_ASK_UIL_SEARCH);
@@ -505,7 +505,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                         status="200"
-                        requestId="42">
+                        requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                 </uilResponse>
                 """;
         final NotificationDto notificationDto = NotificationDto.builder()
@@ -534,7 +534,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                         status="ERROR"
-                        requestId="42">
+                        requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                 </uilResponse>
                 """;
         final NotificationDto notificationDto = NotificationDto.builder()
@@ -573,7 +573,7 @@ class UilRequestServiceTest extends BaseServiceTest {
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
                         status="COMPLETE"
-                        requestId="42">
+                        requestID="8827e46c-e74a-49b3-aa0e-600ebe477e18">
                 </uilResponse>
                 """;
 
