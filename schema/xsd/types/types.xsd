@@ -6,4 +6,5 @@
   <xsd:include schemaLocation="currency.xsd"/>
   <xsd:include schemaLocation="measurement.xsd"/>
   <xsd:include schemaLocation="time.xsd"/>
+  <xsd:include schemaLocation="uuid.xsd"/>
 </xsd:schema>

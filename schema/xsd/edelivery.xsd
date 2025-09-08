@@ -1,9 +1,11 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:efti="http://efti.eu/v1/consignment/common"
             xmlns:efti-ed="http://efti.eu/v1/edelivery"
+            xmlns:types="http://efti.eu/v1/types"
             targetNamespace="http://efti.eu/v1/edelivery"
             elementFormDefault="qualified">
 
+  <xsd:import namespace="http://efti.eu/v1/types" schemaLocation="types/types.xsd"/>
   <xsd:import namespace="http://efti.eu/v1/consignment/common" schemaLocation="consignment-common.xsd"/>
 
   <xsd:complexType name="UIL">
@@ -94,7 +96,7 @@
       <xsd:element name="description" type="xsd:string" minOccurs="0"/>
     </xsd:sequence>
     <xsd:attribute name="status" type="efti-ed:ResponseStatus" use="required"/>
-    <xsd:attribute name="requestId" type="xsd:token">
+    <xsd:attribute name="requestId" type="types:UUID">
       <xsd:annotation>
         <xsd:documentation>
           This is a response to a request, which is referred by this request id
@@ -109,13 +111,14 @@
         Any edelivery payload request
       </xsd:documentation>
     </xsd:annotation>
-    <xsd:attribute name="requestId" type="xsd:token" use="required">
+    <xsd:attribute name="requestId" type="types:UUID" use="required">
       <xsd:annotation>
         <xsd:documentation>
           The unique identification number of the request [C(2024) 4572].
           This is the request id from the original client e.g. AAP or platform.
           Gate should retransmit the request id to other gates and platforms when completing the request for AAP.
-          This identifies all the requests in the request chain from the original sender and is used for auditing purposes.
+          This identifies all the requests in the request chain from the original sender and is used for auditing
+          purposes.
           For connecting edelivery response to edelivery request the gates should use
           the standard edelivery fields: "RefToMessageId" and "ConversationId" [ebMS 3.0].
         </xsd:documentation>

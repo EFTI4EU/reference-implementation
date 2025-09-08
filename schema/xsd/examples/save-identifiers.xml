@@ -4,7 +4,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/platform.xsd"
     datasetId="12331232"
-    requestId="X">
+    requestId="e5f4d2aa-b340-4c4f-85f4-3eab6a008f61">
 
   <consignment>
     <!-- eFTI39 -->
