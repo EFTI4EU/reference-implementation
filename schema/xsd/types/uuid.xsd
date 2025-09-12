@@ -7,8 +7,8 @@
   <xsd:simpleType name="UUID">
     <xsd:restriction base="xsd:string">
       <!-- https://www.rfc-editor.org/rfc/rfc9562.html#name-uuid-format -->
-      <!-- https://www.rfc-editor.org/rfc/rfc9562.html#name-uuid-version-4 -->
-      <xsd:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"/>
+      <!-- A lenient regex that allows any hex as version id and variant id. Compatible with java.util.UUID. -->
+      <xsd:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"/>
     </xsd:restriction>
   </xsd:simpleType>
 </xsd:schema>
