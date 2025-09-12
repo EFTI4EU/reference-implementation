@@ -644,6 +644,8 @@ class UilRequestServiceTest extends BaseServiceTest {
 
     @Test
     void shouldBuildRequestBody_whenReceived() {
+        uilDto.setDatasetId("16f21af7-2c88-4f04-9214-1a9067216fcc");
+        controlDto.setDatasetId(uilDto.getDatasetId());
         controlDto.setRequestType(RequestTypeEnum.EXTERNAL_UIL_SEARCH);
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
         rabbitRequestDto.setControl(controlDto);

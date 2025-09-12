@@ -178,6 +178,8 @@ class NotesRequestServiceTest extends BaseServiceTest {
 
     @Test
     void shouldBuildResponseBody_whenRequestReceived() {
+        uilDto.setDatasetId("888bf156-e2e4-4383-b971-20a19cc70dc7");
+        controlDto.setDatasetId(uilDto.getDatasetId());
         controlDto.setRequestType(RequestTypeEnum.NOTE_SEND);
         controlDto.setPlatformId("acme");
         final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
