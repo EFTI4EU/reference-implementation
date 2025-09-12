@@ -52,7 +52,7 @@ class ValidationServiceTest {
                 
                     <platformId>xxx</platformId>
                 
-                    <datasetId>asdf</datasetId>
+                    <datasetId>f90d32d6-e2c0-44d4-8049-9eda75414446</datasetId>
                 
                   </uil>
                 
@@ -170,7 +170,7 @@ class ValidationServiceTest {
                 
                    <ed:platformId>1234</ed:platformId>
                 
-                   <ed:datasetId>XXX</ed:datasetId>
+                   <ed:datasetId>72749dca-191e-4048-9903-c2c9dc7352b0</ed:datasetId>
                 
                  </ed:uil>
                 
@@ -258,7 +258,7 @@ class ValidationServiceTest {
                 
                    <ed:platformId>1234</ed:platformId>
                 
-                   <ed:datasetId>YYY</ed:datasetId>
+                   <ed:datasetId>c5793577-20e9-407e-894d-fe36812d00e4</ed:datasetId>
                 
                  </ed:uil>
                 
@@ -296,7 +296,7 @@ class ValidationServiceTest {
                 
                      <platformId>acme</platformId>
                 
-                     <datasetId>uuid</datasetId>
+                     <datasetId>205e4ba0-4466-4969-9154-d67b191123ee</datasetId>
                 
                  </uil>
                 

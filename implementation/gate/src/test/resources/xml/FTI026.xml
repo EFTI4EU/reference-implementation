@@ -4,7 +4,7 @@
     <uil>
         <gateId>gate</gateId>
         <platformId>acme</platformId>
-        <datasetId>uuid</datasetId>
+        <datasetId>888bf156-e2e4-4383-b971-20a19cc70dc7</datasetId>
     </uil>
     <message>The inspection did not reveal any anomalies. We recommend that you replace the tires as they are on the verge of wear</message>
 </postFollowUpRequest>
