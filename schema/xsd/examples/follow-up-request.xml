@@ -2,12 +2,12 @@
     xmlns="http://efti.eu/v1/edelivery"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-    uilQueryRequestId="XXX"
+    uilQueryRequestId="4d630256-fe8e-4665-9065-757a28842072"
     requestId="8829b03f-c528-4898-8afe-5fd54de2c4ca">
   <uil>
     <gateId>FI1</gateId>
     <platformId>xxx</platformId>
-    <datasetId>asdf</datasetId>
+    <datasetId>c32938b0-30db-40d2-bb10-1bc9a5a0b97e</datasetId>
   </uil>
   <message>Identifiers missing</message>
 </postFollowUpRequest>

@@ -57,7 +57,7 @@
     <ed:uil>
       <ed:gateId>FI</ed:gateId>
       <ed:platformId>1234</ed:platformId>
-      <ed:datasetId>XXX</ed:datasetId>
+      <ed:datasetId>2a1c7610-a894-4ee1-98de-ffbec6f0c2e0</ed:datasetId>
     </ed:uil>
   </ed:consignment>
 
@@ -106,7 +106,7 @@
     <ed:uil>
       <ed:gateId>FI</ed:gateId>
       <ed:platformId>1234</ed:platformId>
-      <ed:datasetId>YYY</ed:datasetId>
+      <ed:datasetId>eda8820b-6f61-48f8-aa7e-80bcd72dd103</ed:datasetId>
     </ed:uil>
   </ed:consignment>
 
