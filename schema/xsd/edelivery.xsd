@@ -182,7 +182,7 @@
             </xsd:simpleType>
           </xsd:element>
         </xsd:sequence>
-        <xsd:attribute name="uilQueryRequestId" type="xsd:token" use="required">
+        <xsd:attribute name="uilQueryRequestId" type="types:UUID" use="required">
           <xsd:annotation>
             <xsd:documentation>
               This follow up message relates to the information retrieved using this uil query.
