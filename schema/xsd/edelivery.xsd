@@ -12,7 +12,7 @@
     <xsd:sequence>
       <xsd:element name="gateId" type="xsd:token"/>
       <xsd:element name="platformId" type="xsd:token"/>
-      <xsd:element name="datasetId" type="xsd:token"/>
+      <xsd:element name="datasetId" type="types:UUID"/>
     </xsd:sequence>
   </xsd:complexType>
 

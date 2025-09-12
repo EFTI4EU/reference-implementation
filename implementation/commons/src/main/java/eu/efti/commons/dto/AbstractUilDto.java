@@ -29,8 +29,10 @@ public abstract class AbstractUilDto {
     @NotNull(message = "UIL_UUID_MISSING")
     @NotBlank(message = "UIL_UUID_MISSING")
     @Size(max = 36, message = "DATASET_ID_TOO_LONG")
+    // https://www.rfc-editor.org/rfc/rfc9562.html#name-uuid-format
+    // A lenient regex that allows any hex as version id and variant id. Compatible with java.util.UUID.
     @Pattern(regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}", message = "DATASET_ID_INCORRECT_FORMAT")
-    @Schema(example = "regex = [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}")
+    @Schema(example = "35fe2d45-0b8b-4730-9913-b167a42c16ae")
     @JsonProperty("datasetId")
     private String datasetId;
 
