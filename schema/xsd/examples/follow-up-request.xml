@@ -2,7 +2,7 @@
     xmlns="http://efti.eu/v1/edelivery"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://efti.eu/v1/edelivery ../edelivery/gate.xsd"
-    uilQueryRequestId="XXX"
+    uilQueryRequestId="3db77162-d35c-424f-a684-f5d0b20ca0f6"
     requestId="8829b03f-c528-4898-8afe-5fd54de2c4ca">
   <uil>
     <gateId>FI1</gateId>
