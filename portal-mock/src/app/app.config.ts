@@ -1,9 +1,9 @@
-import {APP_INITIALIZER, ApplicationConfig, importProvidersFrom} from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, inject, provideAppInitializer } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
-import {HTTP_INTERCEPTORS, HttpClient, provideHttpClient} from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient } from "@angular/common/http";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {SessionService} from "./core/services/session.service";
 import {loadUserInfos} from "./core/factories/load-user-info.factory";
@@ -31,12 +31,10 @@ export const appConfig: ApplicationConfig = {
       NgMultiSelectDropDownModule.forRoot()
     ),
     SessionService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: loadUserInfos,
-      deps: [SessionService],
-      multi: true
-    },
+    provideAppInitializer(() => {
+        const initializerFn = (loadUserInfos)(inject(SessionService));
+        return initializerFn();
+      }),
     {provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
   ]

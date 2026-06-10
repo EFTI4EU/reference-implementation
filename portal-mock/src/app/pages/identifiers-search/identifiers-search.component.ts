@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterOutlet } from "@angular/router";
+import { Router } from "@angular/router";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { DatePipe, KeyValuePipe, NgClass, NgIf, NgFor } from "@angular/common";
+import { DatePipe, NgClass } from "@angular/common";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { IdentifiersService } from "../../core/services/identifiers.service";
 import { SessionService } from "../../core/services/session.service";
@@ -23,15 +23,21 @@ import { transportMode } from "../../core/models/transport-mode.model";
 import { EnumSelectPipe } from "../../core/pipe/enum-select.pipe";
 
 @Component({
-  selector: 'app-identifiers-search',
-  standalone: true,
-  templateUrl: './identifiers-search.component.html',
-  imports: [
-    RouterOutlet, ReactiveFormsModule, NgFor, NgIf, NgClass,
-    IconsModule, TranslateModule, DatePipe, NgMultiSelectDropDownModule, FormsModule, NgbPopover,
-    HighchartsChartModule, KeyValuePipe, EnumSelectPipe
-  ],
-  styleUrl: './identifiers-search.component.css'
+    selector: 'app-identifiers-search',
+    templateUrl: './identifiers-search.component.html',
+    imports: [
+    ReactiveFormsModule,
+    NgClass,
+    IconsModule,
+    TranslateModule,
+    DatePipe,
+    NgMultiSelectDropDownModule,
+    FormsModule,
+    NgbPopover,
+    HighchartsChartModule,
+    EnumSelectPipe
+],
+    styleUrl: './identifiers-search.component.css'
 })
 export class IdentifiersSearchComponent implements OnInit {
 
