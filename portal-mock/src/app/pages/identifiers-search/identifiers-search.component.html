@@ -7,22 +7,24 @@
         <div class="form-group col-md-6">
           <label for="identifier" class="mb-2">{{'identifiers-search.identifier' | translate }}</label>
           <input type="text" class="form-control" [ngClass]="{'is-invalid': hasFieldError('identifier')}" id="identifier" placeholder="vehicleID" formControlName="identifier" required>
-          <div class="invalid-feedback" *ngIf="hasFieldError('identifier')">
-            {{getFieldError('identifier')}}
-          </div>
+          @if (hasFieldError('identifier')) {
+            <div class="invalid-feedback">
+              {{getFieldError('identifier')}}
+            </div>
+          }
         </div>
 
         <div class="form-group col-md-6">
           <label for="identifierType" class="mb-2">{{'identifiers-search.identifier-type' | translate }}</label>
           <div>
             <ng-multiselect-dropdown id="identifierType" class="form-control custom-select"
-                                     [settings]="dropdownSettings"
-                                     [data]="identifierTypes"
-                                     [(ngModel)]="selectedIdentifierType"
-                                     (onSelect)="onItemSelectIdentifierType($event)"
-                                     (onDeSelect)="onItemDeselectIdentifierType($event)"
-                                     (onSelectAll)="onSelectAllIdentifierType()"
-                                     (onDeSelectAll)="onDeselectAllIdentifierType()">
+              [settings]="dropdownSettings"
+              [data]="identifierTypes"
+              [(ngModel)]="selectedIdentifierType"
+              (onSelect)="onItemSelectIdentifierType($event)"
+              (onDeSelect)="onItemDeselectIdentifierType($event)"
+              (onSelectAll)="onSelectAllIdentifierType()"
+              (onDeSelectAll)="onDeselectAllIdentifierType()">
             </ng-multiselect-dropdown>
           </div>
         </div>
@@ -35,9 +37,11 @@
           <label for="registrationCountryCode" class="mb-2">{{'identifiers-search.registration-country-code' | translate }}</label>
           <select class="form-control" id="registrationCountryCode" formControlName="registrationCountryCode">
             <option></option>
-            <option *ngFor="let value of countries">
-              {{value}}
-            </option>
+            @for (value of countries; track value) {
+              <option>
+                {{value}}
+              </option>
+            }
           </select>
         </div>
 
@@ -45,9 +49,11 @@
           <label for="modeCode" class="mb-2">{{'identifiers-search.mode-code' | translate }}</label>
           <select class="form-control" id="modeCode" formControlName="modeCode">
             <option></option>
-            <option *ngFor="let mode of transportMode | enum" [value]="mode[0]">
-              {{mode[1]}}
-            </option>
+            @for (mode of transportMode | enum; track mode) {
+              <option [value]="mode[0]">
+                {{mode[1]}}
+              </option>
+            }
           </select>
         </div>
       </div>
@@ -69,9 +75,11 @@
               <label class="form-check-label" for="inlineRadio3">{{'identifiers-search.na' | translate }}</label>
             </div>
           </div>
-          <div class="invalid-feedback" *ngIf="hasFieldError('dangerousGoodsIndicator')">
-            {{getFieldError('dangerousGoodsIndicator')}}
-          </div>
+          @if (hasFieldError('dangerousGoodsIndicator')) {
+            <div class="invalid-feedback">
+              {{getFieldError('dangerousGoodsIndicator')}}
+            </div>
+          }
         </div>
 
         <div class="form-group col-md-6">
@@ -99,59 +107,63 @@
     </form>
   </div>
 
-  <div class="mt-5 row" *ngIf="currentSearch.requestId != null">
-
-    <div class="title-area text-center"> {{'identifiers-search.result' | translate }} </div>
-
-    <div class="col-4 nopadding">
-      <highcharts-chart [Highcharts]="highcharts" [constructorType]="'mapChart'"
-                        [options]="chartOptions" [(update)]="updateFlag" class="map">
-      </highcharts-chart>
-    </div>
-
-    <div class="col-8 nopadding">
-      <div class="data-area p-4">
-        <div class="row align-items-center" style="height: 50px;">
-          <div class="col-md-7 key"> {{'identifiers-search.request-id' | translate }} <span class="ms-3 value">{{currentSearch.requestId}}</span></div>
-          <div class="col-md-3 key"> {{'identifiers-search.status' | translate }}
-            <span class="ms-3" [ngClass]="getClassFromStatus(currentSearch.status)">{{currentSearch.status}}
-              <span ngbPopover="{{currentSearch.errorCode}} {{currentSearch.errorDescription}}" triggers="mouseenter:mouseleave"
-                    popoverTitle="{{currentSearch.status}}" *ngIf="currentSearch.status == 'ERROR'" class="fa-solid fa-circle-info"></span></span>
+  @if (currentSearch.requestId != null) {
+    <div class="mt-5 row">
+      <div class="title-area text-center"> {{'identifiers-search.result' | translate }} </div>
+      <div class="col-4 nopadding">
+        <highcharts-chart [Highcharts]="highcharts" [constructorType]="'mapChart'"
+          [options]="chartOptions" [(update)]="updateFlag" class="map">
+        </highcharts-chart>
+      </div>
+      <div class="col-8 nopadding">
+        <div class="data-area p-4">
+          <div class="row align-items-center" style="height: 50px;">
+            <div class="col-md-7 key"> {{'identifiers-search.request-id' | translate }} <span class="ms-3 value">{{currentSearch.requestId}}</span></div>
+            <div class="col-md-3 key"> {{'identifiers-search.status' | translate }}
+              <span class="ms-3" [ngClass]="getClassFromStatus(currentSearch.status)">{{currentSearch.status}}
+                @if (currentSearch.status == 'ERROR') {
+                  <span ngbPopover="{{currentSearch.errorCode}} {{currentSearch.errorDescription}}" triggers="mouseenter:mouseleave"
+                  popoverTitle="{{currentSearch.status}}" class="fa-solid fa-circle-info"></span>
+                }</span>
+              </div>
+              <div class="col-md-2">
+                <button type="submit" (click)="pollResult()" class="btn btn-primary-in ms-3" id="update-btn" title="{{'identifiers-search.update-status' | translate }}">
+                  <span class="fa-solid fa-arrows-rotate"></span>
+                </button>
+              </div>
+            </div>
+            @if (result.identifiers.length! > 0) {
+              <div class="mt-4 table-responsive">
+                <table class="table table-hover" aria-label="identifiers search table">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="key" (click)="sort('gateId')">{{'identifiers-search.gate-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+                      <th scope="col" class="key" (click)="sort('datasetId')">{{'identifiers-search.dataset-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+                      <th scope="col" class="key" (click)="sort('platformId')">{{'identifiers-search.platform-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+                      <th scope="col" class="key" (click)="sort('countryStart')">{{'identifiers-search.acceptance-date' | translate }}<span class="fa fa-fw fa-sort"></span></th>
+                      <th scope="col" class="key" (click)="sort('journeyStart')">{{'identifiers-search.delivery-date' | translate }}<span class="fa fa-fw fa-sort"></span> </th>
+                      <th scope="col" class="key">{{'identifiers-search.action' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (identifier of identifiers; track identifier) {
+                      <tr>
+                        <td class="value">{{identifier.gateId}}</td>
+                        <td class="value">{{identifier.datasetId}}</td>
+                        <td class="value">{{identifier.platformId}}</td>
+                        <td class="value">{{identifier.carrierAcceptanceDatetime | date:'dd/MM/yyyy hh:mm:ss' }}</td>
+                        <td class="value">{{identifier.deliveryEventActualOccurrenceDatetime | date:'dd/MM/yyyy hh:mm:ss' }}</td>
+                        <td class="value"><button id="open-btn" class="btn btn-primary-in" (click)="displayIdentifiers(identifier)" title="{{'identifiers-search.open' | translate }}">
+                          <span class="fa-solid fa-arrow-up-right-from-square"></span>
+                        </button></td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
           </div>
-          <div class="col-md-2">
-            <button type="submit" (click)="pollResult()" class="btn btn-primary-in ms-3" id="update-btn" title="{{'identifiers-search.update-status' | translate }}">
-              <span class="fa-solid fa-arrows-rotate"></span>
-            </button>
-          </div>
-        </div>
-
-        <div class="mt-4 table-responsive" *ngIf="result?.identifiers?.length! > 0">
-          <table class="table table-hover" aria-label="identifiers search table">
-            <thead>
-            <tr>
-              <th scope="col" class="key" (click)="sort('gateId')">{{'identifiers-search.gate-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
-              <th scope="col" class="key" (click)="sort('datasetId')">{{'identifiers-search.dataset-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
-              <th scope="col" class="key" (click)="sort('platformId')">{{'identifiers-search.platform-id' | translate }}<span class="fa fa-fw fa-sort"></span></th>
-              <th scope="col" class="key" (click)="sort('countryStart')">{{'identifiers-search.acceptance-date' | translate }}<span class="fa fa-fw fa-sort"></span></th>
-              <th scope="col" class="key" (click)="sort('journeyStart')">{{'identifiers-search.delivery-date' | translate }}<span class="fa fa-fw fa-sort"></span> </th>
-              <th scope="col" class="key">{{'identifiers-search.action' | translate }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let identifier of identifiers">
-              <td class="value">{{identifier.gateId}}</td>
-              <td class="value">{{identifier.datasetId}}</td>
-              <td class="value">{{identifier.platformId}}</td>
-              <td class="value">{{identifier.carrierAcceptanceDatetime | date:'dd/MM/yyyy hh:mm:ss' }}</td>
-              <td class="value">{{identifier.deliveryEventActualOccurrenceDatetime | date:'dd/MM/yyyy hh:mm:ss' }}</td>
-              <td class="value"><button id="open-btn" class="btn btn-primary-in" (click)="displayIdentifiers(identifier)" title="{{'identifiers-search.open' | translate }}">
-                <span class="fa-solid fa-arrow-up-right-from-square"></span>
-              </button></td>
-            </tr>
-            </tbody>
-          </table>
         </div>
       </div>
-    </div>
+    }
   </div>
-</div>

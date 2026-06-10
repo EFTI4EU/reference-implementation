@@ -7,8 +7,12 @@
     eFTI Demo Portal
   </div>
   <div class="mt-4 mx-5">
-    <button class="login-btn" *ngIf="!isAuthenticated()" (click)="login()"> {{'menu.login' | translate }} </button>
-    <button class="login-btn" *ngIf="isAuthenticated()" (click)="logout()"> {{'menu.logout' | translate }} </button>
+    @if (!isAuthenticated()) {
+      <button class="login-btn" (click)="login()"> {{'menu.login' | translate }} </button>
+    }
+    @if (isAuthenticated()) {
+      <button class="login-btn" (click)="logout()"> {{'menu.logout' | translate }} </button>
+    }
   </div>
 </div>
 <nav class="navbar navbar-expand-sm navbar-light" id="neubar">
@@ -19,12 +23,16 @@
 
     <div class=" collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav">
-        <li class="nav-item" *ngIf="isLogged()">
-          <a class="nav-link ms-5" routerLink="uil">{{'menu.search-by-uil' | translate }}</a>
-        </li>
-        <li class="nav-item" *ngIf="isLogged()">
-          <a class="nav-link ms-5" routerLink="identifiers">{{'menu.search-by-identifiers' | translate }}</a>
-        </li>
+        @if (isLogged()) {
+          <li class="nav-item">
+            <a class="nav-link ms-5" routerLink="uil">{{'menu.search-by-uil' | translate }}</a>
+          </li>
+        }
+        @if (isLogged()) {
+          <li class="nav-item">
+            <a class="nav-link ms-5" routerLink="identifiers">{{'menu.search-by-identifiers' | translate }}</a>
+          </li>
+        }
       </ul>
 
       <div class="form-check form-switch collapse navbar-collapse justify-content-end navend-button">

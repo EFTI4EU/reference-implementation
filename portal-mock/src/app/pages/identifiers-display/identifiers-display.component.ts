@@ -1,24 +1,26 @@
-import {Component, OnInit } from '@angular/core';
-import {ActivatedRoute, Router, RouterOutlet} from "@angular/router";
-import {DatePipe, NgIf, NgFor} from "@angular/common";
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from "@angular/router";
+import { DatePipe } from "@angular/common";
 import { TranslateModule } from "@ngx-translate/core";
 import { BootstrapIconsModule } from "ng-bootstrap-icons";
 import { IconsModule } from "../../icons/icons.module";
 import { ArrayUtils } from "../../core/utils/array-utils";
 import { Identifiers } from "../../core/models/identifiers.model";
 import { LocalStorageService } from "../../core/services/local-storage.service";
-import {NgbAccordionModule, NgbCollapse} from "@ng-bootstrap/ng-bootstrap";
-import {transportMode} from "../../core/models/transport-mode.model";
+import { NgbAccordionModule } from "@ng-bootstrap/ng-bootstrap";
+import { transportMode } from "../../core/models/transport-mode.model";
 
 @Component({
-  selector: 'app-identifiers-display',
-  standalone: true,
-  templateUrl: './identifiers-display.component.html',
-  imports: [
-    RouterOutlet, NgFor, NgIf, TranslateModule, BootstrapIconsModule, IconsModule,
-    NgbAccordionModule, DatePipe, NgbCollapse
-  ],
-  styleUrl: './identifiers-display.component.css'
+    selector: 'app-identifiers-display',
+    templateUrl: './identifiers-display.component.html',
+    imports: [
+    TranslateModule,
+    BootstrapIconsModule,
+    IconsModule,
+    NgbAccordionModule,
+    DatePipe,
+],
+    styleUrl: './identifiers-display.component.css'
 })
 export class IdentifiersDisplayComponent implements OnInit {
 
