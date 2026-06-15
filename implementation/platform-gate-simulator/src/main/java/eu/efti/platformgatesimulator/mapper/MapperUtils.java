@@ -11,6 +11,7 @@ import eu.efti.v1.json.UsedTransportMeans;
 
 import java.math.BigInteger;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 public class MapperUtils {
 
@@ -20,6 +21,7 @@ public class MapperUtils {
         }
         eu.efti.v1.edelivery.SaveIdentifiersRequest resultSaveIdentifiersRequest = new eu.efti.v1.edelivery.SaveIdentifiersRequest();
         resultSaveIdentifiersRequest.setDatasetId(sourceSaveIdentifiersRequest.getDatasetId());
+        resultSaveIdentifiersRequest.setRequestId(UUID.randomUUID().toString());
         resultSaveIdentifiersRequest.setConsignment(from(sourceSaveIdentifiersRequest.getConsignment()));
         return resultSaveIdentifiersRequest;
     }
