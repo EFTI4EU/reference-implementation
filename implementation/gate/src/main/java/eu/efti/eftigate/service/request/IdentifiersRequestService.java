@@ -16,6 +16,7 @@ import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.utils.SerializeUtils;
 import eu.efti.edeliveryapconnector.constant.EDeliveryStatus;
+import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestUpdaterService;
 import eu.efti.eftigate.config.GateProperties;
@@ -227,9 +228,10 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     public void createOrUpdate(final NotificationDto notificationDto) {
-        final String xmlBody = notificationDto.getContent().getBody();
-        final String platformId = notificationDto.getContent().getFromPartyId();
-        final String requestId = notificationDto.getContent().getConversationId();
+        NotificationContentDto content = notificationDto.getContent();
+        final String xmlBody = content.getBody();
+        final String platformId = content.getFromPartyId();
+        final String requestId = content.getConversationId();
         final Optional<String> validationResult = validationService.isXmlValid(xmlBody);
         if (validationResult.isPresent()) {
             log.error("Received invalid SaveIdentifierRequest from {}", platformId);

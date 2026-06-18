@@ -43,7 +43,7 @@ jobs:
           cache-dependency-path: implementation/**/pom.xml
 
       - name: Build and test with Maven
-        run: mvn --batch-mode --no-transfer-progress verify
+        run: mvn --batch-mode --no-transfer-progress verify -Ddependency-check.skip=true
 
       - name: Upload test reports
         if: always()

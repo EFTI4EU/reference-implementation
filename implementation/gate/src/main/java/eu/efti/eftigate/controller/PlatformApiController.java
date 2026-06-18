@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +30,7 @@ public class PlatformApiController implements V0Api {
         var ctx = PlatformApiContextResolver.getPlatformContextOrFail();
         var result = identifiersRequestService.createOrUpdateFromRest((String) body, datasetId, ctx.platformId());
         if (result.isPresent()) {
-            var problemDetail = org.springframework.http.ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+            var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
             problemDetail.setDetail(result.get());
             return ResponseEntity.of(problemDetail).headers(h -> h.setContentType(MediaType.APPLICATION_PROBLEM_XML)).build();
         }
