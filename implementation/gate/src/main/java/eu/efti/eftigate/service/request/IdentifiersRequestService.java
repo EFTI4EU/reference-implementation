@@ -1,6 +1,7 @@
 package eu.efti.eftigate.service.request;
 
 import eu.efti.commons.dto.ControlDto;
+import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.IdentifiersRequestDto;
 import eu.efti.commons.dto.IdentifiersResultsDto;
 import eu.efti.commons.dto.RequestDto;
@@ -8,6 +9,7 @@ import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.SearchParameter;
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
+import eu.efti.commons.enums.ErrorCodesEnum;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestType;
 import eu.efti.commons.enums.RequestTypeEnum;
@@ -27,10 +29,13 @@ import eu.efti.eftigate.service.ControlService;
 import eu.efti.eftigate.service.LogManager;
 import eu.efti.eftigate.service.RabbitSenderService;
 import eu.efti.identifiersregistry.service.IdentifiersService;
+import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
 import eu.efti.v1.edelivery.Identifier;
 import eu.efti.v1.edelivery.IdentifierQuery;
 import eu.efti.v1.edelivery.IdentifierResponse;
 import eu.efti.v1.edelivery.IdentifierType;
+import eu.efti.v1.edelivery.Response;
+import eu.efti.v1.edelivery.SaveIdentifiersRequest;
 import jakarta.xml.bind.JAXBElement;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -164,11 +169,25 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     @Override
     public String buildRequestBody(final RabbitRequestDto requestDto) {
         final ControlDto controlDto = requestDto.getControl();
-        if (EXTERNAL_ASK_IDENTIFIERS_SEARCH == controlDto.getRequestType()) { //remote sending response
+        if (controlDto.getRequestType() == null) {
+            return getSerializeUtils().mapJaxbObjectToXmlString(buildSaveIdentifiersResponseElement(requestDto), Response.class);
+        } else if (EXTERNAL_ASK_IDENTIFIERS_SEARCH == controlDto.getRequestType()) {
             return getSerializeUtils().mapJaxbObjectToXmlString(this.buildEdeliveryIdentifiersResponse(requestDto), IdentifierResponse.class);
-        } else { //local sending request
+        } else {
             return getSerializeUtils().mapJaxbObjectToXmlString(this.buildQueryFromControl(controlDto), IdentifierQuery.class);
         }
+    }
+
+    private JAXBElement<Response> buildSaveIdentifiersResponseElement(final RabbitRequestDto requestDto) {
+        final Response response = new Response();
+        response.setRequestId(requestDto.getControl().getRequestId());
+        response.setStatus(SUCCESS.equals(requestDto.getStatus())
+                ? EDeliveryStatus.OK.getCode()
+                : EDeliveryStatus.BAD_REQUEST.getCode());
+        if (requestDto.getError() != null && requestDto.getError().getErrorDescription() != null) {
+            response.setDescription(requestDto.getError().getErrorDescription());
+        }
+        return getObjectFactory().createSaveIdentifiersResponse(response);
     }
 
     @Override
@@ -208,14 +227,59 @@ public class IdentifiersRequestService extends RequestService<IdentifiersRequest
     }
 
     public void createOrUpdate(final NotificationDto notificationDto) {
-        final Optional<String> validationResult = validationService.isXmlValid(notificationDto.getContent().getBody());
+        final String xmlBody = notificationDto.getContent().getBody();
+        final String platformId = notificationDto.getContent().getFromPartyId();
+        final String requestId = notificationDto.getContent().getConversationId();
+        final Optional<String> validationResult = validationService.isXmlValid(xmlBody);
         if (validationResult.isPresent()) {
-            log.error("Received invalid SaveIdentifierRequest from {}", notificationDto.getContent().getFromPartyId());
+            log.error("Received invalid SaveIdentifierRequest from {}", platformId);
+            sendSaveIdentifiersResponse(platformId, requestId, RequestStatusEnum.ERROR, validationResult.get());
             return;
         }
+        this.identifiersService.createOrUpdate(new SaveIdentifiersRequestWrapper(platformId,
+                getSerializeUtils().mapXmlStringToJaxbObject(xmlBody)));
+        sendSaveIdentifiersResponse(platformId, requestId, SUCCESS, null);
+    }
 
-        this.identifiersService.createOrUpdate(new SaveIdentifiersRequestWrapper(notificationDto.getContent().getFromPartyId(),
-                getSerializeUtils().mapXmlStringToJaxbObject(notificationDto.getContent().getBody())));
+    private void sendSaveIdentifiersResponse(final String platformId, final String requestId,
+                                             final RequestStatusEnum status, final String errorDescription) {
+        final ControlDto controlDto = ControlDto.builder()
+                .requestId(requestId)
+                .build();
+        final ErrorDto errorDto = StringUtils.isNotBlank(errorDescription) ?
+                ErrorDto.builder()
+                        .errorCode(ErrorCodesEnum.XML_ERROR.name())
+                        .errorDescription(errorDescription).build()
+                : null;
+        final RequestDto requestDto = RequestDto.builder()
+                .control(controlDto)
+                .status(status)
+                .gateIdDest(platformId)
+                .requestType(RequestType.IDENTIFIER)
+                .error(errorDto)
+                .build();
+        this.sendRequest(requestDto);
+        getLogManager().logSaveIdentifiersResponse(controlDto, platformId, SUCCESS.equals(status));
+    }
+
+    public Optional<String> createOrUpdateFromRest(final String body, final String datasetId, final String platformId) {
+        final ControlDto controlDto = ControlDto.builder().build();
+        final Optional<String> validationError = validationService.isXmlValid(body);
+        if (validationError.isPresent()) {
+            log.error("Error processing SaveIdentifierRequest from {} via REST: {}", platformId, validationError.get());
+            controlDto.setError(ErrorDto.builder()
+                    .errorCode(ErrorCodesEnum.XML_ERROR.name())
+                    .errorDescription(validationError.get()).build());
+            getLogManager().logSaveIdentifiersResponse(controlDto, platformId, false);
+            return validationError;
+        }
+        final SupplyChainConsignment consignment = getSerializeUtils().mapXmlStringToJaxbObject(body, SupplyChainConsignment.class);
+        final SaveIdentifiersRequest saveRequest = new SaveIdentifiersRequest();
+        saveRequest.setDatasetId(datasetId);
+        saveRequest.setConsignment(consignment);
+        identifiersService.createOrUpdate(new SaveIdentifiersRequestWrapper(platformId, saveRequest));
+        getLogManager().logSaveIdentifiersResponse(controlDto, platformId, true);
+        return Optional.empty();
     }
 
     private RequestDto createReceivedRequest(final ControlDto controlDto, final List<ConsignmentDto> identifiersDtos) {
