@@ -26,8 +26,6 @@
         <sonar.projectName>EFTI : efti-gate</sonar.projectName>
         <keycloak.version>22.0.5</keycloak.version>
         <java-jwt.version>4.4.0</java-jwt.version>
-        <!--NEXUS-->
-        <nexus.home>http://nexus.imprimerienationale.fr</nexus.home>
 
         <!--encoding-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
