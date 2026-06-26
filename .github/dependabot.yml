@@ -6,5 +6,9 @@ updates:
       - "/implementation/**/*"
     schedule:
       interval: "cron"
-      cronjob: "0 11 * * *"
+      cronjob: "30 13 * * *"
     open-pull-requests-limit: 50
+    groups:
+      maven-dependencies:
+        patterns:
+          - "*"
