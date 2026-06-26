@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    target-branch: "EREF-81-update-gate-libs"
+    directories:
+      - "/implementation/**/*"
+    schedule:
+      interval: "cron"
+      cronjob: "0 11 * * *"
+    open-pull-requests-limit: 50
