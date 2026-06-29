@@ -12,3 +12,12 @@ updates:
       maven-dependencies:
         patterns:
           - "*"
+    allow:
+      - dependency-name: "org.springframework.boot:spring-boot-starter-parent"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+      - dependency-name: "org.springframework.boot:spring-boot-configuration-processor"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
