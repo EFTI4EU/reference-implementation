@@ -5,8 +5,7 @@ updates:
     directories:
       - "/implementation/**/*"
     schedule:
-      interval: "cron"
-      cronjob: "30 13 * * *"
+      interval: "daily"
     open-pull-requests-limit: 50
     groups:
       maven-dependencies:
