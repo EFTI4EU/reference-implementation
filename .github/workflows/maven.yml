@@ -10,6 +10,9 @@ name: Java CI with Maven
 
 on:
   pull_request:
+  push:
+    branches:
+      - EREF-81-update-gate-libs
 
 jobs:
   build:
