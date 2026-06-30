@@ -14,7 +14,7 @@ services:
       efti:
 
   platform-ACME:
-    image: openjdk:17
+    image: openjdk:21
     depends_on:
       - keycloak
       - psql
@@ -31,7 +31,7 @@ services:
       efti:
 
   platform-MASSIVE:
-    image: openjdk:17
+    image: openjdk:21
     depends_on:
       - keycloak
       - psql
@@ -48,7 +48,7 @@ services:
       efti:
   
   platform-UMBRELLA:
-    image: openjdk:17
+    image: openjdk:21
     depends_on:
       - keycloak
       - psql
@@ -67,7 +67,7 @@ services:
   efti-gate-BO:
     env_file:
       - ./gate/ENV/BO.env
-    image: openjdk:17
+    image: openjdk:21
     depends_on:
       - keycloak
       - psql
@@ -86,7 +86,7 @@ services:
   efti-gate-LI:
     env_file:
       - ./gate/ENV/LI.env
-    image: openjdk:17
+    image: openjdk:21
     depends_on:
       - keycloak
       - psql
@@ -105,7 +105,7 @@ services:
   efti-gate-SY:
     env_file:
       - ./gate/ENV/SY.env
-    image: openjdk:17
+    image: openjdk:21
     depends_on:
       - keycloak
       - psql

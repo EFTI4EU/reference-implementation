@@ -1,0 +1,20 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    target-branch: "EREF-81-update-gate-libs"
+    directories:
+      - "/implementation/**/*"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 50
+    groups:
+      maven-dependencies-2:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "org.springframework.boot:spring-boot-starter-parent"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "org.springframework.boot:spring-boot-configuration-processor"
+        update-types:
+          - "version-update:semver-major"
