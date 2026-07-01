@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
         generator = PropertyGenerator.class,
         property = "id")
 public class RabbitRequestDto {
-    private long id;
+    private Long id;
     private RequestStatusEnum status;
     private String edeliveryMessageId;
     private Integer retry;

@@ -184,7 +184,7 @@ public abstract class RequestService<T extends RequestEntity> {
     }
 
     protected boolean isExternalRequest(final RequestDto requestDto) {
-        return EXTERNAL_REQUESTS_TYPES.contains(requestDto.getControl().getRequestType());
+        return requestDto.getControl().getRequestType() != null && EXTERNAL_REQUESTS_TYPES.contains(requestDto.getControl().getRequestType());
     }
 
     private RequestDto buildRequestDto(final ControlDto controlDto, final RequestStatusEnum status) {

@@ -1,10 +1,12 @@
 package eu.efti.eftigate.service.request;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import eu.efti.commons.dto.ErrorDto;
 import eu.efti.commons.dto.IdentifiersRequestDto;
 import eu.efti.commons.dto.SaveIdentifiersRequestWrapper;
 import eu.efti.commons.dto.identifiers.ConsignmentDto;
 import eu.efti.commons.dto.identifiers.UsedTransportEquipmentDto;
+import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
@@ -317,11 +319,13 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void shouldCreateOrUpdateIdentifiers() {
+    void shouldCreateOrUpdateIdentifiers_andSendResponseAndLogFti029() throws JsonProcessingException {
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
                         .messageId(MESSAGE_ID)
+                        .fromPartyId("platform.eu")
+                        .conversationId("67fe38bd-6bf7-4b06-b20e-206264bd639c")
                         .body(testFile("/xml/SaveIdentifierRequest.xml"))
                         .build())
                 .build();
@@ -329,14 +333,18 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         identifiersRequestService.createOrUpdate(notificationDto);
 
         verify(identifiersService).createOrUpdate(any(SaveIdentifiersRequestWrapper.class));
+        verify(rabbitSenderService).sendMessageToRabbit(any(), any(), any());
+        verify(logManager).logSaveIdentifiersResponse(any(), eq("platform.eu"), eq(true));
     }
 
     @Test
-    void shouldNotCreateOrUpdateIdentifiersIfInvalid() {
+    void shouldNotCreateOrUpdateIdentifiers_whenValidationFails_andSendErrorResponseAndLogFti029() throws JsonProcessingException {
         final NotificationDto notificationDto = NotificationDto.builder()
                 .notificationType(NotificationType.RECEIVED)
                 .content(NotificationContentDto.builder()
                         .messageId(MESSAGE_ID)
+                        .fromPartyId("platform.eu")
+                        .conversationId("67fe38bd-6bf7-4b06-b20e-206264bd639c")
                         .body(testFile("/xml/SaveIdentifierRequest.xml"))
                         .build())
                 .build();
@@ -344,6 +352,63 @@ class IdentifiersRequestServiceTest extends BaseServiceTest {
         identifiersRequestService.createOrUpdate(notificationDto);
 
         verify(identifiersService, never()).createOrUpdate(any(SaveIdentifiersRequestWrapper.class));
+        verify(rabbitSenderService).sendMessageToRabbit(any(), any(), any());
+        verify(logManager).logSaveIdentifiersResponse(any(), eq("platform.eu"), eq(false));
+    }
+
+    @Test
+    void shouldCreateOrUpdateFromRest_andLogFti029Success() {
+        when(validationService.isXmlValid(anyString())).thenReturn(Optional.empty());
+
+        final Optional<String> result = identifiersRequestService.createOrUpdateFromRest(
+                testFile("/xml/SaveIdentifierRequest.xml"), "12331232", "platform.eu");
+
+        assertTrue(result.isEmpty());
+        verify(identifiersService).createOrUpdate(any(SaveIdentifiersRequestWrapper.class));
+        verify(logManager).logSaveIdentifiersResponse(any(), eq("platform.eu"), eq(true));
+    }
+
+    @Test
+    void shouldNotCreateOrUpdateFromRest_whenValidationFails_andLogFti029Error() {
+        when(validationService.isXmlValid(anyString())).thenReturn(Optional.of("Invalid XML"));
+
+        final Optional<String> result = identifiersRequestService.createOrUpdateFromRest(
+                testFile("/xml/SaveIdentifierRequest.xml"), "12331232", "platform.eu");
+
+        assertTrue(result.isPresent());
+        assertEquals("Invalid XML", result.get());
+        verify(identifiersService, never()).createOrUpdate(any(SaveIdentifiersRequestWrapper.class));
+        verify(logManager).logSaveIdentifiersResponse(any(), eq("platform.eu"), eq(false));
+    }
+
+    @Test
+    void shouldBuildRequestBody_whenSaveIdentifiersResponse_success() {
+        controlDto.setRequestType(null);
+        final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
+        rabbitRequestDto.setControl(controlDto);
+        rabbitRequestDto.setStatus(SUCCESS);
+        final String expectedRequestBody = testFile("/xml/FTI029-success.xml");
+
+        final String requestBody = identifiersRequestService.buildRequestBody(rabbitRequestDto);
+
+        assertThat(expectedRequestBody, CompareMatcher.isIdenticalTo(requestBody).ignoreWhitespace());
+    }
+
+    @Test
+    void shouldBuildRequestBody_whenSaveIdentifiersResponse_error() {
+        controlDto.setRequestType(null);
+        final RabbitRequestDto rabbitRequestDto = new RabbitRequestDto();
+        rabbitRequestDto.setControl(controlDto);
+        rabbitRequestDto.setStatus(RequestStatusEnum.ERROR);
+        rabbitRequestDto.setError(ErrorDto.builder()
+                .errorCode("XML_ERROR")
+                .errorDescription("Error occurred")
+                .build());
+        final String expectedRequestBody = testFile("/xml/FTI029-error.xml");
+
+        final String requestBody = identifiersRequestService.buildRequestBody(rabbitRequestDto);
+
+        assertThat(expectedRequestBody, CompareMatcher.isIdenticalTo(requestBody).ignoreWhitespace());
     }
 
 

@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
 public class RequestDto {
-    private long id;
+    private Long id;
     private RequestStatusEnum status;
     private String edeliveryMessageId;
     private Integer retry;
