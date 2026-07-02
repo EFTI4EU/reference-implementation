@@ -19,6 +19,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -83,14 +84,18 @@ public class ControlJpaConfiguration {
         final SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog(properties.getChangeLog());
-        liquibase.setContexts(properties.getContexts());
+        liquibase.setContexts(joinWithComma(properties.getContexts()));
         liquibase.setDefaultSchema(properties.getDefaultSchema());
         liquibase.setDropFirst(properties.isDropFirst());
         liquibase.setShouldRun(properties.isEnabled());
-        liquibase.setLabelFilter(properties.getLabelFilter());
+        liquibase.setLabelFilter(joinWithComma(properties.getLabelFilter()));
         liquibase.setChangeLogParameters(properties.getParameters());
         liquibase.setRollbackFile(properties.getRollbackFile());
         return liquibase;
+    }
+
+    private static String joinWithComma(Collection<String> values) {
+        return values == null || values.isEmpty() ? null : String.join(",", values);
     }
 
 }
