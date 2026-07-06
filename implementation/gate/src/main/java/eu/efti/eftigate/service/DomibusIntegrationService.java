@@ -44,16 +44,18 @@ public class DomibusIntegrationService {
         String previousEdeliveryMessageId = rabbitRequestDto.getEdeliveryMessageId();
         try {
             String eDeliveryMessageId = messageIdGenerator.generateMessageId();
-            if (rabbitRequestDto.getError() == null || !ErrorCodesEnum.REQUESTID_MISSING.name().equals(rabbitRequestDto.getError().getErrorCode())) {
+            if (rabbitRequestDto.getId() != null && (rabbitRequestDto.getError() == null || !ErrorCodesEnum.REQUESTID_MISSING.name().equals(rabbitRequestDto.getError().getErrorCode()))) {
                 getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, eDeliveryMessageId);
             }
             this.requestSendingService.sendRequest(buildApRequestDto(rabbitRequestDto, eDeliveryMessageId));
         } catch (final SendRequestException e) {
             log.error("error while sending request" + e);
-            getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
+            if (rabbitRequestDto.getId() != null) {
+                getRequestService(rabbitRequestDto.getRequestType()).updateRequestStatus(requestDto, previousEdeliveryMessageId);
+            }
             throw new TechnicalException("Error when try to send message to domibus", e);
         } finally {
-            final String body = getRequestService(requestTypeEnum).buildRequestBody(rabbitRequestDto);
+            final String body = getRequestService(requestDto.getRequestType()).buildRequestBody(rabbitRequestDto);
             if (RequestType.UIL.equals(requestDto.getRequestType())) {
                 //log fti020 and fti009
                 logManager.logSentMessage(requestDto.getControl(), body, receiverLabel, ComponentType.GATE, target, true, LogManager.FTI_009_FTI_020);

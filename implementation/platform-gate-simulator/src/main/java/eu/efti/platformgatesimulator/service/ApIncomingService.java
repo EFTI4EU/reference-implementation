@@ -88,6 +88,11 @@ public class ApIncomingService {
             return;
         }
 
+        if (StringUtils.containsIgnoreCase(notificationContentDto.getBody(), "<saveIdentifiersResponse")) {
+            log.info("Received saveIdentifiersResponse from gate: {}", notificationContentDto.getBody());
+            return;
+        }
+
         final XmlType queryAnnotationIdentifierQuery = IdentifierQuery.class.getAnnotation((XmlType.class));
         if (StringUtils.containsIgnoreCase(notificationContentDto.getBody(), "<" + queryAnnotationIdentifierQuery.name())) {
             final IdentifierQuery identifierQuery = serializeUtils.mapXmlStringToJaxbObject(notificationContentDto.getBody());

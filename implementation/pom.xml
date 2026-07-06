@@ -26,8 +26,6 @@
         <sonar.projectName>EFTI : efti-gate</sonar.projectName>
         <keycloak.version>22.0.5</keycloak.version>
         <java-jwt.version>4.4.0</java-jwt.version>
-        <!--NEXUS-->
-        <nexus.home>http://nexus.imprimerienationale.fr</nexus.home>
 
         <!--encoding-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -47,7 +45,7 @@
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-        <dependency-check-maven.version>11.1.1</dependency-check-maven.version>
+        <dependency-check-maven.version>12.2.2</dependency-check-maven.version>
         <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
         <maven-project-info-reports-plugin.version>3.4.3</maven-project-info-reports-plugin.version>
         <maven-apt-plugin.version>1.0.4</maven-apt-plugin.version>
@@ -206,7 +204,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>8.2.1</version>
+                <version>${dependency-check-maven.version}</version>
                 <configuration>
                     <formats>
                         <format>HTML</format>
@@ -296,7 +294,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>8.2.1</version>
+                <version>${dependency-check-maven.version}</version>
                 <configuration>
                     <name>Dependency Check</name>
                 </configuration>
