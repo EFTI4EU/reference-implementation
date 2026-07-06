@@ -55,32 +55,8 @@ jobs:
 
       - name: Build and test with Maven
         run: |
-          mkdir -p /tmp/diagnostics
           mvn --batch-mode --errors verify -Ddependency-check.skip=true \
-            -Dsurefire.printSummary=true -Dmaven.test.redirectTestOutputToFile=false &
-          MVN_PID=$!
-
-          # Heartbeat + thread dumps every minute so a hang shows up in the logs
-          # even if the job is killed by the workflow timeout before mvn finishes.
-          (
-            while kill -0 "$MVN_PID" 2>/dev/null; do
-              sleep 60
-              {
-                echo "=== heartbeat $(date -u +%FT%TZ) ==="
-                jps -l || true
-                for pid in $(jps -q); do
-                  echo "--- jstack $pid ---"
-                  jstack "$pid" 2>/dev/null || true
-                done
-              } | tee -a /tmp/diagnostics/thread-dumps.log
-            done
-          ) &
-          WATCHDOG_PID=$!
-
-          wait "$MVN_PID"
-          MVN_EXIT=$?
-          kill "$WATCHDOG_PID" 2>/dev/null || true
-          exit $MVN_EXIT
+            -Dsurefire.printSummary=true -Dmaven.test.redirectTestOutputToFile=false
 
       - name: Upload test reports
         if: always()
@@ -88,12 +64,4 @@ jobs:
         with:
           name: surefire-reports
           path: implementation/**/target/surefire-reports/
-          if-no-files-found: ignore
-
-      - name: Upload thread dumps
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: thread-dumps
-          path: /tmp/diagnostics/thread-dumps.log
           if-no-files-found: ignore
