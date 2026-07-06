@@ -2,6 +2,7 @@ package eu.efti.platformgatesimulator.service;
 
 import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
+import eu.efti.edeliveryapconnector.dto.ApRequestDto;
 import eu.efti.edeliveryapconnector.dto.NotificationContentDto;
 import eu.efti.edeliveryapconnector.dto.NotificationDto;
 import eu.efti.edeliveryapconnector.service.RequestSendingService;
@@ -13,6 +14,7 @@ import eu.efti.v1.edelivery.IdentifierQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -20,6 +22,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -142,5 +146,21 @@ class IdentifierServiceTest extends AbstractTest {
         identifierService.sendResponseIdentifier(identifierQuery, notificationDto);
 
         verify(requestSendingService, times(1)).sendRequest(any());
+    }
+
+    @Test
+    void sendFollowUpResponseTest() {
+        final NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setContent(NotificationContentDto.builder().fromPartyId("fromParty").body("body").conversationId("conversationId")
+                .contentType("contentType").messageId("messageId").build());
+
+        when(requestSendingService.sendRequest(any())).thenReturn(null);
+
+        identifierService.sendFollowUpResponse("note-request-id", notificationDto);
+
+        final ArgumentCaptor<ApRequestDto> captor = ArgumentCaptor.forClass(ApRequestDto.class);
+        verify(requestSendingService, times(1)).sendRequest(captor.capture());
+        assertEquals("conversationId", captor.getValue().getRequestId());
+        assertTrue(captor.getValue().getBody().contains("requestId=\"note-request-id\""));
     }
 }

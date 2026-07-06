@@ -4,6 +4,7 @@ import eu.efti.commons.dto.PostFollowUpRequestDto;
 import eu.efti.eftigate.controller.api.NoteControllerApi;
 import eu.efti.eftigate.dto.NoteResponseDto;
 import eu.efti.eftigate.service.ControlService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -26,5 +27,11 @@ public class NoteController implements NoteControllerApi {
         log.info("POST on /control/uil/follow-up with param requestId {}", notesDto.getRequestId());
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
         return new ResponseEntity<>(noteResponseDto, StringUtils.isNotBlank(noteResponseDto.getErrorCode()) ? HttpStatus.BAD_REQUEST : HttpStatus.ACCEPTED);
+    }
+
+    @Override
+    public ResponseEntity<NoteResponseDto> getNoteStatus(final @Parameter String requestId) {
+        log.info("GET on /control/uil/follow-up with param requestId {}", requestId);
+        return new ResponseEntity<>(controlService.getNoteRequestStatus(requestId), HttpStatus.OK);
     }
 }
