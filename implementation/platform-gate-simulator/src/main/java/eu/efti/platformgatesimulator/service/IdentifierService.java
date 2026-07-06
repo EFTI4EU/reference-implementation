@@ -15,6 +15,7 @@ import eu.efti.v1.edelivery.Identifier;
 import eu.efti.v1.edelivery.IdentifierQuery;
 import eu.efti.v1.edelivery.IdentifierResponse;
 import eu.efti.v1.edelivery.ObjectFactory;
+import eu.efti.v1.edelivery.Response;
 import eu.efti.v1.edelivery.UIL;
 import eu.efti.v1.edelivery.UILQuery;
 import eu.efti.v1.edelivery.UILResponse;
@@ -243,12 +244,38 @@ public class IdentifierService {
         return serializeUtils.mapJaxbObjectToXmlString(jaxBResponse, IdentifierResponse.class);
     }
 
+    public void sendFollowUpResponse(final String requestId, final NotificationDto notificationDto) {
+        requestSendingService.sendRequest(buildApRequestDtoFollowUpResponse(requestId, notificationDto));
+    }
+
+    private ApRequestDto buildApRequestDtoFollowUpResponse(final String requestId, final NotificationDto notificationDto) {
+        return ApRequestDto.builder()
+                .requestId(UUID.randomUUID().toString())
+                .sender(gateProperties.getOwner())
+                .receiver(notificationDto.getContent().getFromPartyId())
+                .body(followUpResponseString(requestId))
+                .apConfig(ApConfigDto.builder()
+                        .username(gateProperties.getAp().getUsername())
+                        .password(gateProperties.getAp().getPassword())
+                        .url(gateProperties.getAp().getUrl())
+                        .build())
+                .build();
+    }
+
+    private String followUpResponseString(final String requestId) {
+        final Response response = new Response();
+        response.setRequestId(requestId);
+        response.setStatus(EDeliveryStatus.OK.getCode());
+        final JAXBElement<Response> jaxBResponse = objectFactory.createPostFollowUpResponse(response);
+        return serializeUtils.mapJaxbObjectToXmlString(jaxBResponse, Response.class);
+    }
+
 
     private IdentifierResponse buildIdentifierResponse(final IdentifierQuery identifierQuery) {
         final IdentifierResponse identifierResponse = new IdentifierResponse();
 
         if (defineBadOrGoodRequest()) {
-            log.info("Good request will be send");
+            log.info("Good request will be sent");
             identifierResponse.setRequestId(identifierQuery.getRequestId());
             identifierResponse.setDescription(descriptionIdentifierResponse);
             identifierResponse.setStatus(statusIdentifierResponse);

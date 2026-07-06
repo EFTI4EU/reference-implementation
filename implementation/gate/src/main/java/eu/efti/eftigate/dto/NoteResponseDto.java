@@ -1,6 +1,7 @@
 package eu.efti.eftigate.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import eu.efti.commons.enums.StatusEnum;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,8 @@ import lombok.NoArgsConstructor;
 public class NoteResponseDto {
     @NotNull
     private String message;
+    private String requestId;
+    private StatusEnum status;
     private String errorCode;
     private String errorDescription;
 }

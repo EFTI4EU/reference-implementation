@@ -63,7 +63,8 @@ class AapNoteControllerTest {
         final PostFollowUpRequestDto notesDto = new PostFollowUpRequestDto();
         notesDto.setRequestId("requestId");
         notesDto.setMessage("Conducteur suspect");
-        when(controlService.createNoteRequestForControl(notesDto)).thenReturn(new NoteResponseDto("Note was not sent", "ID_NOT_FOUND", "Id not found"));
+        when(controlService.createNoteRequestForControl(notesDto)).thenReturn(NoteResponseDto.builder()
+                .message("Note was not sent").errorCode("ID_NOT_FOUND").errorDescription("Id not found").build());
 
         final String response = mockMvc.perform(post("/v1/aap/control/uil/follow-up")
                         .with(csrf())

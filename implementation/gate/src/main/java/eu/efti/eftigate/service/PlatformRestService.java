@@ -54,9 +54,9 @@ public class PlatformRestService {
             }
         }
 
-        public void callPostConsignmentFollowup(String datasetId, String body) throws PlatformIntegrationServiceException {
+        public void callPostConsignmentFollowup(String datasetId, String body, String requestId) throws PlatformIntegrationServiceException {
             try {
-                api.postConsignmentFollowup(datasetId, body);
+                api.postConsignmentFollowup(datasetId, body, requestId);
             } catch (HttpClientErrorException e) {
                 throw new PlatformIntegrationServiceException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);
             }

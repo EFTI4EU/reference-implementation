@@ -64,7 +64,8 @@ class NoteControllerTest {
         notesDto.setRequestId("requestId");
         notesDto.setMessage("Ugly driver");
 
-        when(controlService.createNoteRequestForControl(notesDto)).thenReturn(new NoteResponseDto("Note was not sent", "ID_NOT_FOUND", "Id not found"));
+        when(controlService.createNoteRequestForControl(notesDto)).thenReturn(NoteResponseDto.builder()
+                .message("Note was not sent").errorCode("ID_NOT_FOUND").errorDescription("Id not found").build());
 
         final String response = mockMvc.perform(post("/v1/control/uil/follow-up")
                         .with(csrf())
