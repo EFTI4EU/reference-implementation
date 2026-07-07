@@ -110,9 +110,9 @@
             <OnMismatch>NEUTRAL</OnMismatch>
             <OnMatch>DENY</OnMatch>
         </filter>
-        <layout>
+        <encoder>
             <pattern>%d %-5level %logger : %msg%n</pattern>
-        </layout>
+        </encoder>
     </appender>
 
     <appender name="Async-Appender" class="ch.qos.logback.classic.AsyncAppender">

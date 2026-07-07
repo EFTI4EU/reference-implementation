@@ -3,6 +3,7 @@ package eu.efti.eftigate.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -16,6 +17,7 @@ public class RabbitSenderService {
 
     public void sendMessageToRabbit(final String exchange, final String key, final Object message) throws JsonProcessingException {
         final ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new Jdk8Module());
         objectMapper.registerModule(new JavaTimeModule());
         final ObjectWriter ow = objectMapper.writer();
         final String json = ow.writeValueAsString(message);

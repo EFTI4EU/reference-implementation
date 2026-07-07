@@ -24,7 +24,7 @@ jobs:
   build:
     name: Build and test
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
 
     defaults:
       run:
@@ -34,16 +34,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: "17"
+          java-version: '21'
           distribution: temurin
           cache: maven
           cache-dependency-path: implementation/**/pom.xml
 
+      - name: Show environment info
+        run: |
+          echo "== java -version =="
+          java -version
+          echo "== mvn -version =="
+          mvn -version
+          echo "== df -h =="
+          df -h
+          echo "== free -h =="
+          free -h || true
+
       - name: Build and test with Maven
-        run: mvn --batch-mode --no-transfer-progress verify -Ddependency-check.skip=true
+        run: |
+          mvn --batch-mode --errors verify -Ddependency-check.skip=true \
+            -Dsurefire.printSummary=true -Dmaven.test.redirectTestOutputToFile=false
 
       - name: Upload test reports
         if: always()

@@ -30,7 +30,7 @@ cp -rf ../../../implementation/platform-gate-simulator/target/platform-gate-simu
 
 echo "Starting up docker compose"
 docker compose up -d
-docker compose restart efti-gate-BO efti-gate-LI efti-gate-SY
+docker compose restart efti-gate-BO efti-gate-LI efti-gate-SY platform-ACME platform-MASSIVE platform-UMBRELLA
 
 wait_for_gate() {
     gate_port=$1

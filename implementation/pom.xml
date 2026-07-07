@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.8</version>
+        <version>3.5.16</version>
     </parent>
 
     <groupId>eu.efti</groupId>
@@ -32,16 +32,16 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!--compilation-->
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
 
         <!--spring cloud-->
         <spring-cloud.version>2022.0.4</spring-cloud.version>
         <openfeign.version>11.7</openfeign.version>
 
         <!-- Plugins version-->
-        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
@@ -74,14 +74,6 @@
         <pluginRepository>
             <id>cefdigital-releases</id>
             <url>https://ec.europa.eu/cefdigital/artifact/content/groups/public/</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>SmartBearPluginRepository</id>
-            <url>https://www.soapui.org/repository/maven2</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>smartbear</id>
-            <url>http://smartbearsoftware.com/repository/maven2</url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -222,7 +214,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
+                <version>${jacoco-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>jacoco-initialize</id>
@@ -242,7 +234,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.9.1</version>
+                <version>${maven-site-plugin.version}</version>
                 <configuration>
                     <locales>fr</locales>
                     <outputEncoding>UTF-8</outputEncoding>
@@ -251,7 +243,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>${maven-project-info-reports-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -309,7 +301,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
+                <version>${jacoco-maven-plugin.version}</version>
                 <reportSets>
                     <reportSet>
                         <reports>
