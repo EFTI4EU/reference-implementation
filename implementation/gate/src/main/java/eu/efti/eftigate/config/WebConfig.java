@@ -11,7 +11,7 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         // We want to handle parameters of type Object and content type application/xml as plain strings so that we may
         // do xml parsing explicitly in controller method. Let's add a pass-through converter for this combination as
         // the first converter so that MappingJackson2XmlHttpMessageConverter is not used for conversion.
