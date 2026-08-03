@@ -1,4 +1,7 @@
 spring:
+  test:
+    database:
+      replace: none
   jpa:
     show-sql: true
     hibernate:
@@ -6,9 +9,9 @@ spring:
     properties:
       hibernate:
         default_schema: EFTI
+        hbm2ddl:
+          create_namespaces: true
         format_sql: true
-        connection:
-          url: jdbc:h2:mem:efti;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS EFTI;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
       username: sa
       password:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -21,4 +24,7 @@ spring:
     console:
       enabled: true
   datasource:
+    url: jdbc:h2:mem:efti;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS EFTI;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
     driver-class-name: org.h2.Driver

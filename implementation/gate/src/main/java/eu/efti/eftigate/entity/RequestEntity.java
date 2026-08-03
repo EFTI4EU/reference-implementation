@@ -1,11 +1,9 @@
 package eu.efti.eftigate.entity;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import eu.efti.commons.enums.RequestStatusEnum;
 import eu.efti.commons.model.AbstractModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -37,7 +35,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
-@Convert(attributeName = "entityAttrName", converter = JsonBinaryType.class)
 public class RequestEntity extends AbstractModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

@@ -53,4 +53,32 @@ public class ApiSecurityIT extends RestIntegrationTest {
         var res = caller.get("/ws", Object.class);
         assertEquals(HttpStatus.UNAUTHORIZED, res.getStatus());
     }
+
+    @Test
+    public void nonAuthenticatedUserShouldNotHaveAccessToControlApi() {
+        var caller = restApiCallerFactory.createUnauthenticated();
+        var res = caller.get("/v1/control/uil", Object.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, res.getStatus());
+    }
+
+    @Test
+    public void preAuthenticatedPlatformHeadersShouldNotHaveAccessToControlApi() {
+        var caller = restApiCallerFactory.createAuthenticatedForPlatformApi(randomIdentifier());
+        var res = caller.get("/v1/control/uil", Object.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, res.getStatus());
+    }
+
+    @Test
+    public void nonAuthenticatedUserShouldNotHaveAccessToAapControlApi() {
+        var caller = restApiCallerFactory.createUnauthenticated();
+        var res = caller.get("/v1/aap/control/uil", Object.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, res.getStatus());
+    }
+
+    @Test
+    public void preAuthenticatedPlatformHeadersShouldNotHaveAccessToAapControlApi() {
+        var caller = restApiCallerFactory.createAuthenticatedForPlatformApi(randomIdentifier());
+        var res = caller.get("/v1/aap/control/uil", Object.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, res.getStatus());
+    }
 }

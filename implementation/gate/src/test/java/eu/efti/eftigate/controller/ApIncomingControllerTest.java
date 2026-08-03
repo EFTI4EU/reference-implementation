@@ -6,16 +6,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
 
@@ -27,18 +25,14 @@ import static eu.efti.edeliveryapconnector.dto.ReceivedNotificationDto.SENT_SUCC
 @ExtendWith(SpringExtension.class)
 class ApIncomingControllerTest {
 
-    @MockBean
+    @Autowired
     private ApIncomingController apIncomingController;
 
-    @Autowired
-    protected MockMvc mockMvc;
-
-    @Mock
+    @MockitoBean
     private RabbitSenderService rabbitSenderService;
 
     @BeforeEach
     public void before() {
-        apIncomingController = new ApIncomingController(rabbitSenderService);
         ReflectionTestUtils.setField(apIncomingController, "eftiReceiveMessageExchange", "eftiReceiveMessageExchange");
         ReflectionTestUtils.setField(apIncomingController, "eftiKeySendMessage", "eftiKeySendMessage");
     }

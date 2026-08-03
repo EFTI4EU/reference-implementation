@@ -4,20 +4,17 @@ import eu.efti.commons.dto.SearchWithIdentifiersRequestDto;
 import eu.efti.commons.dto.UilDto;
 import eu.efti.platformgatesimulator.service.IdentifierService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -29,19 +26,14 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(SpringExtension.class)
 class ControlControllerTest {
 
-    @Mock
+    @MockitoBean
     private IdentifierService identifierService;
 
     @Autowired
     protected MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private ControlController controlController;
-
-    @BeforeEach
-    void before() {
-        controlController = new ControlController(identifierService);
-    }
 
     @Test
     void requestUilTest() {
