@@ -30,6 +30,8 @@
         <tomcat.version>11.0.24</tomcat.version>
         <!-- Override netty version from Spring Boot BOM to fix vulnerabilities -->
         <netty.version>4.2.16.Final</netty.version>
+        <!-- Override postgresql version from Spring Boot BOM to fix vulnerabilities -->
+        <postgresql.version>42.7.13</postgresql.version>
 
         <!--encoding-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
