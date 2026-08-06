@@ -10,4 +10,11 @@
     <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin-stdlib@.*$</packageUrl>
     <cve>CVE-2026-53914</cve>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+    The vulnerable Tomcat example application is not included in this project.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat-embed-.+@.*$</packageUrl>
+    <cve>CVE-2026-66299</cve>
+  </suppress>
 </suppressions>
