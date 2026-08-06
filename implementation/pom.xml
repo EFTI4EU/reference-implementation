@@ -24,7 +24,6 @@
         <multirabbit.version>2.7.0</multirabbit.version>
         <properties-maven-plugin-version>1.1.0</properties-maven-plugin-version>
         <sonar.projectName>EFTI : efti-gate</sonar.projectName>
-        <keycloak.version>22.0.5</keycloak.version>
         <java-jwt.version>4.4.0</java-jwt.version>
 
         <!-- Overrides to Spring Boot BOM managed versions to fix vulnerabilities -->
