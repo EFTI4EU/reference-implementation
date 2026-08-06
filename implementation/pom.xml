@@ -26,12 +26,14 @@
         <sonar.projectName>EFTI : efti-gate</sonar.projectName>
         <keycloak.version>22.0.5</keycloak.version>
         <java-jwt.version>4.4.0</java-jwt.version>
-        <!-- Override tomcat version from Spring Boot BOM to fix vulnerabilities -->
+
+        <!-- Overrides to Spring Boot BOM managed versions to fix vulnerabilities -->
         <tomcat.version>11.0.24</tomcat.version>
-        <!-- Override netty version from Spring Boot BOM to fix vulnerabilities -->
         <netty.version>4.2.16.Final</netty.version>
-        <!-- Override postgresql version from Spring Boot BOM to fix vulnerabilities -->
         <postgresql.version>42.7.13</postgresql.version>
+        <jackson-2-bom.version>2.22.1</jackson-2-bom.version>
+        <log4j2.version>2.25.5</log4j2.version>
+        <!-- /Overrides to Spring Boot BOM managed versions to fix vulnerabilities -->
 
         <!--encoding-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
