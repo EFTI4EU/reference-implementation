@@ -1,13 +1,11 @@
 package eu.efti.eftigate.entity;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import eu.efti.commons.dto.SearchParameter;
 import eu.efti.commons.enums.RequestTypeEnum;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.commons.model.AbstractModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -41,7 +39,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Convert(attributeName = "entityAttrName", converter = JsonBinaryType.class)
 public class ControlEntity extends AbstractModel implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

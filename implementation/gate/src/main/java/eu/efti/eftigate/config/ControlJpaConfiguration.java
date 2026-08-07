@@ -2,12 +2,13 @@ package eu.efti.eftigate.config;
 
 import eu.efti.eftigate.entity.ControlEntity;
 import liquibase.integration.spring.SpringLiquibase;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jpa.EntityManagerFactoryBuilder;
 import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +20,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -46,8 +49,8 @@ public class ControlJpaConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource.control.liquibase")
-    public LiquibaseProperties controlDataSourceLiquibaseProperties() {
-        return new LiquibaseProperties();
+    public LocalLiquibaseProperties controlDataSourceLiquibaseProperties() {
+        return new LocalLiquibaseProperties();
     }
 
     @Bean
@@ -80,7 +83,7 @@ public class ControlJpaConfiguration {
         return props;
     }
 
-    private static SpringLiquibase springLiquibase(final DataSource dataSource, final LiquibaseProperties properties) {
+    private static SpringLiquibase springLiquibase(final DataSource dataSource, final LocalLiquibaseProperties properties) {
         final SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog(properties.getChangeLog());
@@ -96,6 +99,19 @@ public class ControlJpaConfiguration {
 
     private static String joinWithComma(Collection<String> values) {
         return values == null || values.isEmpty() ? null : String.join(",", values);
+    }
+
+    @Setter
+    @Getter
+    public static class LocalLiquibaseProperties {
+        private String changeLog;
+        private List<String> contexts;
+        private String defaultSchema;
+        private boolean dropFirst;
+        private boolean enabled = true;
+        private List<String> labelFilter;
+        private Map<String, String> parameters;
+        private File rollbackFile;
     }
 
 }

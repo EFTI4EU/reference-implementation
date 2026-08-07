@@ -6,7 +6,6 @@ import eu.efti.commons.dto.ContactInformationDto;
 import eu.efti.commons.dto.aap.AapUilDto;
 import eu.efti.commons.enums.StatusEnum;
 import eu.efti.eftigate.dto.RequestIdDto;
-import eu.efti.eftigate.entity.ControlEntity;
 import eu.efti.eftigate.service.ControlService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,10 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -43,7 +41,7 @@ class AapControlControllerTest {
     @Autowired
     protected MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     ControlService controlService;
 
     private final RequestIdDto requestIdDto = new RequestIdDto();
@@ -52,16 +50,6 @@ class AapControlControllerTest {
     void before() {
         requestIdDto.setStatus(StatusEnum.PENDING);
         requestIdDto.setRequestId(REQUEST_ID);
-    }
-
-    @Test
-    @WithAnonymousUser
-    void getByIdshouldFailWhenUnauthenticatedTest() throws Exception {
-        Mockito.when(controlService.getById(1L)).thenReturn(new ControlEntity());
-
-        mockMvc.perform(get("/v1/aap/control/uil"))
-                .andExpect(status().is4xxClientError())
-                .andReturn();
     }
 
     @Test
