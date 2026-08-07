@@ -14,6 +14,9 @@ import eu.efti.eftilogger.dto.MessagePartiesDto;
 import eu.efti.eftilogger.model.ComponentType;
 import eu.efti.eftilogger.service.AuditRegistryLogService;
 import eu.efti.eftilogger.service.AuditRequestLogService;
+
+import static eu.efti.eftilogger.model.ComponentType.GATE;
+import static eu.efti.eftilogger.model.ComponentType.PLATFORM;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,7 @@ public class LogManager {
     public static final String FTI_023 = "fti023";
     public static final String FTI_025 = "fti025";
     public static final String FTI_026 = "fti026";
+    public static final String FTI_029 = "fti029";
 
     public void logNoteReceiveFromAapMessage(final ControlDto control,
                                              final String message,
@@ -155,6 +159,10 @@ public class LogManager {
                 .respondingComponentType(respondingComponentType)
                 .respondingComponentId(!ComponentType.CA_APP.equals(respondingComponentType) ? gateProperties.getOwner() : StringUtils.EMPTY)
                 .respondingComponentCountry(gateProperties.getCountry()).build();
+    }
+
+    public void logSaveIdentifiersResponse(final ControlDto control, final String platformId, final boolean isSuccess) {
+        logSentMessage(control, null, platformId, GATE, PLATFORM, isSuccess, FTI_029);
     }
 
     public void logRequestRegistry(final ControlDto controlDto, final String body, final ComponentType requestingComponentType,

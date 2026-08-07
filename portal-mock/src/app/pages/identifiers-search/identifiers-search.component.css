@@ -16,7 +16,7 @@
 /*
 override multiselect css
 */
-/deep/ .dropdown-btn {
+::ng-deep.dropdown-btn {
   border: none !important;
   padding: 0 !important;
 }

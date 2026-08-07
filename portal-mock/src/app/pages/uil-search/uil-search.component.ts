@@ -1,6 +1,6 @@
 import {Component, inject, OnInit, TemplateRef} from '@angular/core';
 import {ActivatedRoute, RouterOutlet} from "@angular/router";
-import {DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
+import { DatePipe, NgClass } from "@angular/common";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {IconsModule} from "../../icons/icons.module";
@@ -20,14 +20,18 @@ import {LocalStorageService} from "../../core/services/local-storage.service";
 import FileSaver from 'file-saver';
 
 @Component({
-  selector: 'app-uil-search',
-  standalone: true,
-  templateUrl: './uil-search.component.html',
-  imports: [
-    RouterOutlet, IconsModule, DatePipe, NgForOf, NgIf, ReactiveFormsModule,
-    TranslateModule, NgClass, FormsModule, NgSelectModule, NgbPopoverModule
-  ],
-  styleUrl: './uil-search.component.css'
+    selector: 'app-uil-search',
+    templateUrl: './uil-search.component.html',
+    imports: [
+    IconsModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    NgClass,
+    FormsModule,
+    NgSelectModule,
+    NgbPopoverModule
+],
+    styleUrl: './uil-search.component.css'
 })
 export class UilSearchComponent implements OnInit {
 

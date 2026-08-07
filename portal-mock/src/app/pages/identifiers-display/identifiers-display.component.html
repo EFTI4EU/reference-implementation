@@ -21,7 +21,7 @@
   </div>
 </div>
 
-  <div class="row">
+<div class="row">
   <div class="col-6">
     <div class="mt-4 text-center title-area ">{{'identifiers-display.transport-movement' | translate }}</div>
     <div class="data-area vehicle-area p-4 table-responsive">
@@ -36,13 +36,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transportMovement of identifiers.mainCarriageTransportMovement">
-            <td class="value">{{transportMovement.id}}</td>
-            <td class="value">{{transportMovement.schemeAgencyId}}</td>
-            <td class="value">{{getTransportModeFromCode(transportMovement.modeCode)}}</td>
-            <td class="value">{{transportMovement.registrationCountryCode}}</td>
-            <td class="value">{{transportMovement.dangerousGoodsIndicator}}</td>
-          </tr>
+          @for (transportMovement of identifiers.mainCarriageTransportMovement; track transportMovement) {
+            <tr>
+              <td class="value">{{transportMovement.id}}</td>
+              <td class="value">{{transportMovement.schemeAgencyId}}</td>
+              <td class="value">{{getTransportModeFromCode(transportMovement.modeCode)}}</td>
+              <td class="value">{{transportMovement.registrationCountryCode}}</td>
+              <td class="value">{{transportMovement.dangerousGoodsIndicator}}</td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
@@ -72,12 +74,14 @@
               <td class="value">{{usedTransportEquipment.categoryCode}}</td>
               <td class="value">{{usedTransportEquipment.registrationCountryCode}}</td>
             </tr>
-            <tr *ngFor="let carriedTransportEquipment of usedTransportEquipment.carriedTransportEquipment" class="hidden" [id]="'carried-' + $index">
-              <td></td>
-              <td class="value grey">{{carriedTransportEquipment.sequenceNumber}}</td>
-              <td class="value grey">{{carriedTransportEquipment.id}}</td>
-              <td class="value grey">{{carriedTransportEquipment.schemeAgencyId}}</td>
-            </tr>
+            @for (carriedTransportEquipment of usedTransportEquipment.carriedTransportEquipment; track carriedTransportEquipment) {
+              <tr class="hidden" [id]="'carried-' + $index">
+                <td></td>
+                <td class="value grey">{{carriedTransportEquipment.sequenceNumber}}</td>
+                <td class="value grey">{{carriedTransportEquipment.id}}</td>
+                <td class="value grey">{{carriedTransportEquipment.schemeAgencyId}}</td>
+              </tr>
+            }
           </tbody>
         }
       </table>

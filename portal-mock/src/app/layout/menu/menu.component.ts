@@ -2,17 +2,16 @@ import { Component } from '@angular/core';
 import { NgbNavModule } from "@ng-bootstrap/ng-bootstrap";
 import {Router, RouterLink} from "@angular/router";
 import {SessionService} from "../../core/services/session.service";
-import {NgIf} from "@angular/common";
+
 import {TranslateModule} from "@ngx-translate/core";
 import {FormsModule} from "@angular/forms";
 import {LocalStorageService} from "../../core/services/local-storage.service";
 
 @Component({
-  selector: 'app-menu',
-  standalone: true,
-  imports: [NgbNavModule, RouterLink, NgIf, TranslateModule, FormsModule],
-  templateUrl: './menu.component.html',
-  styleUrl: './menu.component.css'
+    selector: 'app-menu',
+    imports: [NgbNavModule, RouterLink, TranslateModule, FormsModule],
+    templateUrl: './menu.component.html',
+    styleUrl: './menu.component.css'
 })
 export class MenuComponent {
 
