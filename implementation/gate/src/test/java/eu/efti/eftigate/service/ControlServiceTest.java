@@ -144,7 +144,7 @@ class ControlServiceTest extends AbstractServiceTest {
                         .username(USERNAME).build()).build();
         controlService = new ControlService(controlRepository, eftiGateIdResolver, identifiersService, mapperUtils,
                 requestServiceFactory, logManager, gateToRequestTypeFunction, eftiAsyncCallsProcessor,
-                gateProperties, serializeUtils, platformIntegrationService);
+                gateProperties, serializeUtils, platformIntegrationService, notesRequestService);
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
         final StatusEnum status = StatusEnum.PENDING;
         final AuthorityDto authorityDto = AuthorityDto.builder()
