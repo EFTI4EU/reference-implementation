@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.16</version>
+        <version>4.0.7</version>
     </parent>
 
     <groupId>eu.efti</groupId>
@@ -24,8 +24,15 @@
         <multirabbit.version>2.7.0</multirabbit.version>
         <properties-maven-plugin-version>1.1.0</properties-maven-plugin-version>
         <sonar.projectName>EFTI : efti-gate</sonar.projectName>
-        <keycloak.version>22.0.5</keycloak.version>
         <java-jwt.version>4.4.0</java-jwt.version>
+
+        <!-- Overrides to Spring Boot BOM managed versions to fix vulnerabilities -->
+        <tomcat.version>11.0.24</tomcat.version>
+        <netty.version>4.2.16.Final</netty.version>
+        <postgresql.version>42.7.13</postgresql.version>
+        <jackson-2-bom.version>2.22.1</jackson-2-bom.version>
+        <log4j2.version>2.25.5</log4j2.version>
+        <!-- /Overrides to Spring Boot BOM managed versions to fix vulnerabilities -->
 
         <!--encoding-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,13 +44,16 @@
         <maven.compiler.target>21</maven.compiler.target>
 
         <!--spring cloud-->
-        <spring-cloud.version>2022.0.4</spring-cloud.version>
+        <spring-cloud.version>2025.1.2</spring-cloud.version>
         <openfeign.version>11.7</openfeign.version>
+        <hypersistence-utils.version>3.11.0</hypersistence-utils.version>
+        <commons-io.version>2.20.0</commons-io.version>
 
         <!-- Plugins version-->
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
-        <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <dependency-check-maven.version>12.2.2</dependency-check-maven.version>
         <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
@@ -51,11 +61,6 @@
         <maven-apt-plugin.version>1.0.4</maven-apt-plugin.version>
         <maven-changelog-plugin.version>2.3</maven-changelog-plugin.version>
 
-        <multirabbit.version>2.7.0</multirabbit.version>
-        <properties-maven-plugin-version>1.1.0</properties-maven-plugin-version>
-
-        <keycloak.version>22.0.5</keycloak.version>
-        <java-jwt.version>4.4.0</java-jwt.version>
     </properties>
 
     <distributionManagement>
@@ -130,16 +135,6 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.18.34</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.messaging.saaj</groupId>
-                <artifactId>saaj-impl</artifactId>
-                <version>3.0.4</version>
-            </dependency>
-            <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-rt</artifactId>
                 <version>4.0.3</version>
@@ -156,23 +151,18 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.15.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>4.4</version>
             </dependency>
             <dependency>
-                <groupId>com.vladmihalcea</groupId>
-                <artifactId>hibernate-types-52</artifactId>
-                <version>2.2.2</version>
+                <groupId>io.hypersistence</groupId>
+                <artifactId>hypersistence-utils-hibernate-70</artifactId>
+                <version>${hypersistence-utils.version}</version>
             </dependency>
             <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>4.0.2</version>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -187,7 +177,7 @@
                 <plugin>
                     <groupId>org.openapitools</groupId>
                     <artifactId>openapi-generator-maven-plugin</artifactId>
-                    <version>7.10.0</version>
+                    <version>7.17.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -202,6 +192,9 @@
                         <format>HTML</format>
                         <format>JSON</format>
                     </formats>
+                    <suppressionFiles>
+                        <suppressionFile>dependency-check-suppressions.xml</suppressionFile>
+                    </suppressionFiles>
                 </configuration>
                 <executions>
                     <execution>
@@ -268,7 +261,35 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.2</version>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*IT.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+                <configuration>
+                    <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.liquibase</groupId>

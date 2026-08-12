@@ -7,10 +7,9 @@ import eu.efti.eftigate.service.request.ValidationService;
 import eu.efti.eftigate.utils.StringAsObjectHttpMessageConverter;
 import eu.efti.v1.consignment.common.SupplyChainConsignment;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.net.URI;
 import java.util.Set;
@@ -18,17 +17,21 @@ import java.util.Set;
 @AllArgsConstructor
 @Service
 public class PlatformRestService {
-    private static final RestTemplate restTemplate = new RestTemplateBuilder()
-            .messageConverters(new StringAsObjectHttpMessageConverter())
-            .build();
+    private static final RestClient restClient = createRestClient();
 
     private final SerializeUtils serializeUtils;
 
     private final ValidationService validationService;
 
+    private static RestClient createRestClient() {
+        return RestClient.builder()
+                .messageConverters(converters -> converters.add(0, new StringAsObjectHttpMessageConverter()))
+                .build();
+    }
+
     private static DefaultApi createApi(URI restApiBaseUrl) {
         // TODO EREF-72: include authentication info
-        return new DefaultApi(new ApiClient(restTemplate)
+        return new DefaultApi(new ApiClient(restClient)
                 .setBasePath(restApiBaseUrl.toString()));
     }
 

@@ -6,9 +6,9 @@ import eu.efti.platformgatesimulator.config.GateProperties;
 import eu.efti.platformgatesimulator.service.client.DefaultApi;
 import eu.efti.v1.consignment.identifier.SupplyChainConsignment;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
@@ -31,10 +31,13 @@ public class GateIntegrationService {
                                   SerializeUtils serializeUtils) {
         this.gateProperties = gateProperties;
         this.serializeUtils = serializeUtils;
-        var builder = new RestTemplateBuilder()
-                .defaultHeader("X-Mock-Pre-Authenticated-User-Id", gateProperties.getOwner())
-                .defaultHeader("X-Mock-Pre-Authenticated-User-Role", "PLATFORM");
-        api = new DefaultApi(new ApiClient(builder.build())
+        var restTemplate = new RestTemplate();
+        restTemplate.getInterceptors().add((request, body, execution) -> {
+            request.getHeaders().add("X-Mock-Pre-Authenticated-User-Id", gateProperties.getOwner());
+            request.getHeaders().add("X-Mock-Pre-Authenticated-User-Role", "PLATFORM");
+            return execution.execute(request, body);
+        });
+        api = new DefaultApi(new ApiClient(restTemplate)
                 .setBasePath(gateProperties.getRestApiBaseUrl().toString()));
     }
 

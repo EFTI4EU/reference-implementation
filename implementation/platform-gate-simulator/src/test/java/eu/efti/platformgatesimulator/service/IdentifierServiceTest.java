@@ -13,12 +13,10 @@ import eu.efti.v1.edelivery.IdentifierQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
@@ -28,7 +26,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-@RunWith(SpringRunner.class)
 @EnableConfigurationProperties(GateProperties.class)
 class IdentifierServiceTest extends AbstractTest {
 

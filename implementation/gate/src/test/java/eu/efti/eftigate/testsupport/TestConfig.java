@@ -2,6 +2,7 @@ package eu.efti.eftigate.testsupport;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -73,7 +74,9 @@ public class TestConfig {
     }
 
     @Bean
-    public DbCleaner getDbCleaner(DataSource controlDataSource, DataSource identifiersDataSource) {
+    public DbCleaner getDbCleaner(
+            @Qualifier("controlDataSource") DataSource controlDataSource,
+            @Qualifier("identifiersDataSource") DataSource identifiersDataSource) {
         var url1 = getUrl(controlDataSource);
         var url2 = getUrl(identifiersDataSource);
         if (!url1.equals(url2)) {
