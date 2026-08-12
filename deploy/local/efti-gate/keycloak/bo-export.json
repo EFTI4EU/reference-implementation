@@ -923,7 +923,8 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "KGC5ic7Ciu9pzUeeqVn6r8SHVKO86CXK",
       "redirectUris": [
-        "http://portal.efti.fr:83/redirect_uri"
+        "http://portal.efti.fr:83/redirect_uri",
+        "http://portal.efti.fr:83"
       ],
       "webOrigins": [
         "http://portal.efti.fr:83"
