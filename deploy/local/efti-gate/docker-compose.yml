@@ -1,6 +1,6 @@
 services:
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:4.3-management
     container_name: efti-rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: guest
