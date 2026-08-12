@@ -2,15 +2,15 @@ spring:
   datasource:
     control:
       driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-      jdbc-url: jdbc:tc:postgresql:15.4:///test?user=efti&TC_INITSCRIPT=sql/init-test-schema.sql
-      url: jdbc:tc:postgresql:15.4:///test?user=efti&TC_INITSCRIPT=sql/init-test-schema.sql
+      jdbc-url: jdbc:tc:postgresql:18:///test?user=efti&TC_INITSCRIPT=sql/init-test-schema.sql
+      url: jdbc:tc:postgresql:18:///test?user=efti&TC_INITSCRIPT=sql/init-test-schema.sql
       liquibase:
         change-log: classpath:db/changelog/db.test.changelog-master.xml
         default-schema: "eftiit"
     identifiers:
       driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-      jdbc-url: jdbc:tc:postgresql:15.4:///test?user=efti&TC_INITSCRIPT=sql/init-test-schema.sql
-      url: jdbc:tc:postgresql:15.4:///test?user=efti&TC_INITSCRIPT=sql/init-test-schema.sql
+      jdbc-url: jdbc:tc:postgresql:18:///test?user=efti&TC_INITSCRIPT=sql/init-test-schema.sql
+      url: jdbc:tc:postgresql:18:///test?user=efti&TC_INITSCRIPT=sql/init-test-schema.sql
       liquibase:
         enabled: false
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver

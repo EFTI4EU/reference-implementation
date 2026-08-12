@@ -1,6 +1,6 @@
 services:
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:4.3-management
     container_name: efti-rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: guest
@@ -14,7 +14,7 @@ services:
       efti:
 
   platform-ACME:
-    image: openjdk:21
+    image: eclipse-temurin:21
     depends_on:
       - keycloak
       - psql
@@ -31,7 +31,7 @@ services:
       efti:
 
   platform-MASSIVE:
-    image: openjdk:21
+    image: eclipse-temurin:21
     depends_on:
       - keycloak
       - psql
@@ -48,7 +48,7 @@ services:
       efti:
   
   platform-UMBRELLA:
-    image: openjdk:21
+    image: eclipse-temurin:21
     depends_on:
       - keycloak
       - psql
@@ -67,7 +67,7 @@ services:
   efti-gate-BO:
     env_file:
       - ./gate/ENV/BO.env
-    image: openjdk:21
+    image: eclipse-temurin:21
     depends_on:
       - keycloak
       - psql
@@ -86,7 +86,7 @@ services:
   efti-gate-LI:
     env_file:
       - ./gate/ENV/LI.env
-    image: openjdk:21
+    image: eclipse-temurin:21
     depends_on:
       - keycloak
       - psql
@@ -105,7 +105,7 @@ services:
   efti-gate-SY:
     env_file:
       - ./gate/ENV/SY.env
-    image: openjdk:21
+    image: eclipse-temurin:21
     depends_on:
       - keycloak
       - psql
@@ -122,7 +122,7 @@ services:
       efti:
 
   psql:
-    image: postgres:15.4
+    image: postgres:18
     container_name: reference-gate-shared-db
     environment:
       POSTGRES_PASSWORD: root
@@ -135,7 +135,7 @@ services:
       efti:
 
   psql-meta:
-    image: postgres:15.4
+    image: postgres:18
     environment:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: efti
@@ -147,11 +147,11 @@ services:
       efti:
 
   keycloak:
-    image: quay.io/keycloak/keycloak:22.0.5
+    image: quay.io/keycloak/keycloak:26.6
     command: [ "start-dev", "--import-realm", "-Dkeycloak.profile.feature.upload_scripts=enabled" ]
     environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=secret
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=secret
       - DEBUG=true
       - DEBUG_PORT=*:8788
     ports:
