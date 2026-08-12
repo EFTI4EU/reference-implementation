@@ -223,6 +223,13 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet author="kahlj" id="1707315732219-27">
+        <createIndex indexName="requestid_index" tableName="control" unique="true">
+            <column name="requestid"/>
+        </createIndex>
+    </changeSet>
+
     <include file="/db.changelog/db.gate.changelog-1-rename.xml"/>
     <include file="/db.changelog/db.gate.changelog-2-subsetIds.xml"/>
 </databaseChangeLog>
