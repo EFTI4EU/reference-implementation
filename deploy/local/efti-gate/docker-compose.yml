@@ -122,7 +122,7 @@ services:
       efti:
 
   psql:
-    image: postgres:15.4
+    image: postgres:18
     container_name: reference-gate-shared-db
     environment:
       POSTGRES_PASSWORD: root
@@ -135,7 +135,7 @@ services:
       efti:
 
   psql-meta:
-    image: postgres:15.4
+    image: postgres:18
     environment:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: efti
