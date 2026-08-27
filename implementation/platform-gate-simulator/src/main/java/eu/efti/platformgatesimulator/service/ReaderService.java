@@ -58,7 +58,7 @@ public class ReaderService {
         if (resource.exists()) {
             log.info("file exists");
             Optional<String> str;
-            if (subsets.isEmpty() || subsets.contains("full")) {
+            if (subsets.isEmpty()) {
                 str = Optional.of(resource.getContentAsString(Charset.defaultCharset()));
             } else {
                 str = SubsetUtils.parseBySubsets(resource.getContentAsString(Charset.defaultCharset()), subsets);
