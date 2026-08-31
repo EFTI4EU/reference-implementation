@@ -1,20 +1,120 @@
+USE general_schema;
+
 --  *********************************************************************
 --  Update Database Script
 --  *********************************************************************
---  Change Log: src/main/resources/db/changelog-multi-tenancy.xml
---  Ran at: 3/24/23 6:43 PM
---  Against: null@offline:mysql?changeLogFile=/Users/dragusa/domibus_release_504/domibus/Core/Domibus-MSH-db/target/liquibase/changelog-5.1-multi-tenancy.mysql
+--  Change Log: src/main/resources/db/releases/5.2.1/5.2.1-changelog-multi-tenancy.xml
+--  Ran at: 8/11/26, 12:29 PM
+--  Against: null@offline:mysql?changeLogFile=target/liquibase/changelog-1.19-multi-tenancy.mysql
 --  Liquibase version: 4.17.0
 --  *********************************************************************
 
+--  Changeset src/main/resources/db/releases/5.2.1/../../common/changelog-before-migration-statements.xml::EDELIVERY-12287_assert_previous_migration_succeeded-mysql::Gabriel Maier
+DELIMITER //
 
-USE general_schema;
+DROP PROCEDURE IF EXISTS ASSERT_DB_VERSION_IS
+//
 
---  Changeset src/main/resources/db/changelog-multi-tenancy.xml::EDELIVERY-7836::gautifr
+DROP FUNCTION IF EXISTS STRING_TO_JSON_ARRAY
+//
+
+CREATE FUNCTION STRING_TO_JSON_ARRAY(in_string VARCHAR(100), in_delimiter VARCHAR(1))
+RETURNS JSON
+DETERMINISTIC
+BEGIN
+    RETURN CAST(CONCAT('["', REPLACE(in_string, in_delimiter, '","'), '"]') as JSON);
+END
+//
+
+CREATE PROCEDURE ASSERT_DB_VERSION_IS(IN in_expected_version VARCHAR(100))
+BEGIN
+    DECLARE actual_version VARCHAR(30);
+    DECLARE numeric_version INT;
+
+    IF in_expected_version IS NOT NULL THEN
+        SET in_expected_version = REPLACE(in_expected_version, ' ', '');
+    END IF;
+    IF in_expected_version = 'PreconditionDomibusVersionIs_not_set' OR in_expected_version IS NULL THEN
+        SET in_expected_version = 'ignore';
+    END IF;
+    IF in_expected_version = 'empty' THEN
+        SELECT count(1)
+        INTO @table_count
+        FROM information_schema.tables
+        WHERE table_type = 'BASE TABLE'
+          AND lower(table_schema) = lower(database());
+        IF @table_count > 0 THEN
+                    SET @error_message = CONCAT('Domibus Assertion Error: The schema ', database(), ' should be empty to run this script file') ;
+                    SIGNAL SQLSTATE '45000'
+                        SET MESSAGE_TEXT = @error_message;
+        END IF;
+    ELSEIF in_expected_version <> 'ignore' THEN
+        SELECT V.VERSION, SUBSTRING_INDEX(V.VERSION, '.', 1) * 100 * 100 +  -- major version
+                          SUBSTRING_INDEX(SUBSTRING_INDEX(V.VERSION, '.', 2), '.', -1) * 100 +  -- minor version
+                          IFNULL(           -- patch version
+                                  CASE
+                                      WHEN V.VERSION LIKE '%.%.%'
+                                          THEN CAST(SUBSTRING_INDEX(V.VERSION, '.', -1) AS UNSIGNED)
+                                      END,
+                                  0
+                          ) as version_as_number
+        INTO actual_version, numeric_version
+        FROM TB_VERSION V
+        ORDER BY version_as_number DESC
+        LIMIT 1;
+        IF NOT JSON_CONTAINS(STRING_TO_JSON_ARRAY(in_expected_version, ','), JSON_QUOTE(actual_version)) THEN
+            SET @error_message = CONCAT('Domibus Assertion Error: Please upgrade to ', in_expected_version, '. The last successful upgrade was to ', actual_version);
+            SIGNAL SQLSTATE '45001'
+                SET MESSAGE_TEXT = @error_message;
+        END IF;
+    END IF;
+END
+//
+CALL ASSERT_DB_VERSION_IS('ignore');
+//
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS EXECUTE_AND_IGNORE_ERROR
+//
+
+/*  Call this stored procedure to execute the statement contained in the parameter dmlStatement.
+ In case the execution causes an error the statement that failed is rolled back.
+ If the MYSQL_ERRNO equals errorNumber then a warning message is logged and the error is ignored otherwise the error is rethrown with the SQLSTATE code 45001 */
+CREATE PROCEDURE EXECUTE_AND_IGNORE_ERROR(IN dmlStatement MEDIUMTEXT, IN errorNumber NUMERIC)
+    MODIFIES SQL DATA
+    SQL SECURITY DEFINER
+BEGIN
+    DECLARE code NUMERIC DEFAULT -1;
+    DECLARE msg TEXT;
+
+    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+        BEGIN
+            GET DIAGNOSTICS CONDITION 1
+                code = MYSQL_ERRNO, msg = MESSAGE_TEXT;
+            IF code = errorNumber THEN
+                SELECT CONCAT('Warning: Ignoring error [', code, ': ', msg, '] after executing [', dmlStatement, ']') AS Message;
+            ELSE
+                SET @error_message = CONCAT('Unhandled exception [', code, ': ', msg, ']') ;
+                SIGNAL SQLSTATE '45001'
+                    SET MESSAGE_TEXT = @error_message;
+            END IF;
+        END;
+
+    SET @q = dmlStatement;
+    PREPARE stmt FROM @q;
+    IF code = -1 THEN
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+    END IF;
+END
+//
+
+--  Changeset src/main/resources/db/releases/5.2.1/5.2.1-changelog-multi-tenancy.xml::EDELIVERY-7836::gautifr
 --  create DOMIBUS_SCALABLE_SEQUENCE sequence
 CREATE TABLE DOMIBUS_SCALABLE_SEQUENCE (sequence_name VARCHAR(255) NOT NULL, next_val BIGINT NULL, CONSTRAINT PK_DOMIBUS_SCALABLE_SEQUENCE PRIMARY KEY (sequence_name));
 
---  Changeset src/main/resources/db/changelog-quartz.xml::EDELIVERY-3425::migueti
+--  Changeset src/main/resources/db/releases/5.2.1/5.2.1-changelog-quartz.xml::EDELIVERY-3425::migueti
 CREATE TABLE QRTZ_BLOB_TRIGGERS (SCHED_NAME VARCHAR(120) NOT NULL, TRIGGER_NAME VARCHAR(200) NOT NULL, TRIGGER_GROUP VARCHAR(200) NOT NULL, BLOB_DATA BLOB NULL);
 
 CREATE TABLE QRTZ_CALENDARS (SCHED_NAME VARCHAR(120) NOT NULL, CALENDAR_NAME VARCHAR(200) NOT NULL, CALENDAR_BLOB BLOB NOT NULL);
@@ -109,12 +209,12 @@ ALTER TABLE QRTZ_SIMPROP_TRIGGERS ADD CONSTRAINT FK_SIMPROP_TRIGGERS FOREIGN KEY
 
 ALTER TABLE QRTZ_TRIGGERS ADD CONSTRAINT FK_TRIGGERS FOREIGN KEY (SCHED_NAME, JOB_NAME, JOB_GROUP) REFERENCES QRTZ_JOB_DETAILS (SCHED_NAME, JOB_NAME, JOB_GROUP) ON UPDATE NO ACTION ON DELETE NO ACTION;
 
---  Changeset src/main/resources/db/changelog-multi-tenancy.xml::EDELIVERY-7822,EDELIVERY-8050::Sebastian-Ion TINCU
+--  Changeset src/main/resources/db/releases/5.2.1/5.2.1-changelog-multi-tenancy.xml::EDELIVERY-7822,EDELIVERY-8050::Sebastian-Ion TINCU
 CREATE TABLE TB_D_TIMEZONE_OFFSET (ID_PK BIGINT AUTO_INCREMENT NOT NULL, NEXT_ATTEMPT_TIMEZONE_ID VARCHAR(255) NULL COMMENT 'Time zone ID on the application server to use when converting the next attempt for displaying it to the user', NEXT_ATTEMPT_OFFSET_SECONDS INT NULL COMMENT 'Offset in seconds of the time zone on the application server to use when converting the next attempt for displaying it to the user', CREATION_TIME timestamp DEFAULT NOW() NOT NULL, CREATED_BY VARCHAR(255) DEFAULT 'DOMIBUS' NOT NULL, MODIFICATION_TIME timestamp NULL, MODIFIED_BY VARCHAR(255) NULL, CONSTRAINT PK_D_TIMEZONE_OFFSET PRIMARY KEY (ID_PK));
 
 ALTER TABLE TB_D_TIMEZONE_OFFSET ADD CONSTRAINT UK_D_TIMEZONE_OFFSET UNIQUE (NEXT_ATTEMPT_TIMEZONE_ID, NEXT_ATTEMPT_OFFSET_SECONDS);
 
---  Changeset src/main/resources/db/changelog-multi-tenancy.xml::1564496480476-13::Catalin Enache
+--  Changeset src/main/resources/db/releases/5.2.1/5.2.1-changelog-multi-tenancy.xml::1564496480476-13::Catalin Enache
 --  create tables
 CREATE TABLE TB_ALERT (ID_PK BIGINT AUTO_INCREMENT NOT NULL, ALERT_TYPE VARCHAR(50) NOT NULL, ATTEMPTS_NUMBER INT NULL, MAX_ATTEMPTS_NUMBER INT NOT NULL, PROCESSED BIT(1) NULL, PROCESSED_TIME timestamp NULL, REPORTING_TIME timestamp NULL, REPORTING_TIME_FAILURE timestamp NULL, NEXT_ATTEMPT timestamp NULL, FK_TIMEZONE_OFFSET BIGINT NULL, ALERT_STATUS VARCHAR(50) NOT NULL, ALERT_LEVEL VARCHAR(20) NOT NULL, CREATION_TIME timestamp DEFAULT NOW() NOT NULL, CREATED_BY VARCHAR(255) DEFAULT 'DOMIBUS' NOT NULL, MODIFICATION_TIME timestamp NULL, MODIFIED_BY VARCHAR(255) NULL, CONSTRAINT PK_ALERT PRIMARY KEY (ID_PK));
 
@@ -132,7 +232,7 @@ CREATE TABLE TB_EVENT (ID_PK BIGINT AUTO_INCREMENT NOT NULL, EVENT_TYPE VARCHAR(
 
 CREATE TABLE TB_EVENT_ALERT (FK_EVENT BIGINT NOT NULL, FK_ALERT BIGINT NOT NULL, CREATION_TIME timestamp DEFAULT NOW() NOT NULL, CREATED_BY VARCHAR(255) DEFAULT 'DOMIBUS' NOT NULL, MODIFICATION_TIME timestamp NULL, MODIFIED_BY VARCHAR(255) NULL, CONSTRAINT PK_EVENT_ALERT PRIMARY KEY (FK_EVENT, FK_ALERT));
 
-CREATE TABLE TB_EVENT_PROPERTY (ID_PK BIGINT AUTO_INCREMENT NOT NULL, PROPERTY_TYPE VARCHAR(50) NOT NULL, FK_EVENT BIGINT NOT NULL, DTYPE VARCHAR(31) NULL, STRING_VALUE VARCHAR(255) NULL, DATE_VALUE timestamp NULL, CREATION_TIME timestamp DEFAULT NOW() NOT NULL, CREATED_BY VARCHAR(255) DEFAULT 'DOMIBUS' NOT NULL, MODIFICATION_TIME timestamp NULL, MODIFIED_BY VARCHAR(255) NULL, CONSTRAINT PK_EVENT_PROPERTY PRIMARY KEY (ID_PK));
+CREATE TABLE TB_EVENT_PROPERTY (ID_PK BIGINT AUTO_INCREMENT NOT NULL, PROPERTY_TYPE VARCHAR(50) NOT NULL, FK_EVENT BIGINT NOT NULL, DTYPE VARCHAR(31) NULL, STRING_VALUE VARCHAR(255) NULL, DATE_VALUE timestamp NULL, EVENT_TYPE VARCHAR(50) NOT NULL, CREATION_TIME timestamp DEFAULT NOW() NOT NULL, CREATED_BY VARCHAR(255) DEFAULT 'DOMIBUS' NOT NULL, MODIFICATION_TIME timestamp NULL, MODIFIED_BY VARCHAR(255) NULL, CONSTRAINT PK_EVENT_PROPERTY PRIMARY KEY (ID_PK));
 
 CREATE TABLE TB_REV_INFO (ID BIGINT AUTO_INCREMENT NOT NULL, TIMESTAMP BIGINT NULL, REVISION_DATE timestamp NULL, USER_NAME VARCHAR(255) NULL, CONSTRAINT PK_REV_INFO PRIMARY KEY (ID));
 
@@ -158,10 +258,10 @@ CREATE TABLE TB_VERSION (VERSION VARCHAR(30) NULL, BUILD_TIME VARCHAR(30) NULL, 
 
 CREATE TABLE TB_LOCK (ID_PK BIGINT AUTO_INCREMENT NOT NULL, LOCK_KEY VARCHAR(255) NOT NULL, CREATION_TIME timestamp DEFAULT NOW() NOT NULL, CREATED_BY VARCHAR(255) DEFAULT 'DOMIBUS' NOT NULL, MODIFICATION_TIME timestamp NULL, MODIFIED_BY VARCHAR(255) NULL, CONSTRAINT PK_LOCK PRIMARY KEY (ID_PK)) COMMENT='Stores keys used for locking/synchronizing in cluster';
 
---  Changeset src/main/resources/db/changelog-multi-tenancy.xml::EDELIVERY-9028-Audit Table for TB_USER_DOMAIN::Ion Perpegel
+--  Changeset src/main/resources/db/releases/5.2.1/5.2.1-changelog-multi-tenancy.xml::EDELIVERY-9028-Audit Table for TB_USER_DOMAIN::Ion Perpegel
 CREATE TABLE TB_USER_DOMAIN_AUD (ID_PK BIGINT NOT NULL, REV BIGINT NOT NULL, REVTYPE TINYINT NULL, USER_NAME VARCHAR(255) NULL, USERNAME_MOD BIT(1) NULL, DOMAIN VARCHAR(255) NULL, DOMAIN_MOD BIT(1) NULL, PREFERRED_DOMAIN VARCHAR(255) NULL, PREFERREDDOMAIN_MOD BIT(1) NULL, CONSTRAINT PK_USER_DOMAIN_AUD PRIMARY KEY (ID_PK, REV));
 
---  Changeset src/main/resources/db/changelog-multi-tenancy.xml::EDELIVERY-8688-General Schema Audit::Ion Perpegel
+--  Changeset src/main/resources/db/releases/5.2.1/5.2.1-changelog-multi-tenancy.xml::EDELIVERY-8688-General Schema Audit::Ion Perpegel
 CREATE OR REPLACE VIEW V_AUDIT_DETAIL AS SELECT
             DISTINCT rc.GROUP_NAME as AUDIT_TYPE ,
             rc.MODIFICATION_TYPE as ACTION_TYPE,
@@ -176,7 +276,7 @@ CREATE OR REPLACE VIEW V_AUDIT AS SELECT *
             FROM V_AUDIT_DETAIL VAD
             ORDER BY VAD.AUDIT_DATE DESC;
 
---  Changeset src/main/resources/db/changelog-multi-tenancy.xml::1564496480476-27::Catalin Enache
+--  Changeset src/main/resources/db/releases/5.2.1/5.2.1-changelog-multi-tenancy.xml::1564496480476-27::Catalin Enache
 --  unique constraints
 ALTER TABLE TB_COMMAND_PROPERTY ADD CONSTRAINT UK_COMMAND_PROP_NAME UNIQUE (FK_COMMAND, PROPERTY_NAME);
 
@@ -190,7 +290,7 @@ ALTER TABLE TB_LOCK ADD CONSTRAINT UK_LOCK_KEY UNIQUE (LOCK_KEY);
 
 ALTER TABLE TB_VERSION ADD CONSTRAINT UK_VERSION UNIQUE (VERSION);
 
---  Changeset src/main/resources/db/changelog-multi-tenancy.xml::1564496480476-30::Catalin Enache
+--  Changeset src/main/resources/db/releases/5.2.1/5.2.1-changelog-multi-tenancy.xml::1564496480476-30::Catalin Enache
 --  create indexes
 CREATE INDEX IDX_FK_ALERT ON TB_EVENT_ALERT(FK_ALERT);
 
@@ -208,7 +308,7 @@ CREATE INDEX IDX_FK_USR_ROL_AUD_REV_INFO ON TB_USER_ROLE_AUD(REV);
 
 CREATE INDEX IDX_FK_USR_DOM_AUD_REV_INFO ON TB_USER_DOMAIN_AUD(REV);
 
---  Changeset src/main/resources/db/changelog-multi-tenancy.xml::1564496480476-56::Catalin Enache
+--  Changeset src/main/resources/db/releases/5.2.1/5.2.1-changelog-multi-tenancy.xml::1564496480476-56::Catalin Enache
 --  create foreign keys
 ALTER TABLE TB_EVENT_ALERT ADD CONSTRAINT FK_ALERT_ID FOREIGN KEY (FK_ALERT) REFERENCES TB_ALERT (ID_PK) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
@@ -232,7 +332,7 @@ ALTER TABLE TB_USER_ROLE_AUD ADD CONSTRAINT FK_USR_ROL_AUD_REV_INFO FOREIGN KEY 
 
 ALTER TABLE TB_USER_DOMAIN_AUD ADD CONSTRAINT FK_USR_DOM_AUD_REV_INFO FOREIGN KEY (REV) REFERENCES TB_REV_INFO (ID) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
---  Changeset src/main/resources/db/changelog-multi-tenancy.xml::EDELIVERY-9563::Razvan Cretu
-CREATE TABLE TB_PARTY_STATUS (ID_PK BIGINT AUTO_INCREMENT NOT NULL, PARTY_NAME VARCHAR(100) NOT NULL, CONNECTIVITY_STATUS VARCHAR(50) NOT NULL, CREATION_TIME timestamp DEFAULT NOW() NOT NULL, CREATED_BY VARCHAR(255) DEFAULT 'DOMIBUS' NOT NULL, MODIFICATION_TIME timestamp NULL, MODIFIED_BY VARCHAR(255) NULL, CONSTRAINT PK_PARTY_STATUS PRIMARY KEY (ID_PK));
+--  Changeset src/main/resources/db/releases/5.2.1/5.2.1-changelog-multi-tenancy.xml::EDELIVERY-14185::perpeio
+CREATE TABLE TB_CLUSTER_NODE_ID (NODE_NAME VARCHAR(255) NOT NULL, NODE_ID INT NOT NULL, CONSTRAINT PK_CLUSTER_NODE_ID PRIMARY KEY (NODE_NAME));
 
-ALTER TABLE TB_PARTY_STATUS ADD CONSTRAINT UK_PARTY_NAME UNIQUE (PARTY_NAME);
+ALTER TABLE TB_CLUSTER_NODE_ID ADD CONSTRAINT UK_CLUSTER_NODE_ID UNIQUE (NODE_ID);

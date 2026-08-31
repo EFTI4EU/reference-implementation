@@ -38,7 +38,7 @@ this will launch 12 containers:
 * activemq-sybo
 * activemq-platform
 * mariadb-li
-* mariadb-sybo
+* mysql-sybo
 * mariadb-platform
 * domibus-li-1
 * domibus-li-2
