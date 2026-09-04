@@ -63,21 +63,13 @@ RUN set -ex; \
         -e 's#^default\.domibus\.database\.schema=.*#default.domibus.database.schema=default_schema#' \
         default-domibus.properties
 
-# Activate the multitenancy include hooks for our domains. The fragments themselves live in the
-# repository (e.g. domibus/sybo/domains/<domain>/<domain>-logback.xml) and are bind-mounted along with
-# the rest of each domain's configuration.
-# TODO EREF-79: can we make this domain agnostic?
-RUN set -ex; \
-    cd "${DOMIBUS_CONFIG_LOCATION}"; \
-    for domain in syldavia borduria; do \
-        sed -i "/<!-- multitenancy: end include domains config files here -->/i\\    <include optional=\"true\" file=\"\${catalina.home}/conf/domibus/domains/${domain}/${domain}-logback.xml\"/>" \
-            logback.xml; \
-    done
-
 # prepareDomibusConf() also unpacks a copy of the WAR and an empty webapps/ directory into the
 # configuration location; neither is used once the WAR is deployed under CATALINA_HOME/webapps.
+# The domain_name directory is a template rather than a real domain: keep its logback fragment, which
+# docker-entrypoint.sh renders per domain at startup, and drop the rest.
 RUN set -ex; \
     cd "${DOMIBUS_CONFIG_LOCATION}"; \
+    mv domains/domain_name/domain_name-logback.xml logback-domain-template.xml; \
     rm -rf webapps domibus-MSH-tomcat-*.war domains/domain_name
 
 FROM eclipse-temurin:21-jre
@@ -90,7 +82,13 @@ COPY --from=build /data/tomcat ${CATALINA_HOME}
 
 RUN mkdir -p "${CATALINA_HOME}/logs" "${CATALINA_HOME}/temp" "${CATALINA_HOME}/work"
 
+# Domains are bind mounted, so the logback includes can only be resolved at startup, not at build
+# time. See the script for details.
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 WORKDIR ${CATALINA_HOME}
 EXPOSE 8080
 
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["catalina.sh", "run"]
