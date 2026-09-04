@@ -26,24 +26,22 @@ docker network create efti-network
 
 ## Run the project 
 
-This project uses the Domibus docker image maintained by the eFTI4EU project. The project ensures that all the MariaDB databases and the related scripts were successfully done before starting Domibus instances.
+This project builds a custom Domibus image from the `Dockerfile` in this directory and runs it against plain MySQL databases. The MySQL containers create and seed all Domibus schemas from `db/<instance>/initdb.d` and only report healthy once that is done, so the Domibus instances always start against a ready database.
 To run the project, use the following command:
 
 ```
 docker compose up -d
 ```
 
-this will launch 12 containers:
+this will launch 10 containers:
 * activemq-li
 * activemq-sybo
 * activemq-platform
-* mariadb-li
-* mariadb-sybo
-* mariadb-platform
-* domibus-li-1
-* domibus-li-2
-* domibus-sybo-1
-* domibus-sybo-2
+* mysql-li
+* mysql-sybo
+* mysql-platform
+* domibus-li
+* domibus-sybo
 * domibus-platform
 * nginx
 
@@ -72,7 +70,13 @@ For each domain you need to:
 - Add the related pmode file. To do this, click on PMode menu on the left, then current > upload and pass it the domain-pmode.xml file stored in the pmodes folder of this project.
   You should see a message telling you the upload is ok.
 - In menu Plugins Users (and not Users!) , create a user that will be used as a service account to authenticate the
-  requests. To be compatible with the postman, name it `domain_service_account` (ex: `syldavia_service_account`) with password `Azerty59*1234567` and role `admin`. After creating the user, you need to click 'save' on the bottom or it will not work
+  requests. To be compatible with the postman, name it `<domain>_service_account` with password `Azerty59*1234567` and role `admin`. After creating the user, you need to click 'save' on the bottom, or it will not work. All names:
+  - `acme_service_account`
+  - `borduria_service_account`
+  - `listenbourg_service_account`
+  - `massivedynamic_service_account`
+  - `syldavia_service_account`
+  - `umbrellacorporation_service_account`
 
 Finally, open your host file (for windows C:\Windows\System32\drivers\etc\hosts) and add the following:
 
@@ -94,3 +98,25 @@ First, import the postman collections from `utils/postman` by using the "file > 
 If you followed the naming convention for the service account, you should not need to change anything. Otherwise, go to Authorization tab of each request and update the user password
 
 You can see a pre-configured sample message for each allowed flow between gate and gate, and gate and platform. Click "send" and you should see it in sender's and recipient's Domibus
+
+## Upgrading DDL Upon Domibus Upgrades
+
+The `.sql` files under `db/<instance>/initdb.d` are the official Domibus DDL, taken verbatim from the official Domibus MySQL image:
+
+```
+docker create code.europa.eu:4567/edelivery/docker/domibus-mysql8:5.2.1-JEE10
+docker cp <container>:/resources/domibus/sql-scripts/ .
+```
+
+That directory holds the DDL for every Domibus release. Four files matter per version:
+
+| Source file                              | Applied to               |
+|------------------------------------------|--------------------------|
+| `mysql-<version>-multi-tenancy.ddl`      | the general schema, once |
+| `mysql-<version>-multi-tenancy-data.ddl` | the general schema, once |
+| `mysql-<version>.ddl`                    | every domain schema      |
+| `mysql-<version>-data.ddl`               | every domain schema      |
+
+They are copied in unchanged apart from a leading `USE <schema>;`, since the scripts themselves select no database. The numbered prefixes only fix the order MySQL runs them in, and the `init-<schema>.sql` files in between create the schema and grant access. Domain schemas therefore get one identical copy of the same two scripts each — this is intentional, and keeps each instance's `initdb.d` readable on its own.
+
+To move to a newer Domibus, pull the matching `domibus-mysql8:<version>` image, copy the four files out, and replace the existing ones. Note these are full-install scripts and not upgrade scripts: they build a schema from scratch, which is what this local stack wants. Upgrading a database with data in it instead needs the `mysql-<from>-to-<to>-upgrade.ddl` scripts from the same directory.
