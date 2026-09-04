@@ -18,8 +18,8 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - ./mariadb/sybo/initdb.d:/docker-entrypoint-initdb.d/
-      - ./mariadb/sybo/data:/var/lib/mysql:Z
+      - ./db/sybo/initdb.d:/docker-entrypoint-initdb.d/
+      - ./db/sybo/data:/var/lib/mysql:Z
     networks:
       efti:
 
@@ -42,8 +42,8 @@ services:
     ports:
       - '3307:3306'
     volumes:
-      - ./mariadb/li/initdb.d:/docker-entrypoint-initdb.d/
-      - ./mariadb/li/data:/var/lib/mysql:Z
+      - ./db/li/initdb.d:/docker-entrypoint-initdb.d/
+      - ./db/li/data:/var/lib/mysql:Z
     networks:
       efti:
 
@@ -66,8 +66,8 @@ services:
     ports:
       - '3308:3306'
     volumes:
-      - ./mariadb/platform/initdb.d:/docker-entrypoint-initdb.d/
-      - ./mariadb/platform/data:/var/lib/mysql:Z
+      - ./db/platform/initdb.d:/docker-entrypoint-initdb.d/
+      - ./db/platform/data:/var/lib/mysql:Z
     networks:
       efti:
 
