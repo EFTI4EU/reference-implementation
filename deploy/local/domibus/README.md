@@ -98,3 +98,25 @@ First, import the postman collections from `utils/postman` by using the "file > 
 If you followed the naming convention for the service account, you should not need to change anything. Otherwise, go to Authorization tab of each request and update the user password
 
 You can see a pre-configured sample message for each allowed flow between gate and gate, and gate and platform. Click "send" and you should see it in sender's and recipient's Domibus
+
+## Upgrading DDL Upon Domibus Upgrades
+
+The `.sql` files under `db/<instance>/initdb.d` are the official Domibus DDL, taken verbatim from the official Domibus MySQL image:
+
+```
+docker create code.europa.eu:4567/edelivery/docker/domibus-mysql8:5.2.1-JEE10
+docker cp <container>:/resources/domibus/sql-scripts/ .
+```
+
+That directory holds the DDL for every Domibus release. Four files matter per version:
+
+| Source file                              | Applied to               |
+|------------------------------------------|--------------------------|
+| `mysql-<version>-multi-tenancy.ddl`      | the general schema, once |
+| `mysql-<version>-multi-tenancy-data.ddl` | the general schema, once |
+| `mysql-<version>.ddl`                    | every domain schema      |
+| `mysql-<version>-data.ddl`               | every domain schema      |
+
+They are copied in unchanged apart from a leading `USE <schema>;`, since the scripts themselves select no database. The numbered prefixes only fix the order MySQL runs them in, and the `init-<schema>.sql` files in between create the schema and grant access. Domain schemas therefore get one identical copy of the same two scripts each — this is intentional, and keeps each instance's `initdb.d` readable on its own.
+
+To move to a newer Domibus, pull the matching `domibus-mysql8:<version>` image, copy the four files out, and replace the existing ones. Note these are full-install scripts and not upgrade scripts: they build a schema from scratch, which is what this local stack wants. Upgrading a database with data in it instead needs the `mysql-<from>-to-<to>-upgrade.ddl` scripts from the same directory.
