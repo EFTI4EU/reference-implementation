@@ -72,7 +72,13 @@ For each domain you need to:
 - Add the related pmode file. To do this, click on PMode menu on the left, then current > upload and pass it the domain-pmode.xml file stored in the pmodes folder of this project.
   You should see a message telling you the upload is ok.
 - In menu Plugins Users (and not Users!) , create a user that will be used as a service account to authenticate the
-  requests. To be compatible with the postman, name it `domain_service_account` (ex: `syldavia_service_account`) with password `Azerty59*1234567` and role `admin`. After creating the user, you need to click 'save' on the bottom or it will not work
+  requests. To be compatible with the postman, name it `<domain>_service_account` with password `Azerty59*1234567` and role `admin`. After creating the user, you need to click 'save' on the bottom, or it will not work. All names:
+  - `acme_service_account`
+  - `borduria_service_account`
+  - `listenbourg_service_account`
+  - `massivedynamic_service_account`
+  - `syldavia_service_account`
+  - `umbrellacorporation_service_account`
 
 Finally, open your host file (for windows C:\Windows\System32\drivers\etc\hosts) and add the following:
 
