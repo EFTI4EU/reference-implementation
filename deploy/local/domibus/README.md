@@ -26,24 +26,22 @@ docker network create efti-network
 
 ## Run the project 
 
-This project uses the Domibus docker image maintained by the eFTI4EU project. The project ensures that all the MariaDB databases and the related scripts were successfully done before starting Domibus instances.
+This project builds a custom Domibus image from the `Dockerfile` in this directory and runs it against plain MySQL databases. The MySQL containers create and seed all Domibus schemas from `db/<instance>/initdb.d` and only report healthy once that is done, so the Domibus instances always start against a ready database.
 To run the project, use the following command:
 
 ```
 docker compose up -d
 ```
 
-this will launch 12 containers:
+this will launch 10 containers:
 * activemq-li
 * activemq-sybo
 * activemq-platform
-* mariadb-li
+* mysql-li
 * mysql-sybo
-* mariadb-platform
-* domibus-li-1
-* domibus-li-2
-* domibus-sybo-1
-* domibus-sybo-2
+* mysql-platform
+* domibus-li
+* domibus-sybo
 * domibus-platform
 * nginx
 

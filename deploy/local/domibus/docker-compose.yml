@@ -4,7 +4,7 @@ services:
     restart: always
     healthcheck:
       # Wait until the Domibus schemas have been created and seeded
-      test: "test -f /tmp/init-done"
+      test: "test -f /var/lib/mysql/.domibus-init-done && mysqladmin ping -h 127.0.0.1 --silent"
       interval: 30s
       timeout: 10s
       retries: 10
@@ -23,22 +23,22 @@ services:
     networks:
       efti:
 
-  mariadb-li:
-    image: mariadb:10.11.6
+  mysql-li:
+    image: mysql:8.0
     restart: always
     healthcheck:
-      # Wait until migrations are done
-      test: "test -f /tmp/init-done"
+      # Wait until the Domibus schemas have been created and seeded
+      test: "test -f /var/lib/mysql/.domibus-init-done && mysqladmin ping -h 127.0.0.1 --silent"
       interval: 30s
       timeout: 10s
       retries: 10
       start_period: 60s
       start_interval: 30s
     environment:
-      MARIADB_DATABASE: 'db'
-      MARIADB_USER: 'user'
-      MARIADB_PASSWORD: 'password'
-      MARIADB_ROOT_PASSWORD: 'password'
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
     ports:
       - '3307:3306'
     volumes:
@@ -47,22 +47,22 @@ services:
     networks:
       efti:
 
-  mariadb-platform:
-    image: mariadb:10.11.6
+  mysql-platform:
+    image: mysql:8.0
     restart: always
     healthcheck:
-      # Wait until migrations are done
-      test: "test -f /tmp/init-done"
+      # Wait until the Domibus schemas have been created and seeded
+      test: "test -f /var/lib/mysql/.domibus-init-done && mysqladmin ping -h 127.0.0.1 --silent"
       interval: 30s
       timeout: 10s
       retries: 10
       start_period: 60s
       start_interval: 30s
     environment:
-      MARIADB_DATABASE: 'db'
-      MARIADB_USER: 'user'
-      MARIADB_PASSWORD: 'password'
-      MARIADB_ROOT_PASSWORD: 'password'
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
     ports:
       - '3308:3306'
     volumes:
@@ -96,7 +96,9 @@ services:
       efti:
 
   domibus-li:
-    image: efti4eu/domibus
+    build:
+      context: ./
+      dockerfile: Dockerfile
     tty: true
     ports:
       - "8090:8080"
@@ -105,10 +107,11 @@ services:
     volumes:
       - ./domibus/li/domains/listenbourg/:/opt/domibus/conf/domibus/domains/listenbourg/
       - ./domibus/li/domibus-li.properties:/opt/domibus/conf/domibus/domibus.properties
-      - ./domibus/sh/setenv-node-1-5.1.sh:/opt/domibus/bin/setenv.sh
+      - ./domibus/sh/setenv-node-1.sh:/opt/domibus/bin/setenv.sh
       - ./domibus/li/plugins-conf/:/opt/domibus/conf/domibus/plugins/config/domains/
+      - ./domibus/ca_cert:/opt/domibus/conf/ca_cert/
     depends_on:
-      mariadb-li:
+      mysql-li:
         condition: service_healthy
       activemq-li:
         condition: service_started
@@ -116,7 +119,9 @@ services:
       efti:
 
   domibus-platform:
-    image: efti4eu/domibus
+    build:
+      context: ./
+      dockerfile: Dockerfile
     tty: true
     ports:
       - "8100:8080"
@@ -127,10 +132,11 @@ services:
       - ./domibus/platform/domains/massivedynamic/:/opt/domibus/conf/domibus/domains/massivedynamic/
       - ./domibus/platform/domains/umbrellacorporation/:/opt/domibus/conf/domibus/domains/umbrellacorporation/
       - ./domibus/platform/domibus-platform.properties:/opt/domibus/conf/domibus/domibus.properties
-      - ./domibus/sh/setenv-node-1-5.1.sh:/opt/domibus/bin/setenv.sh
+      - ./domibus/sh/setenv-node-1.sh:/opt/domibus/bin/setenv.sh
       - ./domibus/platform/plugins-conf/:/opt/domibus/conf/domibus/plugins/config/domains/
+      - ./domibus/ca_cert:/opt/domibus/conf/ca_cert/
     depends_on:
-      mariadb-platform:
+      mysql-platform:
         condition: service_healthy
       activemq-platform:
         condition: service_started

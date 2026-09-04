@@ -1,6 +1,11 @@
-drop schema if exists general_schema;
-create schema general_schema;
-alter database general_schema charset=utf8mb4 collate=utf8mb4_bin;
-create user 'edelivery'@'%' identified by 'edelivery';
-grant all on general_schema.* to edelivery;
-/*grant xa_recover_admin on *.* to edelivery_user;
+-- Creates the Domibus multi-tenancy general schema and the shared database user.
+-- Schema names deliberately match the ones referenced from the mounted Domibus
+-- properties files (general_schema / syldavia / borduria / default_schema).
+CREATE USER IF NOT EXISTS 'edelivery'@'%' IDENTIFIED BY 'edelivery';
+
+DROP SCHEMA IF EXISTS general_schema;
+CREATE SCHEMA general_schema;
+ALTER DATABASE general_schema CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+GRANT ALL PRIVILEGES ON general_schema.* TO 'edelivery'@'%';
+GRANT XA_RECOVER_ADMIN ON *.* TO 'edelivery'@'%';
+FLUSH PRIVILEGES;

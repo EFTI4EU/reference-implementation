@@ -1,5 +1,5 @@
-drop schema if exists listenbourg;
-create schema listenbourg;
-alter database listenbourg charset=utf8mb4 collate=utf8mb4_bin;
-grant all on listenbourg.* to edelivery;
-/*grant xa_recover_admin on *.* to edelivery_user;
+DROP SCHEMA IF EXISTS listenbourg;
+CREATE SCHEMA listenbourg;
+ALTER DATABASE listenbourg CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+GRANT ALL PRIVILEGES ON listenbourg.* TO 'edelivery'@'%';
+FLUSH PRIVILEGES;
