@@ -45,8 +45,8 @@ public class GateApiController implements V0Api {
     }
 
     @Override
-    public ResponseEntity<Void> postConsignmentFollowup(String datasetId, String body) {
-        log.info("note \"{}\" received for datasetId {}", body, datasetId);
+    public ResponseEntity<Void> postConsignmentFollowup(String datasetId, String body, String requestId) {
+        log.info("note \"{}\" received for datasetId {} with requestId {}", body, datasetId, requestId);
         return ResponseEntity.ok().build();
     }
 }

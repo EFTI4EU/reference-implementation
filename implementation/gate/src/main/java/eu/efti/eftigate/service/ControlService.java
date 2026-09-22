@@ -28,6 +28,7 @@ import eu.efti.eftigate.exception.AmbiguousIdentifierException;
 import eu.efti.eftigate.mapper.MapperUtils;
 import eu.efti.eftigate.repository.ControlRepository;
 import eu.efti.eftigate.service.gate.EftiGateIdResolver;
+import eu.efti.eftigate.service.request.NotesRequestService;
 import eu.efti.eftigate.service.request.RequestService;
 import eu.efti.eftigate.service.request.RequestServiceFactory;
 import eu.efti.eftigate.utils.ControlUtils;
@@ -55,6 +56,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 
 import static eu.efti.commons.enums.ErrorCodesEnum.ID_NOT_FOUND;
@@ -86,6 +88,7 @@ public class ControlService {
     private final GateProperties gateProperties;
     private final SerializeUtils serializeUtils;
     private final PlatformIntegrationService platformIntegrationService;
+    private final NotesRequestService notesRequestService;
 
     @Value("${efti.control.pending.timeout:60}")
     private Integer timeoutValue;
@@ -134,7 +137,11 @@ public class ControlService {
                     dto -> validateControl(dto)
                             .or(() -> isCurrentGate ? (platformIntegrationService.platformExists(savedControl.getPlatformId()) ? Optional.empty() : Optional.of(ErrorDto.fromErrorCode(ErrorCodesEnum.PLATFORM_ID_DOES_NOT_EXIST))) : Optional.empty()));
         } else {
-            return new NoteResponseDto(NOTE_WAS_NOT_SENT, ID_NOT_FOUND.name(), ID_NOT_FOUND.getMessage());
+            return NoteResponseDto.builder()
+                    .message(NOTE_WAS_NOT_SENT)
+                    .errorCode(ID_NOT_FOUND.name())
+                    .errorDescription(ID_NOT_FOUND.getMessage())
+                    .build();
         }
     }
 
@@ -148,15 +155,26 @@ public class ControlService {
             //log fti025 not sent
             logManager.logNoteReceiveFromAapMessage(controlDto, serializeUtils.mapObjectToBase64String(notesDto), receiver, ComponentType.GATE, ComponentType.PLATFORM, false, isCurrentGate ? RequestTypeEnum.NOTE_SEND : RequestTypeEnum.EXTERNAL_NOTE_SEND, isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026);
             log.error("Not was not send : {}", errorDto.getErrorDescription());
-            return new NoteResponseDto(NOTE_WAS_NOT_SENT, errorDto.getErrorCode(), errorDto.getErrorDescription());
+            return NoteResponseDto.builder()
+                    .message(NOTE_WAS_NOT_SENT)
+                    .errorCode(errorDto.getErrorCode())
+                    .errorDescription(errorDto.getErrorDescription())
+                    .build();
         } else {
+            final String noteRequestId = UUID.randomUUID().toString();
             controlDto.setNotes(notesDto.getMessage());
+            controlDto.setNoteRequestId(noteRequestId);
             getRequestService(RequestTypeEnum.NOTE_SEND).createAndSendRequest(controlDto, !gateProperties.isCurrentGate(controlDto.getGateId()) ? controlDto.getGateId() : null);
             //log fti025
             logManager.logNoteReceiveFromAapMessage(controlDto, serializeUtils.mapObjectToBase64String(notesDto), receiver, ComponentType.GATE, ComponentType.PLATFORM, true, isCurrentGate ? RequestTypeEnum.NOTE_SEND : RequestTypeEnum.EXTERNAL_NOTE_SEND, isCurrentGate ? LogManager.FTI_025 : LogManager.FTI_026);
             log.info("Note has been registered for control with request uuid '{}'", controlDto.getRequestId());
-            return NoteResponseDto.builder().message("Note sent").build();
+            return NoteResponseDto.builder().message("Note sent").requestId(noteRequestId).build();
         }
+    }
+
+    public NoteResponseDto getNoteRequestStatus(final String noteRequestId) {
+        log.info("get Note request status for noteRequestId : {}", noteRequestId);
+        return notesRequestService.getStatus(noteRequestId);
     }
 
     private Optional<ErrorDto> validateControl(final ValidableDto validable) {

@@ -143,4 +143,17 @@ class IdentifierServiceTest extends AbstractTest {
 
         verify(requestSendingService, times(1)).sendRequest(any());
     }
+
+    @Test
+    void sendFollowUpResponseTest() {
+        final NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setContent(NotificationContentDto.builder().fromPartyId("fromParty").body("body").conversationId("conversationId")
+                .contentType("contentType").messageId("messageId").build());
+
+        when(requestSendingService.sendRequest(any())).thenReturn(null);
+
+        identifierService.sendFollowUpResponse("note-request-id", notificationDto);
+
+        verify(requestSendingService, times(1)).sendRequest(any());
+    }
 }

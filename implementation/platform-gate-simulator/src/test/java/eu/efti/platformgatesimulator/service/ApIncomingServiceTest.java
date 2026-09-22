@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -159,6 +160,7 @@ class ApIncomingServiceTest extends AbstractTest {
 
         assertTrue(memoryAppender.containsFormattedLogMessage("note \"Identifiers missing\" received for request with id 67fe38bd-6bf7-4b06-b20e-206264bd639c"));
         assertEquals(1, memoryAppender.countEventsForLogger(LOGGER_NAME, Level.INFO));
+        verify(identifierService, times(1)).sendFollowUpResponse(eq("67fe38bd-6bf7-4b06-b20e-206264bd639c"), any());
     }
 
     @Test

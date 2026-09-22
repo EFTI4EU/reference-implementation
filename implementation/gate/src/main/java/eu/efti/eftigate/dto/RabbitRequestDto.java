@@ -37,4 +37,5 @@ public class RabbitRequestDto {
     private RequestType requestType;
     private String note;
     private String platformId;
+    private String noteRequestId;
 }

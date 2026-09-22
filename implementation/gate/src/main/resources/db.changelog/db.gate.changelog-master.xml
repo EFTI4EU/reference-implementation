@@ -232,4 +232,5 @@
 
     <include file="/db.changelog/db.gate.changelog-1-rename.xml"/>
     <include file="/db.changelog/db.gate.changelog-2-subsetIds.xml"/>
+    <include file="/db.changelog/db.gate.changelog-3-note-request-id.xml"/>
 </databaseChangeLog>

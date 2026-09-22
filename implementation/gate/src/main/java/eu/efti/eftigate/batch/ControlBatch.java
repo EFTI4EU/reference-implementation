@@ -1,6 +1,7 @@
 package eu.efti.eftigate.batch;
 
 import eu.efti.eftigate.service.ControlService;
+import eu.efti.eftigate.service.request.NotesRequestService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class ControlBatch {
     ControlService controlService;
+    NotesRequestService notesRequestService;
+
     @Scheduled(cron = "${batch.update.cron}")
     @SchedulerLock(name = "TaskScheduler_scheduledTask",
             lockAtLeastFor = "PT19S", lockAtMostFor = "PT19S")
@@ -19,5 +22,7 @@ public class ControlBatch {
         log.info("Batch of updating control started");
         final int updatePendingControls = controlService.updatePendingControls();
         log.info("Batch of updating control finished with {} control updated", updatePendingControls);
+        final int timedOutNotes = notesRequestService.timeoutStaleRequests();
+        log.info("Batch of updating control finished with {} stale note follow-up request(s) timed out", timedOutNotes);
     }
 }

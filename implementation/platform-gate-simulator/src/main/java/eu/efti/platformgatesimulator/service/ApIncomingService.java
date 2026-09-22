@@ -117,6 +117,7 @@ public class ApIncomingService {
         } else {
             final PostFollowUpRequest messageBody = serializeUtils.mapXmlStringToJaxbObject(notificationDto.get().getContent().getBody());
             log.info("note \"{}\" received for request with id {}", messageBody.getMessage(), messageBody.getRequestId());
+            identifierService.sendFollowUpResponse(messageBody.getRequestId(), notificationDto.get());
         }
     }
 
