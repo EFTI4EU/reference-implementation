@@ -1,2642 +1,1915 @@
 {
-	"info": {
-		"_postman_id": "4a2e367a-78e6-4f34-8edf-42e5af467373",
-		"name": "eFTI",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "39288808"
-	},
-	"item": [
-		{
-			"name": "BO",
-			"item": [
-				{
-					"name": "Gate",
-					"item": [
-						{
-							"name": "Authentication BO",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											" // Set access_token global variable\r",
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"access_token\", responseData.access_token);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "username",
-											"value": "user_bo",
-											"type": "text"
-										},
-										{
-											"key": "password",
-											"value": "Azerty59*123",
-											"type": "text"
-										},
-										{
-											"key": "grant_type",
-											"value": "password",
-											"type": "text"
-										},
-										{
-											"key": "client_id",
-											"value": "gate",
-											"type": "text"
-										},
-										{
-											"key": "client_secret",
-											"value": "{{kc_gate_bo_secret}}",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{kc_bo_url}}/realms/eFTI_BO/protocol/openid-connect/token",
-									"host": [
-										"{{kc_bo_url}}"
-									],
-									"path": [
-										"realms",
-										"eFTI_BO",
-										"protocol",
-										"openid-connect",
-										"token"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "POST UIL Control",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"gateId\": \"borduria\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"acme\",\r\n    \"subsetId\": \"full\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/control/uil",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET UIL Control",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/control/uil?requestId={{requestId}}",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil"
-									],
-									"query": [
-										{
-											"key": "requestId",
-											"value": "{{requestId}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "POST Identifiers Control",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"BO\", \"SY\"]\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/getIdentifiers",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"getIdentifiers"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET Identifiers Control",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/getIdentifiers?requestId={{requestId}}",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"getIdentifiers"
-									],
-									"query": [
-										{
-											"key": "requestId",
-											"value": "{{requestId}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Gate to Gate UIL",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"gateId\": \"syldavia\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"massivedynamic\",\r\n    \"subsetId\": \"full\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/control/uil",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Gate to Gate Note",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"message\" : \"LENS > PSG\",\r\n    \"requestId\": \"{{requestId}}\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/control/uil/follow-up",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil",
-										"follow-up"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "AAP",
-					"item": [
-						{
-							"name": "POST UIL Control",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"strictSSL": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"gateId\": \"borduria\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"acme\",\r\n    \"subsetId\": \"full\",\r\n       \"authority\": {\r\n      \"country\":\"DE\",\r\n      \"isEmergencyService\":\"yes\",\r\n      \"legalContact\":{\r\n      \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"\r\n      },\r\n      \"name\":\"BALM\",\r\n      \"nationalUniqueIdentifier\":\"BALM\",\r\n      \"workingContact\":{ \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"}\r\n    }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/aap/control/uil",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"aap",
-										"control",
-										"uil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET UIL Control",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"strictSSL": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/aap/control/uil?requestId={{requestId}}",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"aap",
-										"control",
-										"uil"
-									],
-									"query": [
-										{
-											"key": "requestId",
-											"value": "{{requestId}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "POST Identifiers Control",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"strictSSL": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"BO\", \"SY\"],\r\n         \"authority\": {\r\n      \"country\":\"DE\",\r\n      \"isEmergencyService\":\"yes\",\r\n      \"legalContact\":{\r\n      \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"\r\n      },\r\n      \"name\":\"BALM\",\r\n      \"nationalUniqueIdentifier\":\"BALM\",\r\n      \"workingContact\":{ \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"}\r\n    }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/aap/control/identifiers",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"aap",
-										"control",
-										"identifiers"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET Identifiers Control",
-							"protocolProfileBehavior": {
-								"strictSSL": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/aap/control/identifiers?requestId={{requestId}}",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"aap",
-										"control",
-										"identifiers"
-									],
-									"query": [
-										{
-											"key": "requestId",
-											"value": "{{requestId}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Gate to Gate UIL",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"gateId\": \"syldavia\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"massivedynamic\",\r\n    \"subsetId\": \"full\",\r\n       \"authority\": {\r\n      \"country\":\"DE\",\r\n      \"isEmergencyService\":\"yes\",\r\n      \"legalContact\":{\r\n      \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"\r\n      },\r\n      \"name\":\"BALM\",\r\n      \"nationalUniqueIdentifier\":\"BALM\",\r\n      \"workingContact\":{ \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"}\r\n    }\r\n\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/aap/control/uil",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"aap",
-										"control",
-										"uil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Gate to Gate Note",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"message\" : \"LENS > PSG\",\r\n    \"requestId\": \"{{requestId}}\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/aap/control/uil/follow-up",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"aap",
-										"control",
-										"uil",
-										"follow-up"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Simulator",
-					"item": [
-						{
-							"name": "Authentification",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											" // Set access_token global variable\r",
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"access_token\", responseData.access_token);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "username",
-											"value": "user_bo",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "password",
-											"value": "Azerty59*123",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "grant_type",
-											"value": "client_credentials",
-											"type": "text"
-										},
-										{
-											"key": "client_id",
-											"value": "simulator",
-											"type": "text"
-										},
-										{
-											"key": "client_secret",
-											"value": "{{kc_simulator_bo_secret}}",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{kc_bo_url}}/realms/eFTI_BO/protocol/openid-connect/token",
-									"host": [
-										"{{kc_bo_url}}"
-									],
-									"path": [
-										"realms",
-										"eFTI_BO",
-										"protocol",
-										"openid-connect",
-										"token"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Upload File",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"type": "file",
-											"src": "/C:/Users/kahlj/Desktop/12345678-ab12-4ab6-8999-123456789abc.xml"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{simulator_bo_url}}/identifiers/upload/file",
-									"host": [
-										"{{simulator_bo_url}}"
-									],
-									"path": [
-										"identifiers",
-										"upload",
-										"file"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Upload Identifiers",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"consignment\": {\r\n    \"carrierAcceptanceDateTime\": {\r\n      \"formatId\": \"205\",\r\n      \"value\": \"202310011000+0000\"\r\n    },\r\n    \"deliveryEvent\": {\r\n      \"actualOccurrenceDateTime\": {\r\n        \"formatId\": \"205\",\r\n        \"value\": \"202310021500+0000\"\r\n      }\r\n    },\r\n    \"mainCarriageTransportMovement\": [\r\n      {\r\n        \"dangerousGoodsIndicator\": false,\r\n        \"modeCode\": \"1\",\r\n        \"usedTransportMeans\": {\r\n          \"id\": {\r\n            \"schemeAgencyId\": \"UN\",\r\n            \"value\": \"12345\"\r\n          },\r\n          \"registrationCountry\": {\r\n            \"code\": \"DE\"\r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"usedTransportEquipment\": [\r\n      {\r\n        \"carriedTransportEquipment\": [\r\n          {\r\n            \"id\": {\r\n              \"schemeAgencyId\": \"UN\",\r\n              \"value\": \"67890\"\r\n            },\r\n            \"sequenceNumber\": 1\r\n          }\r\n        ],\r\n        \"categoryCode\": \"AE\",\r\n        \"id\": {\r\n          \"schemeAgencyId\": \"UN\",\r\n          \"value\": \"54321\"\r\n        },\r\n        \"registrationCountry\": {\r\n          \"code\": \"FR\"\r\n        },\r\n        \"sequenceNumber\": 2\r\n      }\r\n    ]\r\n  },\r\n  \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{simulator_bo_url}}/identifiers/upload",
-									"host": [
-										"{{simulator_bo_url}}"
-									],
-									"path": [
-										"identifiers",
-										"upload"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "LI",
-			"item": [
-				{
-					"name": "Gate",
-					"item": [
-						{
-							"name": "Authentication LI",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											" // Set access_token global variable\r",
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"access_token\", responseData.access_token);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "username",
-											"value": "user_li",
-											"type": "text"
-										},
-										{
-											"key": "password",
-											"value": "Azerty59*123",
-											"type": "text"
-										},
-										{
-											"key": "grant_type",
-											"value": "password",
-											"type": "text"
-										},
-										{
-											"key": "client_id",
-											"value": "gate",
-											"type": "text"
-										},
-										{
-											"key": "client_secret",
-											"value": "{{kc_gate_li_secret}}",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{kc_li_url}}/realms/eFTI_LI/protocol/openid-connect/token",
-									"host": [
-										"{{kc_li_url}}"
-									],
-									"path": [
-										"realms",
-										"eFTI_LI",
-										"protocol",
-										"openid-connect",
-										"token"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "POST UIL Control",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"gateId\": \"listenbourg\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"umbrellainc\",\r\n    \"subsetId\": \"full\"\r\n\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_li_url}}/v1/control/uil",
-									"host": [
-										"{{gate_li_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET UIL Control",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"url": {
-									"raw": "{{gate_li_url}}/v1/control/uil?requestId={{requestId}}",
-									"host": [
-										"{{gate_li_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil"
-									],
-									"query": [
-										{
-											"key": "requestId",
-											"value": "{{requestId}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "POST Identifiers Control",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"BO\", \"SY\", \"LI\"]\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_li_url}}/v1/control/identifiers",
-									"host": [
-										"{{gate_li_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"identifiers"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET Identifiers Control",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{gate_li_url}}/v1/getIdentifiers?requestId={{requestId}}",
-									"host": [
-										"{{gate_li_url}}"
-									],
-									"path": [
-										"v1",
-										"getIdentifiers"
-									],
-									"query": [
-										{
-											"key": "requestId",
-											"value": "{{requestId}}"
-										}
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Simulator",
-					"item": [
-						{
-							"name": "Authentification",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											" // Set access_token global variable\r",
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"access_token\", responseData.access_token);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "username",
-											"value": "user_li",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "password",
-											"value": "Azerty59*123",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "grant_type",
-											"value": "client_credentials",
-											"type": "text"
-										},
-										{
-											"key": "client_id",
-											"value": "simulator",
-											"type": "text"
-										},
-										{
-											"key": "client_secret",
-											"value": "{{kc_simulator_li_secret}}",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{kc_li_url}}/realms/eFTI_LI/protocol/openid-connect/token",
-									"host": [
-										"{{kc_li_url}}"
-									],
-									"path": [
-										"realms",
-										"eFTI_LI",
-										"protocol",
-										"openid-connect",
-										"token"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Upload File",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"type": "file",
-											"src": "/C:/Users/jthueux/Desktop/cda/12345678-ab12-4ab6-8999-123456789abe.xml"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{simulator_li_url}}/identifiers/upload/file",
-									"host": [
-										"{{simulator_li_url}}"
-									],
-									"path": [
-										"identifiers",
-										"upload",
-										"file"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Upload Identifiers",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"consignment\": {\r\n    \"carrierAcceptanceDateTime\": {\r\n      \"formatId\": \"205\",\r\n      \"value\": \"202310011000+0000\"\r\n    },\r\n    \"deliveryEvent\": {\r\n      \"actualOccurrenceDateTime\": {\r\n        \"formatId\": \"205\",\r\n        \"value\": \"202310021500+0000\"\r\n      }\r\n    },\r\n    \"mainCarriageTransportMovement\": [\r\n      {\r\n        \"dangerousGoodsIndicator\": false,\r\n        \"modeCode\": \"1\",\r\n        \"usedTransportMeans\": {\r\n          \"id\": {\r\n            \"schemeAgencyId\": \"UN\",\r\n            \"value\": \"12345\"\r\n          },\r\n          \"registrationCountry\": {\r\n            \"code\": \"DE\"\r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"usedTransportEquipment\": [\r\n      {\r\n        \"carriedTransportEquipment\": [\r\n          {\r\n            \"id\": {\r\n              \"schemeAgencyId\": \"UN\",\r\n              \"value\": \"67890\"\r\n            },\r\n            \"sequenceNumber\": 1\r\n          }\r\n        ],\r\n        \"categoryCode\": \"AE\",\r\n        \"id\": {\r\n          \"schemeAgencyId\": \"UN\",\r\n          \"value\": \"54321\"\r\n        },\r\n        \"registrationCountry\": {\r\n          \"code\": \"FR\"\r\n        },\r\n        \"sequenceNumber\": 2\r\n      }\r\n    ]\r\n  },\r\n  \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{simulator_li_url}}/identifiers/upload",
-									"host": [
-										"{{simulator_li_url}}"
-									],
-									"path": [
-										"identifiers",
-										"upload"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "SY",
-			"item": [
-				{
-					"name": "Gate",
-					"item": [
-						{
-							"name": "Authentication SY",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											" // Set access_token global variable\r",
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"access_token\", responseData.access_token);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "username",
-											"value": "user_sy",
-											"type": "text"
-										},
-										{
-											"key": "password",
-											"value": "Azerty59*123",
-											"type": "text"
-										},
-										{
-											"key": "grant_type",
-											"value": "password",
-											"type": "text"
-										},
-										{
-											"key": "client_id",
-											"value": "gate",
-											"type": "text"
-										},
-										{
-											"key": "client_secret",
-											"value": "{{kc_gate_sy_secret}}",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{kc_sy_url}}/realms/eFTI_SY/protocol/openid-connect/token",
-									"host": [
-										"{{kc_sy_url}}"
-									],
-									"path": [
-										"realms",
-										"eFTI_SY",
-										"protocol",
-										"openid-connect",
-										"token"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "POST UIL Control",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"gateId\": \"syldavia\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"massivedynamic\",\r\n    \"subsetId\": \"full\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_sy_url}}/v1/control/uil",
-									"host": [
-										"{{gate_sy_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET UIL Control",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"url": {
-									"raw": "{{gate_sy_url}}/v1/control/uil?requestId={{requestId}}",
-									"host": [
-										"{{gate_sy_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil"
-									],
-									"query": [
-										{
-											"key": "requestId",
-											"value": "{{requestId}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "POST Identifiers Control",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"BO\", \"SY\"]\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_sy_url}}/v1/control/identifiers",
-									"host": [
-										"{{gate_sy_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"identifiers"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET Identifiers Control",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{gate_sy_url}}/v1/control/identifiers?requestId={{requestId}}",
-									"host": [
-										"{{gate_sy_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"identifiers"
-									],
-									"query": [
-										{
-											"key": "requestId",
-											"value": "{{requestId}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Gate to Gate UIL",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"gateId\": \"france\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"ttf\",\r\n    \"subsetId\": \"full\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_sy_url}}/v1/control/uil",
-									"host": [
-										"{{gate_sy_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Gate to Gate Note",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"message\" : \"LENS > PSG\",\r\n    \"requestId\": \"{{requestId}}\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/control/uil/follow-up",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil",
-										"follow-up"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Simulator",
-					"item": [
-						{
-							"name": "Authentification",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											" // Set access_token global variable\r",
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"access_token\", responseData.access_token);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "username",
-											"value": "user_bo",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "password",
-											"value": "Azerty59*123",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "grant_type",
-											"value": "client_credentials",
-											"type": "text"
-										},
-										{
-											"key": "client_id",
-											"value": "simulator",
-											"type": "text"
-										},
-										{
-											"key": "client_secret",
-											"value": "{{kc_simulator_sy_secret}}",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{kc_sy_url}}/realms/eFTI_SY/protocol/openid-connect/token",
-									"host": [
-										"{{kc_sy_url}}"
-									],
-									"path": [
-										"realms",
-										"eFTI_SY",
-										"protocol",
-										"openid-connect",
-										"token"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Upload File",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"type": "file",
-											"src": "/C:/Users/dfourmaux/Desktop/jdd_efti/12345678-ab12-4ab6-8999-123456789abc.xml"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{simulator_sy_url}}/identifiers/upload/file",
-									"host": [
-										"{{simulator_sy_url}}"
-									],
-									"path": [
-										"identifiers",
-										"upload",
-										"file"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Upload Identifiers",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"consignment\": {\r\n    \"carrierAcceptanceDateTime\": {\r\n      \"formatId\": \"205\",\r\n      \"value\": \"202310011000+0000\"\r\n    },\r\n    \"deliveryEvent\": {\r\n      \"actualOccurrenceDateTime\": {\r\n        \"formatId\": \"205\",\r\n        \"value\": \"202310021500+0000\"\r\n      }\r\n    },\r\n    \"mainCarriageTransportMovement\": [\r\n      {\r\n        \"dangerousGoodsIndicator\": false,\r\n        \"modeCode\": \"1\",\r\n        \"usedTransportMeans\": {\r\n          \"id\": {\r\n            \"schemeAgencyId\": \"UN\",\r\n            \"value\": \"12345\"\r\n          },\r\n          \"registrationCountry\": {\r\n            \"code\": \"DE\"\r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"usedTransportEquipment\": [\r\n      {\r\n        \"carriedTransportEquipment\": [\r\n          {\r\n            \"id\": {\r\n              \"schemeAgencyId\": \"UN\",\r\n              \"value\": \"67890\"\r\n            },\r\n            \"sequenceNumber\": 1\r\n          }\r\n        ],\r\n        \"categoryCode\": \"AE\",\r\n        \"id\": {\r\n          \"schemeAgencyId\": \"UN\",\r\n          \"value\": \"54321\"\r\n        },\r\n        \"registrationCountry\": {\r\n          \"code\": \"FR\"\r\n        },\r\n        \"sequenceNumber\": 2\r\n      }\r\n    ]\r\n  },\r\n  \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{simulator_sy_url}}/identifiers/upload",
-									"host": [
-										"{{simulator_sy_url}}"
-									],
-									"path": [
-										"identifiers",
-										"upload"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "FR",
-			"item": [
-				{
-					"name": "Gate",
-					"item": [
-						{
-							"name": "Authentication FR",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											" // Set access_token global variable\r",
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"access_token\", responseData.access_token);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "username",
-											"value": "user_fr",
-											"type": "text"
-										},
-										{
-											"key": "password",
-											"value": "Azerty59*123",
-											"type": "text"
-										},
-										{
-											"key": "grant_type",
-											"value": "password",
-											"type": "text"
-										},
-										{
-											"key": "client_id",
-											"value": "gate",
-											"type": "text"
-										},
-										{
-											"key": "client_secret",
-											"value": "{{kc_gate_fr_secret}}",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{kc_fr_url}}/realms/eFTI_FR/protocol/openid-connect/token",
-									"host": [
-										"{{kc_fr_url}}"
-									],
-									"path": [
-										"realms",
-										"eFTI_FR",
-										"protocol",
-										"openid-connect",
-										"token"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "POST UIL Control",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"gateId\": \"france\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"ttf\",\r\n    \"subsetId\": \"full\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_fr_url}}/v1/control/uil",
-									"host": [
-										"{{gate_fr_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET UIL Control",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"url": {
-									"raw": "{{gate_fr_url}}/v1/control/uil?requestId={{requestId}}",
-									"host": [
-										"{{gate_fr_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil"
-									],
-									"query": [
-										{
-											"key": "requestId",
-											"value": "{{requestId}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "POST Identifiers Control",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"BO\", \"SY\", \"FR\"]\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_fr_url}}/v1/control/identifiers",
-									"host": [
-										"{{gate_fr_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"identifiers"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET Identifiers Control",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{gate_fr_url}}/v1/control/identifiers?requestId={{requestId}}",
-									"host": [
-										"{{gate_fr_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"identifiers"
-									],
-									"query": [
-										{
-											"key": "requestId",
-											"value": "{{requestId}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Gate to Gate UIL",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"requestId\", responseData.requestId);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"gateId\": \"borduria\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"acme\",\r\n    \"subsetId\": \"full\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_fr_url}}/v1/requestUil",
-									"host": [
-										"{{gate_fr_url}}"
-									],
-									"path": [
-										"v1",
-										"requestUil"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Gate to Gate Note",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"message\" : \"LENS > PSG\",\r\n    \"requestId\": \"{{requestId}}\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{gate_bo_url}}/v1/control/uil/follow-up",
-									"host": [
-										"{{gate_bo_url}}"
-									],
-									"path": [
-										"v1",
-										"control",
-										"uil",
-										"follow-up"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "TTF Simulator",
-					"item": [
-						{
-							"name": "Authentification",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											" // Set access_token global variable\r",
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"access_token\", responseData.access_token);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "username",
-											"value": "user_bo",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "password",
-											"value": "Azerty59*123",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "grant_type",
-											"value": "client_credentials",
-											"type": "text"
-										},
-										{
-											"key": "client_id",
-											"value": "simulator",
-											"type": "text"
-										},
-										{
-											"key": "client_secret",
-											"value": "{{kc_simulator_fr_secret}}",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{kc_fr_url}}/realms/eFTI_FR/protocol/openid-connect/token",
-									"host": [
-										"{{kc_fr_url}}"
-									],
-									"path": [
-										"realms",
-										"eFTI_FR",
-										"protocol",
-										"openid-connect",
-										"token"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Upload File",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"type": "file",
-											"src": []
-										}
-									]
-								},
-								"url": {
-									"raw": "{{simulator_fr_url}}/ttf/identifiers/upload/file",
-									"host": [
-										"{{simulator_fr_url}}"
-									],
-									"path": [
-										"ttf",
-										"identifiers",
-										"upload",
-										"file"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Upload Identifiers",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"consignment\": {\r\n    \"carrierAcceptanceDateTime\": {\r\n      \"formatId\": \"205\",\r\n      \"value\": \"202310011000+0000\"\r\n    },\r\n    \"deliveryEvent\": {\r\n      \"actualOccurrenceDateTime\": {\r\n        \"formatId\": \"205\",\r\n        \"value\": \"202310021500+0000\"\r\n      }\r\n    },\r\n    \"mainCarriageTransportMovement\": [\r\n      {\r\n        \"dangerousGoodsIndicator\": false,\r\n        \"modeCode\": \"1\",\r\n        \"usedTransportMeans\": {\r\n          \"id\": {\r\n            \"schemeAgencyId\": \"UN\",\r\n            \"value\": \"12345\"\r\n          },\r\n          \"registrationCountry\": {\r\n            \"code\": \"DE\"\r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"usedTransportEquipment\": [\r\n      {\r\n        \"carriedTransportEquipment\": [\r\n          {\r\n            \"id\": {\r\n              \"schemeAgencyId\": \"UN\",\r\n              \"value\": \"67890\"\r\n            },\r\n            \"sequenceNumber\": 1\r\n          }\r\n        ],\r\n        \"categoryCode\": \"AE\",\r\n        \"id\": {\r\n          \"schemeAgencyId\": \"UN\",\r\n          \"value\": \"54321\"\r\n        },\r\n        \"registrationCountry\": {\r\n          \"code\": \"FR\"\r\n        },\r\n        \"sequenceNumber\": 2\r\n      }\r\n    ]\r\n  },\r\n  \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{simulator_fr_url}}/ttf/identifiers/upload",
-									"host": [
-										"{{simulator_fr_url}}"
-									],
-									"path": [
-										"ttf",
-										"identifiers",
-										"upload"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "ROGER Simulator",
-					"item": [
-						{
-							"name": "Authentification",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											" // Set access_token global variable\r",
-											"let responseData = pm.response.json();\r",
-											"pm.globals.set(\"access_token\", responseData.access_token);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "username",
-											"value": "user_bo",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "password",
-											"value": "Azerty59*123",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "grant_type",
-											"value": "client_credentials",
-											"type": "text"
-										},
-										{
-											"key": "client_id",
-											"value": "simulator",
-											"type": "text"
-										},
-										{
-											"key": "client_secret",
-											"value": "{{kc_simulator_fr_secret}}",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{kc_fr_url}}/realms/eFTI_FR/protocol/openid-connect/token",
-									"host": [
-										"{{kc_fr_url}}"
-									],
-									"path": [
-										"realms",
-										"eFTI_FR",
-										"protocol",
-										"openid-connect",
-										"token"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Upload File",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"type": "file",
-											"src": "/C:/Users/dfourmaux/Desktop/jdd_efti/12345678-ab12-4ab6-8999-123456789abc.xml"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{simulator_fr_url}}/roger/identifiers/upload/file",
-									"host": [
-										"{{simulator_fr_url}}"
-									],
-									"path": [
-										"roger",
-										"identifiers",
-										"upload",
-										"file"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Upload Identifiers",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{access_token}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"consignment\": {\r\n    \"carrierAcceptanceDateTime\": {\r\n      \"formatId\": \"205\",\r\n      \"value\": \"202310011000+0000\"\r\n    },\r\n    \"deliveryEvent\": {\r\n      \"actualOccurrenceDateTime\": {\r\n        \"formatId\": \"205\",\r\n        \"value\": \"202310021500+0000\"\r\n      }\r\n    },\r\n    \"mainCarriageTransportMovement\": [\r\n      {\r\n        \"dangerousGoodsIndicator\": false,\r\n        \"modeCode\": \"1\",\r\n        \"usedTransportMeans\": {\r\n          \"id\": {\r\n            \"schemeAgencyId\": \"UN\",\r\n            \"value\": \"12345\"\r\n          },\r\n          \"registrationCountry\": {\r\n            \"code\": \"DE\"\r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"usedTransportEquipment\": [\r\n      {\r\n        \"carriedTransportEquipment\": [\r\n          {\r\n            \"id\": {\r\n              \"schemeAgencyId\": \"UN\",\r\n              \"value\": \"67890\"\r\n            },\r\n            \"sequenceNumber\": 1\r\n          }\r\n        ],\r\n        \"categoryCode\": \"AE\",\r\n        \"id\": {\r\n          \"schemeAgencyId\": \"UN\",\r\n          \"value\": \"54321\"\r\n        },\r\n        \"registrationCountry\": {\r\n          \"code\": \"FR\"\r\n        },\r\n        \"sequenceNumber\": 2\r\n      }\r\n    ]\r\n  },\r\n  \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{simulator_fr_url}}/roger/identifiers/upload",
-									"host": [
-										"{{simulator_fr_url}}"
-									],
-									"path": [
-										"roger",
-										"identifiers",
-										"upload"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				}
-			]
-		}
-	],
-	"variable": [
-		{
-			"key": "bearer",
-			"value": " "
-		}
-	]
+  "info": {
+    "_postman_id": "07c1b2fa-8c27-4112-b07c-68cde3829b38",
+    "name": "eFTI Copy",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "30836777"
+  },
+  "item": [
+    {
+      "name": "BO",
+      "item": [
+        {
+          "name": "Gate",
+          "item": [
+            {
+              "name": "Authentication BO",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      " // Set access_token global variable\r",
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"access_token\", responseData.access_token);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "username",
+                      "value": "user_bo",
+                      "type": "text"
+                    },
+                    {
+                      "key": "password",
+                      "value": "Azerty59*123",
+                      "type": "text"
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "password",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "gate",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "{{kc_gate_bo_secret}}",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{kc_bo_url}}/realms/eFTI_BO/protocol/openid-connect/token",
+                  "host": [
+                    "{{kc_bo_url}}"
+                  ],
+                  "path": [
+                    "realms",
+                    "eFTI_BO",
+                    "protocol",
+                    "openid-connect",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "POST UIL Control",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"requestId\", responseData.requestId);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"gateId\": \"borduria\",\r\n    \"datasetId\": \"b5f5c67e-5e5f-4646-b037-87b1abb9e486\",\r\n    \"platformId\": \"acme\",\r\n    \"subsetIds\": [\"EU01\",\"EU02\"]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/control/uil",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "uil"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET UIL Control",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "",
+                    "type": "text",
+                    "disabled": true
+                  }
+                ],
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/control/uil?requestId={{requestId}}",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "uil"
+                  ],
+                  "query": [
+                    {
+                      "key": "requestId",
+                      "value": "{{requestId}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "POST Identifiers Control",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"requestId\", responseData.requestId);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "",
+                    "type": "text",
+                    "disabled": true
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"BO\", \"SY\"]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/getIdentifiers",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "getIdentifiers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET Identifiers Control",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/getIdentifiers?requestId={{requestId}}",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "getIdentifiers"
+                  ],
+                  "query": [
+                    {
+                      "key": "requestId",
+                      "value": "{{requestId}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Gate to Gate UIL",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"requestId\", responseData.requestId);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"gateId\": \"syldavia\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"massivedynamic\",\r\n    \"subsetId\": \"EU01\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/control/uil",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "uil"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Gate to Gate Note",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"message\" : \"LENS > PSG\",\r\n    \"requestId\": \"{{requestId}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/control/uil/follow-up",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "uil",
+                    "follow-up"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "AAP",
+          "item": [
+            {
+              "name": "POST UIL Control",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"requestId\", responseData.requestId);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "strictSSL": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"gateId\": \"borduria\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"acme\",\r\n    \"subsetIds\": [\"EU01\",\"EU02\"],\r\n       \"authority\": {\r\n      \"country\":\"DE\",\r\n      \"isEmergencyService\":\"yes\",\r\n      \"legalContact\":{\r\n      \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"\r\n      },\r\n      \"name\":\"BALM\",\r\n      \"nationalUniqueIdentifier\":\"BALM\",\r\n      \"workingContact\":{ \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"}\r\n    }\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/aap/control/uil",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "aap",
+                    "control",
+                    "uil"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET UIL Control",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "strictSSL": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "",
+                    "type": "text",
+                    "disabled": true
+                  }
+                ],
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/aap/control/uil?requestId={{requestId}}",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "aap",
+                    "control",
+                    "uil"
+                  ],
+                  "query": [
+                    {
+                      "key": "requestId",
+                      "value": "{{requestId}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "POST Identifiers Control",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"requestId\", responseData.requestId);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "strictSSL": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "",
+                    "type": "text",
+                    "disabled": true
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"BO\", \"SY\"],\r\n         \"authority\": {\r\n      \"country\":\"DE\",\r\n      \"isEmergencyService\":\"yes\",\r\n      \"legalContact\":{\r\n      \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"\r\n      },\r\n      \"name\":\"BALM\",\r\n      \"nationalUniqueIdentifier\":\"BALM\",\r\n      \"workingContact\":{ \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"}\r\n    }\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/aap/control/identifiers",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "aap",
+                    "control",
+                    "identifiers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET Identifiers Control",
+              "protocolProfileBehavior": {
+                "strictSSL": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/aap/control/identifiers?requestId={{requestId}}",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "aap",
+                    "control",
+                    "identifiers"
+                  ],
+                  "query": [
+                    {
+                      "key": "requestId",
+                      "value": "{{requestId}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Gate to Gate UIL",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"requestId\", responseData.requestId);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"gateId\": \"syldavia\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"massivedynamic\",\r\n    \"subsetIds\": [\"EU01\",\"EU02\"],\r\n       \"authority\": {\r\n      \"country\":\"DE\",\r\n      \"isEmergencyService\":\"yes\",\r\n      \"legalContact\":{\r\n      \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"\r\n      },\r\n      \"name\":\"BALM\",\r\n      \"nationalUniqueIdentifier\":\"BALM\",\r\n      \"workingContact\":{ \"buildingNumber\":\"111\",\r\n      \"city\":\"test\",\r\n      \"email\":\"test@test.test\",\r\n      \"postalCode\":\"54321\",\r\n      \"streetName\":\"street\"}\r\n    }\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/aap/control/uil",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "aap",
+                    "control",
+                    "uil"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Gate to Gate Note",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"message\" : \"LENS > PSG\",\r\n    \"requestId\": \"{{requestId}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/aap/control/uil/follow-up",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "aap",
+                    "control",
+                    "uil",
+                    "follow-up"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Simulator",
+          "item": [
+            {
+              "name": "Authentification",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      " // Set access_token global variable\r",
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"access_token\", responseData.access_token);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "username",
+                      "value": "user_bo",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "password",
+                      "value": "Azerty59*123",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "client_credentials",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "simulator",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "{{kc_simulator_bo_secret}}",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{kc_bo_url}}/realms/eFTI_BO/protocol/openid-connect/token",
+                  "host": [
+                    "{{kc_bo_url}}"
+                  ],
+                  "path": [
+                    "realms",
+                    "eFTI_BO",
+                    "protocol",
+                    "openid-connect",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Upload File",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "/C:/Users/kahlj/Desktop/12345678-ab12-4ab6-8999-123456789abc.xml"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{simulator_bo_url}}/identifiers/upload/file",
+                  "host": [
+                    "{{simulator_bo_url}}"
+                  ],
+                  "path": [
+                    "identifiers",
+                    "upload",
+                    "file"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Upload Identifiers",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"consignment\": {\r\n    \"carrierAcceptanceDateTime\": {\r\n      \"formatId\": \"205\",\r\n      \"value\": \"202310011000+0000\"\r\n    },\r\n    \"deliveryEvent\": {\r\n      \"actualOccurrenceDateTime\": {\r\n        \"formatId\": \"205\",\r\n        \"value\": \"202310021500+0000\"\r\n      }\r\n    },\r\n    \"mainCarriageTransportMovement\": [\r\n      {\r\n        \"dangerousGoodsIndicator\": false,\r\n        \"modeCode\": \"1\",\r\n        \"usedTransportMeans\": {\r\n          \"id\": {\r\n            \"schemeAgencyId\": \"UN\",\r\n            \"value\": \"12345\"\r\n          },\r\n          \"registrationCountry\": {\r\n            \"code\": \"DE\"\r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"usedTransportEquipment\": [\r\n      {\r\n        \"carriedTransportEquipment\": [\r\n          {\r\n            \"id\": {\r\n              \"schemeAgencyId\": \"UN\",\r\n              \"value\": \"67890\"\r\n            },\r\n            \"sequenceNumber\": 1\r\n          }\r\n        ],\r\n        \"categoryCode\": \"AE\",\r\n        \"id\": {\r\n          \"schemeAgencyId\": \"UN\",\r\n          \"value\": \"54321\"\r\n        },\r\n        \"registrationCountry\": {\r\n          \"code\": \"FR\"\r\n        },\r\n        \"sequenceNumber\": 2\r\n      }\r\n    ]\r\n  },\r\n  \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{simulator_bo_url}}/identifiers/upload",
+                  "host": [
+                    "{{simulator_bo_url}}"
+                  ],
+                  "path": [
+                    "identifiers",
+                    "upload"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LI",
+      "item": [
+        {
+          "name": "Gate",
+          "item": [
+            {
+              "name": "Authentication LI",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      " // Set access_token global variable\r",
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"access_token\", responseData.access_token);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "username",
+                      "value": "user_li",
+                      "type": "text"
+                    },
+                    {
+                      "key": "password",
+                      "value": "Azerty59*123",
+                      "type": "text"
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "password",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "gate",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "{{kc_gate_li_secret}}",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{kc_li_url}}/realms/eFTI_LI/protocol/openid-connect/token",
+                  "host": [
+                    "{{kc_li_url}}"
+                  ],
+                  "path": [
+                    "realms",
+                    "eFTI_LI",
+                    "protocol",
+                    "openid-connect",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "POST UIL Control",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"requestId\", responseData.requestId);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"gateId\": \"listenbourg\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"umbrellainc\",\r\n    \"subsetIds\": [\"EU01\",\"EU02\"]\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_li_url}}/v1/control/uil",
+                  "host": [
+                    "{{gate_li_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "uil"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET UIL Control",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "",
+                    "type": "text",
+                    "disabled": true
+                  }
+                ],
+                "url": {
+                  "raw": "{{gate_li_url}}/v1/control/uil?requestId={{requestId}}",
+                  "host": [
+                    "{{gate_li_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "uil"
+                  ],
+                  "query": [
+                    {
+                      "key": "requestId",
+                      "value": "{{requestId}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "POST Identifiers Control",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"requestId\", responseData.requestId);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "",
+                    "type": "text",
+                    "disabled": true
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"BO\", \"SY\", \"LI\"]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_li_url}}/v1/control/identifiers",
+                  "host": [
+                    "{{gate_li_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "identifiers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET Identifiers Control",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{gate_li_url}}/v1/getIdentifiers?requestId={{requestId}}",
+                  "host": [
+                    "{{gate_li_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "getIdentifiers"
+                  ],
+                  "query": [
+                    {
+                      "key": "requestId",
+                      "value": "{{requestId}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Simulator",
+          "item": [
+            {
+              "name": "Authentification",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      " // Set access_token global variable\r",
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"access_token\", responseData.access_token);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "username",
+                      "value": "user_li",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "password",
+                      "value": "Azerty59*123",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "client_credentials",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "simulator",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "{{kc_simulator_li_secret}}",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{kc_li_url}}/realms/eFTI_LI/protocol/openid-connect/token",
+                  "host": [
+                    "{{kc_li_url}}"
+                  ],
+                  "path": [
+                    "realms",
+                    "eFTI_LI",
+                    "protocol",
+                    "openid-connect",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Upload File",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "/C:/Users/jthueux/Desktop/cda/12345678-ab12-4ab6-8999-123456789abe.xml"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{simulator_li_url}}/identifiers/upload/file",
+                  "host": [
+                    "{{simulator_li_url}}"
+                  ],
+                  "path": [
+                    "identifiers",
+                    "upload",
+                    "file"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Upload Identifiers",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"consignment\": {\r\n    \"carrierAcceptanceDateTime\": {\r\n      \"formatId\": \"205\",\r\n      \"value\": \"202310011000+0000\"\r\n    },\r\n    \"deliveryEvent\": {\r\n      \"actualOccurrenceDateTime\": {\r\n        \"formatId\": \"205\",\r\n        \"value\": \"202310021500+0000\"\r\n      }\r\n    },\r\n    \"mainCarriageTransportMovement\": [\r\n      {\r\n        \"dangerousGoodsIndicator\": false,\r\n        \"modeCode\": \"1\",\r\n        \"usedTransportMeans\": {\r\n          \"id\": {\r\n            \"schemeAgencyId\": \"UN\",\r\n            \"value\": \"12345\"\r\n          },\r\n          \"registrationCountry\": {\r\n            \"code\": \"DE\"\r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"usedTransportEquipment\": [\r\n      {\r\n        \"carriedTransportEquipment\": [\r\n          {\r\n            \"id\": {\r\n              \"schemeAgencyId\": \"UN\",\r\n              \"value\": \"67890\"\r\n            },\r\n            \"sequenceNumber\": 1\r\n          }\r\n        ],\r\n        \"categoryCode\": \"AE\",\r\n        \"id\": {\r\n          \"schemeAgencyId\": \"UN\",\r\n          \"value\": \"54321\"\r\n        },\r\n        \"registrationCountry\": {\r\n          \"code\": \"FR\"\r\n        },\r\n        \"sequenceNumber\": 2\r\n      }\r\n    ]\r\n  },\r\n  \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{simulator_li_url}}/identifiers/upload",
+                  "host": [
+                    "{{simulator_li_url}}"
+                  ],
+                  "path": [
+                    "identifiers",
+                    "upload"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SY",
+      "item": [
+        {
+          "name": "Gate",
+          "item": [
+            {
+              "name": "Authentication SY",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      " // Set access_token global variable\r",
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"access_token\", responseData.access_token);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "username",
+                      "value": "user_sy",
+                      "type": "text"
+                    },
+                    {
+                      "key": "password",
+                      "value": "Azerty59*123",
+                      "type": "text"
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "password",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "gate",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "{{kc_gate_sy_secret}}",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{kc_sy_url}}/realms/eFTI_SY/protocol/openid-connect/token",
+                  "host": [
+                    "{{kc_sy_url}}"
+                  ],
+                  "path": [
+                    "realms",
+                    "eFTI_SY",
+                    "protocol",
+                    "openid-connect",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "POST UIL Control",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"requestId\", responseData.requestId);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"gateId\": \"syldavia\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"massivedynamic\",\r\n    \"subsetIds\": [\"EU01\",\"EU02\"]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_sy_url}}/v1/control/uil",
+                  "host": [
+                    "{{gate_sy_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "uil"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET UIL Control",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "",
+                    "type": "text",
+                    "disabled": true
+                  }
+                ],
+                "url": {
+                  "raw": "{{gate_sy_url}}/v1/control/uil?requestId={{requestId}}",
+                  "host": [
+                    "{{gate_sy_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "uil"
+                  ],
+                  "query": [
+                    {
+                      "key": "requestId",
+                      "value": "{{requestId}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "POST Identifiers Control",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"requestId\", responseData.requestId);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "",
+                    "type": "text",
+                    "disabled": true
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"modeCode\": \"1\",\r\n  \"identifier\": \"54321\",\r\n  \"identifierType\": [\r\n    \"EQUIPMENT\"\r\n  ],\r\n  \"registrationCountryCode\": \"FR\",\r\n  \"dangerousGoodsIndicator\": false,\r\n  \"eftiGateIndicator\": [\"BO\", \"SY\"]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_sy_url}}/v1/control/identifiers",
+                  "host": [
+                    "{{gate_sy_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "identifiers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET Identifiers Control",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{gate_sy_url}}/v1/control/identifiers?requestId={{requestId}}",
+                  "host": [
+                    "{{gate_sy_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "identifiers"
+                  ],
+                  "query": [
+                    {
+                      "key": "requestId",
+                      "value": "{{requestId}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Gate to Gate UIL",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"requestId\", responseData.requestId);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"gateId\": \"france\",\r\n    \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\",\r\n    \"platformId\": \"ttf\",\r\n    \"subsetIds\": [\"EU01\",\"EU02\"]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_sy_url}}/v1/control/uil",
+                  "host": [
+                    "{{gate_sy_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "uil"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Gate to Gate Note",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"message\" : \"LENS > PSG\",\r\n    \"requestId\": \"{{requestId}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{gate_bo_url}}/v1/control/uil/follow-up",
+                  "host": [
+                    "{{gate_bo_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "control",
+                    "uil",
+                    "follow-up"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Simulator",
+          "item": [
+            {
+              "name": "Authentification",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      " // Set access_token global variable\r",
+                      "let responseData = pm.response.json();\r",
+                      "pm.globals.set(\"access_token\", responseData.access_token);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "username",
+                      "value": "user_bo",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "password",
+                      "value": "Azerty59*123",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "client_credentials",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "simulator",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "{{kc_simulator_sy_secret}}",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{kc_sy_url}}/realms/eFTI_SY/protocol/openid-connect/token",
+                  "host": [
+                    "{{kc_sy_url}}"
+                  ],
+                  "path": [
+                    "realms",
+                    "eFTI_SY",
+                    "protocol",
+                    "openid-connect",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Upload File",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "/C:/Users/dfourmaux/Desktop/jdd_efti/12345678-ab12-4ab6-8999-123456789abc.xml"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{simulator_sy_url}}/identifiers/upload/file",
+                  "host": [
+                    "{{simulator_sy_url}}"
+                  ],
+                  "path": [
+                    "identifiers",
+                    "upload",
+                    "file"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Upload Identifiers",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"consignment\": {\r\n    \"carrierAcceptanceDateTime\": {\r\n      \"formatId\": \"205\",\r\n      \"value\": \"202310011000+0000\"\r\n    },\r\n    \"deliveryEvent\": {\r\n      \"actualOccurrenceDateTime\": {\r\n        \"formatId\": \"205\",\r\n        \"value\": \"202310021500+0000\"\r\n      }\r\n    },\r\n    \"mainCarriageTransportMovement\": [\r\n      {\r\n        \"dangerousGoodsIndicator\": false,\r\n        \"modeCode\": \"1\",\r\n        \"usedTransportMeans\": {\r\n          \"id\": {\r\n            \"schemeAgencyId\": \"UN\",\r\n            \"value\": \"12345\"\r\n          },\r\n          \"registrationCountry\": {\r\n            \"code\": \"DE\"\r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"usedTransportEquipment\": [\r\n      {\r\n        \"carriedTransportEquipment\": [\r\n          {\r\n            \"id\": {\r\n              \"schemeAgencyId\": \"UN\",\r\n              \"value\": \"67890\"\r\n            },\r\n            \"sequenceNumber\": 1\r\n          }\r\n        ],\r\n        \"categoryCode\": \"AE\",\r\n        \"id\": {\r\n          \"schemeAgencyId\": \"UN\",\r\n          \"value\": \"54321\"\r\n        },\r\n        \"registrationCountry\": {\r\n          \"code\": \"FR\"\r\n        },\r\n        \"sequenceNumber\": 2\r\n      }\r\n    ]\r\n  },\r\n  \"datasetId\": \"12345678-ab12-4ab6-8999-123456789abc\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{simulator_sy_url}}/identifiers/upload",
+                  "host": [
+                    "{{simulator_sy_url}}"
+                  ],
+                  "path": [
+                    "identifiers",
+                    "upload"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "bearer",
+      "value": " "
+    }
+  ]
 }
