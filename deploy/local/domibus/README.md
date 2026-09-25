@@ -23,6 +23,14 @@ To avoid conflicts, this project uses a custom docker network `efti-network`. En
 ```
 docker network create efti-network
 ```
+When you are using a Windows-based system such as WSL and check out the code within the host system, it may happen that some files will be transferred with the wrong line endings. This can cause problems when running the project. To avoid this, make sure that the following files have the correct line endings (LF) and not CRLF:
+* Dockerfile
+* deploy.sh
+* docker-entrypoint.sh
+* domibus/sh/setenv-node-1.sh
+* db/<instance>/initdb.d/99-done.sql (3 files)
+
+```
 
 ## Run the project 
 

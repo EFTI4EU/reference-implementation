@@ -19,7 +19,7 @@ services:
       - '3306:3306'
     volumes:
       - ./db/sybo/initdb.d:/docker-entrypoint-initdb.d/
-      - ./db/sybo/data:/var/lib/mysql:Z
+      - mysql_sybo_data:/var/lib/mysql
     networks:
       efti:
 
@@ -43,7 +43,7 @@ services:
       - '3307:3306'
     volumes:
       - ./db/li/initdb.d:/docker-entrypoint-initdb.d/
-      - ./db/li/data:/var/lib/mysql:Z
+      - mysql_li_data:/var/lib/mysql
     networks:
       efti:
 
@@ -67,7 +67,7 @@ services:
       - '3308:3306'
     volumes:
       - ./db/platform/initdb.d:/docker-entrypoint-initdb.d/
-      - ./db/platform/data:/var/lib/mysql:Z
+      - mysql_platform_data:/var/lib/mysql
     networks:
       efti:
 
@@ -199,3 +199,8 @@ networks:
   efti:
     name: efti-network
     external: true
+
+volumes:
+  mysql_sybo_data:
+  mysql_li_data:
+  mysql_platform_data:
