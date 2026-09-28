@@ -83,7 +83,7 @@ class ReaderServiceTest {
         Mockito.when(resource.exists()).thenReturn(false);
         Mockito.when(resource.exists()).thenReturn(true);
         Mockito.when(resource.getContentAsString(any())).thenReturn(data);
-        final SupplyChainConsignment result = readerService.readFromFile("classpath:cda/teest", List.of("full"));
+        final SupplyChainConsignment result = readerService.readFromFile("classpath:cda/teest", List.of("EU01"));
 
         Assertions.assertNotNull(result);
     }
@@ -94,7 +94,7 @@ class ReaderServiceTest {
         Mockito.when(resourceLoader.getResource(any())).thenReturn(resource);
         Mockito.when(resource.exists()).thenReturn(false);
         Mockito.when(resource.exists()).thenReturn(false);
-        final SupplyChainConsignment result = readerService.readFromFile("classpath:cda/bouuuuuuuuuuuuh", List.of("full"));
+        final SupplyChainConsignment result = readerService.readFromFile("classpath:cda/bouuuuuuuuuuuuh", List.of("EU01"));
 
         Assertions.assertNull(result);
     }

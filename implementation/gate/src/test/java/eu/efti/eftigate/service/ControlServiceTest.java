@@ -171,7 +171,6 @@ class ControlServiceTest extends AbstractServiceTest {
         this.uilDto.setGateId("france");
         this.uilDto.setDatasetId("12345678-ab12-4ab6-8999-123456789abc");
         this.uilDto.setPlatformId("ttf");
-        this.uilDto.setSubsetIds(List.of("full"));
 
         this.searchWithIdentifiersRequestDto.setIdentifier("abc123");
         this.searchWithIdentifiersRequestDto.setRegistrationCountryCode("FR");
@@ -567,7 +566,6 @@ class ControlServiceTest extends AbstractServiceTest {
                 .requestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")
                 .status(StatusEnum.PENDING)
                 .requestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH)
-                .subsetIds(List.of("full"))
                 .gateId("france")
                 .fromGateId("https://efti.gate.france.eu")
                 .transportIdentifiers(SearchParameter.builder()
@@ -591,7 +589,6 @@ class ControlServiceTest extends AbstractServiceTest {
                 .requestId("67fe38bd-6bf7-4b06-b20e-206264bd639c")
                 .status(StatusEnum.PENDING)
                 .requestType(RequestTypeEnum.EXTERNAL_ASK_IDENTIFIERS_SEARCH)
-                .subsetIds(List.of("full"))
                 .gateId("france")
                 .fromGateId("https://efti.gate.france.eu")
                 .eftiData(new byte[0])

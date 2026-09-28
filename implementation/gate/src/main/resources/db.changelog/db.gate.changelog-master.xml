@@ -218,7 +218,7 @@
         <dropColumn tableName="control" columnName="subsetmsrequested"/>
         <dropColumn tableName="control" columnName="subseteurequested"/>
         <addColumn catalogName="efti" tableName="control">
-            <column name="subsetid" type="VARCHAR(255)" defaultValue="full">
+            <column name="subsetid" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
         </addColumn>

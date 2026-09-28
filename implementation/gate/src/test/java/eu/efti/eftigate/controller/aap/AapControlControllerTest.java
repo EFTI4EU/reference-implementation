@@ -76,7 +76,7 @@ class AapControlControllerTest {
         final AapUilDto uilDto = AapUilDto.builder().platformId("platform")
                 .datasetId("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
                 .gateId("gate")
-                .subsetIds(Arrays.asList("full"))
+                .subsetIds(Arrays.asList("EU01"))
                 .authority(AuthorityDto.builder().name("name").country("Country").isEmergencyService(false).nationalUniqueIdentifier("ID")
                 .legalContact(ContactInformationDto.builder().email("mail").city("city").postalCode("pc").streetName("sn").additionalLine("al").build())
                 .workingContact(ContactInformationDto.builder().email("mail").city("city").postalCode("pc").streetName("sn").additionalLine("al").build())
