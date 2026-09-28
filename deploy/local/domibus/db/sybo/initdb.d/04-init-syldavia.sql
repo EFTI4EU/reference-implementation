@@ -1,0 +1,5 @@
+DROP SCHEMA IF EXISTS syldavia;
+CREATE SCHEMA syldavia;
+ALTER DATABASE syldavia CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+GRANT ALL PRIVILEGES ON syldavia.* TO 'edelivery'@'%';
+FLUSH PRIVILEGES;

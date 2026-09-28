@@ -1,0 +1,5 @@
+DROP SCHEMA IF EXISTS borduria;
+CREATE SCHEMA borduria;
+ALTER DATABASE borduria CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+GRANT ALL PRIVILEGES ON borduria.* TO 'edelivery'@'%';
+FLUSH PRIVILEGES;
