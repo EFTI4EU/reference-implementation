@@ -24,7 +24,8 @@
     "authority": null,
     "error": null,
     "identifiersResults": null,
-    "notes": null
+    "notes": null,
+    "noteRequestId": null
   },
   "error": null,
   "requestType": "UIL",

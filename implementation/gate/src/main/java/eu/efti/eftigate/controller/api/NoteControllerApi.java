@@ -4,11 +4,13 @@ import eu.efti.commons.dto.PostFollowUpRequestDto;
 import eu.efti.eftigate.config.security.Roles;
 import eu.efti.eftigate.dto.NoteResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,4 +30,15 @@ public interface NoteControllerApi {
     @PostMapping("/control/uil/follow-up")
     @Secured(Roles.ROLE_ROAD_CONTROLER)
     ResponseEntity<NoteResponseDto> createNote(final @RequestBody PostFollowUpRequestDto notesDto);
+
+    @Operation(summary = "Get a follow up communication status", description = "Get the processing status of a follow up communication for a given note request id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/control/uil/follow-up")
+    @Secured(Roles.ROLE_ROAD_CONTROLER)
+    ResponseEntity<NoteResponseDto> getNoteStatus(@Parameter String requestId);
 }

@@ -2,6 +2,7 @@ package eu.efti.eftigate.batch;
 
 import eu.efti.eftigate.service.AbstractServiceTest;
 import eu.efti.eftigate.service.ControlService;
+import eu.efti.eftigate.service.request.NotesRequestService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,11 +15,14 @@ import static org.mockito.Mockito.verify;
 class ControlBatchTest extends AbstractServiceTest {
     @Mock
     private ControlService controlService;
+    @Mock
+    private NotesRequestService notesRequestService;
 
     @Test
     void work_success() {
-        final ControlBatch controlBatch = new ControlBatch(controlService);
+        final ControlBatch controlBatch = new ControlBatch(controlService, notesRequestService);
         controlBatch.updatePendingControls();
         verify(controlService, times(1)).updatePendingControls();
+        verify(notesRequestService, times(1)).timeoutStaleRequests();
     }
 }

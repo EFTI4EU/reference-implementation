@@ -73,7 +73,7 @@ public class PlatformIntegrationService {
                         uilRequestService.manageRestResponseReceived(control.getRequestId(), res);
                     } else if (RequestTypeEnum.NOTE_SEND.equals(requestTypeEnum)) {
                         notesRequestService.manageRestRequestInProgress(control.getRequestId());
-                        client.callPostConsignmentFollowup(control.getDatasetId(), note.orElseThrow());
+                        client.callPostConsignmentFollowup(control.getDatasetId(), note.orElseThrow(), rabbitRequestDto.getNoteRequestId());
                         notesRequestService.manageRestRequestDone(control.getRequestId());
                     } else {
                         throw new TechnicalException("unexpected request type: " + requestTypeEnum);

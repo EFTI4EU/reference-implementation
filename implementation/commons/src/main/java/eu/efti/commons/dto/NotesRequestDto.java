@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.UUID;
 
 @Data
 @SuperBuilder
@@ -15,11 +18,15 @@ import lombok.experimental.SuperBuilder;
 public class NotesRequestDto extends RequestDto {
     private String note;
     private String platformId;
+    private String noteRequestId;
 
     public NotesRequestDto(final ControlDto controlDto) {
         super(controlDto);
         this.setRequestType(RequestType.NOTE);
         this.setNote(controlDto.getNotes());
         this.setPlatformId(controlDto.getPlatformId());
+        this.setNoteRequestId(StringUtils.isNotBlank(controlDto.getNoteRequestId())
+                ? controlDto.getNoteRequestId()
+                : UUID.randomUUID().toString());
     }
 }

@@ -21,4 +21,7 @@ public class NoteRequestEntity extends RequestEntity {
 
     @Column(name = "note")
     private String note;
+
+    @Column(name = "note_request_id")
+    private String noteRequestId;
 }
