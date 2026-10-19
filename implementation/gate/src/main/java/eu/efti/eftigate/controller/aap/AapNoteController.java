@@ -4,6 +4,7 @@ import eu.efti.commons.dto.PostFollowUpRequestDto;
 import eu.efti.eftigate.controller.aap.api.AapNoteControllerApi;
 import eu.efti.eftigate.dto.NoteResponseDto;
 import eu.efti.eftigate.service.ControlService;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,12 @@ public class AapNoteController implements AapNoteControllerApi {
         log.info("POST on /aap/control/uil/follow-up with param requestId {}", notesDto.getRequestId());
         final NoteResponseDto noteResponseDto = controlService.createNoteRequestForControl(notesDto);
         return new ResponseEntity<>(noteResponseDto, StringUtils.isNotBlank(noteResponseDto.getErrorCode()) ? HttpStatus.BAD_REQUEST : HttpStatus.ACCEPTED);
+    }
+
+    @Override
+    public ResponseEntity<NoteResponseDto> getNoteStatus(final @Parameter String requestId) {
+        log.info("GET on /aap/control/uil/follow-up with param requestId {}", requestId);
+        return new ResponseEntity<>(controlService.getNoteRequestStatus(requestId), HttpStatus.OK);
     }
 
 }
