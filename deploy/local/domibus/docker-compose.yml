@@ -144,7 +144,7 @@ services:
       efti:
 
   activemq-sybo:
-    image: webcenter/activemq:latest
+    image: apache/activemq-classic:5.19.2
     ports:
       - "8161:8161"
     environment:
@@ -155,7 +155,7 @@ services:
       efti:
 
   activemq-li:
-    image: webcenter/activemq:latest
+    image: apache/activemq-classic:5.19.2
     ports:
       - "8162:8161"
     environment:
@@ -166,7 +166,7 @@ services:
       efti:
 
   activemq-platform:
-    image: webcenter/activemq:latest
+    image: apache/activemq-classic:5.19.2
     ports:
       - "8163:8161"
     environment:
